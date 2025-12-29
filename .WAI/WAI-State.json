@@ -1,0 +1,425 @@
+{
+  "wheelwright": {
+    "version": "1.0.0",
+    "structure_version": "v1",
+    "description": "Wheelwright Framework - Core code and wheel templates for AI context persistence",
+    "framework_path": "~/projects/wheelwright-ai/framework",
+    "hub_path": "/home/mario/wheelwright-hub",
+    "_paths_note": "This IS the framework. hub_path points to the developer's personal hub.",
+    "github_repo": "wheelwright-ai/framework",
+    "migrated_from_scf": "2.2.0",
+    "migrated_at": "2025-12-28T00:00:00Z",
+    "tagline": "We aren't reinventing the wheel - we're evolving it faster than one person ever could."
+  },
+  "_project_foundation": {
+    "completed": true,
+    "completed_at": "2025-12-28T00:00:00Z",
+    "completed_with": "Claude Opus 4.5",
+    "identity": {
+      "type": "framework",
+      "name": "Wheelwright Framework",
+      "one_liner": "Build AI wheels that roll forward forever - universal context persistence for any knowledge work",
+      "success_looks_like": "Any AI assistant can pick up any project with full context, and learnings flow across projects automatically via the hub"
+    },
+    "boundaries": {
+      "in_scope": [
+        "Core framework code (WAI CLI, Python modules)",
+        "Wheel templates and schemas (WAI-State.json, WAI-State.md, WAI-Guide.md)",
+        "Hub creation and management tooling",
+        "Spoke loader architecture and built-in spokes",
+        "Documentation for Wheelwright usage",
+        "Cross-project learning protocols",
+        "Migration tools (SCF to Wheelwright)"
+      ],
+      "out_of_scope": [
+        "Hub storage (user creates separately at ~/wheelwright-hub)",
+        "User's personal data/preferences",
+        "IDE extensions (wheelwright-ai/extension-vscode)",
+        "Browser extensions (wheelwright-ai/extension-browser)",
+        "Website (wheelwright-ai/website)",
+        "Project-specific implementations"
+      ],
+      "constraints": [
+        "AI-agnostic: Must work with Claude, GPT, Copilot, Gemini, etc.",
+        "Environment-agnostic: No lock-in to specific tools",
+        "Lightweight: Minimal dependencies, easy adoption",
+        "Non-coding support: Works for research, writing, design - not just code",
+        "Backwards compatible: Migration path from SCF"
+      ]
+    },
+    "approach": {
+      "stack_or_tools": [
+        "Python 3.9+",
+        "JSON/JSONL",
+        "Markdown"
+      ],
+      "workflow": "Dogfooding - Wheelwright tracks its own development",
+      "ai_collaboration_style": "yolo",
+      "review_process": "AI proceeds autonomously, logs decisions retroactively"
+    },
+    "philosophy": {
+      "core_principle": "AI as autonomous partner with full agency",
+      "behaviors": [
+        "Proceed with confidence - user trusts AI judgment",
+        "Make decisions and implement directly",
+        "Complete foundation before starting work (still required)",
+        "Log significant decisions for transparency"
+      ]
+    },
+    "evolution_log": [
+      {
+        "date": "2025-12-22",
+        "change": "Established SCF project foundation - separated framework from hub",
+        "rationale": "Framework is the brains, hub is user's personal storage. Clear separation enables adoption without inheriting creator's context.",
+        "acknowledged_by": "Mario Vaccari",
+        "ai_partner": "Claude Opus 4.5"
+      },
+      {
+        "date": "2025-12-28",
+        "change": "Rebranded from SCF to Wheelwright Framework",
+        "rationale": "New brand identity with wheel metaphor (hub, spokes, wheels). Domain wheelwright.ai purchased. GitHub org wheelwright-ai created. Universal appeal beyond just developers.",
+        "acknowledged_by": "Mario Vaccari",
+        "ai_partner": "Claude Opus 4.5"
+      },
+      {
+        "date": "2025-12-29",
+        "change": "Enabled YOLO mode - AI autonomous collaboration style",
+        "rationale": "User requested full autonomy for AI decision-making. AI will proceed with implementation decisions directly, logging them retroactively for transparency rather than asking for approval upfront.",
+        "acknowledged_by": "Mario Vaccari",
+        "ai_partner": "Claude Sonnet 4.5"
+      },
+      {
+        "date": "2025-12-29",
+        "change": "Implemented conversation logging and naming standardization (WWAI → WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI → WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "acknowledged_by": "Mario Vaccari",
+        "ai_partner": "Claude Sonnet 4.5"
+      }
+    ]
+  },
+  "_session_state": {
+    "last_session_id": "claude-sonnet-2025-12-29-yolo-mode-enabled",
+    "last_modified_by": "Claude Sonnet 4.5",
+    "last_modified_at": "2025-12-29T06:35:00Z",
+    "requires_review": false,
+    "review_reason": null,
+    "session_count": 4,
+    "protocol_completed": true,
+    "protocol_last_run": "2025-12-29T06:25:31Z",
+    "briefing_provided": true,
+    "current_session": null,
+    "last_closeout": null
+  },
+  "wheel": {
+    "name": "Wheelwright Framework",
+    "version": "1.0.0",
+    "type": "framework",
+    "description": "Build AI wheels that roll forward forever - universal context persistence for any knowledge work",
+    "repository": "https://github.com/wheelwright-ai/framework",
+    "created": "2024-11-01T00:00:00Z",
+    "last_updated": "2025-12-28T00:00:00Z",
+    "status": "active"
+  },
+  "hub": {
+    "summary": "Core framework for Wheelwright - the wheel metaphor for AI context persistence",
+    "objectives": [
+      "Provide WAI CLI for wheel/hub management",
+      "Maintain wheel templates (WAI-State.json, WAI-State.md, WAI-Guide.md)",
+      "Enable cross-project learning via hub",
+      "Support any AI assistant (Claude, GPT, Gemini, Copilot)"
+    ],
+    "decisions": [],
+    "constraints": []
+  },
+  "spokes": {
+    "active": [],
+    "available": [
+      "meta-consultation",
+      "document-analysis",
+      "code-review"
+    ]
+  },
+  "context": {
+    "current_phase": "v1.0 Launch - Documentation Complete",
+    "next_actions": [
+      "Test automatic briefing by reloading Claude session",
+      "Commit README updates, WAI-Guide.md, CLAUDE.md, and WAI-State.json",
+      "Run migration script to convert SCF hub and projects",
+      "Rename ~/scf-hub to ~/wheelwright-hub",
+      "Create wheelwright.ai website",
+      "Build VS Code extension",
+      "Build browser extension"
+    ],
+    "blockers": [],
+    "insights": [
+      "Automatic discovery is THE critical feature - WAI must be seen and loaded without manual prompting",
+      "Session start briefing creates immediate continuity and confirms WAI loaded correctly",
+      "Corrected metaphor: Hub=memory+registry, Spoke-Project=project memory, Wheels=Hub+all Spokes together",
+      "The wheel metaphor resonates - hub (memory), spokes (capabilities), wheel (project)",
+      "WAI naming allows phonetic 'Way' branding",
+      "Organization structure (wheelwright-ai) enables clean multi-repo setup"
+    ],
+    "complexity_thresholds": {
+      "multi_file_threshold": 2,
+      "step_count_threshold": 6,
+      "checkpoint_interval": 3,
+      "description": "Thresholds for ADAPTIVE workflow mode - when to enforce STRICT vs YOLO"
+    },
+    "capacity_management": {
+      "current_capacity_estimate": 0.0,
+      "warning_threshold": 0.80,
+      "critical_threshold": 0.90,
+      "last_compact_at": null,
+      "compact_frequency": "before_closeout_or_shipit",
+      "description": "Token capacity tracking and auto-compact triggers"
+    }
+  },
+  "stack": {
+    "core": [
+      "Python 3.9+",
+      "JSON/JSONL",
+      "Markdown"
+    ],
+    "cli": [
+      "./WAI unified CLI"
+    ],
+    "structure": [
+      ".WAI/",
+      "templates/wheel/",
+      "templates/hub/",
+      "WAI-Spokes/",
+      "docs/"
+    ]
+  },
+  "features": [
+    {
+      "name": "Project Foundation System",
+      "status": "active",
+      "description": "Guided setup extracts project identity, boundaries, approach - AI detects drift and enforces intentionality",
+      "impact": 10
+    },
+    {
+      "name": "Hub-Wheel Architecture",
+      "status": "active",
+      "description": "Framework provides wheel templates; users create their own hub for personal learnings",
+      "impact": 10
+    },
+    {
+      "name": "AI Stewardship Philosophy",
+      "status": "active",
+      "description": "AI as responsible partner - detects scope drift, requires acknowledgment for direction changes",
+      "impact": 9
+    },
+    {
+      "name": "Wheel Signals (JSONL)",
+      "status": "active",
+      "description": "Append-only signal log for hub-wheel communication",
+      "impact": 9
+    },
+    {
+      "name": "WAI-Guide.md Generation",
+      "status": "active",
+      "description": "AI instructions generated for each wheel project",
+      "impact": 9
+    },
+    {
+      "name": "Unified CLI (./WAI)",
+      "status": "active",
+      "description": "Single entry point - init, status, sync, hub create, spoke management",
+      "impact": 8
+    },
+    {
+      "name": "Spoke Loader Architecture",
+      "status": "active",
+      "description": "Modular spoke system with 3 built-in spokes (meta-consultation, document-analysis, code-review)",
+      "impact": 8
+    },
+    {
+      "name": "SCF Migration Tool",
+      "status": "active",
+      "description": "One-time converter for SCF hub and projects to Wheelwright format",
+      "impact": 8
+    },
+    {
+      "name": "Non-Coding Project Support",
+      "status": "active",
+      "description": "Templates and workflows for research, writing, design projects",
+      "impact": 8
+    },
+    {
+      "name": "Dogfooding",
+      "status": "active",
+      "description": "Wheelwright tracks its own development - living example for users",
+      "impact": 8
+    }
+  ],
+  "decisions": [
+    {
+      "date": "2025-12-29",
+      "decision": "Enabled YOLO mode for AI collaboration",
+      "rationale": "User requested autonomous AI operation mode. Changed ai_collaboration_style to 'yolo' and review_process to allow AI to proceed with decisions directly. AI will log decisions retroactively rather than asking for approval. Foundation checks still required.",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "CLAUDE.md v2.0 - Priority levels and enforcement architecture",
+      "rationale": "Restructured CLAUDE.md with PRIORITY 0 (blocking), PRIORITY 1 (always-active), PRIORITY 2 (optional) levels. Added session state tracking (protocol_completed flag), inline session start protocol, enforcement checklist with explicit MUST NOT rules, and exception handling for circular dependencies. This fixes root cause: AI tools receive CLAUDE.md as passive reminder, not executable directive. New structure ensures automatic protocol execution on every session start.",
+      "impact": 10,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Automatic session start briefing protocol",
+      "rationale": "AI must automatically brief user on recent changes and check for uncommitted work when WAI loads. This confirms context loaded correctly and provides immediate continuity without user prompting.",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Automatic discovery as critical feature in README",
+      "rationale": "WAI must be automatically seen and loaded by AI tools (VS Code, Claude Code, Cursor, etc.) for session continuity to work. Added comprehensive section showing how each tool discovers WAI and verifies loading.",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Corrected wheel metaphor terminology",
+      "rationale": "Hub=centralized memory+registry, Spoke-Project=project-specific memory, Wheels=Hub+all Spoke-Projects, Spoke-Signals=learnings tracker, Framework=source code. This clarifies architecture and relationships.",
+      "impact": 8,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-28",
+      "decision": "Rebrand from SCF to Wheelwright",
+      "rationale": "The wheel metaphor (hub=memory, spokes=capabilities, wheel=project) is more intuitive and universal. WAI as phonetic 'Way' enables strong branding. wheelwright.ai domain purchased.",
+      "impact": 10,
+      "by": "Mario Vaccari + Claude Opus 4.5"
+    },
+    {
+      "date": "2025-12-28",
+      "decision": "GitHub organization wheelwright-ai",
+      "rationale": "Clean separation of repos: framework, extension-vscode, extension-browser, docs, website, enterprise. Single SSH key works via org under mariov96 account.",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Opus 4.5"
+    },
+    {
+      "date": "2025-12-28",
+      "decision": "WAI file naming convention",
+      "rationale": "WAI-State.json, WAI-State.md, WAI-Guide.md - consistent prefix, phonetically 'Way' files",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Opus 4.5"
+    },
+    {
+      "date": "2025-12-28",
+      "decision": "Local folder structure mirrors GitHub",
+      "rationale": "~/projects/wheelwright-ai/framework matches github.com/wheelwright-ai/framework for clarity when managing multiple repos",
+      "impact": 7,
+      "by": "Mario Vaccari"
+    },
+    {
+      "date": "2025-12-22",
+      "decision": "Framework-Hub separation",
+      "rationale": "Framework repo contains only code and templates. Hub (user's personal data, learnings, project registry) lives separately at user-chosen location.",
+      "impact": 10,
+      "by": "Claude Opus 4.5 + Mario Vaccari"
+    },
+    {
+      "date": "2025-12-22",
+      "decision": "AI as responsible partner philosophy",
+      "rationale": "AI should reign in vibe coding when it strays too far. Detect drift, require explicit acknowledgment for direction changes. Enable but remain intentful.",
+      "impact": 9,
+      "by": "Claude Opus 4.5 + Mario Vaccari"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Conversation logging with JSONL for session continuity",
+      "rationale": "Track every user-AI turn in .WAI/session-conversation.jsonl (JSONL format). Process on closeout to extract summary, clear verbose log. Enables recovery from session disruptions and intelligent closeout. Hub learning cannot proceed until closeout complete and conversation log cleared.",
+      "impact": 10,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Shipit command - closeout + git commit workflow",
+      "rationale": "Single command to process session (closeout), commit WAI state files with session summary, and mark Spoke-Project ready for hub learning. Reduces friction in session end workflow.",
+      "impact": 9,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "WWAI → WAI naming standardization",
+      "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
+      "impact": 9,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Comprehensive unit test suite for session-start hook",
+      "rationale": "Created test-session-start.sh with 26 tests covering all scenarios: exit conditions, briefing generation, decision filtering, git integration, state updates, error handling. Ensures hook reliability and prevents regressions.",
+      "impact": 8,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Dual-layer testing policy: smoke tests + unit tests",
+      "rationale": "Established practice of maintaining both smoke tests (quick verification, 77 tests across framework and spoke) and unit tests (detailed coverage, 26 tests for hooks). Smoke tests verify integration and catch regressions fast. Unit tests ensure component reliability. Both expand as features are added. This policy should apply to all Wheelwright projects for consistent quality.",
+      "impact": 10,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2025-12-29",
+      "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
+      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion → READY TO PLAN → PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
+      "impact": 10,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    }
+  ],
+  "next_steps": [
+    "Run migrate-scf-to-wheelwright.py to convert hub and all projects",
+    "Rename ~/scf-hub to ~/wheelwright-hub",
+    "Create VS Code extension (wheelwright-ai/extension-vscode)",
+    "Create browser extension (wheelwright-ai/extension-browser)",
+    "Build wheelwright.ai website",
+    "Add cloud sync capabilities",
+    "Create spoke marketplace foundation"
+  ],
+  "ai_rules": {
+    "context_loading": "Read .WAI/WAI-Guide.md first, then WAI-State.json and WAI-State.md",
+    "session_state": "Update _session_state when making significant changes",
+    "foundation_enforcement": {
+      "on_incomplete": "Guide user through foundation questions before work",
+      "on_drift_detected": "Present options, require explicit choice",
+      "on_evolution": "Log change with rationale and acknowledgment"
+    },
+    "stewardship": {
+      "principle": "AI is the responsible partner, not just an enabler",
+      "behaviors": [
+        "Detect scope drift and flag before enabling",
+        "Require explicit acknowledgment for direction changes",
+        "Complete foundation before starting work",
+        "Prefer 'are you sure?' over silent compliance"
+      ]
+    },
+    "dogfooding": "This project uses Wheelwright to track its own development - living example for users"
+  },
+  "ai_context": {
+    "conversation_tracking": true,
+    "capacity_monitoring": true,
+    "alert_threshold": "80%",
+    "wwai_commands": {
+      "time": "Intelligent token usage estimate with capacity warnings",
+      "rules": "List active rules and behavioral guidelines",
+      "closeout": "Provide updated WAI-State files for session end",
+      "compact": "Compress context and balance WAI files"
+    },
+    "workflow_mode": "ADAPTIVE",
+    "current_phase": null,
+    "plan_template_version": "v1.0",
+    "token_efficiency_protocols": "v1.0"
+  },
+  "meta": {
+    "total_sessions": 1,
+    "total_turns": 50,
+    "last_closeout": "2025-12-28T00:00:00Z"
+  }
+}
