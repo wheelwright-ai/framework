@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "description": "Registry of wheel projects connected to this hub",
+  "projects": [],
+  "last_scan": null,
+  "_instructions": {
+    "for_llms": "This file tracks all wheel projects. Updated by 'wwai projects scan'.",
+    "structure": {
+      "projects": [
+        {
+          "path": "/path/to/project",
+          "name": "project-name",
+          "type": "code|research|writing|design|hybrid",
+          "last_sync": "ISO-8601 timestamp",
+          "health_score": 0.0,
+          "foundation_complete": false
+        }
+      ]
+    }
+  }
+}

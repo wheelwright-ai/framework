@@ -1,0 +1,1 @@
+{"timestamp": "2025-12-28T12:00:00Z", "by": "Claude", "hub_kb_version": null, "wheel_kb_version": "1.0.0", "offers": [{"type": "pattern_discovered", "topic": "Demo wheel creation", "impact": 8, "context": "Created reference implementation to help users understand Wheelwright file structure"}], "requests": [], "flags": {"has_high_impact_learnings": true}}
