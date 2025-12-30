@@ -1,0 +1,1010 @@
+#!/usr/bin/env python3
+"""
+WAI - Wheelwright Framework
+Unified Command Line Interface
+
+Build AI wheels that roll forward forever.
+"""
+
+import argparse
+import sys
+import json
+import shutil
+import subprocess
+import hashlib
+from pathlib import Path
+from typing import Optional
+from datetime import datetime, timezone, timedelta
+
+
+class WheelwrightOnboarding:
+    """Handles user onboarding and role selection"""
+
+    def show_welcome(self):
+        """Display welcome message and explain Wheelwright concept"""
+        print("""
+    Wheelwright Framework
+
+Build AI wheels that roll forward forever.
+
+Wheelwright gives your AI assistants perfect memory across all your
+development sessions. Never lose context, never repeat explanations.
+
+Choose your role:
+""")
+
+    def choose_role(self) -> str:
+        """Let user choose between hub and wheel modes"""
+        print("1.    Hub Manager - Manage multiple projects from one central location")
+        print("2.    Solo Developer (Wheel) - Add AI memory to a single project")
+        print("3.    Learn More - Understand the difference")
+
+        while True:
+            choice = input("\nEnter your choice (1/2/3): ").strip()
+            if choice == "1":
+                return "hub"
+            elif choice == "2":
+                return "wheel"
+            elif choice == "3":
+                self.explain_hub_wheel()
+            else:
+                print("Please enter 1, 2, or 3")
+
+    def explain_hub_wheel(self):
+        """Explain hub vs wheel concept clearly"""
+        print("""
+    Hub vs Wheel - Simple Explanation:
+
+    WHEEL MODE (Solo Developer):
+   - You work on ONE project
+   - Wheelwright adds "memory" to that project
+   - AI assistants remember all your conversations
+   - Perfect for: Individual projects, focused development
+
+    HUB MODE (Project Manager):
+   - You manage MULTIPLE projects
+   - Central dashboard shows all project health
+   - Share learnings between projects
+   - Perfect for: Teams, consultants, multiple client projects
+
+Most people start with WHEEL mode for their current project.
+""")
+
+
+class WheelwrightHubManager:
+    """Manages Wheelwright Hub creation and configuration"""
+
+    def __init__(self, framework_path: Path):
+        self.framework_path = framework_path
+        self.templates_dir = framework_path / 'templates' / 'hub'
+
+    def create_hub(self, hub_path: Path, interactive: bool = True) -> bool:
+        """Create a new Wheelwright hub at the specified location"""
+        hub_path = hub_path.expanduser().resolve()
+
+        print(f"\n    Creating Wheelwright Hub at: {hub_path}\n")
+
+        # Create hub directory
+        hub_path.mkdir(parents=True, exist_ok=True)
+
+        # Create .WAI directory (hub is also a wheel tracking itself)
+        wai_dir = hub_path / '.wwai'
+        wai_dir.mkdir(exist_ok=True)
+
+        # Create .wwai-registry directory
+        registry_dir = hub_path / '.wwai-registry'
+        registry_dir.mkdir(exist_ok=True)
+        (registry_dir / 'wheels').mkdir(exist_ok=True)
+
+        # Gather user info if interactive
+        user_info = {}
+        if interactive:
+            user_info = self._gather_user_info()
+
+        # Create hub-profile.json
+        self._create_hub_profile(hub_path, user_info)
+
+        # Create wheel-projects.json
+        self._create_wheel_registry(registry_dir)
+
+        # Create hub's own state (it's a wheel tracking itself)
+        self._create_hub_state(wai_dir, hub_path)
+
+        # Create learnings directory
+        learnings_dir = hub_path / 'learnings'
+        learnings_dir.mkdir(exist_ok=True)
+
+        print(f"\n    Hub created successfully at: {hub_path}")
+        print(f"\n    Structure created:")
+        print(f"   {hub_path}/")
+        print(f"       .WAI/                  # Hub's own state")
+        print(f"       .WAI-registry/         # Project registry")
+        print(f"           wheels/             # Individual wheel tracking")
+        print(f"           wheel-projects.json")
+        print(f"       hub-profile.json        # Your preferences")
+        print(f"       learnings/              # Cross-project patterns")
+
+        # Discover existing projects
+        if interactive:
+            self._discover_existing_projects(hub_path, registry_dir)
+
+        print(f"\n    Next steps:")
+        print(f"   1. Run 'WAI hub status' to see connected projects")
+        print(f"   2. Run 'WAI init <path>' to add more projects")
+
+        return True
+
+    def _discover_existing_projects(self, hub_path: Path, registry_dir: Path):
+        """Interactively discover and intake existing projects"""
+        print(f"\n    Project Discovery")
+        print(f"=" * 50)
+
+        discover = input("\nDo you have existing projects to discover? [Y/n]: ").strip().lower()
+        if discover == 'n':
+            print("   Skipping project discovery.")
+            return
+
+        # Get scan locations
+        scan_paths = []
+        print("\nEnter directories to scan for projects (one per line).")
+        print("Common locations: ~/projects, ~/code, ~/work")
+        print("Press Enter with empty line when done.\n")
+
+        while True:
+            path_input = input("   Scan path: ").strip()
+            if not path_input:
+                break
+            scan_path = Path(path_input).expanduser()
+            if scan_path.exists() and scan_path.is_dir():
+                scan_paths.append(scan_path)
+                print(f"       Added: {scan_path}")
+            else:
+                print(f"       Path not found: {scan_path}")
+
+        if not scan_paths:
+            # Default to common locations
+            default_paths = [Path.home() / 'projects', Path.home() / 'code']
+            for dp in default_paths:
+                if dp.exists():
+                    scan_paths.append(dp)
+            if scan_paths:
+                print(f"\n   Using default paths: {', '.join(str(p) for p in scan_paths)}")
+
+        if not scan_paths:
+            print("   No valid paths to scan.")
+            return
+
+        # Load registry to get known projects
+        registry_path = registry_dir / 'wheel-projects.json'
+        known_paths = set()
+        if registry_path.exists():
+            try:
+                registry = json.loads(registry_path.read_text())
+                known_paths = {p.get('path') for p in registry.get('projects', []) if p.get('path')}
+                if known_paths:
+                    print(f"   (Skipping {len(known_paths)} already registered projects)")
+            except:
+                pass
+
+        # Scan for projects
+        print(f"\n    Scanning for projects...")
+        discovered = self._scan_for_projects(scan_paths, known_paths)
+
+        if not discovered:
+            print("   No projects found.")
+            return
+
+        print(f"\n    Found {len(discovered)} projects")
+        for proj in discovered:
+            status = "    Wheelwright" if proj.get('wai_enabled') else "   "
+            print(f"   {status} {proj['name']}")
+
+    def _scan_for_projects(self, scan_paths: list, known_paths: set = None) -> list:
+        """Scan directories for projects"""
+        discovered = []
+        seen_paths = set()
+        known_paths = known_paths or set()
+
+        for scan_path in scan_paths:
+            try:
+                for item in scan_path.iterdir():
+                    if not item.is_dir():
+                        continue
+                    if item.name.startswith('.'):
+                        continue
+                    if str(item.resolve()) in seen_paths:
+                        continue
+                    if str(item.resolve()) in known_paths:
+                        continue
+
+                    # Check if it's a project
+                    is_git = (item / '.git').exists()
+                    is_WAI = (item / '.wwai').exists()
+                    is_scf = (item / '.scf').exists()  # Legacy SCF support
+                    has_package = (item / 'package.json').exists()
+                    has_pyproject = (item / 'pyproject.toml').exists() or (item / 'setup.py').exists()
+                    has_cargo = (item / 'Cargo.toml').exists()
+
+                    if is_git or is_WAI or is_scf or has_package or has_pyproject or has_cargo:
+                        proj_info = {
+                            'name': item.name,
+                            'path': str(item.resolve()),
+                            'wai_enabled': is_wai,
+                            'scf_legacy': is_scf and not is_wai,
+                            'has_git': is_git,
+                            'description': None,
+                            'project_type': None
+                        }
+
+                        discovered.append(proj_info)
+                        seen_paths.add(str(item.resolve()))
+
+            except PermissionError:
+                continue
+
+        return sorted(discovered, key=lambda x: (not x['wai_enabled'], x['name'].lower()))
+
+    def _gather_user_info(self) -> dict:
+        """Interactive user info gathering"""
+        print("    Let's personalize your hub:\n")
+
+        name = input("   What name should AI partners call you? ").strip()
+
+        print("\n   What's your primary development focus?")
+        print("   (e.g., 'Full-stack web, Python automation')")
+        focus = input("   > ").strip()
+
+        print("\n   How do you prefer AI collaboration?")
+        print("   [1] Autonomous - Take initiative, check in on big decisions")
+        print("   [2] Collaborative - Discuss approach before implementing")
+        print("   [3] Supervised - Always ask before acting")
+
+        while True:
+            style_choice = input("   > ").strip()
+            if style_choice == "1":
+                style = "autonomous"
+                break
+            elif style_choice == "2":
+                style = "collaborative"
+                break
+            elif style_choice == "3":
+                style = "supervised"
+                break
+            else:
+                print("   Please enter 1, 2, or 3")
+
+        return {
+            'name': name,
+            'focus': focus,
+            'style': style
+        }
+
+    def _create_hub_profile(self, hub_path: Path, user_info: dict):
+        """Create hub-profile.json with user info"""
+        profile_template = self.templates_dir / 'hub-profile.json'
+
+        if profile_template.exists():
+            with open(profile_template) as f:
+                profile = json.load(f)
+        else:
+            profile = {
+                "user": {"name": None},
+                "work_style": {"description": None},
+                "hub_config": {}
+            }
+
+        # Fill in user info
+        profile['user']['name'] = user_info.get('name', 'Developer')
+        profile['work_style']['description'] = user_info.get('focus', '')
+        profile['work_style']['ai_collaboration_style'] = user_info.get('style', 'collaborative')
+        profile['hub_config']['created_at'] = datetime.now(timezone.utc).isoformat()
+        profile['hub_config']['hub_path'] = str(hub_path)
+        profile['hub_config']['framework_path'] = str(self.framework_path)
+
+        profile_path = hub_path / 'hub-profile.json'
+        with open(profile_path, 'w') as f:
+            json.dump(profile, f, indent=2)
+
+        print(f"       Created hub-profile.json")
+
+    def _create_wheel_registry(self, registry_dir: Path):
+        """Create wheel-projects.json registry"""
+        registry_template = self.templates_dir / 'wheel-projects.json'
+
+        if registry_template.exists():
+            shutil.copy2(registry_template, registry_dir / 'wheel-projects.json')
+        else:
+            registry = {
+                "version": "1.0",
+                "projects": [],
+                "last_scan": None
+            }
+            with open(registry_dir / 'wheel-projects.json', 'w') as f:
+                json.dump(registry, f, indent=2)
+
+        print(f"       Created wheel registry")
+
+    def _create_hub_state(self, wai_dir: Path, hub_path: Path):
+        """Create hub's own state (hub tracks itself as a wheel)"""
+        state = {
+            "wheelwright": {
+                "version": "1.0.0",
+                "structure_version": "v1",
+                "description": "Wheelwright Hub - Your personal learning center",
+                "is_hub": True,
+                "hub_path": str(hub_path)
+            },
+            "_project_foundation": {
+                "completed": True,
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "identity": {
+                    "type": "hub",
+                    "name": "Wheelwright Hub",
+                    "one_liner": "Central hub for cross-project learnings",
+                    "success_looks_like": "All projects connected, learnings flowing"
+                },
+                "boundaries": {
+                    "in_scope": ["User preferences", "Project registry", "Cross-project learnings"],
+                    "out_of_scope": ["Individual project code", "Framework development"]
+                }
+            },
+            "_session_state": {
+                "last_modified_by": "WAI hub create",
+                "last_modified_at": datetime.now(timezone.utc).isoformat(),
+                "session_count": 1
+            },
+            "wheel": {
+                "name": "Wheelwright Hub",
+                "type": "hub",
+                "created": datetime.now(timezone.utc).isoformat()
+            }
+        }
+
+        with open(wai_dir / 'WAI-State.json', 'w') as f:
+            json.dump(state, f, indent=2)
+
+        print(f"       Created hub state")
+
+    @staticmethod
+    def find_hub() -> Optional[Path]:
+        """Find existing hub location"""
+        import os
+
+        # Check environment variable first
+        env_hub = os.environ.get('WHEELWRIGHT_HUB_PATH')
+        if env_hub:
+            env_path = Path(env_hub).expanduser()
+            if env_path.exists():
+                return env_path
+
+        # Check common locations
+        common_paths = [
+            Path.home() / 'wheelwright-hub',
+            Path.home() / '.wheelwright-hub',
+            Path.home() / 'projects' / 'wheelwright-hub',
+            # Legacy SCF locations
+            Path.home() / 'scf-hub',
+            Path.home() / '.scf-hub',
+        ]
+
+        for path in common_paths:
+            if (path / 'hub-profile.json').exists():
+                return path
+
+        return None
+
+
+class WheelwrightCLI:
+    """Main CLI class for Wheelwright"""
+
+    def __init__(self):
+        self.framework_path = Path(__file__).parent.resolve()
+        self.templates_dir = self.framework_path / 'templates'
+
+    def run(self):
+        """Main entry point"""
+        parser = argparse.ArgumentParser(
+            description='Wheelwright Framework - Build AI wheels that roll forward forever',
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog='''
+Examples:
+  WAI init                    Initialize wheel in current directory
+  WAI init ~/projects/myapp   Initialize wheel in specified path
+  WAI status                  Show wheel status
+  WAI hub create              Create a new hub
+  WAI hub status              Show hub status
+  WAI sync                    Sync wheel with hub
+  WAI closeout                Generate closeout for session end
+  WAI context                 Output context for LLM paste
+
+"We aren't reinventing the wheel - we're evolving it faster than one person ever could."
+            '''
+        )
+
+        subparsers = parser.add_subparsers(dest='command', help='Commands')
+
+        # Init command
+        init_parser = subparsers.add_parser('init', help='Initialize a new wheel')
+        init_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+        init_parser.add_argument('--guided', '-g', action='store_true', help='Interactive guided setup')
+
+        # Status command
+        status_parser = subparsers.add_parser('status', help='Show wheel status')
+        status_parser.add_argument('path', nargs='?', default='.', help='Project path')
+
+        # Hub commands
+        hub_parser = subparsers.add_parser('hub', help='Hub management commands')
+        hub_subparsers = hub_parser.add_subparsers(dest='hub_command')
+
+        hub_create = hub_subparsers.add_parser('create', help='Create a new hub')
+        hub_create.add_argument('path', nargs='?', default=None, help='Hub location')
+        hub_create.add_argument('--guided', '-g', action='store_true', help='Interactive guided setup')
+
+        hub_status = hub_subparsers.add_parser('status', help='Show hub status')
+        hub_locate = hub_subparsers.add_parser('locate', help='Find hub location')
+
+        # Sync command
+        sync_parser = subparsers.add_parser('sync', help='Sync wheel with hub')
+        sync_parser.add_argument('--all', action='store_true', help='Sync all wheels')
+
+        # Closeout command
+        closeout_parser = subparsers.add_parser('closeout', help='Generate session closeout')
+
+        # Context command
+        context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
+        context_parser.add_argument('path', nargs='?', default='.', help='Project path')
+
+        # Spoke commands
+        spoke_parser = subparsers.add_parser('spoke', help='Spoke management')
+        spoke_subparsers = spoke_parser.add_subparsers(dest='spoke_command')
+
+        spoke_list = spoke_subparsers.add_parser('list', help='List available spokes')
+        spoke_add = spoke_subparsers.add_parser('add', help='Add a spoke')
+        spoke_add.add_argument('name', help='Spoke name')
+
+        # Version command
+        version_parser = subparsers.add_parser('version', help='Show version info')
+
+        # Parse args
+        args = parser.parse_args()
+
+        if not args.command:
+            # No command - show welcome or help
+            onboarding = WheelwrightOnboarding()
+            onboarding.show_welcome()
+            role = onboarding.choose_role()
+
+            if role == "hub":
+                self.hub_create(None, guided=True)
+            else:
+                self.init_wheel('.', guided=True)
+            return
+
+        # Route to command handlers
+        if args.command == 'init':
+            self.init_wheel(args.path, guided=args.guided)
+        elif args.command == 'status':
+            self.show_status(args.path)
+        elif args.command == 'hub':
+            if args.hub_command == 'create':
+                self.hub_create(args.path, guided=args.guided)
+            elif args.hub_command == 'status':
+                self.hub_status()
+            elif args.hub_command == 'locate':
+                self.hub_locate()
+            else:
+                hub_parser.print_help()
+        elif args.command == 'sync':
+            self.sync(all_wheels=args.all)
+        elif args.command == 'closeout':
+            self.closeout()
+        elif args.command == 'context':
+            self.output_context(args.path)
+        elif args.command == 'spoke':
+            if args.spoke_command == 'list':
+                self.spoke_list()
+            elif args.spoke_command == 'add':
+                self.spoke_add(args.name)
+            else:
+                spoke_parser.print_help()
+        elif args.command == 'version':
+            self.show_version()
+        else:
+            parser.print_help()
+
+    def init_wheel(self, path: str, guided: bool = False):
+        """Initialize a new wheel in the specified directory"""
+        project_path = Path(path).expanduser().resolve()
+
+        if not project_path.exists():
+            print(f"    Error: Path does not exist: {project_path}")
+            return
+
+        wai_dir = project_path / '.wwai'
+
+        if wai_dir.exists():
+            print(f"    Wheel already exists at: {project_path}")
+            print(f"   Run 'WAI status' to see wheel state")
+            return
+
+        print(f"\n    Initializing Wheelwright Wheel")
+        print(f"   Path: {project_path}\n")
+
+        # Create .WAI directory
+        wai_dir.mkdir(exist_ok=True)
+
+        # Copy template files
+        wheel_templates = self.templates_dir / 'wheel'
+
+        # WAI-State.json
+        state_template = wheel_templates / 'WAI-State.json'
+        if state_template.exists():
+            with open(state_template) as f:
+                state = json.load(f)
+        else:
+            state = self._create_default_state()
+
+        # Update with project info
+        state['wheel']['name'] = project_path.name
+        state['wheel']['created'] = datetime.now(timezone.utc).isoformat()
+        state['wheel']['last_updated'] = datetime.now(timezone.utc).isoformat()
+        state['wheelwright']['framework_path'] = str(self.framework_path)
+
+        # Check for hub
+        hub_path = WheelwrightHubManager.find_hub()
+        if hub_path:
+            state['wheelwright']['hub_path'] = str(hub_path)
+
+        with open(wai_dir / 'WAI-State.json', 'w') as f:
+            json.dump(state, f, indent=2)
+
+        # WAI-State.md
+        state_md_template = wheel_templates / 'WAI-State.md'
+        if state_md_template.exists():
+            content = state_md_template.read_text()
+            content = content.replace('[PROJECT_NAME]', project_path.name)
+            (wai_dir / 'WAI-State.md').write_text(content)
+        else:
+            self._create_default_state_md(wai_dir, project_path.name)
+
+        # WAI-Guide.md
+        guide_template = wheel_templates / 'WAI-Guide.md'
+        if guide_template.exists():
+            shutil.copy2(guide_template, wai_dir / 'WAI-Guide.md')
+
+        # kb-sync.json
+        kb_template = wheel_templates / 'kb-sync.json'
+        if kb_template.exists():
+            shutil.copy2(kb_template, wai_dir / 'kb-sync.json')
+        else:
+            kb_sync = {"version": "1.0", "wheel_kb_version": None, "hub_kb_version": None, "last_sync": None}
+            with open(wai_dir / 'kb-sync.json', 'w') as f:
+                json.dump(kb_sync, f, indent=2)
+
+        # wheel-signals.jsonl (empty)
+        (wai_dir / 'wheel-signals.jsonl').touch()
+
+        # hooks directory and session-start.sh
+        hooks_dir = wai_dir / 'hooks'
+        hooks_dir.mkdir(exist_ok=True)
+        hooks_template = wheel_templates / 'hooks' / 'session-start.sh'
+        if hooks_template.exists():
+            hooks_dest = hooks_dir / 'session-start.sh'
+            shutil.copy2(hooks_template, hooks_dest)
+            # Make executable
+            hooks_dest.chmod(0o755)
+
+        # .claude directory and settings.json
+        claude_dir = project_path / '.claude'
+        claude_dir.mkdir(exist_ok=True)
+        claude_template = self.templates_dir / 'claude' / 'settings.json'
+        if claude_template.exists():
+            shutil.copy2(claude_template, claude_dir / 'settings.json')
+
+        print(f"    Wheel initialized successfully!")
+        print(f"\n    Created:")
+        print(f"   {wai_dir}/")
+        print(f"       WAI-State.json      # Machine state")
+        print(f"       WAI-State.md        # Strategic state")
+        print(f"       WAI-Guide.md        # AI instructions")
+        print(f"       kb-sync.json         # Hub sync status")
+        print(f"       wheel-signals.jsonl  # High-impact learnings")
+        print(f"       hooks/")
+        print(f"           session-start.sh # SessionStart hook script")
+        print(f"   {claude_dir}/")
+        print(f"       settings.json        # Claude Code hook configuration")
+
+        if hub_path:
+            print(f"\n    Connected to hub: {hub_path}")
+        else:
+            print(f"\n    No hub found. Run 'WAI hub create' to create one.")
+
+        print(f"\n    Next steps:")
+        print(f"   1. Open project in Claude Code - you'll see automatic briefing!")
+        print(f"   2. Complete the project foundation with your AI partner")
+        print(f"   3. Use 'Time', 'Rules', 'Closeout' commands during sessions")
+        print(f"\n    Note: SessionStart hook will automatically brief you on every session start!")
+
+    def _create_default_state(self) -> dict:
+        """Create default WAI-State.json structure"""
+        return {
+            "wheelwright": {
+                "version": "1.0.0",
+                "structure_version": "v1",
+                "description": "Wheelwright-enabled project with context persistence",
+                "framework_path": None,
+                "hub_path": None
+            },
+            "_project_foundation": {
+                "completed": False,
+                "completed_at": None,
+                "identity": {"type": None, "name": None, "one_liner": None, "success_looks_like": None},
+                "boundaries": {"in_scope": [], "out_of_scope": [], "constraints": []},
+                "approach": {"stack_or_tools": [], "workflow": None, "ai_collaboration_style": None},
+                "evolution_log": []
+            },
+            "_session_state": {
+                "last_session_id": None,
+                "last_modified_by": None,
+                "last_modified_at": None,
+                "session_count": 0
+            },
+            "wheel": {
+                "name": None,
+                "version": "0.1.0",
+                "type": None,
+                "description": None,
+                "created": None,
+                "last_updated": None
+            },
+            "context": {
+                "current_phase": None,
+                "next_actions": ["Complete project foundation", "Define scope and approach", "Begin work"],
+                "blockers": [],
+                "insights": []
+            },
+            "decisions": [],
+            "ai_rules": {
+                "context_loading": "Read WAI-Guide.md first, then WAI-State files",
+                "foundation_enforcement": {"on_incomplete": "Guide user through foundation before any work"}
+            }
+        }
+
+    def _create_default_state_md(self, wai_dir: Path, project_name: str):
+        """Create default WAI-State.md"""
+        content = f"""# Wheel State: {project_name}
+
+---
+
+**Wheelwright Framework v1.0**
+
+*This wheel uses Wheelwright Framework to maintain perfect context across AI sessions.*
+
+---
+
+## Project Foundation
+
+> **IMPORTANT:** If foundation is incomplete, guide user through setup before any work.
+
+### Identity
+- **Type:** *Not yet defined*
+- **Name:** {project_name}
+- **One-liner:** *Not yet defined*
+
+### Boundaries
+- **In Scope:** *To be defined*
+- **Out of Scope:** *To be defined*
+
+---
+
+## Current Focus
+
+### Next Actions
+1. [ ] Complete project foundation
+2. [ ] Define scope and approach
+3. [ ] Begin work
+
+---
+
+## Session Commands
+- `'Time'` - Token usage estimate
+- `'Rules'` - List active guidelines
+- `'Closeout'` - Generate session closeout
+
+---
+
+*Wheelwright Framework - wheelwright.ai*
+"""
+        (wai_dir / 'WAI-State.md').write_text(content)
+
+    def show_status(self, path: str = '.'):
+        """Show wheel status"""
+        project_path = Path(path).expanduser().resolve()
+        wai_dir = project_path / '.wwai'
+
+        if not wai_dir.exists():
+            # Check for legacy SCF
+            scf_dir = project_path / '.scf'
+            if scf_dir.exists():
+                print(f"\n    Legacy SCF project detected")
+                print(f"   Run 'WAI migrate' to convert to Wheelwright")
+                return
+
+            print(f"\n    No wheel found at: {project_path}")
+            print(f"   Run 'WAI init' to create one")
+            return
+
+        # Load state
+        state_path = wai_dir / 'WAI-State.json'
+        if not state_path.exists():
+            print(f"    Wheel directory exists but WAI-State.json missing")
+            return
+
+        with open(state_path) as f:
+            state = json.load(f)
+
+        # Display status
+        wheel = state.get('wheel', {})
+        foundation = state.get('_project_foundation', {})
+        session = state.get('_session_state', {})
+        wai_meta = state.get('wheelwright', {})
+
+        print(f"\n    Wheelwright Status")
+        print(f"=" * 50)
+
+        print(f"\n    Wheel: {wheel.get('name', project_path.name)}")
+        if wheel.get('type'):
+            print(f"   Type: {wheel['type']}")
+        if foundation.get('identity', {}).get('one_liner'):
+            print(f"   Description: {foundation['identity']['one_liner']}")
+
+        print(f"\n    Foundation:")
+        if foundation.get('completed'):
+            print(f"       Complete")
+        else:
+            print(f"       Incomplete - needs setup")
+
+        print(f"\n    Session State:")
+        print(f"   Last modified by: {session.get('last_modified_by', 'Unknown')}")
+        print(f"   Sessions: {session.get('session_count', 0)}")
+
+        if wai_meta.get('hub_path'):
+            print(f"\n    Hub: {wai_meta['hub_path']}")
+        else:
+            print(f"\n    Hub: Not connected")
+
+        # Check signals
+        signals_path = wai_dir / 'wheel-signals.jsonl'
+        if signals_path.exists():
+            signal_count = sum(1 for _ in open(signals_path) if _.strip())
+            if signal_count > 0:
+                print(f"\n    Signals: {signal_count} high-impact learnings recorded")
+
+    def hub_create(self, path: Optional[str], guided: bool = False):
+        """Create a new hub"""
+        if path:
+            hub_path = Path(path).expanduser()
+        else:
+            # Default location
+            hub_path = Path.home() / 'wheelwright-hub'
+            print(f"\n   No path specified. Using default: {hub_path}")
+            confirm = input("   Continue? [Y/n]: ").strip().lower()
+            if confirm == 'n':
+                custom = input("   Enter custom path: ").strip()
+                if custom:
+                    hub_path = Path(custom).expanduser()
+                else:
+                    print("   Cancelled.")
+                    return
+
+        manager = WheelwrightHubManager(self.framework_path)
+        manager.create_hub(hub_path, interactive=True)
+
+    def hub_status(self):
+        """Show hub status"""
+        hub_path = WheelwrightHubManager.find_hub()
+
+        if not hub_path:
+            print(f"\n    No hub found")
+            print(f"   Run 'WAI hub create' to create one")
+            return
+
+        print(f"\n    Wheelwright Hub Status")
+        print(f"=" * 50)
+        print(f"\n   Location: {hub_path}")
+
+        # Load profile
+        profile_path = hub_path / 'hub-profile.json'
+        if profile_path.exists():
+            with open(profile_path) as f:
+                profile = json.load(f)
+
+            user = profile.get('user', {})
+            if user.get('name'):
+                print(f"   User: {user['name']}")
+
+        # Load registry
+        registry_path = hub_path / '.wwai-registry' / 'wheel-projects.json'
+        if registry_path.exists():
+            with open(registry_path) as f:
+                registry = json.load(f)
+
+            projects = registry.get('projects', [])
+            print(f"\n    Connected Wheels: {len(projects)}")
+
+            if projects:
+                for proj in projects[:5]:
+                    status = "    " if proj.get('wai_enabled') else "   "
+                    print(f"   {status} {proj['name']}")
+                if len(projects) > 5:
+                    print(f"   ... and {len(projects) - 5} more")
+
+    def hub_locate(self):
+        """Find and display hub location"""
+        hub_path = WheelwrightHubManager.find_hub()
+
+        if hub_path:
+            print(f"\n    Hub found: {hub_path}")
+        else:
+            print(f"\n    No hub found")
+            print(f"\n   Checked locations:")
+            print(f"   - $WHEELWRIGHT_HUB_PATH")
+            print(f"   - ~/wheelwright-hub")
+            print(f"   - ~/.wheelwright-hub")
+            print(f"   - ~/projects/wheelwright-hub")
+
+    def sync(self, all_wheels: bool = False):
+        """Sync wheel(s) with hub"""
+        hub_path = WheelwrightHubManager.find_hub()
+
+        if not hub_path:
+            print(f"\n    No hub found - nothing to sync")
+            return
+
+        if all_wheels:
+            print(f"\n    Syncing all wheels with hub...")
+            # TODO: Implement full sync
+            print(f"   Feature coming soon")
+        else:
+            # Sync current wheel
+            project_path = Path('.').resolve()
+            wai_dir = project_path / '.wwai'
+
+            if not wai_dir.exists():
+                print(f"\n    No wheel in current directory")
+                return
+
+            print(f"\n    Syncing wheel with hub...")
+            # TODO: Implement sync logic
+            print(f"   Feature coming soon")
+
+    def closeout(self):
+        """Generate session closeout"""
+        project_path = Path('.').resolve()
+        wai_dir = project_path / '.wwai'
+
+        if not wai_dir.exists():
+            print(f"\n    No wheel in current directory")
+            return
+
+        # Load state
+        state_path = wai_dir / 'WAI-State.json'
+        with open(state_path) as f:
+            state = json.load(f)
+
+        print(f"\n    Session Closeout")
+        print(f"=" * 50)
+        print(f"\nUpdate your WAI-State files with the following:")
+        print(f"\n1. Update _session_state.last_modified_at to current time")
+        print(f"2. Increment session_count")
+        print(f"3. Add any decisions with impact >= 5 to decisions array")
+        print(f"4. Append high-impact learnings to wheel-signals.jsonl")
+
+    def output_context(self, path: str = '.'):
+        """Output context for LLM paste"""
+        project_path = Path(path).expanduser().resolve()
+        wai_dir = project_path / '.wwai'
+
+        if not wai_dir.exists():
+            print(f"No wheel found at: {project_path}", file=sys.stderr)
+            return
+
+        # Output Guide first
+        guide_path = wai_dir / 'WAI-Guide.md'
+        if guide_path.exists():
+            print(f"# WAI-Guide.md\n")
+            print(guide_path.read_text())
+            print(f"\n---\n")
+
+        # Output State.json
+        state_path = wai_dir / 'WAI-State.json'
+        if state_path.exists():
+            print(f"# WAI-State.json\n")
+            print(f"```json")
+            print(state_path.read_text())
+            print(f"```")
+            print(f"\n---\n")
+
+        # Output State.md
+        state_md_path = wai_dir / 'WAI-State.md'
+        if state_md_path.exists():
+            print(f"# WAI-State.md\n")
+            print(state_md_path.read_text())
+
+    def spoke_list(self):
+        """List available spokes"""
+        print(f"\n    Available Spokes")
+        print(f"=" * 50)
+
+        spokes = [
+            ("meta-consultation", "Multi-LLM queries for diverse perspectives"),
+            ("document-analysis", "Deep analysis of documents and files"),
+            ("code-review", "Comprehensive code review and suggestions"),
+        ]
+
+        for name, desc in spokes:
+            print(f"\n       {name}")
+            print(f"      {desc}")
+
+        print(f"\n   Add a spoke with: WAI spoke add <name>")
+
+    def spoke_add(self, name: str):
+        """Add a spoke to current wheel"""
+        project_path = Path('.').resolve()
+        wai_dir = project_path / '.wwai'
+
+        if not wai_dir.exists():
+            print(f"\n    No wheel in current directory")
+            return
+
+        # Load state
+        state_path = wai_dir / 'WAI-State.json'
+        with open(state_path) as f:
+            state = json.load(f)
+
+        # Check if spoke exists
+        available = state.get('spokes', {}).get('available', [])
+        active = state.get('spokes', {}).get('active', [])
+
+        if name not in available:
+            print(f"\n    Spoke '{name}' not found")
+            print(f"   Available: {', '.join(available)}")
+            return
+
+        if name in active:
+            print(f"\n    Spoke '{name}' already active")
+            return
+
+        # Add spoke
+        if 'spokes' not in state:
+            state['spokes'] = {'active': [], 'available': available}
+        state['spokes']['active'].append(name)
+
+        with open(state_path, 'w') as f:
+            json.dump(state, f, indent=2)
+
+        print(f"\n    Added spoke: {name}")
+
+    def show_version(self):
+        """Show version info"""
+        print(f"""
+    Wheelwright Framework
+
+Version: 1.0.0
+Repository: https://github.com/wheelwright-ai/framework
+Website: https://wheelwright.ai
+
+"We aren't reinventing the wheel - we're evolving it faster than one person ever could."
+
+Created by Mario Vaccari
+""")
+
+
+def main():
+    """Entry point"""
+    cli = WheelwrightCLI()
+    cli.run()
+
+
+if __name__ == '__main__':
+    main()
