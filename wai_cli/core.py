@@ -30,6 +30,11 @@ class WheelwrightCLI:
         """Initialize CLI."""
         self.framework_path = Path(__file__).parent.parent.resolve()
 
+    def _confirm_exit(self) -> bool:
+        """Confirm exit with user."""
+        from .utils.input import safe_confirm
+        return safe_confirm("  Exit WAI CLI?", default=True)
+
     def run(self):
         """Main entry point with command routing."""
         parser = self._create_parser()
@@ -183,6 +188,7 @@ Examples:
                 print_info("\n⚠️  Framework not initialized yet.\n")
                 print_info("  1/i - ✨ Initialize      Set up framework (recommended)")
                 print_info("  2/? - ❓ Help           Getting started")
+                print_info("")
                 print_info("  q   - 👋 Quit")
                 print_info("")
 
@@ -215,6 +221,7 @@ Examples:
                 print_info("  2/s - 🎡 Spokes       Registered projects")
                 print_info("  3/t - 📊 Statistics   Insights & recommendations")
                 print_info("  4/? - ❓ Help         Getting started & commands")
+                print_info("")
                 print_info("  v   - ℹ️  Version      Show version info")
                 print_info("  q   - 👋 Quit")
                 print_info("")
@@ -257,6 +264,7 @@ Examples:
             print_info("  3/c - 📝 Closeout        Session closeout")
             print_info("  4/o - 📄 Context         Export for LLM")
             print_info("  5/? - ❓ Help            Show all commands")
+            print_info("")
             print_info("  q   - 👋 Quit")
             print_info("")
 
@@ -357,10 +365,12 @@ Examples:
             # Display project listing by default
             if projects:
                 print_info("  Registered Projects:")
+                print_info("  Legend: 🟢 Active (updated <30 days)  🔴 Inactive (30+ days)")
                 print_info("")
                 for i, project in enumerate(projects, 1):
                     # Extract project info
                     name = project.get('name', 'Unknown')
+                    preferred_name = project.get('preferred_name', name)
                     desc = project.get('description', 'No description')
                     path = project.get('path', '')
 
@@ -372,9 +382,10 @@ Examples:
                     last_update = state_data.get('last_update', 'Unknown')
                     status = state_data.get('status', 'Unknown')
 
-                    # Format display
+                    # Format display - use preferred name
                     status_icon = "🟢" if status == "active" else "🔴"
-                    print_info(f"  [{i}] {status_icon} {name}")
+                    display_name = preferred_name if preferred_name != name else name
+                    print_info(f"  [{i}] {status_icon} {display_name}")
                     print_info(f"      {desc[:60]}...")
                     print_info(f"      Tech: {tech_stack} │ Signals: {signal_count} │ Last teach: {last_teach}")
                     print_info(f"      Status: {status} │ Updated: {last_update}")
@@ -384,17 +395,22 @@ Examples:
                 print_info("")
 
             # Menu options
-            print_info("  1/a - ➕ Add Projects    Register new spokes")
-            print_info("  2/g - 📁 Groups          Organize spokes")
-            print_info("  3/r - 🔄 Refresh         Reload project list")
+            print_info("  1/a - ➕ Add Projects      Register new spokes")
+            print_info("  2/m - ✏️  Modify Projects  Remove or organize")
+            print_info("  3/g - 📁 Groups            Manage spoke groups")
+            print_info("  4/r - 🔄 Refresh           Reload project list")
+            print_info("")
             print_info("  b   - ⬅️  Back")
+            print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
                 ('1', 'a', '➕ Add Projects', 'add'),
-                ('2', 'g', '📁 Groups', 'groups'),
-                ('3', 'r', '🔄 Refresh', 'refresh'),
-                ('b', 'b', '⬅️  Back', 'back')
+                ('2', 'm', '✏️  Modify Projects', 'modify'),
+                ('3', 'g', '📁 Groups', 'groups'),
+                ('4', 'r', '🔄 Refresh', 'refresh'),
+                ('b', 'b', '⬅️  Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
             ]
 
             choice = safe_menu_choice("Select", options, default='b')
@@ -402,19 +418,81 @@ Examples:
             if choice == "add":
                 from .utils.input import safe_input
                 print_info("\nAdd Projects - Scan for projects in a directory\n")
-                scan_path = safe_input("  Folder to scan (default: parent of hub)", default="", allow_empty=True)
 
-                if scan_path:
+                # Calculate default scan path (2 levels above hub)
+                default_path = hub_path.parent.parent if hub_path else Path.cwd().parent
+                print_info(f"  Default: {default_path}")
+                print_info("")
+
+                scan_path = safe_input(
+                    "  Folder to scan",
+                    default=str(default_path),
+                    allow_empty=True
+                )
+
+                if scan_path and scan_path.strip():
                     args = type('Args', (), {'scan': [scan_path]})()
                 else:
                     args = type('Args', (), {'scan': None})()
 
                 self._projects_add(args)
                 input("\n  Press Enter to continue...")
+            elif choice == "modify":
+                self._show_modify_projects_menu(hub_path, projects)
             elif choice == "groups":
                 self._show_groups_menu()
             elif choice == "refresh":
                 continue  # Reload
+            elif choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "back" or choice is None:
+                return
+
+    def _show_modify_projects_menu(self, hub_path: Path, projects: list):
+        """Show modify projects submenu."""
+        while True:
+            print_info("\n" + "=" * 60)
+            print_info("           Modify Projects Menu")
+            print_info("=" * 60)
+            print_info("")
+            print_info("  1/r - 🗑️  Remove from Registry  Unregister a spoke")
+            print_info("  2/n - ✏️  Rename Project        Set preferred display name")
+            print_info("  3/g - 📁 Add to Group          Organize spoke")
+            print_info("")
+            print_info("  b   - ⬅️  Back")
+            print_info("  q   - 👋 Quit")
+            print_info("")
+
+            options = [
+                ('1', 'r', '🗑️  Remove', 'remove'),
+                ('2', 'n', '✏️  Rename', 'rename'),
+                ('3', 'g', '📁 Add to Group', 'add_to_group'),
+                ('b', 'b', '⬅️  Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
+            ]
+
+            choice = safe_menu_choice("Select", options, default='b')
+
+            if choice == "remove":
+                self._projects_remove(hub_path, projects)
+                input("\n  Press Enter to continue...")
+                return  # Return to parent menu to refresh list
+            elif choice == "rename":
+                self._projects_rename(hub_path, projects)
+                input("\n  Press Enter to continue...")
+                return  # Return to parent menu to refresh list
+            elif choice == "add_to_group":
+                self._projects_add_to_group(hub_path, projects)
+                input("\n  Press Enter to continue...")
+                return  # Return to parent menu
+            elif choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
             elif choice == "back" or choice is None:
                 return
 
@@ -428,7 +506,8 @@ Examples:
             'last_teach': 'Never',
             'signal_count': 0,
             'last_update': 'Unknown',
-            'status': 'inactive'
+            'status': 'inactive',
+            'preferred_name': None
         }
 
         if not spoke_path.exists():
@@ -444,6 +523,10 @@ Examples:
         if state_file.exists():
             try:
                 state = json.loads(state_file.read_text())
+
+                # Get preferred name from wheel section
+                wheel = state.get('wheel', {})
+                details['preferred_name'] = wheel.get('preferred_name')
 
                 # Get tech stack from foundation
                 foundation = state.get('_project_foundation', {})
@@ -493,7 +576,9 @@ Examples:
             print_info("  3/a - ➕ Add Spoke       Add spoke to group")
             print_info("  4/r - ➖ Remove Spoke    Remove spoke from group")
             print_info("  5/d - 🗑️  Delete         Delete group")
+            print_info("")
             print_info("  b   - ⬅️  Back")
+            print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
@@ -502,12 +587,18 @@ Examples:
                 ('3', 'a', '➕ Add Spoke', 'add'),
                 ('4', 'r', '➖ Remove Spoke', 'remove'),
                 ('5', 'd', '🗑️  Delete', 'delete'),
-                ('b', 'b', '⬅️  Back', 'back')
+                ('b', 'b', '⬅️  Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
             ]
 
             choice = safe_menu_choice("Select option", options, default='1')
 
-            if choice == "back" or choice is None:
+            if choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "back" or choice is None:
                 return
 
             # Find hub first
@@ -615,29 +706,32 @@ Examples:
 
             if hub_path:
                 print_info("  1/l - 🔍 Locate          Show hub location & candidates")
-                print_info("  2/t - 🎓 Teach           Trigger teach event (hub learns)")
-                print_info("  3/s - 📚 Share           Trigger share event (hub teaches)")
-                print_info("  4/c - ✨ Create          Initialize new hub")
+                print_info("  2/t - 🎓 Teach           Hub learns from spokes")
+                print_info("  3/l - 📚 Learn           Spokes learn from hub")
+                print_info("")
                 print_info("  b   - ⬅️  Back")
+                print_info("  q   - 👋 Quit")
                 print_info("")
 
                 options = [
-                    ('1', 'l', '🔍 Locate', 'locate'),
+                    ('1', 'o', '🔍 Locate', 'locate'),  # Changed 'l' to 'o' to avoid conflict with Learn
                     ('2', 't', '🎓 Teach', 'teach'),
-                    ('3', 's', '📚 Share', 'share'),
-                    ('4', 'c', '✨ Create', 'create'),
-                    ('b', 'b', '⬅️  Back', 'back')
+                    ('3', 'l', '📚 Learn', 'learn'),
+                    ('b', 'b', '⬅️  Back', 'back'),
+                    ('q', 'q', '👋 Quit', 'quit')
                 ]
             else:
                 print_info("  1/l - 🔍 Locate          Find hub (scan for candidates)")
                 print_info("  2/c - ✨ Create          Initialize new hub")
                 print_info("  b   - ⬅️  Back")
+                print_info("  q   - 👋 Quit")
                 print_info("")
 
                 options = [
                     ('1', 'l', '🔍 Locate', 'locate'),
                     ('2', 'c', '✨ Create', 'create'),
-                    ('b', 'b', '⬅️  Back', 'back')
+                    ('b', 'b', '⬅️  Back', 'back'),
+                    ('q', 'q', '👋 Quit', 'quit')
                 ]
 
             choice = safe_menu_choice("Select", options, default='1')
@@ -648,12 +742,17 @@ Examples:
             elif choice == "teach":
                 self._hub_trigger_teach()
                 input("\n  Press Enter to continue...")
-            elif choice == "share":
-                self._hub_trigger_share()
+            elif choice == "learn":
+                self._hub_trigger_learn()
                 input("\n  Press Enter to continue...")
             elif choice == "create":
                 self._hub_create(type('Args', (), {'path': None})())
                 input("\n  Press Enter to continue...")
+            elif choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
             elif choice == "back" or choice is None:
                 return
 
@@ -663,9 +762,9 @@ Examples:
         import json
 
         while True:
-            print_info("\n" + "=" * 60)
-            print_info("             Statistics & Insights")
-            print_info("=" * 60)
+            print("\n" + "=" * 60)
+            print("             Statistics & Insights")
+            print("=" * 60)
 
             # Find hub
             hub_manager = HubManager()
@@ -695,8 +794,8 @@ Examples:
                 group_count = 0
 
             # Display statistics
-            print_info("\n  Hub Overview:")
-            print_info(f"    Location: {hub_path}")
+            print_info("\n  Wheel Overview:")
+            print_info(f"    Hub Location: {hub_path}")
             print_info(f"    Registered Spokes: {spoke_count}")
             print_info(f"    Groups: {group_count}")
 
@@ -713,32 +812,49 @@ Examples:
                     'command': 'spokes_add'
                 })
 
-            if spoke_count > 0 and group_count == 0:
-                recommendations.append({
-                    'id': 2,
-                    'impact': 7,
-                    'action': 'Create project groups',
-                    'description': 'Organize spokes by type or client',
-                    'command': 'groups_create'
-                })
-
             if spoke_count > 5 and group_count == 0:
                 recommendations.append({
-                    'id': 3,
-                    'impact': 9,
-                    'action': 'Create groups for better organization',
-                    'description': 'With 5+ spokes, groups help manage complexity',
+                    'id': 2,
+                    'impact': 3,
+                    'action': 'Create groups for organization',
+                    'description': 'With 5+ spokes, groups help manage CLI complexity',
                     'command': 'groups_create'
                 })
 
-            # Always show maintenance recommendation
-            recommendations.append({
-                'id': 4,
-                'impact': 5,
-                'action': 'Run sync on all spokes',
-                'description': 'Keep hub knowledge base current',
-                'command': 'sync_all'
-            })
+            # Only recommend teach if there are spokes and recent learning activity
+            # Check if hub has recently learned (last learn < 30 days)
+            if spoke_count > 0:
+                # TODO: Check hub-profile.json for last_learn_timestamp
+                # For now, recommend if spokes exist and have been active
+                has_recent_activity = False
+                if hub_path:
+                    hub_profile = hub_path / 'hub-profile.json'
+                    if hub_profile.exists():
+                        try:
+                            import json
+                            from datetime import datetime, timedelta
+                            profile_data = json.loads(hub_profile.read_text())
+
+                            # Check for last_learn timestamp
+                            last_learn = profile_data.get('last_learn_at')
+                            if last_learn:
+                                last_learn_date = datetime.fromisoformat(last_learn.replace('Z', '+00:00'))
+                                days_since_learn = (datetime.now() - last_learn_date).days
+                                has_recent_activity = days_since_learn < 30
+                            else:
+                                # If never learned, suggest learning first instead
+                                has_recent_activity = False
+                        except Exception:
+                            pass
+
+                if has_recent_activity:
+                    recommendations.append({
+                        'id': 3,
+                        'impact': 8,
+                        'action': 'Run teach on all spokes',
+                        'description': 'Update hub knowledge base from spoke learnings',
+                        'command': 'teach_all'
+                    })
 
             if recommendations:
                 for rec in sorted(recommendations, key=lambda x: x['impact'], reverse=True):
@@ -750,18 +866,26 @@ Examples:
             print_info("")
             print_info("  1/e - ⚡ Enact           Execute a recommendation")
             print_info("  2/r - 🔄 Refresh         Update statistics")
+            print_info("")
             print_info("  b   - ⬅️  Back")
+            print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
                 ('1', 'e', '⚡ Enact', 'enact'),
                 ('2', 'r', '🔄 Refresh', 'refresh'),
-                ('b', 'b', '⬅️  Back', 'back')
+                ('b', 'b', '⬅️  Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
             ]
 
             choice = safe_menu_choice("Select option", options, default='b')
 
-            if choice == "enact" and recommendations:
+            if choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "enact" and recommendations:
                 rec_id = safe_choice(
                     "  Select recommendation",
                     choices=[str(r['id']) for r in recommendations],
@@ -774,8 +898,8 @@ Examples:
                             self._projects_add(type('Args', (), {'scan': None})())
                         elif rec['command'] == 'groups_create':
                             self._show_groups_menu()
-                        elif rec['command'] == 'sync_all':
-                            print_info("\n  Sync all feature coming soon.")
+                        elif rec['command'] == 'teach_all':
+                            print_info("\n  Teach all feature coming soon.")
             elif choice == "refresh":
                 continue  # Refresh
             elif choice == "back" or choice is None:
@@ -791,19 +915,27 @@ Examples:
             print_info("  1/c - 🖥️  CLI Usage        Navigate interactive menus")
             print_info("  2/p - 📦 Project Use      Initialize & manage spokes")
             print_info("  3/m - 💻 Command Line     Quick reference guide")
+            print_info("")
             print_info("  b   - ⬅️  Back")
+            print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
                 ('1', 'c', '🖥️  CLI Usage', 'cli'),
                 ('2', 'p', '📦 Project Use', 'project'),
                 ('3', 'm', '💻 Command Line', 'commands'),
-                ('b', 'b', '⬅️  Back', 'back')
+                ('b', 'b', '⬅️  Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
             ]
 
             choice = safe_menu_choice("Select option", options, default='1')
 
-            if choice == "cli":
+            if choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "cli":
                 print_info("\n" + "=" * 60)
                 print_info("           Using WAI CLI")
                 print_info("=" * 60)
@@ -1192,23 +1324,23 @@ Examples:
         print_info("  (Teach functionality to be implemented)")
         print_success("  Teach event complete!")
 
-    def _hub_trigger_share(self):
-        """Trigger share event - hub teaches spokes."""
-        print_info("\n📚 Share Event - Hub Teaching Spokes\n")
+    def _hub_trigger_learn(self):
+        """Trigger learn event - spokes learn from hub."""
+        print_info("\n📚 Learn Event - Spokes Learning from Hub\n")
         print_info("  This will:")
         print_info("  • Share hub knowledge with registered spokes")
         print_info("  • Update spoke guidance based on learnings")
         print_info("  • Propagate best practices")
-        print_info("  • Record share timestamp\n")
+        print_info("  • Record learn timestamp\n")
 
         from .utils.input import safe_confirm
-        if not safe_confirm("  Trigger share event?", default=False):
+        if not safe_confirm("  Trigger learn event?", default=False):
             print_info("  Cancelled.")
             return
 
-        print_info("\n  Sharing...")
-        print_info("  (Share functionality to be implemented)")
-        print_success("  Share event complete!")
+        print_info("\n  Learning...")
+        print_info("  (Learn functionality to be implemented)")
+        print_success("  Learn event complete!")
 
     def _hub_ignore_candidates(self, ignore_paths: list, primary_hub: Path):
         """Add hub paths to ignore list in primary hub profile."""
@@ -1257,7 +1389,7 @@ Examples:
             target_registry_path = target_hub / 'registry' / 'wheel-projects.json'
 
             if not source_registry_path.exists():
-                print_warning(f"  Source registry not found: {source_registry_path}")
+                print_error(f"  Source registry not found: {source_registry_path}")
                 return
 
             source_registry = json.loads(source_registry_path.read_text())
@@ -1356,9 +1488,6 @@ Examples:
             auto_add=False
         )
 
-        if count > 0:
-            print_success(f"\nAdded {count} project(s) to hub.")
-
     def _projects_list(self, args):
         """List registered projects."""
         # Find hub
@@ -1393,6 +1522,236 @@ Examples:
 
         except Exception as e:
             print_error(f"Failed to list projects: {e}")
+
+    def _projects_remove(self, hub_path: Path, projects: list):
+        """Remove a project from the registry."""
+        import json
+        from .utils.input import safe_input
+
+        if not projects:
+            print_info("\n  No projects to remove.")
+            return
+
+        # Display projects with numbers
+        print_info("\n  Select project to remove:\n")
+        for i, project in enumerate(projects, 1):
+            name = project.get('name', 'Unknown')
+            path = project.get('path', '')
+            print_info(f"  [{i}] {name}")
+            print_info(f"      {path}")
+            print_info("")
+
+        # Prompt for selection
+        choice = safe_input(
+            "  Project number (or 'c' to cancel)",
+            default="c",
+            allow_empty=True
+        )
+
+        if choice and choice.lower() != 'c':
+            try:
+                idx = int(choice) - 1
+                if 0 <= idx < len(projects):
+                    project = projects[idx]
+                    name = project.get('name', 'Unknown')
+
+                    # Confirm removal
+                    from .utils.input import safe_confirm
+                    if safe_confirm(f"\n  Remove '{name}' from registry?", default=False):
+                        # Load registry
+                        from .utils.registry import load_registry
+                        registry_path = hub_path / 'registry' / 'wheel-projects.json'
+                        registry = load_registry(hub_path)
+
+                        # Remove project
+                        registry['projects'] = [p for p in registry['projects'] if p.get('path') != project.get('path')]
+
+                        # Save
+                        registry_path.write_text(json.dumps(registry, indent=2))
+                        print_success(f"\n  ✓ Removed '{name}' from registry")
+                    else:
+                        print_info("\n  Removal cancelled")
+                else:
+                    print_error("\n  Invalid project number")
+            except ValueError:
+                print_error("\n  Invalid input")
+        else:
+            print_info("\n  Removal cancelled")
+
+    def _projects_rename(self, hub_path: Path, projects: list):
+        """Rename a project by setting preferred display name."""
+        import json
+        from .utils.input import safe_input
+
+        if not projects:
+            print_info("\n  No projects to rename.")
+            return
+
+        # Display projects with numbers
+        print_info("\n  Select project to rename:\n")
+        for i, project in enumerate(projects, 1):
+            name = project.get('name', 'Unknown')
+            preferred_name = project.get('preferred_name')
+            path = project.get('path', '')
+
+            # Show current preferred name if exists
+            if preferred_name and preferred_name != name:
+                print_info(f"  [{i}] {preferred_name} (folder: {name})")
+            else:
+                print_info(f"  [{i}] {name}")
+            print_info(f"      {path}")
+            print_info("")
+
+        # Prompt for selection
+        choice = safe_input(
+            "  Project number (or 'c' to cancel)",
+            default="c",
+            allow_empty=True
+        )
+
+        if choice and choice.lower() != 'c':
+            try:
+                idx = int(choice) - 1
+                if 0 <= idx < len(projects):
+                    project = projects[idx]
+                    current_name = project.get('name', 'Unknown')
+                    preferred_name = project.get('preferred_name', current_name)
+                    project_path = Path(project.get('path', ''))
+
+                    print_info(f"\n  Renaming: {preferred_name}")
+                    print_info(f"  Current display name: {preferred_name}")
+
+                    # Prompt for new name
+                    new_name = safe_input(
+                        "\n  New display name",
+                        default=preferred_name,
+                        allow_empty=False
+                    )
+
+                    if new_name and new_name != preferred_name:
+                        # Update spoke's WAI-State.json if it exists
+                        spoke_state_file = project_path / 'WAI-Spoke' / 'WAI-State.json'
+                        if spoke_state_file.exists():
+                            try:
+                                state = json.loads(spoke_state_file.read_text())
+                                if 'wheel' not in state:
+                                    state['wheel'] = {}
+                                state['wheel']['preferred_name'] = new_name
+                                spoke_state_file.write_text(json.dumps(state, indent=2))
+                                print_success(f"  ✓ Updated spoke WAI-State.json")
+                            except Exception as e:
+                                print_error(f"  Failed to update spoke state: {e}")
+
+                        # Update registry
+                        from .utils.registry import load_registry
+                        registry_path = hub_path / 'registry' / 'wheel-projects.json'
+                        registry = load_registry(hub_path)
+
+                        # Find and update project in registry
+                        for reg_project in registry.get('projects', []):
+                            if reg_project.get('path') == project.get('path'):
+                                reg_project['preferred_name'] = new_name
+                                break
+
+                        # Save registry
+                        registry_path.write_text(json.dumps(registry, indent=2))
+                        print_success(f"\n  ✓ Renamed '{preferred_name}' to '{new_name}'")
+                        print_info(f"  Display name updated in registry and spoke")
+                    else:
+                        print_info("\n  No changes made")
+                else:
+                    print_error("\n  Invalid project number")
+            except ValueError:
+                print_error("\n  Invalid input")
+        else:
+            print_info("\n  Rename cancelled")
+
+    def _projects_add_to_group(self, hub_path: Path, projects: list):
+        """Add a project to a group."""
+        import json
+        from .utils.input import safe_input
+        from .utils.registry import load_registry
+
+        if not projects:
+            print_info("\n  No projects to add to group.")
+            return
+
+        # Load registry to get groups
+        registry = load_registry(hub_path)
+        groups = registry.get('groups', {})
+
+        if not groups:
+            print_info("\n  No groups exist. Create a group first.")
+            return
+
+        # Display projects
+        print_info("\n  Select project:\n")
+        for i, project in enumerate(projects, 1):
+            name = project.get('name', 'Unknown')
+            preferred_name = project.get('preferred_name', name)
+            display_name = preferred_name if preferred_name != name else name
+            print_info(f"  [{i}] {display_name}")
+
+        project_choice = safe_input(
+            "\n  Project number (or 'c' to cancel)",
+            default="c",
+            allow_empty=True
+        )
+
+        if not project_choice or project_choice.lower() == 'c':
+            print_info("\n  Cancelled")
+            return
+
+        try:
+            proj_idx = int(project_choice) - 1
+            if not (0 <= proj_idx < len(projects)):
+                print_error("\n  Invalid project number")
+                return
+
+            selected_project = projects[proj_idx]
+            project_path = selected_project.get('path')
+
+            # Display groups
+            print_info("\n  Select group:\n")
+            group_list = list(groups.keys())
+            for i, group_name in enumerate(group_list, 1):
+                print_info(f"  [{i}] {group_name}")
+
+            group_choice = safe_input(
+                "\n  Group number (or 'c' to cancel)",
+                default="c",
+                allow_empty=True
+            )
+
+            if not group_choice or group_choice.lower() == 'c':
+                print_info("\n  Cancelled")
+                return
+
+            group_idx = int(group_choice) - 1
+            if not (0 <= group_idx < len(group_list)):
+                print_error("\n  Invalid group number")
+                return
+
+            group_name = group_list[group_idx]
+
+            # Add project to group
+            if 'spokes' not in groups[group_name]:
+                groups[group_name]['spokes'] = []
+
+            if project_path not in groups[group_name]['spokes']:
+                groups[group_name]['spokes'].append(project_path)
+                registry['groups'] = groups
+
+                # Save
+                registry_path = hub_path / 'registry' / 'wheel-projects.json'
+                registry_path.write_text(json.dumps(registry, indent=2))
+
+                print_success(f"\n  ✓ Added '{selected_project.get('name')}' to group '{group_name}'")
+            else:
+                print_info(f"\n  Project already in group '{group_name}'")
+
+        except ValueError:
+            print_error("\n  Invalid input")
 
     def _cmd_group(self, args):
         """Handle group commands."""

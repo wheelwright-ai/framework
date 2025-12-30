@@ -10,6 +10,72 @@ from typing import Optional, Callable, List
 from .exceptions import ValidationError
 
 
+def getch():
+    """
+    Read a single character without waiting for Enter.
+
+    Works on Unix/Linux/WSL using termios.
+    """
+    import sys
+    import tty
+    import termios
+
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+    return ch
+
+
+def single_key_input(prompt: str, valid_keys: List[str]) -> Optional[str]:
+    """
+    Get single-key input without requiring Enter.
+
+    Args:
+        prompt: Prompt to display
+        valid_keys: List of valid single characters (case-insensitive)
+
+    Returns:
+        The pressed key (lowercase) or None if cancelled
+
+    Examples:
+        >>> single_key_input("[1] Add project?", ['y', 'n', 'a', 'c'])
+        'y'  # User just pressed 'y', no Enter needed
+    """
+    print(f"   {prompt} ", end='', flush=True)
+
+    valid_keys_lower = [k.lower() for k in valid_keys]
+
+    while True:
+        try:
+            ch = getch()
+
+            # Handle special keys
+            if ch == '\x03' or ch == '\x04':  # Ctrl+C or Ctrl+D
+                print()
+                return None
+
+            response = ch.lower()
+
+            if response in valid_keys_lower:
+                print(ch)  # Echo the character
+                return response
+            else:
+                # Invalid key, just beep or ignore
+                continue
+
+        except KeyboardInterrupt:
+            print()
+            return None
+        except Exception:
+            print()
+            return None
+
+
 def safe_input(
     prompt: str,
     default: Optional[str] = None,
@@ -107,13 +173,19 @@ def safe_confirm(
         >>> safe_confirm("Delete file?")
         # Requires explicit y/n
     """
-    # Build prompt with default hint
+    # Build prompt: brackets for default, color for action letters
+    COLOR = '\033[36m'  # Cyan for action letters
+    RESET = '\033[0m'
+
     if default is True:
-        hint = " [Y/n]"
+        # Yes is default (Enter), No is action
+        hint = f" ([Yes] / {COLOR}N{RESET}o)"
     elif default is False:
-        hint = " [y/N]"
+        # No is default (Enter), Yes is action
+        hint = f" ({COLOR}Y{RESET}es / [No])"
     else:
-        hint = " [y/n]"
+        # No default, both are actions
+        hint = f" ({COLOR}Y{RESET}es / {COLOR}N{RESET}o)"
 
     display_prompt = prompt.rstrip() + hint + ": "
 
@@ -124,7 +196,7 @@ def safe_confirm(
             if not response:
                 if default is not None:
                     return default
-                print("   Please answer yes or no.")
+                print("   Please answer [Y]es or [N]o")
                 continue
 
             if response in ('y', 'yes'):
@@ -132,7 +204,7 @@ def safe_confirm(
             elif response in ('n', 'no'):
                 return False
             else:
-                print("   Please answer yes or no.")
+                print("   Please answer [Y]es or [N]o")
                 continue
 
         except KeyboardInterrupt:
@@ -335,32 +407,52 @@ def safe_menu_choice(
 
     first_try = True
 
+    print(display_prompt, end='', flush=True)
+
     while True:
         try:
-            response = input(display_prompt).strip().lower()
+            # Read single character (no Enter needed)
+            ch = getch()
 
-            if not response:
+            # Handle special keys
+            if ch == '\x03':  # Ctrl+C
+                print()
+                return None
+            elif ch == '\x04':  # Ctrl+D / EOF
+                print()
+                return None
+            elif ch == '\r' or ch == '\n':  # Enter key
                 if default is not None:
                     if default.lower() in valid_inputs:
+                        print()  # Newline after selection
                         return valid_inputs[default.lower()]
-                # Only show options on subsequent tries
+                # Show options if Enter pressed without default
+                print()
                 if first_try:
                     print(f"   Please enter a selection.")
                     first_try = False
                 else:
                     print(f"   Choose: {choices_str}")
+                print(display_prompt, end='', flush=True)
                 continue
 
+            response = ch.lower()
+
             if response in valid_inputs:
+                print(ch)  # Echo the character
                 return valid_inputs[response]
             else:
                 # Show full options list on invalid input
+                print(ch)  # Echo the invalid character
                 print(f"   Invalid. Choose: {choices_str}")
+                print(display_prompt, end='', flush=True)
                 first_try = False
                 continue
 
         except KeyboardInterrupt:
             print()
             return None
-        except EOFError:
+        except Exception:
+            # Fallback to regular input on any error
+            print()
             return None

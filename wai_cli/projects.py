@@ -9,7 +9,7 @@ from typing import List, Optional, Set
 from dataclasses import dataclass
 from datetime import datetime
 
-from .utils.input import safe_input, print_info, print_success
+from .utils.input import safe_input, print_info, print_success, print_error, single_key_input
 from .utils.registry import add_project
 
 
@@ -270,48 +270,39 @@ class ProjectDiscovery:
         for i, project in enumerate(projects, 1):
             marker = "✓" if "WAI-enabled" in project.project_type else " "
             types = project.format_types()
-            print_info(f"[{i}] {marker} {project.name} ({types})")
-            print_info(f"    {project.path}")
+            print_info(f"[{i}]\t{marker} {project.name} ({types})")
+            print_info(f"\t\t{project.path}")
+
+        # Format options with colored action letters
+        COLOR = '\033[36m'  # Cyan for action letters
+        RESET = '\033[0m'
 
         print_info("\nAdd projects to hub?")
-        print_info("Commands: y (yes), n (no), all, none, quit")
+        print_info(f"  Options: {COLOR}Y{RESET}es  {COLOR}N{RESET}o  {COLOR}A{RESET}ll  {COLOR}C{RESET}ancel")
         print_info("")
 
         selected: List[ProjectInfo] = []
 
         for i, project in enumerate(projects, 1):
-            # Prompt for this project
+            # Prompt for this project (single-key input)
             prompt = f"[{i}] Add '{project.name}'?"
 
-            response = safe_input(
-                prompt,
-                default=None,
-                validator=None,
-                max_length=10,
-                allow_empty=False
-            )
+            response = single_key_input(prompt, ['y', 'n', 'a', 'c'])
 
             if response is None:
                 # Ctrl+C or cancelled
                 print_info("\nSelection cancelled.")
                 break
 
-            response = response.strip().lower()
-
             # Handle commands
-            if response == 'quit' or response == 'q':
+            if response in ('cancel', 'c'):
                 print_info("\nSelection cancelled.")
                 break
 
-            elif response == 'all':
+            elif response == 'all' or response == 'a':
                 # Add remaining projects
                 selected.extend(projects[i-1:])
                 print_info(f"\nAdded all remaining projects ({len(projects) - i + 1}).")
-                break
-
-            elif response == 'none':
-                # Skip remaining projects
-                print_info(f"\nSkipped all remaining projects.")
                 break
 
             elif response in ('y', 'yes'):
@@ -365,14 +356,11 @@ class ProjectDiscovery:
                     description=description
                 )
 
-                print_success(f"  ✓ Registered '{project.name}'")
+                print_success(f"Registered '{project.name}'")
                 registered_count += 1
 
             except Exception as e:
-                print_info(f"  ✗ Failed to register '{project.name}': {e}")
-
-        if registered_count > 0:
-            print_success(f"\nSuccessfully registered {registered_count} project(s).")
+                print_error(f"Failed to register '{project.name}': {e}")
 
         return registered_count
 
@@ -399,9 +387,9 @@ class ProjectDiscovery:
             >>> discovery = ProjectDiscovery()
             >>> count = discovery.discover_and_add_projects(hub_path)
         """
-        # Default scan paths: parent of hub
+        # Default scan paths: 2 levels above hub (grandparent)
         if scan_paths is None:
-            scan_paths = [hub_path.parent]
+            scan_paths = [hub_path.parent.parent]
 
         # Add hub to exclude list
         if exclude_paths is None:
@@ -415,6 +403,26 @@ class ProjectDiscovery:
         if not discovered:
             print_info("No projects discovered.")
             return 0
+
+        # Filter out already-registered projects
+        from .utils.registry import load_registry
+        try:
+            registry = load_registry(hub_path)
+            registered_paths = {Path(p['path']).resolve() for p in registry.get('projects', [])}
+
+            # Filter discovered projects
+            before_count = len(discovered)
+            discovered = [p for p in discovered if p.path.resolve() not in registered_paths]
+            filtered_count = before_count - len(discovered)
+
+            if filtered_count > 0:
+                print_info(f"Filtered {filtered_count} already-registered project(s).")
+
+            if not discovered:
+                print_info("All discovered projects are already registered.")
+                return 0
+        except Exception:
+            pass  # If registry load fails, continue with full list
 
         # Select projects
         if auto_add:
