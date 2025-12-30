@@ -213,14 +213,41 @@ Examples:
 
         if is_initialized:
             while True:
+                # Get last learn timestamp from hub
+                hub_manager = HubManager()
+                hub_path = hub_manager.auto_discover_hub(framework_path, verbose=False)
+                last_learn_text = ""
+                if hub_path:
+                    hub_profile = hub_path / 'hub-profile.json'
+                    if hub_profile.exists():
+                        try:
+                            import json
+                            from datetime import datetime
+                            profile = json.loads(hub_profile.read_text())
+                            last_learn = profile.get('last_learn_at')
+                            if last_learn:
+                                learn_date = datetime.fromisoformat(last_learn.replace('Z', '+00:00'))
+                                days_ago = (datetime.now() - learn_date).days
+                                if days_ago == 0:
+                                    last_learn_text = " │ Last learn: Today"
+                                elif days_ago == 1:
+                                    last_learn_text = " │ Last learn: Yesterday"
+                                else:
+                                    last_learn_text = f" │ Last learn: {days_ago}d ago"
+                            else:
+                                last_learn_text = " │ Last learn: Never"
+                        except Exception:
+                            pass
+
                 print_info("\n" + "=" * 60)
-                print_info("                Main Menu")
+                print_info(f"                Main Menu{last_learn_text}")
                 print_info("=" * 60)
                 print_info("")
                 print_info("  1/h - 🏢 Hub          Central knowledge repository")
                 print_info("  2/s - 🎡 Spokes       Registered projects")
-                print_info("  3/t - 📊 Statistics   Insights & recommendations")
-                print_info("  4/? - ❓ Help         Getting started & commands")
+                print_info("  3/k - 🧠 Knowledge    Review learnings & insights")
+                print_info("  4/t - 📊 Statistics   Usage metrics & recommendations")
+                print_info("  5/? - ❓ Help         Getting started & commands")
                 print_info("")
                 print_info("  v   - ℹ️  Version      Show version info")
                 print_info("  q   - 👋 Quit")
@@ -229,8 +256,9 @@ Examples:
                 options = [
                     ('1', 'h', '🏢 Hub', 'hub'),
                     ('2', 's', '🎡 Spokes', 'spokes'),
-                    ('3', 't', '📊 Statistics', 'statistics'),
-                    ('4', '?', '❓ Help', 'help'),
+                    ('3', 'k', '🧠 Knowledge', 'knowledge'),
+                    ('4', 't', '📊 Statistics', 'statistics'),
+                    ('5', '?', '❓ Help', 'help'),
                     ('v', 'v', 'ℹ️  Version', 'version'),
                     ('q', 'q', '👋 Quit', 'quit')
                 ]
@@ -241,6 +269,8 @@ Examples:
                     self._show_hub_actions_menu()
                 elif choice == "spokes":
                     self._show_spokes_menu(framework_path)
+                elif choice == "knowledge":
+                    self._show_knowledge_base_menu()
                 elif choice == "statistics":
                     self._show_statistics_menu()
                 elif choice == "help":
@@ -905,6 +935,198 @@ Examples:
             elif choice == "back" or choice is None:
                 return
 
+    def _show_knowledge_base_menu(self):
+        """Show knowledge base menu - review learnings and insights."""
+        import json
+        from datetime import datetime
+
+        while True:
+            print_info("\n" + "=" * 60)
+            print_info("            Knowledge Base")
+            print_info("=" * 60)
+            print_info("")
+
+            # Find hub
+            hub_manager = HubManager()
+            hub_path = hub_manager.auto_discover_hub(Path.cwd(), verbose=False)
+
+            if not hub_path:
+                print_info("  No hub found. Create a hub first to enable knowledge base.")
+                print_info("")
+                print_info("  b   - ⬅️  Back")
+                print_info("  q   - 👋 Quit")
+                print_info("")
+
+                options = [
+                    ('b', 'b', '⬅️  Back', 'back'),
+                    ('q', 'q', '👋 Quit', 'quit')
+                ]
+
+                choice = safe_menu_choice("Select option", options, default='b')
+                if choice == "quit":
+                    if self._confirm_exit():
+                        import sys
+                        print_info("\n  👋 Goodbye!")
+                        sys.exit(0)
+                else:
+                    return
+
+            # Load hub learnings summary
+            signals_summary = self._get_hub_learnings_summary(hub_path)
+
+            print_info("  Hub Knowledge Overview:")
+            print_info(f"    Location: {hub_path}")
+            print_info(f"    Total signals: {signals_summary['total_signals']}")
+            print_info(f"    High-impact learnings: {signals_summary['high_impact_count']}")
+            print_info(f"    Last updated: {signals_summary['last_updated']}")
+            print_info("")
+
+            print_info("  Browse by Category:")
+            print_info("")
+            print_info("  1/p - 📚 Patterns          Code patterns & best practices")
+            print_info("  2/d - 🚨 Decisions         Architectural & design decisions")
+            print_info("  3/i - 💡 Insights          Project insights & observations")
+            print_info("  4/w - ⚠️  Warnings          Common pitfalls & anti-patterns")
+            print_info("  5/a - 📋 All Learnings     View all signals chronologically")
+            print_info("")
+            print_info("  b   - ⬅️  Back")
+            print_info("  q   - 👋 Quit")
+            print_info("")
+
+            options = [
+                ('1', 'p', '📚 Patterns', 'patterns'),
+                ('2', 'd', '🚨 Decisions', 'decisions'),
+                ('3', 'i', '💡 Insights', 'insights'),
+                ('4', 'w', '⚠️  Warnings', 'warnings'),
+                ('5', 'a', '📋 All', 'all'),
+                ('b', 'b', '⬅️  Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
+            ]
+
+            choice = safe_menu_choice("Select option", options, default='b')
+
+            if choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "back" or choice is None:
+                return
+            elif choice in ['patterns', 'decisions', 'insights', 'warnings', 'all']:
+                self._show_learnings_by_category(hub_path, choice)
+                input("\n  Press Enter to continue...")
+
+    def _get_hub_learnings_summary(self, hub_path: Path):
+        """Get summary of hub learnings."""
+        import json
+        from datetime import datetime
+
+        summary = {
+            'total_signals': 0,
+            'high_impact_count': 0,
+            'last_updated': 'Never'
+        }
+
+        # Check hub knowledge base (aggregated signals)
+        kb_dir = hub_path / 'knowledge-base'
+        if kb_dir.exists():
+            for signals_file in kb_dir.glob('*.jsonl'):
+                try:
+                    lines = signals_file.read_text().strip().split('\n')
+                    for line in lines:
+                        if line.strip():
+                            summary['total_signals'] += 1
+                            try:
+                                signal = json.loads(line)
+                                # Check for high impact offers
+                                for offer in signal.get('offers', []):
+                                    if offer.get('impact', 0) >= 8:
+                                        summary['high_impact_count'] += 1
+                            except:
+                                pass
+
+                    # Get last modified time
+                    mtime = datetime.fromtimestamp(signals_file.stat().st_mtime)
+                    days_ago = (datetime.now() - mtime).days
+                    if days_ago == 0:
+                        summary['last_updated'] = "Today"
+                    elif days_ago == 1:
+                        summary['last_updated'] = "Yesterday"
+                    else:
+                        summary['last_updated'] = f"{days_ago}d ago"
+                except Exception:
+                    pass
+
+        return summary
+
+    def _show_learnings_by_category(self, hub_path: Path, category: str):
+        """Show learnings filtered by category."""
+        import json
+
+        print_info(f"\n{('=' * 60)}")
+        category_names = {
+            'patterns': '📚 Code Patterns & Best Practices',
+            'decisions': '🚨 Architectural & Design Decisions',
+            'insights': '💡 Project Insights & Observations',
+            'warnings': '⚠️  Common Pitfalls & Anti-Patterns',
+            'all': '📋 All Learnings'
+        }
+        print_info(f"  {category_names.get(category, 'Learnings')}")
+        print_info("=" * 60)
+        print_info("")
+
+        # Load signals from knowledge base
+        kb_dir = hub_path / 'knowledge-base'
+        learnings = []
+
+        if kb_dir.exists():
+            for signals_file in kb_dir.glob('*.jsonl'):
+                try:
+                    lines = signals_file.read_text().strip().split('\n')
+                    for line in lines:
+                        if line.strip():
+                            try:
+                                signal = json.loads(line)
+                                for offer in signal.get('offers', []):
+                                    # Filter by category if not 'all'
+                                    if category == 'all' or offer.get('type') == category[:-1]:  # Remove 's' from plural
+                                        learnings.append({
+                                            'type': offer.get('type', 'unknown'),
+                                            'topic': offer.get('topic', 'No topic'),
+                                            'context': offer.get('context', 'No context'),
+                                            'impact': offer.get('impact', 0),
+                                            'timestamp': signal.get('timestamp', '')
+                                        })
+                            except:
+                                pass
+                except Exception:
+                    pass
+
+        if not learnings:
+            print_info("  No learnings found in this category yet.")
+            print_info("")
+            print_info("  As you work with your spokes and run 'teach' events,")
+            print_info("  the hub will accumulate learnings here.")
+        else:
+            # Sort by impact (descending)
+            learnings.sort(key=lambda x: x['impact'], reverse=True)
+
+            for i, learning in enumerate(learnings[:20], 1):  # Show top 20
+                type_icon = {
+                    'pattern': '📚',
+                    'decision': '🚨',
+                    'insight': '💡',
+                    'warning': '⚠️'
+                }.get(learning['type'], '📝')
+
+                print_info(f"  [{i}] {type_icon} {learning['topic']} (Impact: {learning['impact']}/10)")
+                print_info(f"      {learning['context'][:80]}...")
+                print_info("")
+
+            if len(learnings) > 20:
+                print_info(f"  ... and {len(learnings) - 20} more learnings")
+                print_info("")
+
     def _show_help_menu(self):
         """Show help menu with structured options."""
         while True:
@@ -1100,7 +1322,7 @@ Examples:
         Check if path is the framework directory.
 
         Checks:
-        - Has WAI script
+        - Has WAI-CLI script
         - Has templates/ directory
         - Has wai_cli/ package
 
@@ -1111,7 +1333,7 @@ Examples:
             True if framework directory
         """
         return (
-            (path / 'WAI').exists() and
+            (path / 'WAI-CLI').exists() and
             (path / 'templates').exists() and
             (path / 'wai_cli').exists()
         )
