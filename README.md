@@ -223,10 +223,10 @@ Start by adding Wheelwright to an existing project (or create a new one):
 cd ~/projects/my-awesome-project
 
 # Initialize Wheelwright context
-WAI init
+WAI-CLI init
 
 # Or initialize from anywhere
-WAI init ~/projects/my-awesome-project
+WAI-CLI init ~/projects/my-awesome-project
 ```
 
 This creates a `WAI-Spoke/` directory containing your project's memory:
@@ -283,8 +283,8 @@ The `WAI` command-line interface orchestrates your Hub, Spoke-Projects, and the 
 
 ```bash
 # Project Commands
-WAI init [path]           # Initialize Wheelwright in a project
-WAI status                # Show current wheel state and health
+WAI-CLI init [path]           # Initialize Wheelwright in a project
+WAI-CLI status                # Show current wheel state and health
 WAI context               # Output context for LLM paste
 WAI closeout              # Generate session closeout files
 
@@ -453,7 +453,7 @@ Popular AI assistants automatically discover WAI through standard integration po
 
 ### The WAI Automatic Setup
 
-When you run `WAI init`, the framework:
+When you run `WAI-CLI init`, the framework:
 
 1. **Detects your environment** - VS Code? Claude Code? Cursor? Other?
 2. **Creates integration files** - `.vscode/settings.json`, `CLAUDE.md`, `.cursorrules`, etc.
@@ -510,7 +510,7 @@ WAI auto-configures for:
 | **Zed** | `.zed/settings.json` | ✅ Yes |
 | **GitHub Copilot Workspace** | `.github/copilot-instructions.md` | ✅ Yes |
 | **Aider** | `.aider.conf.yml` | ✅ Yes |
-| **Web LLMs** | Use `WAI context` command | Manual copy |
+| **Web LLMs** | Use `WAI-CLI context` command | Manual copy |
 
 ### Manual Override (When Needed)
 

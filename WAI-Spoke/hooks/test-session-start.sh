@@ -29,7 +29,7 @@ TEST_HOOK="$FIXTURES_DIR/session-start.sh"
 
 # Setup test environment
 setup() {
-    mkdir -p "$FIXTURES_DIR/.WAI/hooks"
+    mkdir -p "$FIXTURES_DIR/WAI-Spoke/hooks"
 
     # Copy the hook script to test location using absolute path
     cp "$SOURCE_HOOK" "$TEST_HOOK"
@@ -51,7 +51,7 @@ teardown() {
 # Create a valid WAI-State.json fixture
 create_state_fixture() {
     local protocol_completed="${1:-false}"
-    cat > "$FIXTURES_DIR/.WAI/WAI-State.json" <<EOF
+    cat > "$FIXTURES_DIR/WAI-Spoke/WAI-State.json" <<EOF
 {
   "wheel": {
     "name": "Test Project",
@@ -197,7 +197,7 @@ assert_file_contains() {
 # Test cases
 test_exits_when_no_state_file() {
     echo ""
-    echo "Test: Exit silently when .WAI/WAI-State.json doesn't exist"
+    echo "Test: Exit silently when WAI-Spoke/WAI-State.json doesn't exist"
 
     cd "$FIXTURES_DIR"
     OUTPUT=$(CLAUDE_PROJECT_DIR="$FIXTURES_DIR" "$TEST_HOOK" 2>&1)
@@ -336,7 +336,7 @@ test_updates_session_state() {
     set +e
     CLAUDE_PROJECT_DIR="$FIXTURES_DIR" "$TEST_HOOK" >/dev/null 2>&1
 
-    STATE_FILE="$FIXTURES_DIR/.WAI/WAI-State.json"
+    STATE_FILE="$FIXTURES_DIR/WAI-Spoke/WAI-State.json"
 
     assert_file_contains "$STATE_FILE" '"protocol_completed": true' "Should set protocol_completed to true"
     assert_file_contains "$STATE_FILE" '"briefing_provided": true' "Should set briefing_provided to true"
@@ -348,7 +348,7 @@ test_handles_missing_fields_gracefully() {
     echo "Test: Handle missing fields gracefully"
 
     # Create minimal state file with missing optional fields
-    cat > "$FIXTURES_DIR/.WAI/WAI-State.json" <<EOF
+    cat > "$FIXTURES_DIR/WAI-Spoke/WAI-State.json" <<EOF
 {
   "wheel": {
     "name": "Minimal Project"

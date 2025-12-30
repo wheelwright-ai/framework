@@ -962,7 +962,7 @@ Examples:
                 print_info("")
                 print_info("  1. Initialize spoke in project:")
                 print_info("     $ cd /path/to/project")
-                print_info("     $ WAI init")
+                print_info("     $ WAI-CLI init")
                 print_info("")
                 print_info("  2. Key files created (WAI-Spoke/):")
                 print_info("     • WAI-Guide.md - AI instructions")
