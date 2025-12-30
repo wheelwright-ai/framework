@@ -8,7 +8,7 @@
     "tagline": "We aren't reinventing the wheel - we're evolving it faster than one person ever could."
   },
 
-  "_wai_bootstrap": {
+  "_wwai_bootstrap": {
     "_purpose": "Instructions for AI assistants to find or create Wheelwright components",
 
     "find_framework": {
@@ -165,7 +165,7 @@
     "conversation_tracking": true,
     "capacity_monitoring": true,
     "alert_threshold": "80%",
-    "wai_commands": {
+    "wwai_commands": {
       "time": "Intelligent token usage estimate with capacity warnings",
       "rules": "List active rules and behavioral guidelines",
       "closeout": "Provide updated WAI-State files for session end"

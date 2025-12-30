@@ -15,7 +15,7 @@ This file contains prioritized instructions for AI assistants working on this pr
 **IMPORTANT:** This protocol is automatically enforced via Claude Code's SessionStart hook.
 
 **How it works:**
-1. When you open this project, `.claude/settings.json` triggers `.WAI/hooks/session-start.sh`
+1. When you open this project, `.claude/settings.json` triggers `WAI-Spoke/hooks/session-start.sh`
 2. The hook script reads WAI-State.json and displays the briefing automatically
 3. The hook updates `protocol_completed` flag to prevent duplicate briefings
 4. You see the briefing message **before** I respond to your first message
@@ -33,7 +33,7 @@ When you first receive a message in this project directory, complete this checkl
 import json
 from pathlib import Path
 
-state_file = Path(".WAI/WAI-State.json")
+state_file = Path("WAI-Spoke/WAI-State.json")
 state = json.loads(state_file.read_text())
 session_state = state.get("_session_state", {})
 
@@ -49,9 +49,9 @@ else:
 
 #### Step 1: Load Project Context (REQUIRED)
 Read these 3 files to load full project context:
-1. `.WAI/WAI-Guide.md` - AI behavioral protocols and detailed instructions
-2. `.WAI/WAI-State.json` - Project foundation, decisions, current state
-3. `.WAI/WAI-State.md` - Strategic context and vision
+1. `WAI-Spoke/WAI-Guide.md` - AI behavioral protocols and detailed instructions
+2. `WAI-Spoke/WAI-State.json` - Project foundation, decisions, current state
+3. `WAI-Spoke/WAI-State.md` - Strategic context and vision
 
 #### Step 2: Brief the User (REQUIRED)
 Immediately after loading context, provide this briefing:
@@ -209,12 +209,12 @@ When you make a decision with **impact >= 8**, record it in TWO places:
 }
 ```
 
-#### B. Append to wheel-signals.jsonl:
+#### B. Append to WAI-Signals.jsonl:
 ```json
 {"timestamp": "ISO-8601", "by": "AI-Name", "hub_kb_version": "...", "wheel_kb_version": "...", "offers": [{"type": "pattern", "topic": "Brief title", "impact": 8, "context": "Why this matters"}], "requests": [], "flags": {"has_high_impact_learnings": true}}
 ```
 
-**CRITICAL:** Append only, never overwrite wheel-signals.jsonl!
+**CRITICAL:** Append only, never overwrite WAI-Signals.jsonl!
 
 ### 4. Conversation Logging
 
@@ -226,7 +226,7 @@ Log **EVERY turn** - both user messages and your responses.
 
 #### Log Format
 
-Append to `.WAI/session-conversation.jsonl` after each exchange:
+Append to `WAI-Spoke/WAI-Session-Log.jsonl` after each exchange:
 
 ```jsonl
 {"timestamp":"2025-12-29T12:34:56Z","turn":1,"type":"user","content":"User's message text","metadata":{"tokens_estimate":150}}
@@ -248,7 +248,7 @@ def estimate_tokens(text: str) -> int:
 - "Are you tracking this?"
 - "Is this being logged?"
 
-**Response:** `📝 Logged - Turn {N} captured to session-conversation.jsonl ({X} turns so far this session)`
+**Response:** `📝 Logged - Turn {N} captured to WAI-Session-Log.jsonl ({X} turns so far this session)`
 
 **Do NOT:**
 - Proactively announce logging on every turn
@@ -500,7 +500,7 @@ def estimate_steps(request: str) -> int:
 
 ### Full Protocol Reference
 
-**Complete details in:** `.WAI/WAI-Guide.md` → "Token Efficiency & Multi-Stage Workflow"
+**Complete details in:** `WAI-Spoke/WAI-Guide.md` → "Token Efficiency & Multi-Stage Workflow"
 
 **Key sections:**
 - ADAPTIVE Workflow Mode (STRICT vs YOLO decision logic)
@@ -552,7 +552,7 @@ List the active rules from:
 
 **Your actions:**
 
-1. **Analyze current conversation** (from memory or `.WAI/session-conversation.jsonl` if exists)
+1. **Analyze current conversation** (from memory or `WAI-Spoke/WAI-Session-Log.jsonl` if exists)
 2. **Extract key information:**
    - Session summary (3-5 sentences)
    - Key decisions made
@@ -624,7 +624,7 @@ Ready to continue with compressed context.
 
 #### Step 2: Load Conversation Log
 
-Read `.WAI/session-conversation.jsonl` line-by-line to understand the full session context.
+Read `WAI-Spoke/WAI-Session-Log.jsonl` line-by-line to understand the full session context.
 
 #### Step 3: Extract Session Insights
 
@@ -647,7 +647,7 @@ From the conversation log and compressed summary, identify:
 - Count entries added to `decisions` array this session
 
 **E. High-Impact Signals**
-- Count entries appended to `wheel-signals.jsonl` this session
+- Count entries appended to `WAI-Signals.jsonl` this session
 
 #### Step 4: Update WAI-State.json
 
@@ -678,15 +678,15 @@ Move `current_session` → `last_closeout` with extracted insights:
 **CRITICAL:** Only delete AFTER successfully writing summary to WAI-State.json!
 
 ```bash
-rm -f .WAI/session-conversation.jsonl
+rm -f WAI-Spoke/WAI-Session-Log.jsonl
 ```
 
-#### Step 6: Mark .WAI/ Folder Ready for Hub Learning
+#### Step 6: Mark WAI-Spoke/ Folder Ready for Hub Learning
 
 **IMPORTANT:** Hub learning cannot proceed until:
 - Closeout is complete
 - Conversation log consumed and cleared
-- .WAI/ folder in clean state
+- WAI-Spoke/ folder in clean state
 
 #### Step 7: Provide Summary
 
@@ -714,10 +714,10 @@ rm -f .WAI/session-conversation.jsonl
 
 **State files updated:**
 - ✓ WAI-State.json (session summary recorded)
-- ✓ wheel-signals.jsonl (if applicable)
-- ✓ session-conversation.jsonl (cleared)
+- ✓ WAI-Signals.jsonl (if applicable)
+- ✓ WAI-Session-Log.jsonl (cleared)
 
-**Hub learning readiness:** ✓ .WAI/ folder ready for learning process
+**Hub learning readiness:** ✓ WAI-Spoke/ folder ready for learning process
 
 **Next session will:**
 - Load updated context automatically
@@ -741,7 +741,7 @@ This command is **compact + closeout + git commit** in one operation.
 - Generate session summary using compressed context
 - Update WAI-State.json
 - Clear conversation log
-- Ensure .WAI/ folder ready for hub learning
+- Ensure WAI-Spoke/ folder ready for hub learning
 
 #### Step 2: Git Workflow
 
@@ -750,7 +750,7 @@ This command is **compact + closeout + git commit** in one operation.
 git status --short
 
 # Add all WAI state files
-git add .WAI/WAI-State.json .WAI/WAI-State.md .WAI/WAI-Guide.md .WAI/wheel-signals.jsonl
+git add WAI-Spoke/WAI-State.json WAI-Spoke/WAI-State.md WAI-Spoke/WAI-Guide.md WAI-Spoke/WAI-Signals.jsonl
 
 # Add other modified files (if user confirms)
 git add {files_from_session}
@@ -785,7 +785,7 @@ git show --stat
 
 **Commit hash:** {hash}
 **Files committed:**
-- .WAI/WAI-State.json
+- WAI-Spoke/WAI-State.json
 - {other_files}
 
 **Commit message:**
@@ -827,13 +827,12 @@ All changes captured and committed!
 | `WAI` | Main CLI tool |
 | `migrate-scf-to-wheelwright.py` | One-time SCF migration |
 | `templates/wheel/` | WAI template files |
-| `WAI-Spokes/` | Spoke loader + built-in spokes |
-| `.WAI/WAI-Guide.md` | Complete AI instructions (460 lines) |
-| `.WAI/WAI-State.json` | Project state and decisions |
-| `.WAI/WAI-State.md` | Strategic vision and evolution |
+| `WAI-Spoke/WAI-Guide.md` | Complete AI instructions (460 lines) |
+| `WAI-Spoke/WAI-State.json` | Project state and decisions |
+| `WAI-Spoke/WAI-State.md` | Strategic vision and evolution |
 
 ### Next Steps (from WAI-State.json)
-Check `.WAI/WAI-State.json` → `context.next_actions` for current tasks.
+Check `WAI-Spoke/WAI-State.json` → `context.next_actions` for current tasks.
 
 ### Philosophy
 This project follows "AI as responsible partner" philosophy:
@@ -846,7 +845,7 @@ This project follows "AI as responsible partner" philosophy:
 ## TROUBLESHOOTING
 
 ### "Protocol failed to load"
-- Verify `.WAI/` folder exists in project root
+- Verify `WAI-Spoke/` folder exists in project root
 - Check all 3 required files are present (WAI-Guide.md, WAI-State.json, WAI-State.md)
 - Verify JSON is valid in WAI-State.json
 

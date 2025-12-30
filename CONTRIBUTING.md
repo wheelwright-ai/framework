@@ -55,10 +55,9 @@ python -m pytest tests/
 
 ```
 wheelwright/
-├── wwai                      # Main CLI entry point
-├── WWAI-Framework/           # Core framework modules
-├── WWAI-Spokes/              # Built-in spokes
-├── WWAI-Hub/                 # Hub management
+├── WAI                      # Main CLI entry point
+├── WAI-Framework/           # Core framework modules
+├── WAI-Hub/                 # Hub management
 ├── templates/                # Template files
 │   ├── wheel/                # Wheel templates
 │   └── hub/                  # Hub templates

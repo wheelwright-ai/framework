@@ -15,7 +15,7 @@ git clone https://github.com/wheelwright-ai/framework.git wheelwright
 cd wheelwright
 
 # Make CLI executable
-chmod +x wwai
+chmod +x WAI
 
 # Add to PATH (optional)
 echo 'export PATH="$PATH:'$(pwd)'"' >> ~/.bashrc
@@ -28,26 +28,26 @@ source ~/.bashrc
 
 ```bash
 cd ~/projects/my-project
-wwai init
+WAI init
 ```
 
-This creates a `.wwai/` directory with:
-- `WWAI-State.json` - Machine-readable state
-- `WWAI-State.md` - Human-readable context
-- `WWAI-Guide.md` - AI instructions
-- `wheel-signals.jsonl` - Learning log
-- `kb-sync.json` - Hub sync status
+This creates a `WAI-Spoke/` directory with:
+- `WAI-State.json` - Machine-readable state
+- `WAI-State.md` - Human-readable context
+- `WAI-Guide.md` - AI instructions
+- `WAI-Signals.jsonl` - Learning log
+- `WAI-KB-Sync.json` - Hub sync status
 
 ### 2. Start an AI Session
 
 Copy your wheel context to share with any AI:
 
 ```bash
-wwai context | pbcopy  # macOS
-wwai context | xclip   # Linux
+WAI context | pbcopy  # macOS
+WAI context | xclip   # Linux
 ```
 
-Or simply tell your AI to read the `.wwai/` directory.
+Or simply tell your AI to read the `WAI-Spoke/` directory.
 
 ### 3. Work with Your AI Partner
 
@@ -62,7 +62,7 @@ During the session, use these commands:
 ### 4. Check Status
 
 ```bash
-wwai status
+WAI status
 ```
 
 ## Creating a Hub (Optional)
@@ -70,7 +70,7 @@ wwai status
 If you work on multiple projects, create a hub:
 
 ```bash
-wwai hub create
+WAI hub create
 ```
 
 This enables:

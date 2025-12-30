@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
+    "project_root": "/home/mario/projects/wheelwright-ai/framework",
+    "project_name": "framework",
+    "last_updated": "2025-12-30T04:13:55Z",
+    "updated_by": "Claude Sonnet 4.5"
+  },
+  "core_files": {
+    "WAI-State.json": {
+      "purpose": "Project state, decisions, session tracking",
+      "required": true,
+      "auto_managed": true
+    },
+    "WAI-Guide.md": {
+      "purpose": "AI behavioral instructions and protocols",
+      "required": true,
+      "auto_managed": false
+    },
+    "WAI-State.md": {
+      "purpose": "Strategic vision and evolution narrative",
+      "required": true,
+      "auto_managed": false
+    },
+    "WAI-File-Index.json": {
+      "purpose": "Manifest of all managed files and bidirectional attribution",
+      "required": true,
+      "auto_managed": true
+    }
+  },
+  "operational_files": {
+    "WAI-KB-Sync.json": {
+      "purpose": "Hub knowledge base sync metadata",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "safe_to_delete_if_stale"
+    },
+    "WAI-Signals.jsonl": {
+      "purpose": "Learning signals for hub ingestion",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "archive_after_hub_sync"
+    },
+    "WAI-Session-Log.jsonl": {
+      "purpose": "Conversation log for current session",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "delete_on_closeout"
+    }
+  },
+  "project_files": {},
+  "legacy_files": {}
+}

@@ -29,23 +29,23 @@ Wheelwright is a context persistence framework for AI-assisted development. It m
 
 ## File Structure
 
-### Wheel Files (`.wwai/`)
+### Wheel Files (`WAI-Spoke/`)
 
 ```
-.wwai/
-├── WWAI-State.json       # Machine-readable state
-├── WWAI-State.md         # Human-readable context
-├── WWAI-Guide.md         # AI instructions
-├── wheel-signals.jsonl   # High-impact learnings
-└── kb-sync.json          # Hub sync status
+WAI-Spoke/
+├── WAI-State.json       # Machine-readable state
+├── WAI-State.md         # Human-readable context
+├── WAI-Guide.md         # AI instructions
+├── WAI-Signals.jsonl   # High-impact learnings
+└── WAI-KB-Sync.json          # Hub sync status
 ```
 
 ### Hub Files
 
 ```
 wheelwright-hub/
-├── .wwai/                # Hub's own state
-├── .wwai-registry/       # Wheel tracking
+├── WAI-Spoke/                # Hub's own state
+├── .WAI-registry/       # Wheel tracking
 │   ├── wheels/           # Individual wheel data
 │   └── wheel-projects.json
 ├── hub-profile.json      # User preferences
@@ -57,7 +57,7 @@ wheelwright-hub/
 ```
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
 │   AI Session │────▶│    Wheel     │────▶│     Hub      │
-│              │     │  (.wwai/)    │     │  (learnings) │
+│              │     │  (WAI-Spoke/)    │     │  (learnings) │
 └──────────────┘     └──────────────┘     └──────────────┘
        ▲                    │                    │
        │                    ▼                    ▼
@@ -71,14 +71,14 @@ wheelwright-hub/
 
 ### 1. State Management
 
-**WWAI-State.json** stores:
+**WAI-State.json** stores:
 - Project foundation (identity, boundaries, approach)
 - Session state (last modified, session count)
 - Decisions and their rationale
 - Active spokes
 - AI rules and behaviors
 
-**WWAI-State.md** provides:
+**WAI-State.md** provides:
 - Human-readable strategic context
 - Evolution log
 - Current focus and next actions
@@ -95,7 +95,7 @@ Foundation must be completed before any work begins.
 ### 3. Signal System
 
 High-impact learnings (impact >= 8) are:
-1. Recorded in `wheel-signals.jsonl`
+1. Recorded in `WAI-Signals.jsonl`
 2. Synced to the hub
 3. Distributed to other wheels
 

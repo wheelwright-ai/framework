@@ -72,3 +72,6 @@ yarn-error.log*
 # But ignore local test artifacts
 test-output/
 *.tmp
+
+# Wheelwright session logs (temporary)
+.WAI/session-conversation.jsonl

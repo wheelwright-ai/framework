@@ -7,8 +7,8 @@ git commit -m "Initial commit: Wheelwright Framework v1.0.0
 Wheelwright Framework - Build AI wheels that roll forward forever.
 
 Includes:
-- wwai CLI tool
-- WWAI template files (State.json, State.md, Guide.md)
+- WAI CLI tool
+- WAI template files (State.json, State.md, Guide.md)
 - Spoke loader architecture with 3 built-in spokes
 - Documentation and examples
 - Demo wheel for learning

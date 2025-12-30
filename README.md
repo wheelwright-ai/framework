@@ -26,11 +26,11 @@ Wheelwright gives your AI assistants **perfect memory** across all your work ses
 
 WAI (pronounced "way") stands for **Wheelwright AI**.
 
-Your Spoke-Project's `.WAI/` directory contains:
+Your Spoke-Project's `WAI-Spoke/` directory contains:
 - **WAI-State.json** - Technical state, foundation, session tracking
 - **WAI-State.md** - Strategic vision and evolution log
 - **WAI-Guide.md** - Instructions for AI assistants
-- **wheel-signals.jsonl** - High-impact learnings log
+- **WAI-Signals.jsonl** - High-impact learnings log
 
 *"This is the WAI"* - The files that carry context forward. 🎯
 
@@ -163,7 +163,7 @@ This isn't just about "AI memory" - it's about **intelligent, cost-effective AI 
 - **Hub** = Your centralized memory and project registry (stored at ~/wheelwright-hub/)
 - **Spoke-Projects** (or **Spokes** for short) = Individual projects using Wheelwright (like your apps, research, writing projects)
 - **Wheels** = The combination of your Hub and all Spoke-Projects working together
-- **Spoke-Signals** = How a Spoke-Project tracks notable learnings (wheel-signals.jsonl)
+- **Spoke-Signals** = How a Spoke-Project tracks notable learnings (WAI-Signals.jsonl)
 - **Framework** = The Wheelwright source code (this repo)
 
 **How they work together:** Your Hub discovers and tracks all your Spoke-Projects. Each Spoke signals important learnings back to the Hub. The Hub consolidates this knowledge and teaches all Spokes - raising all boats by raising the tide. This continuous "rolling" forward means your AI never forgets.
@@ -229,12 +229,12 @@ WAI init
 WAI init ~/projects/my-awesome-project
 ```
 
-This creates a `.WAI/` directory containing your project's memory:
+This creates a `WAI-Spoke/` directory containing your project's memory:
 - `WAI-State.json` - Machine-readable project state and foundation
 - `WAI-State.md` - Human-readable strategic context and vision
 - `WAI-Guide.md` - Instructions that teach AI assistants about your project
-- `wheel-signals.jsonl` - High-impact learnings ready for Hub collection
-- `kb-sync.json` - Hub synchronization status
+- `WAI-Signals.jsonl` - High-impact learnings ready for Hub collection
+- `WAI-KB-Sync.json` - Hub synchronization status
 
 ### Step 3: Create Your Hub (After 1+ Spoke-Projects)
 
@@ -330,7 +330,7 @@ You: *sighs* "Yes, we already set that up in session 1..."
 
 ```
 You: "Let's add authentication to the app"
-AI: *reads .WAI/* "I see we're using PostgreSQL with bcrypt.
+AI: *reads WAI-Spoke/* "I see we're using PostgreSQL with bcrypt.
     Based on our architecture decisions (WAI-State.json:147),
     I'll implement JWT with refresh tokens as discussed.
     Should I follow the pattern we established in the user service?"
@@ -396,7 +396,7 @@ Session 4 (Different Project)
 
 ### Why Automatic Discovery Matters
 
-When you start an AI session in VS Code, Claude Code, Cursor, or any AI-powered IDE, the AI needs to **see your `.WAI/` folder immediately** - before you type a single prompt. Without this:
+When you start an AI session in VS Code, Claude Code, Cursor, or any AI-powered IDE, the AI needs to **see your `WAI-Spoke/` folder immediately** - before you type a single prompt. Without this:
 
 - ❌ AI starts with zero context
 - ❌ You have to manually paste context every session
@@ -420,8 +420,8 @@ Popular AI assistants automatically discover WAI through standard integration po
 // Place instructions in: CLAUDE.md
 // WAI templates include this by default
 
-// Your CLAUDE.md points to .WAI/ folder:
-"IMPORTANT: Read .WAI/ folder first to understand project context."
+// Your CLAUDE.md points to WAI-Spoke/ folder:
+"IMPORTANT: Read WAI-Spoke/ folder first to understand project context."
 ```
 
 #### VS Code Extensions (Copilot, Codeium, etc.)
@@ -429,11 +429,11 @@ Popular AI assistants automatically discover WAI through standard integration po
 // .vscode/settings.json - WAI creates this automatically
 {
   "ai.context.files": [
-    ".WAI/WAI-Guide.md",
-    ".WAI/WAI-State.json",
-    ".WAI/WAI-State.md"
+    "WAI-Spoke/WAI-Guide.md",
+    "WAI-Spoke/WAI-State.json",
+    "WAI-Spoke/WAI-State.md"
   ],
-  "ai.instructions": ".WAI/WAI-Guide.md"
+  "ai.instructions": "WAI-Spoke/WAI-Guide.md"
 }
 ```
 
@@ -441,14 +441,14 @@ Popular AI assistants automatically discover WAI through standard integration po
 ```json
 // .cursorrules - WAI generates on init
 // Cursor automatically loads this file
-// Contains: "Read .WAI/WAI-Guide.md for complete project context"
+// Contains: "Read WAI-Spoke/WAI-Guide.md for complete project context"
 ```
 
 #### Windsurf, Zed, and Others
 ```markdown
 // .ai/instructions.md or similar conventions
 // WAI detects your IDE and creates appropriate files
-// Standard pattern: Point to .WAI/ as source of truth
+// Standard pattern: Point to WAI-Spoke/ as source of truth
 ```
 
 ### The WAI Automatic Setup
@@ -457,7 +457,7 @@ When you run `WAI init`, the framework:
 
 1. **Detects your environment** - VS Code? Claude Code? Cursor? Other?
 2. **Creates integration files** - `.vscode/settings.json`, `CLAUDE.md`, `.cursorrules`, etc.
-3. **Points AI to `.WAI/`** - Each integration file references `.WAI/WAI-Guide.md`
+3. **Points AI to `WAI-Spoke/`** - Each integration file references `WAI-Spoke/WAI-Guide.md`
 4. **Configures auto-loading** - AI tools read context on session start
 
 ### What Gets Loaded Automatically
@@ -469,13 +469,13 @@ Session Start
     ↓
 AI Tool Detects Integration File (CLAUDE.md, .cursorrules, etc.)
     ↓
-Reads .WAI/WAI-Guide.md
+Reads WAI-Spoke/WAI-Guide.md
     ↓
-Loads .WAI/WAI-State.json (foundation, decisions, constraints)
+Loads WAI-Spoke/WAI-State.json (foundation, decisions, constraints)
     ↓
-Loads .WAI/WAI-State.md (strategic context, vision)
+Loads WAI-Spoke/WAI-State.md (strategic context, vision)
     ↓
-Checks .WAI/kb-sync.json (Hub learnings available?)
+Checks WAI-Spoke/WAI-KB-Sync.json (Hub learnings available?)
     ↓
 AI is now FULLY CONTEXT-AWARE before first response
 ```
@@ -521,7 +521,7 @@ For AI tools not yet supported, you can manually configure:
 WAI context
 
 # Or create a custom integration file
-echo "Read .WAI/WAI-Guide.md for project context" > .your-ai-tool-config
+echo "Read WAI-Spoke/WAI-Guide.md for project context" > .your-ai-tool-config
 ```
 
 **The goal:** Every AI tool should load WAI automatically. If your tool isn't listed, [open an issue](https://github.com/wheelwright-ai/framework/issues) and we'll add support.
@@ -556,15 +556,15 @@ echo "Read .WAI/WAI-Guide.md for project context" > .your-ai-tool-config
       ┌──────────┐      ┌──────────┐      ┌──────────┐
       │ Project A│      │ Project B│      │ Project C│
       │ (Spoke)  │      │ (Spoke)  │      │ (Spoke)  │
-      │  .WAI/  │      │  .WAI/  │      │  .WAI/  │
+      │  WAI-Spoke/  │      │  WAI-Spoke/  │      │  WAI-Spoke/  │
       └──────────┘      └──────────┘      └──────────┘
 ```
 
 ### The Wheel in Motion
 
-1. **You work with AI** - Any LLM reads your `.WAI/` context
+1. **You work with AI** - Any LLM reads your `WAI-Spoke/` context
 2. **AI updates state** - Session info, decisions, insights logged
-3. **Signals flow to Hub** - High-impact learnings (impact >= 8) shared via `wheel-signals.jsonl`
+3. **Signals flow to Hub** - High-impact learnings (impact >= 8) shared via `WAI-Signals.jsonl`
 4. **Hub learns and teaches** - Patterns consolidated, distributed to other Spoke-Projects
 5. **All boats rise** - Your next project starts smarter because of this one
 
@@ -588,12 +588,12 @@ During any AI session with Wheelwright, these commands optimize efficiency and c
 
 ```
 your-project/
-├── .WAI/                    # Wheelwright context directory
+├── WAI-Spoke/                    # Wheelwright context directory
 │   ├── WAI-State.json       # Machine-readable state, foundation, decisions
 │   ├── WAI-State.md         # Human-readable strategic context
 │   ├── WAI-Guide.md         # AI instructions and behavioral guidelines
-│   ├── wheel-signals.jsonl   # High-impact learnings ready for Hub
-│   └── kb-sync.json          # Hub synchronization status
+│   ├── WAI-Signals.jsonl   # High-impact learnings ready for Hub
+│   └── WAI-KB-Sync.json          # Hub synchronization status
 └── ... your project files
 ```
 
@@ -601,7 +601,7 @@ your-project/
 
 ```
 wheelwright-hub/
-├── .WAI/                    # Hub's own Wheelwright context
+├── WAI-Spoke/                    # Hub's own Wheelwright context
 ├── .WAI-registry/           # Spoke-Project tracking and metadata
 │   ├── wheels/               # Individual wheel metadata
 │   └── wheel-projects.json   # Complete registry

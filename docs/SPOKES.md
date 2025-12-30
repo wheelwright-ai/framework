@@ -29,7 +29,7 @@ Spokes are modular extensions that add specific capabilities to your Wheelwright
 4. Document the consensus
 
 ```bash
-wwai spoke add meta-consultation
+WAI spoke add meta-consultation
 ```
 
 ### Document Analysis
@@ -48,7 +48,7 @@ wwai spoke add meta-consultation
 - Cross-reference checking
 
 ```bash
-wwai spoke add document-analysis
+WAI spoke add document-analysis
 ```
 
 ### Code Review
@@ -68,7 +68,7 @@ wwai spoke add document-analysis
 - Best practices
 
 ```bash
-wwai spoke add code-review
+WAI spoke add code-review
 ```
 
 ## Managing Spokes
@@ -76,18 +76,18 @@ wwai spoke add code-review
 ### List Available Spokes
 
 ```bash
-wwai spoke list
+WAI spoke list
 ```
 
 ### Add a Spoke
 
 ```bash
-wwai spoke add <spoke-name>
+WAI spoke add <spoke-name>
 ```
 
 ### View Active Spokes
 
-Check `spokes.active` in your `WWAI-State.json`:
+Check `spokes.active` in your `WAI-State.json`:
 
 ```json
 {

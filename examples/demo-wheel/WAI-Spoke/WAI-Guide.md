@@ -37,18 +37,18 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-wai_path = Path(".WAI")
-kb_sync = json.loads((wai_path / "kb-sync.json").read_text()) if (wai_path / "kb-sync.json").exists() else {}
-state = json.loads((wai_path / "WAI-State.json").read_text())
-wai_meta = state.get("wheelwright", {})
+wwai_path = Path(".WAI")
+kb_sync = json.loads((wwai_path / "kb-sync.json").read_text()) if (wwai_path / "kb-sync.json").exists() else {}
+state = json.loads((wwai_path / "WAI-State.json").read_text())
+wwai_meta = state.get("wheelwright", {})
 
 # Check for new hub teachings
-hub_version = wai_meta.get("hub_reference", {}).get("current_hash_short", "unknown")
-last_teach = wai_meta.get("sync_history", [{}])[-1].get("date", "never") if wai_meta.get("sync_history") else "never"
+hub_version = wwai_meta.get("hub_reference", {}).get("current_hash_short", "unknown")
+last_teach = wwai_meta.get("sync_history", [{}])[-1].get("date", "never") if wwai_meta.get("sync_history") else "never"
 
 print(f"Hub version: {hub_version}")
 print(f"Last teach sync: {last_teach}")
-print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since_sync', 'unknown')}")
+print(f"Days since sync: {wwai_meta.get('development_health', {}).get('days_since_sync', 'unknown')}")
 ```
 
 **If you see new learnings or policies were added:**
