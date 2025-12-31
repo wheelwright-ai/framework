@@ -1,4 +1,4 @@
-# Wheelwright Framework - Phase 1, 2 & 3 Implementation Summary
+# Wheelwright Framework - Phase 1, 2, 3 & Critical Priority Implementation Summary
 
 **Date:** 2025-12-31
 **Session:** Autonomous implementation of core framework features
@@ -8,12 +8,14 @@
 
 ## Executive Summary
 
-Implemented **Phases 1, 2, and 3** of the Wheelwright Framework implementation plan, delivering:
+Implemented **Phases 1, 2, 3, and Critical Priority items** of the Wheelwright Framework implementation plan, delivering:
 - Complete session infrastructure and smart closeout processing
 - Full analytics system with baseline mode and token tracking
 - Modular IDE integration with 4 platform integrations
+- **Quality Gates for pre-closeout validation**
+- **Session commands: Time and Shipit**
 - 33 comprehensive smoke tests (all passing)
-- 3 major commits with ~4,227 lines of new code
+- 5 major commits with ~4,900+ lines of new code
 
 **Status:** Production-ready for alpha testing
 
@@ -50,8 +52,9 @@ Content rebalancing system:
 - `rebalance()` - Perform rebalancing
 - `scan_unknown_files()` - Find unknown files
 
-#### 3. **wai_cli/closeout.py** (245 lines)
-Smart closeout processor with 7-step workflow:
+#### 3. **wai_cli/closeout.py** (290+ lines)
+Smart closeout processor with 8-step workflow:
+0. Run quality gates (unless minor changes)
 1. Scan for unknown files
 2. Reconcile hub learnings (WAI-Hub-Learnings.md → WAI-Guide.md)
 3. Rebalance file content
@@ -236,6 +239,107 @@ Get optimization suggestions:
 
 ---
 
+## Critical Priority Items ✅
+
+### Quality Gates & Session Commands Implementation
+
+Following Phase 3, critical priority items were implemented to ensure code quality and provide essential session management tools.
+
+### Modules Created
+
+#### 18. **wai_cli/quality_gates.py** (386 lines)
+Pre-closeout validation system:
+- Integrated as Step 0 in closeout workflow
+- Validates test coverage, unit tests, contradictions, code smells
+- Interactive confirmation for blockers
+- Automatic skip for minor changes (<10 lines, docs only)
+
+**Quality Gate Checks:**
+1. **Test Coverage** - Runs pytest and shell tests, blocks if failing
+2. **Unit Tests** - Checks that modified Python files have test_*.py or *_test.py
+3. **Contradictions** - Detects reversals of high-impact decisions (checks commit messages for reversal keywords)
+4. **Code Smells** - Flags files exceeding 500 lines
+5. **UAT Generation** - Creates User Acceptance Testing templates for features
+
+**Key Methods:**
+- `run_all_gates()` - Execute all validation checks
+- `_check_if_minor_changes()` - Determine if validation can be skipped
+- `_check_test_coverage()` - Verify tests exist and pass
+- `_check_unit_tests()` - Check modified files have tests
+- `_check_contradictions()` - Detect conflicts with existing decisions
+- `_check_code_smells()` - Find files that may need refactoring
+- `generate_uat_instructions()` - Generate UAT checklist templates
+
+**Integration:**
+- Runs automatically before closeout (Step 0/8)
+- Non-blocking warnings for missing tests
+- Blocking errors for failing tests
+- Interactive confirmation to proceed despite blockers
+
+### CLI Commands Added
+
+#### 19. **WAI-CLI time [path]**
+Show current session token usage and capacity:
+- Displays estimated usage % of context window
+- Shows capacity warnings at 60%, 80%, 90% thresholds
+- Integrates with SessionManager.get_capacity_estimate()
+- Shows session turn statistics if log exists
+- Helps users monitor context consumption during work
+
+**Output:**
+```
+Estimated usage: ~7.5% of context window
+Tokens used: ~15,000 / 200,000
+Capacity: 200,000 tokens
+
+✓ Low usage - plenty of capacity available.
+```
+
+**Warning Levels:**
+- Normal (< 60%): Low usage message
+- Medium (60-79%): Moderate usage
+- High (80-89%): Consider closeout soon
+- Critical (≥ 90%): Recommend immediate closeout
+
+#### 20. **WAI-CLI shipit [path] [--non-interactive] [--push]**
+Closeout session and create git commit:
+- Runs full 8-step closeout workflow
+- Checks if directory is a git repository
+- Auto-stages WAI state files (WAI-State.json, WAI-State.md, WAI-Guide.md, WAI-Signals.jsonl)
+- Interactively prompts to stage other modified files
+- Generates commit message from session summary
+- Optional --push flag to push to remote
+- Aborts if closeout fails or quality gates have blockers
+
+**Workflow:**
+1. Execute full closeout (8 steps)
+2. Check git status
+3. Auto-stage WAI files
+4. Prompt for other files (interactive mode)
+5. Create commit with session summary
+6. Optionally push to remote
+
+**Commit Message Format:**
+```
+Session closeout: {summary}
+
+{full summary text}
+
+Session turns: {count}
+Key topics: {topic1}, {topic2}
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+### Updates to Existing Modules
+
+- **wai_cli/closeout.py** - Integrated Quality Gates as Step 0, renumbered steps from 1-7 to 1-8
+- **wai_cli/core.py** - Added time and shipit command parsers and handlers (~270 lines)
+
+---
+
 ## Testing & Quality Assurance
 
 ### Smoke Tests Created
@@ -275,7 +379,8 @@ Get optimization suggestions:
 | wai_cli/session.py | 302 | Session lifecycle |
 | wai_cli/rebalancer.py | 247 | Content rebalancing |
 | wai_cli/metrics.py | 328 | Analytics tracking |
-| wai_cli/closeout.py | 245 | Closeout processing |
+| wai_cli/closeout.py | 290 | Closeout processing (updated with quality gates) |
+| wai_cli/quality_gates.py | 386 | Quality gates validation |
 | wai_cli/integrations/base.py | 150 | IDE integration interface |
 | wai_cli/integrations/claude_code.py | 146 | Claude Code integration |
 | wai_cli/integrations/vscode.py | 93 | VS Code integration |
@@ -283,18 +388,18 @@ Get optimization suggestions:
 | wai_cli/integrations/web_llm.py | 145 | Web LLM integration |
 | wai_cli/integrations/manager.py | 216 | IDE manager |
 | smoke-tests-phase1-2.sh | 530 | Phase 1 & 2 tests |
-| **TOTAL NEW CODE** | **2,526** | **Core implementation** |
+| **TOTAL NEW CODE** | **2,957** | **Core implementation** |
 
 ### Files Modified
 
 | File | Lines Added | Purpose |
 |------|-------------|---------|
-| wai_cli/core.py | ~350 | CLI commands (stats, baseline, closeout, configure-ide) |
+| wai_cli/core.py | ~620 | CLI commands (stats, baseline, closeout, time, shipit, configure-ide) |
 | templates/WAI/WAI-State.json | ~26 | Analytics schema |
 | WAI-Spoke/WAI-State.json | ~26 | Analytics schema |
-| **TOTAL MODIFIED** | **~402** | **Integration & schema** |
+| **TOTAL MODIFIED** | **~672** | **Integration & schema** |
 
-### **Grand Total: 2,928 lines implemented**
+### **Grand Total: 3,629 lines implemented**
 
 ---
 
@@ -316,7 +421,25 @@ d7746af Phase 3 Implementation: IDE Integration & Capability Discovery
 - Created: 7 integration files
 ```
 
-### **Total Changes: 3,353 insertions, 86 deletions**
+### Commit 3: Quality Gates Implementation
+```
+0b253b5 Implement Quality Gates + Time command (Critical Priority items)
+- 4 files changed
+- 498 insertions(+), 10 deletions(-)
+- Created: quality_gates.py
+- Updated: closeout.py (integrated quality gates as Step 0)
+- Updated: core.py (added time command)
+```
+
+### Commit 4: Shipit Command Implementation
+```
+b06a4c7 Implement Shipit command (Closeout + Git Commit)
+- 1 file changed
+- 196 insertions(+)
+- Updated: core.py (added shipit command)
+```
+
+### **Total Changes: 4,053 insertions, 96 deletions**
 
 ---
 
@@ -329,7 +452,7 @@ d7746af Phase 3 Implementation: IDE Integration & Capability Discovery
 | Conversation logging | ✅ Complete | WAI-Session-Log.jsonl format |
 | Token estimation | ✅ Complete | Heuristic-based (chars/4) |
 | File rebalancer | ✅ Complete | JSON/MD token limits enforced |
-| Smart closeout (7 steps) | ✅ Complete | Full workflow implemented |
+| Smart closeout (8 steps) | ✅ Complete | Full workflow with quality gates |
 | Unknown file detection | ✅ Complete | Scans and prompts user |
 | **Phase 2: Analytics & Commands** |
 | Session metrics | ✅ Complete | Count, turns, duration |
@@ -354,6 +477,15 @@ d7746af Phase 3 Implementation: IDE Integration & Capability Discovery
 | configure-ide setup | ✅ Complete | Config generation |
 | configure-ide capabilities | ✅ Complete | Capability display |
 | configure-ide optimize | ✅ Complete | Suggestion display |
+| **Critical Priority Items** |
+| Quality Gates | ✅ Complete | Pre-closeout validation (5 checks) |
+| Test coverage validation | ✅ Complete | Runs pytest/shell tests, blocks if failing |
+| Unit test verification | ✅ Complete | Checks modified files have tests |
+| Contradiction detection | ✅ Complete | Detects reversals of decisions |
+| Code smell detection | ✅ Complete | Flags files >500 lines |
+| UAT generation | ✅ Complete | Creates UAT templates |
+| WAI-CLI time command | ✅ Complete | Token usage with capacity warnings |
+| WAI-CLI shipit command | ✅ Complete | Closeout + git commit |
 
 ---
 
