@@ -158,6 +158,10 @@ Examples:
         baseline_status = baseline_subparsers.add_parser('status', help='Show baseline mode status')
         baseline_status.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
+        # Time command
+        time_parser = subparsers.add_parser('time', help='Show current session token usage and capacity')
+        time_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+
         # Context command (placeholder)
         context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
         context_parser.add_argument('path', nargs='?', default='.', help='Project path')
@@ -1460,6 +1464,8 @@ Examples:
             self._cmd_stats(args)
         elif args.command == 'baseline':
             self._cmd_baseline(args)
+        elif args.command == 'time':
+            self._cmd_time(args)
         elif args.command == 'configure-ide':
             self._cmd_configure_ide(args)
         elif args.command == 'context':
@@ -2576,6 +2582,72 @@ Examples:
 
         except Exception as e:
             print_error(f"Baseline command failed: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _cmd_time(self, args):
+        """Handle time command - show token usage and capacity."""
+        from .session import SessionManager
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                return
+
+            session = SessionManager(spoke_path)
+            capacity = session.get_capacity_estimate()
+
+            print_info("\n" + "=" * 60)
+            print_success("  Token Usage Estimate")
+            print_info("=" * 60 + "\n")
+
+            # Display capacity
+            capacity_pct = capacity['capacity_percent']
+            tokens_used = capacity['tokens_used']
+            context_limit = capacity['context_limit']
+            warning_level = capacity['warning_level']
+
+            print_info(f"  Estimated usage: ~{capacity_pct * 100:.1f}% of context window")
+            print_info(f"  Tokens used: ~{tokens_used:,} / {context_limit:,}")
+            print_info(f"  Capacity: {context_limit:,} tokens\n")
+
+            # Warning thresholds
+            if warning_level == 'critical':
+                print_error("  ⚠️  CRITICAL: Approaching capacity limit!")
+                print_info("     Context window is nearly full.")
+                print_info("     Recommend running 'Closeout' immediately to consolidate state.\n")
+            elif warning_level == 'high':
+                print_error("  ⚠️  WARNING: High capacity usage!")
+                print_info("     Consider running 'Closeout' soon to consolidate state.\n")
+            elif warning_level == 'medium':
+                print_info("  ℹ️  Moderate usage - you have plenty of capacity remaining.\n")
+            else:
+                print_success("  ✓ Low usage - plenty of capacity available.\n")
+
+            # Show conversation log stats if exists
+            log_file = spoke_path / 'WAI-Spoke' / 'WAI-Session-Log.jsonl'
+            if log_file.exists():
+                # Count turns
+                turns = 0
+                import json
+                with open(log_file, 'r') as f:
+                    for line in f:
+                        turns += 1
+
+                print_info(f"  Session turns logged: {turns}")
+
+                if turns > 0:
+                    avg_tokens = tokens_used / turns if turns > 0 else 0
+                    print_info(f"  Average per turn: ~{avg_tokens:.0f} tokens\n")
+
+            print_info("=" * 60 + "\n")
+
+        except Exception as e:
+            print_error(f"Time command failed: {e}")
             import traceback
             traceback.print_exc()
 

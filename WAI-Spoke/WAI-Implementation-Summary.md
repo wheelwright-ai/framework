@@ -477,8 +477,6 @@ rm -rf "$TEST_DIR"
 1. **Token Estimation** - Uses heuristic (chars/4), not actual tokenizer
 2. **Signal Extraction** - Stub implementation (Phase 4 enhancement)
 3. **Session Start Hooks** - Documented but not CLI-integrated yet
-4. **Quality Gates** - Not implemented (Phase 4 priority)
-5. **Time/Compact Commands** - Not implemented yet
 
 ---
 

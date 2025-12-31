@@ -17,6 +17,7 @@ from typing import Dict, Any, List, Optional
 from .session import SessionManager
 from .rebalancer import FileRebalancer
 from .metrics import MetricsTracker
+from .quality_gates import QualityGates
 from .utils.input import print_success, print_error, print_info, print_warning, safe_confirm
 
 
@@ -32,6 +33,7 @@ class CloseoutProcessor:
         self.session = SessionManager(spoke_dir)
         self.rebalancer = FileRebalancer(self.wai_spoke_dir)
         self.metrics = MetricsTracker(self.wai_spoke_dir)
+        self.quality_gates = QualityGates(spoke_dir)
 
     def process_closeout(self, interactive: bool = True) -> Dict[str, Any]:
         """
@@ -49,11 +51,41 @@ class CloseoutProcessor:
             'steps_completed': [],
             'warnings': [],
             'errors': [],
-            'session_summary': {}
+            'session_summary': {},
+            'quality_gates': {}
         }
 
+        # Step 0: Run Quality Gates (unless truly minor changes)
+        print_info("  Step 0/8: Running quality gates...")
+        gate_results = self.quality_gates.run_all_gates(skip_minor=True)
+        results['quality_gates'] = gate_results
+
+        if gate_results.get('skip_reason'):
+            print_info(f"    ⚠️  {gate_results['skip_reason']}")
+            results['steps_completed'].append(f"Quality gates: {gate_results['skip_reason']}")
+        elif not gate_results['passed']:
+            # Quality gates failed
+            print_warning("    ⚠️  Quality gates failed!")
+
+            for blocker in gate_results.get('blockers', []):
+                print_error(f"      ✗ BLOCKER: {blocker}")
+
+            for warning in gate_results.get('warnings', []):
+                print_warning(f"      ⚠️  {warning}")
+
+            if interactive and gate_results.get('blockers'):
+                print_info("\n  Quality gate blockers detected. Continue anyway?")
+                if not safe_confirm("Proceed with closeout despite blockers?", default=False):
+                    results['errors'].append("Closeout aborted due to quality gate failures")
+                    return results
+
+            results['steps_completed'].append(f"Quality gates: Failed with {len(gate_results.get('blockers', []))} blockers")
+        else:
+            print_success("    ✓ All quality gates passed")
+            results['steps_completed'].append("Quality gates: Passed")
+
         # Step 1: Scan for unknown files
-        print_info("  Step 1/7: Scanning for unknown files...")
+        print_info("  Step 1/8: Scanning for unknown files...")
         unknown_files = self._scan_unknown_files(interactive)
         if unknown_files:
             results['warnings'].append(f"Found {len(unknown_files)} unknown files")
@@ -62,13 +94,13 @@ class CloseoutProcessor:
             results['steps_completed'].append("Scanned files: all known")
 
         # Step 2: Reconcile WAI-Hub-Learnings.md if exists
-        print_info("  Step 2/7: Reconciling hub learnings...")
+        print_info("  Step 2/8: Reconciling hub learnings...")
         learnings_reconciled = self._reconcile_hub_learnings()
         if learnings_reconciled:
             results['steps_completed'].append("Reconciled hub learnings into WAI-Guide.md")
 
         # Step 3: Run file rebalancer
-        print_info("  Step 3/7: Rebalancing file content...")
+        print_info("  Step 3/8: Rebalancing file content...")
         rebalance_result = self.rebalancer.rebalance()
         if rebalance_result['rebalanced']:
             results['steps_completed'].append(f"Rebalanced files: {len(rebalance_result['actions'])} actions")
@@ -76,13 +108,13 @@ class CloseoutProcessor:
             results['steps_completed'].append("Files balanced: no action needed")
 
         # Step 4: Extract session summary
-        print_info("  Step 4/7: Extracting session summary...")
+        print_info("  Step 4/8: Extracting session summary...")
         session_summary = self.session.extract_session_summary()
         results['session_summary'] = session_summary
         results['steps_completed'].append(f"Extracted summary: {session_summary['turns']} turns")
 
         # Step 5: Extract high-impact signals
-        print_info("  Step 5/7: Extracting high-impact signals...")
+        print_info("  Step 5/8: Extracting high-impact signals...")
         signals_extracted = self._extract_signals()
         if signals_extracted > 0:
             results['steps_completed'].append(f"Extracted {signals_extracted} high-impact signals")
@@ -90,12 +122,12 @@ class CloseoutProcessor:
             results['steps_completed'].append("No new signals to extract")
 
         # Step 6: Record analytics
-        print_info("  Step 6/7: Recording session analytics...")
+        print_info("  Step 6/8: Recording session analytics...")
         self._record_analytics(session_summary)
         results['steps_completed'].append("Recorded session analytics")
 
         # Step 7: Update session state and clear log
-        print_info("  Step 7/7: Finalizing closeout...")
+        print_info("  Step 7/8: Finalizing closeout...")
         self._finalize_closeout(session_summary)
         results['steps_completed'].append("Finalized: state updated, log cleared")
 
