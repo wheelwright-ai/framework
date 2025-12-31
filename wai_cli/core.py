@@ -162,6 +162,25 @@ Examples:
         context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
         context_parser.add_argument('path', nargs='?', default='.', help='Project path')
 
+        # Configure IDE command
+        config_ide_parser = subparsers.add_parser('configure-ide', help='Configure IDE integration')
+        config_ide_subparsers = config_ide_parser.add_subparsers(dest='config_ide_command')
+
+        config_ide_detect = config_ide_subparsers.add_parser('detect', help='Detect IDEs in use')
+        config_ide_detect.add_argument('path', nargs='?', default='.', help='Project path')
+
+        config_ide_setup = config_ide_subparsers.add_parser('setup', help='Setup IDE configuration')
+        config_ide_setup.add_argument('ide', nargs='?', help='IDE name (default: all detected)')
+        config_ide_setup.add_argument('path', nargs='?', default='.', help='Project path')
+        config_ide_setup.add_argument('--force', action='store_true', help='Overwrite existing config')
+
+        config_ide_capabilities = config_ide_subparsers.add_parser('capabilities', help='Show IDE capabilities')
+        config_ide_capabilities.add_argument('ide', nargs='?', help='IDE name (default: all detected)')
+        config_ide_capabilities.add_argument('path', nargs='?', default='.', help='Project path')
+
+        config_ide_optimize = config_ide_subparsers.add_parser('optimize', help='Get optimization suggestions')
+        config_ide_optimize.add_argument('path', nargs='?', default='.', help='Project path')
+
         # Version command
         version_parser = subparsers.add_parser('version', help='Show version info')
 
@@ -1441,6 +1460,8 @@ Examples:
             self._cmd_stats(args)
         elif args.command == 'baseline':
             self._cmd_baseline(args)
+        elif args.command == 'configure-ide':
+            self._cmd_configure_ide(args)
         elif args.command == 'context':
             self._cmd_context(args)
         elif args.command == 'version':
@@ -2555,6 +2576,138 @@ Examples:
 
         except Exception as e:
             print_error(f"Baseline command failed: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _cmd_configure_ide(self, args):
+        """Handle configure-ide command."""
+        from .integrations.manager import IDEManager
+
+        try:
+            spoke_path = normalize_path(args.path if hasattr(args, 'path') else '.')
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                return
+
+            manager = IDEManager(spoke_path)
+
+            if not hasattr(args, 'config_ide_command') or args.config_ide_command is None:
+                # Show available commands
+                print_info("\nIDE Configuration Commands:")
+                print_info("  detect        - Detect IDEs in use")
+                print_info("  setup         - Setup IDE configuration")
+                print_info("  capabilities  - Show IDE capabilities")
+                print_info("  optimize      - Get optimization suggestions\n")
+                return
+
+            if args.config_ide_command == 'detect':
+                ides = manager.detect_ides()
+
+                print_info("\n" + "=" * 60)
+                print_success("  Detected IDEs")
+                print_info("=" * 60 + "\n")
+
+                if not ides:
+                    print_info("  No IDEs detected.")
+                    print_info("\n  Supported IDEs:")
+                    print_info("    - Claude Code")
+                    print_info("    - VS Code")
+                    print_info("    - Cursor")
+                    print_info("    - Web LLMs (Claude.ai, ChatGPT, etc.)\n")
+                else:
+                    for ide_info in ides:
+                        status = "✓ Configured" if ide_info['configured'] else "⚠️ Not configured"
+                        print_success(f"  {ide_info['name']}: {status}")
+                        print_info(f"    Config: {ide_info['config_path']}")
+
+                print_info("\n" + "=" * 60 + "\n")
+
+            elif args.config_ide_command == 'setup':
+                ide_name = args.ide if hasattr(args, 'ide') and args.ide else None
+                force = args.force if hasattr(args, 'force') else False
+
+                if ide_name:
+                    # Setup specific IDE
+                    result = manager.configure_ide(ide_name, force=force)
+
+                    if result.get('success'):
+                        print_success(f"\n✓ Configured {ide_name}")
+                        print_info(f"  Config file: {result['config_path']}\n")
+                    else:
+                        print_error(f"\n✗ Failed to configure {ide_name}")
+                        print_info(f"  {result.get('error', 'Unknown error')}\n")
+                        if 'available' in result:
+                            print_info("  Available IDEs:")
+                            for available in result['available']:
+                                print_info(f"    - {available}")
+                            print_info("")
+                else:
+                    # Setup all detected
+                    results = manager.configure_all_detected(force=force)
+
+                    print_info("\n" + "=" * 60)
+                    print_success("  IDE Configuration Results")
+                    print_info("=" * 60 + "\n")
+
+                    for ide, result in results['results'].items():
+                        if result.get('configured'):
+                            print_success(f"  ✓ {ide}: Configured")
+                            print_info(f"    {result['config_path']}")
+                        else:
+                            print_warning(f"  ⚠️ {ide}: {result.get('reason', 'Not configured')}")
+
+                    print_info(f"\n  Total configured: {results['configured_count']}/{len(results['results'])}\n")
+
+            elif args.config_ide_command == 'capabilities':
+                ide_name = args.ide if hasattr(args, 'ide') and args.ide else None
+
+                capabilities = manager.probe_capabilities(ide_name)
+
+                print_info("\n" + "=" * 60)
+                print_success("  IDE Capabilities")
+                print_info("=" * 60 + "\n")
+
+                if 'error' in capabilities:
+                    print_error(f"  {capabilities['error']}\n")
+                elif 'ide' in capabilities:
+                    # Single IDE
+                    print_info(f"  IDE: {capabilities['ide']}\n")
+                    for cap, value in capabilities['capabilities'].items():
+                        print_info(f"    {cap}: {value}")
+                    print_info("")
+                else:
+                    # All detected
+                    for ide, caps in capabilities['capabilities'].items():
+                        print_success(f"  {ide}:")
+                        for cap, value in caps.items():
+                            print_info(f"    {cap}: {value}")
+                        print_info("")
+
+            elif args.config_ide_command == 'optimize':
+                report = manager.get_optimization_report()
+
+                print_info("\n" + "=" * 60)
+                print_success("  IDE Optimization Suggestions")
+                print_info("=" * 60 + "\n")
+
+                if not report['detected_ides']:
+                    print_info("  No IDEs detected.\n")
+                else:
+                    for ide in report['detected_ides']:
+                        suggestions = report['suggestions_by_ide'][ide]
+                        print_success(f"  {ide}:")
+                        if suggestions:
+                            for suggestion in suggestions:
+                                print_info(f"    • {suggestion}")
+                        else:
+                            print_info("    No specific suggestions")
+                        print_info("")
+
+        except Exception as e:
+            print_error(f"IDE configuration failed: {e}")
             import traceback
             traceback.print_exc()
 
