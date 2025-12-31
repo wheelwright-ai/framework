@@ -162,6 +162,12 @@ Examples:
         time_parser = subparsers.add_parser('time', help='Show current session token usage and capacity')
         time_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
+        # Shipit command (closeout + git commit)
+        shipit_parser = subparsers.add_parser('shipit', help='Closeout session and create git commit')
+        shipit_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+        shipit_parser.add_argument('--non-interactive', action='store_true', help='Skip confirmations')
+        shipit_parser.add_argument('--push', action='store_true', help='Push to remote after commit')
+
         # Context command (placeholder)
         context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
         context_parser.add_argument('path', nargs='?', default='.', help='Project path')
@@ -1466,6 +1472,8 @@ Examples:
             self._cmd_baseline(args)
         elif args.command == 'time':
             self._cmd_time(args)
+        elif args.command == 'shipit':
+            self._cmd_shipit(args)
         elif args.command == 'configure-ide':
             self._cmd_configure_ide(args)
         elif args.command == 'context':
@@ -2648,6 +2656,194 @@ Examples:
 
         except Exception as e:
             print_error(f"Time command failed: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _cmd_shipit(self, args):
+        """Handle shipit command - closeout + git commit."""
+        from .closeout import CloseoutProcessor
+        from .utils.input import safe_confirm
+        import subprocess
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                return
+
+            # Check if this is a git repository
+            result = subprocess.run(
+                ['git', 'rev-parse', '--git-dir'],
+                cwd=spoke_path,
+                capture_output=True,
+                text=True
+            )
+
+            if result.returncode != 0:
+                print_error("Not a git repository.")
+                print_info("Initialize git first: git init")
+                return
+
+            # Step 1: Run full closeout
+            print_info("\n🚀 Shipit: Closeout + Git Commit\n")
+            print_info("=" * 60)
+
+            processor = CloseoutProcessor(spoke_path)
+            results = processor.process_closeout(interactive=not args.non_interactive)
+
+            # Check if closeout was aborted
+            if results.get('errors') and any('aborted' in e.lower() for e in results['errors']):
+                print_error("\nShipit aborted due to closeout errors.")
+                return
+
+            # Step 2: Git workflow
+            print_info("\n" + "=" * 60)
+            print_info("  Git Commit Workflow")
+            print_info("=" * 60 + "\n")
+
+            # Check git status
+            result = subprocess.run(
+                ['git', 'status', '--short'],
+                cwd=spoke_path,
+                capture_output=True,
+                text=True
+            )
+
+            if not result.stdout.strip():
+                print_info("  Working tree clean - nothing to commit.\n")
+                return
+
+            # Show what changed
+            print_info("  Changed files:")
+            for line in result.stdout.strip().split('\n'):
+                print_info(f"    {line}")
+            print_info("")
+
+            # Stage WAI state files automatically
+            wai_files = [
+                'WAI-Spoke/WAI-State.json',
+                'WAI-Spoke/WAI-State.md',
+                'WAI-Spoke/WAI-Guide.md',
+                'WAI-Spoke/WAI-Signals.jsonl'
+            ]
+
+            files_to_commit = []
+            for wai_file in wai_files:
+                wai_file_path = spoke_path / wai_file
+                if wai_file_path.exists():
+                    # Check if file is modified
+                    result = subprocess.run(
+                        ['git', 'status', '--short', wai_file],
+                        cwd=spoke_path,
+                        capture_output=True,
+                        text=True
+                    )
+                    if result.stdout.strip():
+                        files_to_commit.append(wai_file)
+
+            if files_to_commit:
+                print_info("  Auto-staging WAI files:")
+                for f in files_to_commit:
+                    print_info(f"    + {f}")
+                    subprocess.run(['git', 'add', f], cwd=spoke_path)
+                print_info("")
+
+            # Ask about other files
+            result = subprocess.run(
+                ['git', 'status', '--short'],
+                cwd=spoke_path,
+                capture_output=True,
+                text=True
+            )
+
+            unstaged_files = []
+            for line in result.stdout.strip().split('\n'):
+                if line and not line.strip().startswith('A'):
+                    # Extract filename (handle both modified and untracked)
+                    parts = line.strip().split(maxsplit=1)
+                    if len(parts) == 2:
+                        filename = parts[1]
+                        if not filename.startswith('WAI-Spoke/'):
+                            unstaged_files.append(filename)
+
+            if unstaged_files and not args.non_interactive:
+                print_info("  Other modified files:")
+                for f in unstaged_files:
+                    print_info(f"    {f}")
+                print_info("")
+
+                if safe_confirm("  Stage these files too?", default=False):
+                    for f in unstaged_files:
+                        subprocess.run(['git', 'add', f], cwd=spoke_path)
+                        print_info(f"    + {f}")
+                    print_info("")
+
+            # Generate commit message from session summary
+            session_summary = results.get('session_summary', {})
+            summary_text = session_summary.get('summary', 'Session closeout')
+            key_topics = session_summary.get('key_topics', [])
+            turns = session_summary.get('turns', 0)
+
+            # Create commit message
+            commit_msg = f"""Session closeout: {summary_text[:60]}
+
+{summary_text}
+
+Session turns: {turns}
+{f'Key topics: {", ".join(key_topics)}' if key_topics else ''}
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
+
+            # Create commit
+            result = subprocess.run(
+                ['git', 'commit', '-m', commit_msg],
+                cwd=spoke_path,
+                capture_output=True,
+                text=True
+            )
+
+            if result.returncode == 0:
+                print_success("\n  ✓ Commit created successfully!\n")
+
+                # Show commit details
+                result = subprocess.run(
+                    ['git', 'log', '-1', '--stat'],
+                    cwd=spoke_path,
+                    capture_output=True,
+                    text=True
+                )
+                print_info(result.stdout)
+
+                # Push to remote if requested
+                if args.push:
+                    print_info("  Pushing to remote...")
+                    result = subprocess.run(
+                        ['git', 'push'],
+                        cwd=spoke_path,
+                        capture_output=True,
+                        text=True
+                    )
+
+                    if result.returncode == 0:
+                        print_success("  ✓ Pushed to remote successfully!\n")
+                    else:
+                        print_error(f"  Push failed: {result.stderr}")
+                else:
+                    print_info("  To push to remote, run: git push\n")
+
+                print_info("=" * 60)
+                print_success("  Shipit Complete!")
+                print_info("=" * 60 + "\n")
+            else:
+                print_error(f"\n  Commit failed: {result.stderr}\n")
+
+        except Exception as e:
+            print_error(f"Shipit command failed: {e}")
             import traceback
             traceback.print_exc()
 
