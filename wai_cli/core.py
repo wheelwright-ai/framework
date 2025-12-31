@@ -168,6 +168,25 @@ Examples:
         shipit_parser.add_argument('--non-interactive', action='store_true', help='Skip confirmations')
         shipit_parser.add_argument('--push', action='store_true', help='Push to remote after commit')
 
+        # Template commands
+        template_parser = subparsers.add_parser('template', help='Manage project templates')
+        template_subparsers = template_parser.add_subparsers(dest='template_command')
+
+        template_create = template_subparsers.add_parser('create', help='Create template from spoke')
+        template_create.add_argument('name', help='Template name')
+        template_create.add_argument('--path', default='.', help='Spoke path (default: current directory)')
+        template_create.add_argument('--description', '-d', help='Template description')
+
+        template_list = template_subparsers.add_parser('list', help='List available templates')
+
+        template_apply = template_subparsers.add_parser('apply', help='Apply template to new project')
+        template_apply.add_argument('name', help='Template name')
+        template_apply.add_argument('path', help='Target project path')
+
+        template_delete = template_subparsers.add_parser('delete', help='Delete a template')
+        template_delete.add_argument('name', help='Template name')
+        template_delete.add_argument('--force', '-f', action='store_true', help='Skip confirmation')
+
         # Context command (placeholder)
         context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
         context_parser.add_argument('path', nargs='?', default='.', help='Project path')
@@ -1474,6 +1493,8 @@ Examples:
             self._cmd_time(args)
         elif args.command == 'shipit':
             self._cmd_shipit(args)
+        elif args.command == 'template':
+            self._cmd_template(args)
         elif args.command == 'configure-ide':
             self._cmd_configure_ide(args)
         elif args.command == 'context':
@@ -2844,6 +2865,126 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
 
         except Exception as e:
             print_error(f"Shipit command failed: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _cmd_template(self, args):
+        """Handle template command."""
+        from .templates import TemplateManager
+        from .hub import HubManager
+        from .utils.input import safe_confirm
+
+        try:
+            # Get hub path
+            hub_manager = HubManager()
+            hub_path = hub_manager.auto_discover_hub(Path.cwd(), verbose=False)
+
+            if not hub_path and args.template_command != 'list':
+                print_error("No hub found. Templates require a hub.")
+                print_info("Run 'WAI-CLI hub create' to create a hub first.")
+                return
+
+            template_manager = TemplateManager(hub_path)
+
+            if not hasattr(args, 'template_command') or args.template_command is None:
+                # Show available commands
+                print_info("\nTemplate Commands:")
+                print_info("  create  - Create template from spoke")
+                print_info("  list    - List available templates")
+                print_info("  apply   - Apply template to new project")
+                print_info("  delete  - Delete a template\n")
+                return
+
+            if args.template_command == 'create':
+                spoke_path = normalize_path(args.path)
+
+                # Check if spoke exists
+                if not check_spoke_initialized(spoke_path):
+                    print_error(f"No spoke found at {spoke_path}")
+                    print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                    return
+
+                print_info(f"\n📝 Creating template '{args.name}'...\n")
+
+                result = template_manager.create_template(
+                    spoke_path=spoke_path,
+                    template_name=args.name,
+                    description=args.description or ""
+                )
+
+                if result['success']:
+                    print_success(f"✓ Template '{args.name}' created successfully!\n")
+                    print_info(f"  Template path: {result['template_path']}")
+                    print_info(f"  Files included: {result['files_included']}")
+                    print_info(f"  Project type: {result['analysis']['project_type']}\n")
+                else:
+                    print_error("Template creation failed")
+
+            elif args.template_command == 'list':
+                templates = template_manager.list_templates()
+
+                if not templates:
+                    print_info("\nNo templates found.")
+                    if not hub_path:
+                        print_info("Create a hub first: WAI-CLI hub create\n")
+                    else:
+                        print_info("Create your first template: WAI-CLI template create <name>\n")
+                    return
+
+                print_info("\n" + "=" * 60)
+                print_success("  Available Templates")
+                print_info("=" * 60 + "\n")
+
+                for template in templates:
+                    print_success(f"  {template['name']}")
+                    if template.get('description'):
+                        print_info(f"    {template['description']}")
+                    print_info(f"    Project type: {template['structure']['project_type']}")
+                    print_info(f"    Created: {template['created_at'][:10]}")
+                    print_info("")
+
+                print_info("=" * 60 + "\n")
+
+            elif args.template_command == 'apply':
+                target_path = normalize_path(args.path)
+
+                print_info(f"\n📦 Applying template '{args.name}' to {target_path}...\n")
+
+                # TODO: Ask template questions if defined
+                # For now, just apply with no customizations
+
+                result = template_manager.apply_template(
+                    template_name=args.name,
+                    target_path=target_path,
+                    answers=None
+                )
+
+                if result['success']:
+                    print_success(f"✓ Template applied successfully!\n")
+                    print_info(f"  Spoke created at: {result['spoke_path']}")
+                    print_info(f"  Template used: {result['template_used']}\n")
+                    print_info("  Next steps:")
+                    print_info("    1. Review and customize WAI-Guide.md")
+                    print_info("    2. Complete project foundation")
+                    print_info("    3. Start your first session\n")
+                else:
+                    print_error("Template application failed")
+
+            elif args.template_command == 'delete':
+                if not args.force:
+                    if not safe_confirm(f"Delete template '{args.name}'?", default=False):
+                        print_info("Cancelled.")
+                        return
+
+                if template_manager.delete_template(args.name):
+                    print_success(f"✓ Template '{args.name}' deleted")
+                else:
+                    print_error(f"Template '{args.name}' not found")
+
+        except ValueError as e:
+            print_error(str(e))
+        except Exception as e:
+            print_error(f"Template command failed: {e}")
             import traceback
             traceback.print_exc()
 
