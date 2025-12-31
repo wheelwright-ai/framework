@@ -93,7 +93,36 @@
     "last_modified_at": null,
     "requires_review": false,
     "review_reason": null,
-    "session_count": 0
+    "session_count": 0,
+    "current_session": null,
+    "last_closeout": null,
+    "protocol_completed": false
+  },
+
+  "analytics": {
+    "sessions": {
+      "total_count": 0,
+      "total_turns": 0,
+      "total_duration_seconds": 0,
+      "avg_duration_seconds": 0
+    },
+    "token_efficiency": {
+      "total_tokens_used": 0,
+      "context_limit": 200000,
+      "avg_tokens_per_session": 0
+    },
+    "time_tracking": {
+      "total_time_together_seconds": 0,
+      "total_time_ai_alone_seconds": 0
+    },
+    "baseline_mode": {
+      "enabled": false,
+      "total_tokens_used": 0,
+      "total_sessions": 0,
+      "description": "Track metrics without Wheelwright optimizations for comparison"
+    },
+    "ai_wins": [],
+    "last_updated": null
   },
 
   "wheel": {

@@ -136,8 +136,27 @@ Examples:
         sync_parser = subparsers.add_parser('sync', help='Sync spoke with hub')
         sync_parser.add_argument('--all', action='store_true', help='Sync all spokes')
 
-        # Closeout command (placeholder)
+        # Closeout command
         closeout_parser = subparsers.add_parser('closeout', help='Generate session closeout')
+        closeout_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+        closeout_parser.add_argument('--non-interactive', action='store_true', help='Skip confirmations')
+
+        # Stats command
+        stats_parser = subparsers.add_parser('stats', help='Show session analytics and metrics')
+        stats_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+
+        # Baseline command
+        baseline_parser = subparsers.add_parser('baseline', help='Manage baseline mode tracking')
+        baseline_subparsers = baseline_parser.add_subparsers(dest='baseline_command')
+
+        baseline_enable = baseline_subparsers.add_parser('enable', help='Enable baseline mode')
+        baseline_enable.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+
+        baseline_disable = baseline_subparsers.add_parser('disable', help='Disable baseline mode and lock data')
+        baseline_disable.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+
+        baseline_status = baseline_subparsers.add_parser('status', help='Show baseline mode status')
+        baseline_status.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
         # Context command (placeholder)
         context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
@@ -240,7 +259,8 @@ Examples:
                             pass
 
                 print_info("\n" + "=" * 60)
-                print_info(f"                Main Menu{last_learn_text}")
+                print_info("                Main Menu")
+                print_info(last_learn_text if last_learn_text else "")
                 print_info("=" * 60)
                 print_info("")
                 print_info("  1/h - 🏢 Hub          Central knowledge repository")
@@ -249,7 +269,7 @@ Examples:
                 print_info("  4/t - 📊 Statistics   Usage metrics & recommendations")
                 print_info("  5/? - ❓ Help         Getting started & commands")
                 print_info("")
-                print_info("  v   - ℹ️  Version      Show version info")
+                print_info("  v   - ℹ️Version      Show version info")
                 print_info("  q   - 👋 Quit")
                 print_info("")
 
@@ -259,7 +279,7 @@ Examples:
                     ('3', 'k', '🧠 Knowledge', 'knowledge'),
                     ('4', 't', '📊 Statistics', 'statistics'),
                     ('5', '?', '❓ Help', 'help'),
-                    ('v', 'v', 'ℹ️  Version', 'version'),
+                    ('v', 'v', 'ℹ️Version', 'version'),
                     ('q', 'q', '👋 Quit', 'quit')
                 ]
 
@@ -278,7 +298,10 @@ Examples:
                 elif choice == "version":
                     self._cmd_version()
                 elif choice == "quit" or choice is None:
-                    return
+                    if self._confirm_exit():
+                        import sys
+                        print_info("\n  👋 Goodbye!")
+                        sys.exit(0)
 
     def _show_spoke_menu(self, spoke_path: Path):
         """Show interactive menu for spoke directory."""
@@ -289,7 +312,7 @@ Examples:
             print_info("")
             print_info("  Spoke-specific actions")
             print_info("")
-            print_info("  1/s - ℹ️  Status          View spoke status")
+            print_info("  1/s - ℹ️Status          View spoke status")
             print_info("  2/y - 🔄 Sync            Sync with hub")
             print_info("  3/c - 📝 Closeout        Session closeout")
             print_info("  4/o - 📄 Context         Export for LLM")
@@ -299,7 +322,7 @@ Examples:
             print_info("")
 
             options = [
-                ('1', 's', 'ℹ️  Status', 'status'),
+                ('1', 's', 'ℹ️Status', 'status'),
                 ('2', 'y', '🔄 Sync', 'sync'),
                 ('3', 'c', '📝 Closeout', 'closeout'),
                 ('4', 'o', '📄 Context', 'context'),
@@ -388,7 +411,8 @@ Examples:
 
             # Show menu with stats
             print_info("\n" + "=" * 60)
-            print_info(f"              Spokes Menu │ {spoke_count} Projects")
+            print_info("              Spokes Menu")
+            print_info(f"│ {spoke_count} Projects")
             print_info("=" * 60)
             print_info("")
 
@@ -430,7 +454,7 @@ Examples:
             print_info("  3/g - 📁 Groups            Manage spoke groups")
             print_info("  4/r - 🔄 Refresh           Reload project list")
             print_info("")
-            print_info("  b   - ⬅️  Back")
+            print_info("  b   - ⬅️Back")
             print_info("  q   - 👋 Quit")
             print_info("")
 
@@ -439,7 +463,7 @@ Examples:
                 ('2', 'm', '✏️  Modify Projects', 'modify'),
                 ('3', 'g', '📁 Groups', 'groups'),
                 ('4', 'r', '🔄 Refresh', 'refresh'),
-                ('b', 'b', '⬅️  Back', 'back'),
+                ('b', 'b', '⬅️Back', 'back'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
 
@@ -492,7 +516,7 @@ Examples:
             print_info("  2/n - ✏️  Rename Project        Set preferred display name")
             print_info("  3/g - 📁 Add to Group          Organize spoke")
             print_info("")
-            print_info("  b   - ⬅️  Back")
+            print_info("  b   - ⬅️Back")
             print_info("  q   - 👋 Quit")
             print_info("")
 
@@ -500,7 +524,7 @@ Examples:
                 ('1', 'r', '🗑️  Remove', 'remove'),
                 ('2', 'n', '✏️  Rename', 'rename'),
                 ('3', 'g', '📁 Add to Group', 'add_to_group'),
-                ('b', 'b', '⬅️  Back', 'back'),
+                ('b', 'b', '⬅️Back', 'back'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
 
@@ -607,7 +631,7 @@ Examples:
             print_info("  4/r - ➖ Remove Spoke    Remove spoke from group")
             print_info("  5/d - 🗑️  Delete         Delete group")
             print_info("")
-            print_info("  b   - ⬅️  Back")
+            print_info("  b   - ⬅️Back")
             print_info("  q   - 👋 Quit")
             print_info("")
 
@@ -617,7 +641,7 @@ Examples:
                 ('3', 'a', '➕ Add Spoke', 'add'),
                 ('4', 'r', '➖ Remove Spoke', 'remove'),
                 ('5', 'd', '🗑️  Delete', 'delete'),
-                ('b', 'b', '⬅️  Back', 'back'),
+                ('b', 'b', '⬅️Back', 'back'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
 
@@ -675,19 +699,19 @@ Examples:
             print_info("")
             print_info("  Actions for the current spoke project")
             print_info("")
-            print_info("  1/s - ℹ️  Status          View spoke status & foundation")
+            print_info("  1/s - ℹ️Status          View spoke status & foundation")
             print_info("  2/y - 🔄 Sync            Sync with hub")
             print_info("  3/c - 📝 Closeout        Generate session closeout")
             print_info("  4/o - 📄 Output Context  Export for LLM paste")
-            print_info("  b   - ⬅️  Back")
+            print_info("  b   - ⬅️Back")
             print_info("")
 
             options = [
-                ('1', 's', 'ℹ️  Status', 'status'),
+                ('1', 's', 'ℹ️Status', 'status'),
                 ('2', 'y', '🔄 Sync', 'sync'),
                 ('3', 'c', '📝 Closeout', 'closeout'),
                 ('4', 'o', '📄 Output Context', 'context'),
-                ('b', 'b', '⬅️  Back', 'back')
+                ('b', 'b', '⬅️Back', 'back')
             ]
 
             choice = safe_menu_choice("Select action", options, default='1')
@@ -728,56 +752,73 @@ Examples:
                 hub_stats = " │ No hub configured"
 
             print_info("\n" + "=" * 60)
-            print_info(f"               Hub Menu{hub_stats}")
+            print_info("               Hub Menu")
+            print_info(hub_stats if hub_stats else "")
             print_info("=" * 60)
             print_info("")
             print_info("  Central knowledge repository for all spokes")
             print_info("")
 
             if hub_path:
-                print_info("  1/l - 🔍 Locate          Show hub location & candidates")
-                print_info("  2/t - 🎓 Teach           Hub learns from spokes")
-                print_info("  3/l - 📚 Learn           Spokes learn from hub")
+                print_info("  1/i - 🔍 Info            Show hub location & details")
+                print_info("  2/l - 📚 Learn           Hub learns from spoke projects")
+                print_info("  3/t - 🎓 Teach           Hub distributes knowledge to spokes")
                 print_info("")
-                print_info("  b   - ⬅️  Back")
+                print_info("  v   - ℹ️ Version         Show version info")
+                print_info("")
+                print_info("  b   - ⬅️Back")
                 print_info("  q   - 👋 Quit")
                 print_info("")
 
                 options = [
-                    ('1', 'o', '🔍 Locate', 'locate'),  # Changed 'l' to 'o' to avoid conflict with Learn
-                    ('2', 't', '🎓 Teach', 'teach'),
-                    ('3', 'l', '📚 Learn', 'learn'),
-                    ('b', 'b', '⬅️  Back', 'back'),
+                    ('1', 'i', '🔍 Info', 'info'),
+                    ('2', 'l', '📚 Learn', 'learn'),
+                    ('3', 't', '🎓 Teach', 'teach'),
+                    ('v', 'v', 'ℹ️ Version', 'version'),
+                    ('b', 'b', '⬅️Back', 'back'),
                     ('q', 'q', '👋 Quit', 'quit')
                 ]
             else:
                 print_info("  1/l - 🔍 Locate          Find hub (scan for candidates)")
                 print_info("  2/c - ✨ Create          Initialize new hub")
-                print_info("  b   - ⬅️  Back")
+                print_info("")
+                print_info("  v   - ℹ️ Version         Show version info")
+                print_info("")
+                print_info("  b   - ⬅️Back")
                 print_info("  q   - 👋 Quit")
                 print_info("")
 
                 options = [
                     ('1', 'l', '🔍 Locate', 'locate'),
                     ('2', 'c', '✨ Create', 'create'),
-                    ('b', 'b', '⬅️  Back', 'back'),
+                    ('v', 'v', 'ℹ️ Version', 'version'),
+                    ('b', 'b', '⬅️Back', 'back'),
                     ('q', 'q', '👋 Quit', 'quit')
                 ]
 
             choice = safe_menu_choice("Select", options, default='1')
 
-            if choice == "locate":
+            if choice == "info":
                 self._hub_locate_with_candidates()
                 input("\n  Press Enter to continue...")
-            elif choice == "teach":
-                self._hub_trigger_teach()
+            elif choice == "locate":
+                self._hub_locate_with_candidates()
                 input("\n  Press Enter to continue...")
             elif choice == "learn":
-                self._hub_trigger_learn()
+                # "Learn" means hub learns FROM spokes
+                self._hub_trigger_teach(hub_path)  # This function makes hub learn from spokes
+                input("\n  Press Enter to continue...")
+            elif choice == "teach":
+                # "Teach" means hub teaches TO spokes
+                self._hub_trigger_learn(hub_path)  # This function makes hub teach to spokes
                 input("\n  Press Enter to continue...")
             elif choice == "create":
                 self._hub_create(type('Args', (), {'path': None})())
                 input("\n  Press Enter to continue...")
+            elif choice == "version":
+                # Show version without pausing
+                print_info(f"\n  Wheelwright Framework v{FRAMEWORK_VERSION}")
+                print_info(f"  Spoke Structure v{SPOKE_STRUCTURE_VERSION}")
             elif choice == "quit":
                 if self._confirm_exit():
                     import sys
@@ -897,14 +938,14 @@ Examples:
             print_info("  1/e - ⚡ Enact           Execute a recommendation")
             print_info("  2/r - 🔄 Refresh         Update statistics")
             print_info("")
-            print_info("  b   - ⬅️  Back")
+            print_info("  b   - ⬅️Back")
             print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
                 ('1', 'e', '⚡ Enact', 'enact'),
                 ('2', 'r', '🔄 Refresh', 'refresh'),
-                ('b', 'b', '⬅️  Back', 'back'),
+                ('b', 'b', '⬅️Back', 'back'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
 
@@ -951,14 +992,14 @@ Examples:
             hub_path = hub_manager.auto_discover_hub(Path.cwd(), verbose=False)
 
             if not hub_path:
-                print_info("  No hub found. Create a hub first to enable knowledge base.")
+                print_info("  No hub found. Run 'learn' to create patterns from your projects.")
                 print_info("")
-                print_info("  b   - ⬅️  Back")
+                print_info("  b   - ⬅️Back")
                 print_info("  q   - 👋 Quit")
                 print_info("")
 
                 options = [
-                    ('b', 'b', '⬅️  Back', 'back'),
+                    ('b', 'b', '⬅️Back', 'back'),
                     ('q', 'q', '👋 Quit', 'quit')
                 ]
 
@@ -975,7 +1016,6 @@ Examples:
             signals_summary = self._get_hub_learnings_summary(hub_path)
 
             print_info("  Hub Knowledge Overview:")
-            print_info(f"    Location: {hub_path}")
             print_info(f"    Total signals: {signals_summary['total_signals']}")
             print_info(f"    High-impact learnings: {signals_summary['high_impact_count']}")
             print_info(f"    Last updated: {signals_summary['last_updated']}")
@@ -986,10 +1026,10 @@ Examples:
             print_info("  1/p - 📚 Patterns          Code patterns & best practices")
             print_info("  2/d - 🚨 Decisions         Architectural & design decisions")
             print_info("  3/i - 💡 Insights          Project insights & observations")
-            print_info("  4/w - ⚠️  Warnings          Common pitfalls & anti-patterns")
+            print_info("  4/w - ⚠️Warnings           Common pitfalls & anti-patterns")
             print_info("  5/a - 📋 All Learnings     View all signals chronologically")
             print_info("")
-            print_info("  b   - ⬅️  Back")
+            print_info("  b   - ⬅️Back")
             print_info("  q   - 👋 Quit")
             print_info("")
 
@@ -997,9 +1037,9 @@ Examples:
                 ('1', 'p', '📚 Patterns', 'patterns'),
                 ('2', 'd', '🚨 Decisions', 'decisions'),
                 ('3', 'i', '💡 Insights', 'insights'),
-                ('4', 'w', '⚠️  Warnings', 'warnings'),
+                ('4', 'w', '⚠️Warnings', 'warnings'),
                 ('5', 'a', '📋 All', 'all'),
-                ('b', 'b', '⬅️  Back', 'back'),
+                ('b', 'b', '⬅️Back', 'back'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
 
@@ -1134,19 +1174,21 @@ Examples:
             print_info("               Help Menu")
             print_info("=" * 60)
             print_info("")
-            print_info("  1/c - 🖥️  CLI Usage        Navigate interactive menus")
+            print_info("  1/c - 🖥️CLI Usage        Navigate interactive menus")
             print_info("  2/p - 📦 Project Use      Initialize & manage spokes")
             print_info("  3/m - 💻 Command Line     Quick reference guide")
+            print_info("  4/s - ⏱️Session Commands  Time/Compact/Closeout/Shipit")
             print_info("")
-            print_info("  b   - ⬅️  Back")
+            print_info("  b   - ⬅️Back")
             print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
-                ('1', 'c', '🖥️  CLI Usage', 'cli'),
+                ('1', 'c', '🖥️CLI Usage', 'cli'),
                 ('2', 'p', '📦 Project Use', 'project'),
                 ('3', 'm', '💻 Command Line', 'commands'),
-                ('b', 'b', '⬅️  Back', 'back'),
+                ('4', 's', '⏱️Session Commands', 'session'),
+                ('b', 'b', '⬅️Back', 'back'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
 
@@ -1221,6 +1263,47 @@ Examples:
                 print_info("    WAI group delete <name>")
                 print_info("")
                 print_info("  See 'WAI --help' for complete list")
+                print_info("")
+                input("  Press Enter to continue...")
+
+            elif choice == "session":
+                print_info("\n" + "=" * 60)
+                print_info("           Session Commands")
+                print_info("=" * 60)
+                print_info("\n  Commands for managing AI sessions:")
+                print_info("")
+                print_info("  'Time'")
+                print_info("    Check token usage and context capacity")
+                print_info("    Shows: ~X% of context window used")
+                print_info("    Warns: At 60%, 80%, 90% capacity")
+                print_info("    When: Anytime during session to monitor usage")
+                print_info("")
+                print_info("  'Compact'")
+                print_info("    Compress context by summarizing resolved discussions")
+                print_info("    Reduces: Conversation history to key outcomes")
+                print_info("    Keeps: Decisions, modified files, open questions")
+                print_info("    When: At 80% capacity or before major work")
+                print_info("")
+                print_info("  'Closeout'")
+                print_info("    End session and save state")
+                print_info("    Actions:")
+                print_info("      - Compresses context automatically")
+                print_info("      - Scans WAI-Spoke/ for unknown files")
+                print_info("      - Rebalances JSON/MD content")
+                print_info("      - Extracts high-impact learnings (impact ≥8)")
+                print_info("      - Updates session summary")
+                print_info("      - Clears conversation log")
+                print_info("    When: End of work session")
+                print_info("")
+                print_info("  'Shipit'")
+                print_info("    Closeout + git commit in one step")
+                print_info("    Same as: Closeout, then git add & commit")
+                print_info("    Creates: Commit with session summary")
+                print_info("    When: End of session with changes to commit")
+                print_info("")
+                print_info("  Note: Session commands are triggered by saying")
+                print_info("        the command word to your AI assistant.")
+                print_info("        Example: \"Time\" or \"Run closeout\"")
                 print_info("")
                 input("  Press Enter to continue...")
 
@@ -1354,6 +1437,10 @@ Examples:
             self._cmd_sync(args)
         elif args.command == 'closeout':
             self._cmd_closeout(args)
+        elif args.command == 'stats':
+            self._cmd_stats(args)
+        elif args.command == 'baseline':
+            self._cmd_baseline(args)
         elif args.command == 'context':
             self._cmd_context(args)
         elif args.command == 'version':
@@ -1528,41 +1615,344 @@ Examples:
         # This allows user to see and choose even low-scored options
         return candidates
 
-    def _hub_trigger_teach(self):
-        """Trigger teach event - hub learns from spokes."""
-        print_info("\n🎓 Teach Event - Hub Learning from Spokes\n")
-        print_info("  This will:")
-        print_info("  • Scan all registered spokes for signals")
-        print_info("  • Extract high-impact learnings")
-        print_info("  • Update hub knowledge base")
-        print_info("  • Record teach timestamp\n")
-
+    def _hub_trigger_teach(self, hub_path: Path):
+        """Trigger teach event - hub learns from spokes (called by 'Learn' menu option)."""
+        from .utils.registry import load_registry
         from .utils.input import safe_confirm
-        if not safe_confirm("  Trigger teach event?", default=False):
-            print_info("  Cancelled.")
-            return
 
-        print_info("\n  Teaching...")
-        print_info("  (Teach functionality to be implemented)")
-        print_success("  Teach event complete!")
+        print_info("\n📚 Learn Event - Hub Learns from Spoke Projects\n")
 
-    def _hub_trigger_learn(self):
-        """Trigger learn event - spokes learn from hub."""
-        print_info("\n📚 Learn Event - Spokes Learning from Hub\n")
-        print_info("  This will:")
-        print_info("  • Share hub knowledge with registered spokes")
-        print_info("  • Update spoke guidance based on learnings")
-        print_info("  • Propagate best practices")
-        print_info("  • Record learn timestamp\n")
+        # Load and show registered spokes
+        try:
+            registry = load_registry(hub_path)
+            spokes = registry.get('projects', [])  # Registry uses 'projects' not 'spokes'
 
+            if not spokes:
+                print_info("  No spokes registered in hub.")
+                print_info("  Add spokes first: Main Menu → Spokes → Add Projects")
+                return
+
+            print_info("  📊 Preview of what will happen:")
+            print_info("")
+            print_info(f"  Hub: {hub_path.name}")
+            print_info(f"  Spokes to scan: {len(spokes)}")
+            print_info("")
+            for spoke in spokes[:5]:  # Show first 5
+                spoke_name = spoke.get('preferred_name', spoke.get('path', 'Unknown'))
+                print_info(f"    • {spoke_name}")
+            if len(spokes) > 5:
+                print_info(f"    ... and {len(spokes) - 5} more")
+            print_info("")
+            print_info("  Actions:")
+            print_info("    1. Scan each spoke's WAI-Signals.jsonl")
+            print_info("    2. Extract high-impact learnings (impact ≥8)")
+            print_info("    3. Update hub knowledge base")
+            print_info("    4. Record learn timestamp")
+            print_info("")
+
+            if not safe_confirm("  Proceed with learning from spokes?", default=False):
+                print_info("  Cancelled.")
+                return
+
+            # Actually perform the learning
+            print_info("\n  📚 Hub learning from spokes...")
+            print_info("")
+
+            import json
+            from datetime import datetime
+
+            # Create knowledge base directory if it doesn't exist
+            kb_dir = hub_path / 'knowledge-base'
+            kb_dir.mkdir(exist_ok=True)
+
+            total_new_signals = 0
+            spoke_results = []
+
+            for spoke in spokes:
+                spoke_path = Path(spoke.get('path', ''))
+                spoke_name = spoke.get('preferred_name', spoke_path.name)
+
+                # Look for WAI-Signals.jsonl in the spoke
+                signals_file = spoke_path / 'WAI-Spoke' / 'WAI-Signals.jsonl'
+                if not signals_file.exists():
+                    spoke_results.append((spoke_name, 0, "No signals file"))
+                    continue
+
+                try:
+                    # Read spoke signals
+                    spoke_signals = []
+                    with open(signals_file, 'r') as f:
+                        for line in f:
+                            line = line.strip()
+                            if line:
+                                try:
+                                    signal = json.loads(line)
+                                    spoke_signals.append(signal)
+                                except json.JSONDecodeError:
+                                    pass
+
+                    if not spoke_signals:
+                        spoke_results.append((spoke_name, 0, "Empty signals file"))
+                        continue
+
+                    # Load existing hub signals to avoid duplicates
+                    existing_signals = set()
+                    hub_signals_file = kb_dir / f"{spoke_path.name}-signals.jsonl"
+                    if hub_signals_file.exists():
+                        with open(hub_signals_file, 'r') as f:
+                            for line in f:
+                                line = line.strip()
+                                if line:
+                                    try:
+                                        sig = json.loads(line)
+                                        # Create a simple hash to detect duplicates
+                                        sig_hash = json.dumps(sig.get('offers', []), sort_keys=True)
+                                        existing_signals.add(sig_hash)
+                                    except:
+                                        pass
+
+                    # Filter for new, high-impact signals
+                    new_signals = []
+                    for signal in spoke_signals:
+                        # Check if it's high impact or has high-impact offers
+                        has_high_impact = False
+                        for offer in signal.get('offers', []):
+                            if offer.get('impact', 0) >= 8:
+                                has_high_impact = True
+                                break
+
+                        if has_high_impact:
+                            sig_hash = json.dumps(signal.get('offers', []), sort_keys=True)
+                            if sig_hash not in existing_signals:
+                                new_signals.append(signal)
+                                existing_signals.add(sig_hash)
+
+                    if new_signals:
+                        # Append new signals to hub knowledge base
+                        with open(hub_signals_file, 'a') as f:
+                            for signal in new_signals:
+                                f.write(json.dumps(signal) + '\n')
+
+                        spoke_results.append((spoke_name, len(new_signals), "✓ Added"))
+                        total_new_signals += len(new_signals)
+                    else:
+                        spoke_results.append((spoke_name, 0, "Already absorbed"))
+
+                except Exception as e:
+                    spoke_results.append((spoke_name, 0, f"Error: {str(e)[:30]}"))
+
+            # Display results
+            print_info("  Results by spoke:")
+            print_info("")
+            for spoke_name, count, status in spoke_results:
+                if count > 0:
+                    print_success(f"    ✓ {spoke_name}: {count} new signal(s) - {status}")
+                else:
+                    print_info(f"      {spoke_name}: {count} new signals - {status}")
+
+            print_info("")
+            if total_new_signals > 0:
+                print_success(f"  ✓ Learn complete! Added {total_new_signals} new signal(s) to hub knowledge base")
+
+                # Update hub profile with last learn timestamp
+                profile_path = hub_path / 'hub-profile.json'
+                if profile_path.exists():
+                    try:
+                        profile = json.loads(profile_path.read_text())
+                        profile['last_learn_run'] = datetime.now().isoformat()
+                        profile_path.write_text(json.dumps(profile, indent=2))
+                    except:
+                        pass
+            else:
+                print_info(f"  ✓ Learn complete! No new signals found (all spokes already absorbed)")
+
+            print_info("")
+            print_info("  📝 Next: To apply these learnings in an active AI session:")
+            print_info("     1. If AI is already working on a spoke project:")
+            print_info("        - Say 'Closeout' to end current session")
+            print_info("        - Start new session to load updated WAI-Guide.md")
+            print_info("     2. Hub knowledge is now available in hub/knowledge-base/")
+            print_info("     3. Run 'Teach' to distribute to specific spokes")
+
+        except Exception as e:
+            print_error(f"  Error loading registry: {e}")
+
+    def _hub_trigger_learn(self, hub_path: Path):
+        """Trigger learn event - spokes learn from hub (called by 'Teach' menu option)."""
+        from .utils.registry import load_registry
         from .utils.input import safe_confirm
-        if not safe_confirm("  Trigger learn event?", default=False):
-            print_info("  Cancelled.")
-            return
 
-        print_info("\n  Learning...")
-        print_info("  (Learn functionality to be implemented)")
-        print_success("  Learn event complete!")
+        print_info("\n🎓 Teach Event - Hub Distributes Knowledge to Spokes\n")
+
+        # Load and show registered spokes
+        try:
+            registry = load_registry(hub_path)
+            spokes = registry.get('projects', [])  # Registry uses 'projects' not 'spokes'
+
+            if not spokes:
+                print_info("  No spokes registered in hub.")
+                print_info("  Add spokes first: Main Menu → Spokes → Add Projects")
+                return
+
+            # Check if hub has knowledge to share
+            kb_dir = hub_path / 'knowledge-base'
+            has_knowledge = kb_dir.exists() and any(kb_dir.glob('*.jsonl'))
+
+            if not has_knowledge:
+                print_info("  ⚠️  Hub knowledge base is empty.")
+                print_info("  Run 'Learn' first to gather patterns from spokes.")
+                return
+
+            print_info("  📊 Preview of what will happen:")
+            print_info("")
+            print_info(f"  Hub: {hub_path.name}")
+            print_info(f"  Spokes to update: {len(spokes)}")
+            print_info("")
+            for spoke in spokes[:5]:  # Show first 5
+                spoke_name = spoke.get('preferred_name', spoke.get('path', 'Unknown'))
+                print_info(f"    • {spoke_name}")
+            if len(spokes) > 5:
+                print_info(f"    ... and {len(spokes) - 5} more")
+            print_info("")
+            print_info("  Actions:")
+            print_info("    1. Read hub knowledge base patterns")
+            print_info("    2. Update each spoke's WAI-Guide.md")
+            print_info("    3. Add relevant best practices and learnings")
+            print_info("    4. Record teach timestamp")
+            print_info("")
+
+            if not safe_confirm("  Proceed with distributing knowledge to spokes?", default=False):
+                print_info("  Cancelled.")
+                return
+
+            # Actually perform the teaching
+            print_info("\n  🎓 Hub teaching to spokes...")
+            print_info("")
+
+            import json
+            from datetime import datetime
+
+            total_updated = 0
+            spoke_updates = []
+
+            # Read all hub knowledge base files
+            kb_patterns = []
+            for kb_file in kb_dir.glob('*.jsonl'):
+                try:
+                    with open(kb_file, 'r') as f:
+                        for line in f:
+                            line = line.strip()
+                            if line:
+                                try:
+                                    signal = json.loads(line)
+                                    # Extract high-impact patterns
+                                    for offer in signal.get('offers', []):
+                                        if offer.get('impact', 0) >= 8:
+                                            kb_patterns.append({
+                                                'type': offer.get('type', 'pattern'),
+                                                'topic': offer.get('topic', 'Unknown'),
+                                                'context': offer.get('context', ''),
+                                                'impact': offer.get('impact', 8),
+                                                'source': kb_file.stem
+                                            })
+                                except json.JSONDecodeError:
+                                    pass
+                except Exception:
+                    pass
+
+            if not kb_patterns:
+                print_error("  No patterns found in knowledge base to distribute.")
+                return
+
+            print_info(f"  Found {len(kb_patterns)} pattern(s) to distribute")
+            print_info("")
+
+            # Update each spoke
+            for spoke in spokes:
+                spoke_path = Path(spoke.get('path', ''))
+                spoke_name = spoke.get('preferred_name', spoke_path.name)
+                wai_spoke_dir = spoke_path / 'WAI-Spoke'
+
+                if not wai_spoke_dir.exists():
+                    spoke_updates.append((spoke_name, 0, "No WAI-Spoke directory"))
+                    continue
+
+                try:
+                    # Create a hub-learnings file that closeout will reconcile
+                    learnings_file = wai_spoke_dir / 'WAI-Hub-Learnings.md'
+
+                    # Generate learnings content
+                    content = f"# Hub Learnings - {datetime.now().strftime('%Y-%m-%d')}\n\n"
+                    content += "These patterns were distributed from the hub knowledge base.\n"
+                    content += "Run closeout to integrate these into your WAI-Guide.md\n\n"
+
+                    # Group by type
+                    patterns_by_type = {}
+                    for pattern in kb_patterns:
+                        ptype = pattern['type']
+                        if ptype not in patterns_by_type:
+                            patterns_by_type[ptype] = []
+                        patterns_by_type[ptype].append(pattern)
+
+                    # Write patterns
+                    for ptype, patterns in patterns_by_type.items():
+                        content += f"## {ptype.title()}\n\n"
+                        for pattern in patterns:
+                            content += f"### {pattern['topic']}\n"
+                            if pattern['context']:
+                                content += f"{pattern['context']}\n"
+                            content += f"\n*Impact: {pattern['impact']} | Source: {pattern['source']}*\n\n"
+
+                    # Write the file
+                    learnings_file.write_text(content)
+                    spoke_updates.append((spoke_name, len(kb_patterns), "✓ Updated"))
+                    total_updated += 1
+
+                except Exception as e:
+                    spoke_updates.append((spoke_name, 0, f"Error: {str(e)[:30]}"))
+
+            # Display results
+            print_info("  Results by spoke:")
+            print_info("")
+            for spoke_name, count, status in spoke_updates:
+                if "✓" in status:
+                    print_success(f"    ✓ {spoke_name}: {count} pattern(s) - {status}")
+                else:
+                    print_info(f"      {spoke_name}: {count} patterns - {status}")
+
+            print_info("")
+            if total_updated > 0:
+                print_success(f"  ✓ Teach complete! Updated {total_updated} spoke(s) with hub knowledge")
+
+                # Update hub profile with last teach timestamp
+                profile_path = hub_path / 'hub-profile.json'
+                if profile_path.exists():
+                    try:
+                        profile = json.loads(profile_path.read_text())
+                        profile['last_teach_run'] = datetime.now().isoformat()
+                        profile_path.write_text(json.dumps(profile, indent=2))
+                    except:
+                        pass
+
+                print_info("")
+                print_info("  📝 IMPORTANT - Next Steps:")
+                print_info("     1. If AI is currently working on one of the updated spokes:")
+                print_info("        a. Say 'Closeout' to end the current session")
+                print_info("        b. Closeout will reconcile WAI-Hub-Learnings.md into WAI-Guide.md")
+                print_info("        c. Start a new session to load the updated guidance")
+                print_info("")
+                print_info("     2. New files created in each spoke:")
+                print_info("        • WAI-Spoke/WAI-Hub-Learnings.md (temporary - for closeout)")
+                print_info("")
+                print_info("     3. After closeout, patterns will be in:")
+                print_info("        • WAI-Spoke/WAI-Guide.md (permanent)")
+                print_info("")
+                print_info("  💡 This enables seamless learning on the fly!")
+            else:
+                print_info(f"  No spokes were updated.")
+
+        except Exception as e:
+            print_error(f"  Error loading registry: {e}")
 
     def _hub_ignore_candidates(self, ignore_paths: list, primary_hub: Path):
         """Add hub paths to ignore list in primary hub profile."""
@@ -2012,8 +2402,161 @@ Examples:
 
     def _cmd_closeout(self, args):
         """Handle closeout command."""
-        from .commands.closeout import generate_closeout
-        generate_closeout()
+        from .closeout import CloseoutProcessor
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                return
+
+            # Run closeout processor
+            processor = CloseoutProcessor(spoke_path)
+            interactive = not args.non_interactive
+            results = processor.process_closeout(interactive=interactive)
+            processor.print_summary(results)
+
+        except Exception as e:
+            print_error(f"Closeout failed: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _cmd_stats(self, args):
+        """Handle stats command."""
+        from .metrics import MetricsTracker
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                return
+
+            wai_spoke_dir = spoke_path / 'WAI-Spoke'
+            metrics = MetricsTracker(wai_spoke_dir)
+            stats = metrics.get_session_stats()
+
+            # Display stats
+            print_info("\n" + "=" * 60)
+            print_success("  Session Analytics & Metrics")
+            print_info("=" * 60 + "\n")
+
+            # Sessions
+            print_info("  📊 Sessions:")
+            print_info(f"      Total: {stats['sessions']['total']}")
+            print_info(f"      Avg turns: {stats['sessions']['avg_turns']}")
+            print_info(f"      Avg duration: {stats['sessions']['avg_duration']}")
+
+            # Tokens
+            print_info("\n  🎯 Token Efficiency:")
+            print_info(f"      Total tokens used: {stats['tokens']['total_used']:,}")
+            print_info(f"      Avg per session: {stats['tokens']['avg_per_session']:,}")
+            print_info(f"      Context limit: {stats['tokens']['context_limit']:,}")
+
+            # Token savings if available
+            if 'token_savings' in stats:
+                savings = stats['token_savings']
+                print_info("\n  💰 Token Savings vs Baseline:")
+                print_info(f"      Baseline tokens: {savings['baseline_tokens']:,}")
+                print_info(f"      Optimized tokens: {savings['optimized_tokens']:,}")
+                print_info(f"      Tokens saved: {savings['tokens_saved']:,}")
+                print_success(f"      Savings: {savings['percent_saved']}%")
+                if savings['meets_claim']:
+                    print_success("      ✓ Meets 50-80% savings claim!")
+
+            # Time tracking
+            print_info("\n  ⏱️  Time Tracking:")
+            print_info(f"      Total time: {stats['time']['total']}")
+            print_info(f"      Time together: {stats['time']['together']} ({stats['time']['together_percent']:.1f}%)")
+            print_info(f"      Time AI alone: {stats['time']['ai_alone']}")
+
+            # AI wins
+            print_info("\n  🏆 AI Wins:")
+            print_info(f"      Total: {stats['ai_wins']['total']}")
+            if stats['ai_wins']['recent']:
+                print_info("      Recent wins:")
+                for win in stats['ai_wins']['recent'][-3:]:
+                    print_success(f"        • {win.get('type', 'unknown')}: {win.get('description', 'N/A')}")
+
+            print_info("\n" + "=" * 60 + "\n")
+
+        except Exception as e:
+            print_error(f"Stats failed: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _cmd_baseline(self, args):
+        """Handle baseline command."""
+        from .metrics import MetricsTracker
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                return
+
+            wai_spoke_dir = spoke_path / 'WAI-Spoke'
+            metrics = MetricsTracker(wai_spoke_dir)
+
+            if not hasattr(args, 'baseline_command') or args.baseline_command is None:
+                # Show status
+                args.baseline_command = 'status'
+
+            if args.baseline_command == 'enable':
+                result = metrics.enable_baseline_mode()
+                print_success(f"\n✓ {result['message']}\n")
+
+            elif args.baseline_command == 'disable':
+                result = metrics.disable_baseline_mode()
+                if result['disabled']:
+                    print_success(f"\n✓ {result['message']}")
+                    print_info(f"  Baseline data: {result['baseline_tokens']:,} tokens over {result['baseline_sessions']} sessions\n")
+                else:
+                    print_warning(f"\n⚠️  {result['message']}\n")
+
+            elif args.baseline_command == 'status':
+                state_file = wai_spoke_dir / 'WAI-State.json'
+                with open(state_file, 'r') as f:
+                    import json
+                    state = json.load(f)
+
+                baseline = state.get('analytics', {}).get('baseline_mode', {})
+
+                print_info("\n" + "=" * 60)
+                print_info("  Baseline Mode Status")
+                print_info("=" * 60 + "\n")
+
+                if baseline.get('enabled'):
+                    print_success("  Status: ENABLED")
+                    print_info(f"  Started: {baseline.get('started_at', 'Unknown')}")
+                    print_info(f"  Tokens tracked: {baseline.get('total_tokens_used', 0):,}")
+                    print_info(f"  Sessions tracked: {baseline.get('total_sessions', 0)}")
+                    print_info(f"\n  {baseline.get('description', '')}\n")
+                else:
+                    print_info("  Status: DISABLED")
+                    if baseline.get('total_tokens_used', 0) > 0:
+                        print_info(f"\n  Baseline data (locked):")
+                        print_info(f"    Tokens: {baseline.get('total_tokens_used', 0):,}")
+                        print_info(f"    Sessions: {baseline.get('total_sessions', 0)}")
+                        print_info(f"    Period: {baseline.get('started_at', 'Unknown')} to {baseline.get('ended_at', 'Unknown')}\n")
+                    else:
+                        print_info("\n  No baseline data collected yet.\n")
+                        print_info("  To enable: WAI-CLI baseline enable\n")
+
+                print_info("=" * 60 + "\n")
+
+        except Exception as e:
+            print_error(f"Baseline command failed: {e}")
+            import traceback
+            traceback.print_exc()
 
     def _cmd_context(self, args):
         """Handle context command."""

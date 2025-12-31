@@ -90,8 +90,8 @@
       },
       {
         "date": "2025-12-29",
-        "change": "Implemented conversation logging and naming standardization (WWAI → WAI)",
-        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI → WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "change": "Implemented conversation logging and naming standardization (WWAI \u2192 WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI \u2192 WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
         "acknowledged_by": "Mario Vaccari",
         "ai_partner": "Claude Sonnet 4.5"
       }
@@ -109,6 +109,33 @@
     "briefing_provided": true,
     "current_session": null,
     "last_closeout": null
+  },
+  "analytics": {
+    "sessions": {
+      "total_count": 0,
+      "total_turns": 0,
+      "total_duration_seconds": 0,
+      "avg_duration_seconds": 0
+    },
+    "token_efficiency": {
+      "total_tokens_used": 0,
+      "context_limit": 200000,
+      "avg_tokens_per_session": 0
+    },
+    "time_tracking": {
+      "total_time_together_seconds": 0,
+      "total_time_ai_alone_seconds": 0
+    },
+    "baseline_mode": {
+      "enabled": false,
+      "started_at": "2025-12-31T02:13:34.310594",
+      "total_tokens_used": 0,
+      "total_sessions": 0,
+      "description": "Tracking without Wheelwright optimizations for comparison",
+      "ended_at": "2025-12-31T02:13:40.234779"
+    },
+    "ai_wins": [],
+    "last_updated": null
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -347,7 +374,7 @@
     },
     {
       "date": "2025-12-29",
-      "decision": "WWAI → WAI naming standardization",
+      "decision": "WWAI \u2192 WAI naming standardization",
       "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
       "impact": 9,
       "by": "Claude Sonnet 4.5"
@@ -369,21 +396,21 @@
     {
       "date": "2025-12-29",
       "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
-      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion → READY TO PLAN → PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
+      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion \u2192 READY TO PLAN \u2192 PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     }
