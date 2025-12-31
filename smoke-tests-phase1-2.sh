@@ -535,6 +535,117 @@ else
     fail "New spoke has session state structure"
 fi
 
+echo ""
+echo -e "${YELLOW}→${NC} Testing critical priority features..."
+
+# Test 31: Time command works
+TEST_RESULT=$(./WAI-CLI time "$TEST_DIR" 2>&1)
+if echo "$TEST_RESULT" | grep -q "Token Usage Estimate" && \
+   echo "$TEST_RESULT" | grep -q "Estimated usage:"; then
+    pass "Time command runs on spoke"
+else
+    fail "Time command runs on spoke"
+fi
+
+# Test 32: Time command shows capacity info
+if echo "$TEST_RESULT" | grep -q "Tokens used:" && \
+   echo "$TEST_RESULT" | grep -q "Capacity:"; then
+    pass "Time command shows capacity info"
+else
+    fail "Time command shows capacity info"
+fi
+
+# Test 33: Quality gates module imports
+TEST_RESULT=$(python3 <<EOF
+try:
+    from wai_cli.quality_gates import QualityGates
+    print("PASS")
+except Exception as e:
+    print("FAIL")
+EOF
+)
+
+if echo "$TEST_RESULT" | grep -q "PASS"; then
+    pass "QualityGates module imports"
+else
+    fail "QualityGates module imports"
+fi
+
+# Test 34: Quality gates integration in closeout
+TEST_RESULT=$(python3 <<EOF
+from wai_cli.closeout import CloseoutProcessor
+from pathlib import Path
+import inspect
+
+try:
+    # Check if quality_gates attribute exists
+    processor = CloseoutProcessor(Path("$TEST_DIR"))
+    has_quality_gates = hasattr(processor, 'quality_gates')
+
+    # Check if process_closeout mentions quality gates
+    source = inspect.getsource(processor.process_closeout)
+    has_step_0 = 'Step 0' in source and 'quality gates' in source.lower()
+
+    print("PASS" if (has_quality_gates and has_step_0) else "FAIL")
+except Exception as e:
+    print("FAIL")
+EOF
+)
+
+if echo "$TEST_RESULT" | grep -q "PASS"; then
+    pass "Quality gates integrated in closeout"
+else
+    fail "Quality gates integrated in closeout"
+fi
+
+# Test 35: Quality gates run_all_gates method works
+TEST_RESULT=$(python3 <<EOF
+from wai_cli.quality_gates import QualityGates
+from pathlib import Path
+
+try:
+    gates = QualityGates(Path("$TEST_DIR"))
+    result = gates.run_all_gates(skip_minor=True)
+
+    # Check result structure
+    has_structure = (
+        'passed' in result and
+        'gates' in result and
+        'warnings' in result and
+        'blockers' in result
+    )
+
+    print("PASS" if has_structure else "FAIL")
+except Exception as e:
+    print("FAIL")
+EOF
+)
+
+if echo "$TEST_RESULT" | grep -q "PASS"; then
+    pass "Quality gates run_all_gates works"
+else
+    fail "Quality gates run_all_gates works"
+fi
+
+# Test 36: Shipit command checks git repository
+# Create a git repo in test dir
+cd "$TEST_DIR"
+git init > /dev/null 2>&1
+git config user.name "Test User" > /dev/null 2>&1
+git config user.email "test@example.com" > /dev/null 2>&1
+cd - > /dev/null 2>&1
+
+# Make a change to test shipit
+echo "test" > "$TEST_DIR/test.txt"
+
+TEST_RESULT=$(./WAI-CLI shipit "$TEST_DIR" --non-interactive 2>&1)
+if echo "$TEST_RESULT" | grep -q "Shipit: Closeout + Git Commit" && \
+   echo "$TEST_RESULT" | grep -q "Git Commit Workflow"; then
+    pass "Shipit command runs workflow"
+else
+    fail "Shipit command runs workflow"
+fi
+
 # Cleanup
 cleanup_test_env "$TEST_DIR"
 
