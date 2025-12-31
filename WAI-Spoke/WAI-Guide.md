@@ -339,6 +339,61 @@ If you made significant changes:
 
 ---
 
+## File Management Protocol
+
+**CRITICAL: All planning and tracking documents MUST be stored in WAI-Spoke/**
+
+### The Rule
+
+**NEVER create planning documents in the project root.** All planning, tracking, and management files belong in `WAI-Spoke/` to:
+- ✅ Prevent file sprawl
+- ✅ Ensure files are tracked in WAI-File-Index.json
+- ✅ Maintain clear separation: codebase (root) vs. tracking (WAI-Spoke/)
+- ✅ Keep a single unified backlog
+
+### Planning Document Types
+
+These files MUST go in `WAI-Spoke/`:
+- Plans and roadmaps → `WAI-Plan-*.md`
+- Backlogs and task lists → `WAI-Backlog.md`
+- Implementation summaries → `WAI-Implementation-Summary.md`
+- Decision logs → Already in `WAI-State.json`
+- Session logs → `WAI-Session-Log.jsonl`
+- Any tracking/management docs
+
+### Naming Convention
+
+Use `WAI-` prefix for all tracking files in WAI-Spoke/:
+- ✅ `WAI-Spoke/WAI-Backlog.md`
+- ✅ `WAI-Spoke/WAI-Plan-Phase4.md`
+- ✅ `WAI-Spoke/WAI-Implementation-Summary.md`
+- ❌ `./BACKLOG.md` (wrong - in root)
+- ❌ `./TODO.md` (wrong - in root)
+
+### Single Backlog Principle
+
+**Maintain ONE unified backlog** in `WAI-Spoke/WAI-Backlog.md`:
+- When subsumming external backlogs, merge them with attribution
+- Track origin: "From {source} on {date}"
+- Keep all work items in one place
+- Archive completed items, don't delete
+
+### Enforcement
+
+**When creating any planning document:**
+1. Check: Is this a planning/tracking file?
+2. If yes: Create in `WAI-Spoke/` with `WAI-` prefix
+3. Update `WAI-File-Index.json` to register the file
+4. NEVER leave planning files in project root
+
+**This directive applies to:**
+- All AI sessions
+- All planning modes
+- All tracking activities
+- All future work
+
+---
+
 ## Signaling High-Impact Learnings
 
 When you make a decision with **impact >= 8**, share it:
