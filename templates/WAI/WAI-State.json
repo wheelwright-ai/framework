@@ -108,8 +108,14 @@
     },
     "token_efficiency": {
       "total_tokens_used": 0,
+      "tokens_saved_estimate": 0,
+      "baseline_tokens_estimate": 0,
       "context_limit": 200000,
       "avg_tokens_per_session": 0
+    },
+    "quality_metrics": {
+      "decisions_count": 0,
+      "high_impact_count": 0
     },
     "time_tracking": {
       "total_time_together_seconds": 0,
@@ -123,6 +129,16 @@
     },
     "ai_wins": [],
     "last_updated": null
+  },
+
+  "feature_toggles": {
+    "_description": "Toggle marketing features for baseline comparison and testing",
+    "session_continuity": true,
+    "token_efficiency": true,
+    "analytics": true,
+    "closeout_processing": true,
+    "hub_learning": true,
+    "quality_gates": true
   },
 
   "wheel": {
