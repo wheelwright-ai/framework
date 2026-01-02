@@ -90,8 +90,8 @@
       },
       {
         "date": "2025-12-29",
-        "change": "Implemented conversation logging and naming standardization (WWAI \u2192 WAI)",
-        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI \u2192 WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "change": "Implemented conversation logging and naming standardization (WWAI → WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI → WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
         "acknowledged_by": "Mario Vaccari",
         "ai_partner": "Claude Sonnet 4.5"
       }
@@ -104,63 +104,52 @@
     "requires_review": false,
     "review_reason": null,
     "session_count": 5,
-    "protocol_completed": false,
-    "protocol_last_run": "2025-12-29T06:25:31Z",
+    "protocol_completed": true,
+    "protocol_last_run": "2026-01-02T18:39:27Z",
     "briefing_provided": true,
-    "current_session": null,
+    "current_session": {
+      "session_id": "mario-2026-01-02-133927",
+      "started_at": "2026-01-02T18:39:27Z",
+      "turn_count": 0,
+      "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
+    },
     "last_closeout": {
-      "session_id": "integration-test-framework-2026-01-01",
-      "closed_at": "2026-01-01T00:00:00Z",
-      "turns": 11,
-      "summary": "Implemented comprehensive integration test framework with 6 phases covering 130 tests (122 passing, 99.19% pass rate). Added baseline mode comparison system with feature toggles, configurable CLI testing, test runner orchestration, and CI/CD GitHub Actions workflow.",
-      "key_topics": [
-        "integration-testing",
-        "baseline-mode-comparison",
-        "test-automation",
-        "ci-cd-workflows",
-        "token-efficiency-validation"
-      ],
-      "files_modified": [
-        "templates/WAI/WAI-State.json",
-        ".github/workflows/integration-tests.yml",
-        "tests/integration/harness.py",
-        "tests/integration/cli_automation.py",
-        "tests/integration/assertions.py",
-        "tests/integration/config.py",
-        "tests/integration/runner.py",
-        "run-integration-tests.sh",
-        "requirements-test.txt"
-      ],
-      "decisions_count": 1,
-      "high_impact_signals": 0
+      "session_id": "bd97928f8abb",
+      "started_at": "2026-01-01T23:50:38.643046",
+      "ai_model": "GPT-5",
+      "turns": 0,
+      "closed_at": "2026-01-02T00:29:13.620868",
+      "summary": "No conversation log found",
+      "key_topics": [],
+      "files_modified": []
     }
   },
   "analytics": {
     "sessions": {
-      "total_count": 0,
-      "total_turns": 0,
-      "total_duration_seconds": 0,
-      "avg_duration_seconds": 0
+      "total_count": 10,
+      "total_turns": 8,
+      "total_duration_seconds": 4,
+      "avg_duration_seconds": 0.4
     },
     "token_efficiency": {
-      "total_tokens_used": 0,
+      "total_tokens_used": 66,
       "context_limit": 200000,
       "avg_tokens_per_session": 0
     },
     "time_tracking": {
-      "total_time_together_seconds": 0,
+      "total_time_together_seconds": 4,
       "total_time_ai_alone_seconds": 0
     },
     "baseline_mode": {
       "enabled": false,
-      "started_at": "2025-12-31T02:13:34.310594",
-      "total_tokens_used": 0,
-      "total_sessions": 0,
-      "description": "Tracking without Wheelwright optimizations for comparison",
-      "ended_at": "2025-12-31T02:13:40.234779"
+      "started_at": "2026-01-01T23:50:38.640187",
+      "total_tokens_used": 105,
+      "total_sessions": 1,
+      "description": "Baseline capture: avoid Wheelwright optimizations; closeout still records session metrics",
+      "ended_at": "2026-01-01T23:50:38.642573"
     },
     "ai_wins": [],
-    "last_updated": null
+    "last_updated": "2026-01-02T13:39:27.906801"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -399,7 +388,7 @@
     },
     {
       "date": "2025-12-29",
-      "decision": "WWAI \u2192 WAI naming standardization",
+      "decision": "WWAI → WAI naming standardization",
       "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
       "impact": 9,
       "by": "Claude Sonnet 4.5"
@@ -421,21 +410,21 @@
     {
       "date": "2025-12-29",
       "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
-      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion \u2192 READY TO PLAN \u2192 PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
+      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion → READY TO PLAN → PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
@@ -445,6 +434,34 @@
       "rationale": "Created 6-phase integration test framework to validate end-to-end workflows through automated CLI testing. Implemented configurable CLI testing (user can specify command to test), baseline mode comparison system with feature toggles (validate 50-80% token savings claims), test harness with isolated environments, 130 total tests covering onboarding, menus, spoke init, session continuity, closeout, shipit, quality gates, hub-spoke interaction, analytics, and token efficiency. Added test runner orchestration with phase execution, baseline comparison mode, and CI/CD GitHub Actions workflow. Final results: 122/129 passing (99.19% pass rate). This enables automated regression detection, AI-collaborative test evolution, and data-driven validation of Wheelwright's value propositions.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-01-02",
+      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "impact": 7,
+      "by": "WAI Auto-Upgrade"
+    },
+    {
+      "date": "2026-01-02",
+      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "impact": 7,
+      "by": "WAI Auto-Upgrade"
+    },
+    {
+      "date": "2026-01-02",
+      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "impact": 7,
+      "by": "WAI Auto-Upgrade"
+    },
+    {
+      "date": "2026-01-02",
+      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "impact": 7,
+      "by": "WAI Auto-Upgrade"
     }
   ],
   "next_steps": [

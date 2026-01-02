@@ -30,14 +30,14 @@ Wheelwright builds AI wheels that remember everything. Instead of losing context
 
 ### Context Refresh Check (Do This First!)
 
-**Every session, check if the `.WAI/` folder has been updated since you last worked here:**
+**Every session, check if the `WAI-Spoke/` folder has been updated since you last worked here:**
 
 ```python
 import json
 from pathlib import Path
 from datetime import datetime
 
-wai_path = Path(".WAI")
+wai_path = Path("WAI-Spoke")
 kb_sync = json.loads((wai_path / "kb-sync.json").read_text()) if (wai_path / "kb-sync.json").exists() else {}
 state = json.loads((wai_path / "WAI-State.json").read_text())
 wai_meta = state.get("wheelwright", {})
@@ -79,7 +79,7 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 import json
 from pathlib import Path
 
-state = json.loads(Path(".WAI/WAI-State.json").read_text())
+state = json.loads(Path("WAI-Spoke/WAI-State.json").read_text())
 foundation = state.get("_project_foundation", {})
 
 if not foundation.get("completed"):
@@ -111,6 +111,12 @@ Do NOT proceed with any work. Instead, guide the user through establishing:
 2. Set `completed: true` with timestamp and your AI name
 3. Add first entry to `evolution_log`
 4. Update WAI-State.md with the vision
+
+---
+
+## Implementation Approval Gate
+
+If the user asks for planning/ideation, pause after the plan and ask for explicit approval before making code changes.
 
 ---
 
@@ -164,7 +170,7 @@ Otherwise, trust your judgment and proceed.
 ## Session State Protocol
 
 > **NOTE:** As of v2.1 (2025-12-29), session start briefing is **automatically enforced** via
-> Claude Code's SessionStart hook (`.claude/settings.json` → `.WAI/hooks/session-start.sh`).
+> Claude Code's SessionStart hook (`.claude/settings.json` → `WAI-Spoke/hooks/session-start.sh`).
 > The hook runs before your first message and displays the briefing automatically.
 >
 > **For other AI tools:** If SessionStart hook isn't available, the manual protocol below
@@ -175,9 +181,9 @@ Otherwise, trust your judgment and proceed.
 **Automatic Execution Flow:**
 
 1. **User opens project in Claude Code** → Claude Code reads `.claude/settings.json`
-2. **SessionStart hook triggers** → Runs `.WAI/hooks/session-start.sh` automatically
+2. **SessionStart hook triggers** → Runs `WAI-Spoke/hooks/session-start.sh` automatically
 3. **Hook script executes:**
-   - Reads `.WAI/WAI-State.json` for project state
+   - Reads `WAI-Spoke/WAI-State.json` for project state
    - Extracts recent decisions, next actions, last session info
    - Checks git status for uncommitted changes
    - Updates `protocol_completed` flag to `true`
@@ -187,7 +193,7 @@ Otherwise, trust your judgment and proceed.
 
 **Hook Files:**
 - `.claude/settings.json` - Hook configuration (triggers on session start)
-- `.WAI/hooks/session-start.sh` - Briefing script (bash script that reads state and outputs briefing)
+- `WAI-Spoke/hooks/session-start.sh` - Briefing script (bash script that reads state and outputs briefing)
 
 **Benefits:**
 - ✅ Guaranteed briefing on every session start
@@ -263,7 +269,7 @@ Working tree clean ✓ - Ready for new work!
 import json
 from pathlib import Path
 
-state = json.loads(Path(".WAI/WAI-State.json").read_text())
+state = json.loads(Path("WAI-Spoke/WAI-State.json").read_text())
 session = state.get("_session_state", {})
 
 if session.get('requires_review'):
@@ -295,8 +301,8 @@ Here's what a proper WAI session start looks like:
 ## ⚠️ Uncommitted Changes Detected
 
 I see uncommitted changes:
-- .WAI/WAI-State.json
-- .WAI/WAI-State.md
+- WAI-Spoke/WAI-State.json
+- WAI-Spoke/WAI-State.md
 - README.md
 
 **Recommendation:** These look like work-in-progress from the last session.
@@ -326,6 +332,8 @@ Update `_session_state`:
   }
 }
 ```
+
+**CLI menu parity rule:** When adding or extending WAI-CLI commands, update the interactive menus and help text to match.
 
 ### Before Closing Session
 
@@ -690,7 +698,7 @@ Log **EVERY turn** - both user messages and your responses.
 
 ### Log Format
 
-Append to `.WAI/session-conversation.jsonl` after each exchange:
+Append to `WAI-Spoke/WAI-Session-Log.jsonl` after each exchange:
 
 ```jsonl
 {"timestamp":"2025-12-29T12:34:56Z","turn":1,"type":"user","content":"User's message text","metadata":{"tokens_estimate":150}}
@@ -702,11 +710,11 @@ Append to `.WAI/session-conversation.jsonl` after each exchange:
 When user says "Closeout":
 
 1. **Run 'Compact' first** - Compress context, generate summary
-2. **Load conversation log** - Read `.WAI/session-conversation.jsonl` line-by-line
+2. **Load conversation log** - Read `WAI-Spoke/WAI-Session-Log.jsonl` line-by-line
 3. **Extract insights** - Summary (2-3 sentences, using compressed summary from step 1), key topics (3-5 keywords), files modified
 4. **Update WAI-State.json** - Move `current_session` → `last_closeout` with insights
-5. **Clear log** - `rm -f .WAI/session-conversation.jsonl` (AFTER successful write!)
-6. **Mark ready for hub learning** - .WAI/ folder must be in clean state
+5. **Clear log** - `rm -f WAI-Spoke/WAI-Session-Log.jsonl` (AFTER successful write!)
+6. **Mark ready for hub learning** - WAI-Spoke/ folder must be in clean state
 7. **Provide summary** - Show what was accomplished, next steps
 
 ### Shipit Command
@@ -819,3 +827,5 @@ WAI version               # Show version info
 
 *Wheelwright Framework - Build AI wheels that roll forward forever*
 *wheelwright.ai - MIT License*
+
+## Hub Learnings
