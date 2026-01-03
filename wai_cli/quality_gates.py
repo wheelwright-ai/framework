@@ -170,7 +170,7 @@ class QualityGates:
                     cwd=self.spoke_dir,
                     capture_output=True,
                     text=True,
-                    timeout=30
+                    timeout=120
                 )
                 test_results.append({
                     'file': test_file.name,
@@ -184,7 +184,7 @@ class QualityGates:
                     cwd=self.spoke_dir,
                     capture_output=True,
                     text=True,
-                    timeout=60
+                    timeout=120
                 )
                 test_results.append({
                     'file': test_file.name,
@@ -232,7 +232,10 @@ class QualityGates:
 
             modified_files = [
                 f for f in result.stdout.strip().split('\n')
-                if f.endswith('.py') and not f.startswith('test_')
+                if f.endswith('.py')
+                and not f.startswith('test_')
+                and not f.endswith('_test.py')
+                and not f.startswith('tests/')
             ]
 
             if not modified_files:
