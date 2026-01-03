@@ -74,4 +74,9 @@ test-output/
 *.tmp
 
 # Wheelwright session logs (temporary)
-.WAI/session-conversation.jsonl
+WAI-Spoke/WAI-Session-Log.jsonl
+WAI-Spoke/WAI-Baseline-Log.jsonl
+WAI-Spoke/WAI-Testing-Log.jsonl
+WAI-Spoke/WAI-WebLLM-Instructions.md
+AGENTS.md
+.cursorrules
