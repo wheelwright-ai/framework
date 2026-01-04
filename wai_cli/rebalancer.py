@@ -231,20 +231,44 @@ class FileRebalancer:
             'WAI-Signals.jsonl',
             'WAI-KB-Sync.json',
             'WAI-Session-Log.jsonl',
+            'WAI-Baseline-Log.jsonl',
+            'WAI-Testing-Log.jsonl',
+            'WAI-WebLLM-Instructions.md',
+            'WAI-Backlog.md',
+            'WAI-Implementation-Summary.md',
             'WAI-Hub-Learnings.md',  # Created by Teach, reconciled by Closeout
             'WAI-File-Index.json'  # File index for tracking modifications
         }
 
-        known_dirs = {'hooks'}
+        known_dirs = {'hooks', 'seed', 'reference'}
+        indexed_items = self._load_index_entries()
 
         unknown_files = []
 
         for item in self.wai_spoke_dir.iterdir():
             if item.is_file():
-                if item.name not in known_files:
+                if item.name not in known_files and item.name not in indexed_items:
                     unknown_files.append(item)
             elif item.is_dir():
-                if item.name not in known_dirs:
+                if item.name not in known_dirs and item.name not in indexed_items:
                     unknown_files.append(item)
 
         return unknown_files
+
+    def _load_index_entries(self) -> set:
+        index_path = self.wai_spoke_dir / 'WAI-File-Index.json'
+        if not index_path.exists():
+            return set()
+        try:
+            data = json.loads(index_path.read_text())
+        except Exception:
+            return set()
+
+        entries = set()
+        for section in ('core_files', 'operational_files', 'project_files', 'legacy_files'):
+            items = data.get(section, {})
+            if isinstance(items, dict):
+                for key in items.keys():
+                    entries.add(key)
+                    entries.add(Path(key).name)
+        return entries

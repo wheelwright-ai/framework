@@ -9,6 +9,7 @@ from typing import List, Dict, Any, Optional, Type
 
 from .base import IDEIntegration
 from .claude_code import ClaudeCodeIntegration
+from .codex import CodexIntegration
 from .vscode import VSCodeIntegration
 from .cursor import CursorIntegration
 from .web_llm import WebLLMIntegration
@@ -20,6 +21,7 @@ class IDEManager:
     # Registry of available integrations
     INTEGRATIONS: List[Type[IDEIntegration]] = [
         ClaudeCodeIntegration,
+        CodexIntegration,
         VSCodeIntegration,
         CursorIntegration,
         WebLLMIntegration
@@ -74,6 +76,22 @@ class IDEManager:
             if integration.name.lower() == ide_name.lower():
                 return integration
         return None
+
+    def list_supported(self) -> List[Dict[str, Any]]:
+        """
+        List all supported IDE integrations with details.
+
+        Returns:
+            List of dicts with IDE info and capabilities
+        """
+        results = []
+        for integration in self.all_integrations:
+            results.append({
+                'name': integration.name,
+                'config_path': integration.config_file_path,
+                'capabilities': integration.get_capabilities()
+            })
+        return results
 
     def configure_ide(self, ide_name: str, force: bool = False) -> Dict[str, Any]:
         """

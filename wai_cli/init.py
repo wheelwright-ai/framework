@@ -194,6 +194,73 @@ def init_spoke(
     if verbose:
         print_info(f"  Created WAI-Signals.jsonl")
 
+    # Create seed and reference folders
+    seed_dir = spoke_dir / 'seed'
+    ingest_dir = seed_dir / 'ingest'
+    reference_dir = seed_dir / 'reference'
+    archive_dir = spoke_dir / 'reference'
+    ensure_directory(ingest_dir)
+    ensure_directory(reference_dir)
+    ensure_directory(archive_dir)
+
+    readme = seed_dir / 'README.md'
+    if not readme.exists():
+        readme.write_text(
+            "# Seed Folders\n\n"
+            "Use these folders to bootstrap WAI-Spoke with existing context.\n\n"
+            "- seed/ingest: drop background docs to be fully subsumed into WAI files.\n"
+            "- seed/reference: drop reference docs to be indexed and archived in reference/.\n\n"
+            "After running Update, seed/ingest and seed/reference should be empty.\n"
+        )
+        if verbose:
+            print_info("  Created seed/README.md")
+
+    # Create WAI-Workspace.cmd in WAI-Spoke
+    workspace_template = templates_dir / 'WAI-Workspace.cmd'
+    workspace_target = spoke_dir / 'WAI-Workspace.cmd'
+    if workspace_template.exists() and not workspace_target.exists():
+        try:
+            workspace_target.write_text(workspace_template.read_text(encoding='utf-8'), encoding='utf-8')
+            if verbose:
+                print_info("  Created WAI-Workspace.cmd")
+        except Exception as e:
+            if verbose:
+                print_warning(f"  Failed to create WAI-Workspace.cmd: {e}")
+
+    # Capture initial project discovery snapshot
+    try:
+        from .spoke_update import SpokeUpdateProcessor
+
+        updater = SpokeUpdateProcessor(spoke_path)
+        review = updater.review_project()
+
+        state_md = spoke_dir / 'WAI-State.md'
+        if state_md.exists():
+            snapshot = [
+                "## Project Discovery Snapshot",
+                "",
+                f"Project: {review.get('name', spoke_path.name)}",
+                f"Path: {review.get('path', str(spoke_path))}",
+                "",
+                "Key files found:"
+            ]
+            key_files = review.get('key_files', [])
+            if key_files:
+                snapshot.extend([f"- {item}" for item in key_files])
+            else:
+                snapshot.append("- None detected")
+
+            readme_preview = review.get('readme_preview', '').strip()
+            if readme_preview:
+                snapshot.extend(["", "README preview:", "```", readme_preview, "```"])
+
+            state_md.write_text(state_md.read_text().rstrip() + "\n\n" + "\n".join(snapshot) + "\n")
+            if verbose:
+                print_info("  Added project discovery snapshot")
+    except Exception as exc:
+        if verbose:
+            print_warning(f"  Discovery snapshot skipped: {exc}")
+
     # Update WAI-File-Index.json with metadata
     index_file = spoke_dir / 'WAI-File-Index.json'
     if index_file.exists():

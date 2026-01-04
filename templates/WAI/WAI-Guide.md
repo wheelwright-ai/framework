@@ -30,14 +30,14 @@ Wheelwright builds AI wheels that remember everything. Instead of losing context
 
 ### Context Refresh Check (Do This First!)
 
-**Every session, check if the `.WAI/` folder has been updated since you last worked here:**
+**Every session, check if the `WAI-Spoke/` folder has been updated since you last worked here:**
 
 ```python
 import json
 from pathlib import Path
 from datetime import datetime
 
-wai_path = Path(".WAI")
+wai_path = Path("WAI-Spoke")
 kb_sync = json.loads((wai_path / "kb-sync.json").read_text()) if (wai_path / "kb-sync.json").exists() else {}
 state = json.loads((wai_path / "WAI-State.json").read_text())
 wai_meta = state.get("wheelwright", {})
@@ -79,7 +79,7 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 import json
 from pathlib import Path
 
-state = json.loads(Path(".WAI/WAI-State.json").read_text())
+state = json.loads(Path("WAI-Spoke/WAI-State.json").read_text())
 foundation = state.get("_project_foundation", {})
 
 if not foundation.get("completed"):
@@ -111,6 +111,12 @@ Do NOT proceed with any work. Instead, guide the user through establishing:
 2. Set `completed: true` with timestamp and your AI name
 3. Add first entry to `evolution_log`
 4. Update WAI-State.md with the vision
+
+---
+
+## Implementation Approval Gate
+
+If the user asks for planning/ideation, pause after the plan and ask for explicit approval before making code changes.
 
 ---
 
@@ -175,7 +181,7 @@ Which would you prefer?
 import json
 from pathlib import Path
 
-state = json.loads(Path(".WAI/WAI-State.json").read_text())
+state = json.loads(Path("WAI-Spoke/WAI-State.json").read_text())
 session = state.get("_session_state", {})
 
 print(f"Last modified by: {session.get('last_modified_by')}")
@@ -201,6 +207,8 @@ Update `_session_state`:
   }
 }
 ```
+
+**CLI menu parity rule:** When adding or extending WAI-CLI commands, update the interactive menus and help text to match.
 
 ### Before Closing Session
 

@@ -6,7 +6,7 @@
 
 set -e
 
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
+PROJECT_DIR="${WAI_PROJECT_DIR:-${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}}"
 STATE_FILE="$PROJECT_DIR/WAI-Spoke/WAI-State.json"
 
 # Exit silently if WAI-Spoke doesn't exist (not a wheel project)

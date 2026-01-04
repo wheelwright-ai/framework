@@ -424,6 +424,13 @@ Popular AI assistants automatically discover WAI through standard integration po
 "IMPORTANT: Read WAI-Spoke/ folder first to understand project context."
 ```
 
+#### Codex CLI
+```markdown
+// Codex CLI reads project instructions
+// Place instructions in: AGENTS.md
+// WAI templates include this by default
+```
+
 #### VS Code Extensions (Copilot, Codeium, etc.)
 ```json
 // .vscode/settings.json - WAI creates this automatically
@@ -456,7 +463,7 @@ Popular AI assistants automatically discover WAI through standard integration po
 When you run `WAI-CLI init`, the framework:
 
 1. **Detects your environment** - VS Code? Claude Code? Cursor? Other?
-2. **Creates integration files** - `.vscode/settings.json`, `CLAUDE.md`, `.cursorrules`, etc.
+2. **Creates integration files** - `.vscode/settings.json`, `CLAUDE.md`, `AGENTS.md`, `.cursorrules`, etc.
 3. **Points AI to `WAI-Spoke/`** - Each integration file references `WAI-Spoke/WAI-Guide.md`
 4. **Configures auto-loading** - AI tools read context on session start
 
@@ -467,7 +474,7 @@ When an AI tool starts a session in your project:
 ```
 Session Start
     ↓
-AI Tool Detects Integration File (CLAUDE.md, .cursorrules, etc.)
+AI Tool Detects Integration File (CLAUDE.md, AGENTS.md, .cursorrules, etc.)
     ↓
 Reads WAI-Spoke/WAI-Guide.md
     ↓
@@ -503,6 +510,7 @@ WAI auto-configures for:
 
 | Tool | Integration File | Auto-Generated |
 |------|------------------|----------------|
+| **Codex CLI** | `AGENTS.md` | ✅ Yes |
 | **Claude Code** | `CLAUDE.md` | ✅ Yes |
 | **VS Code** (Copilot, Codeium, Continue) | `.vscode/settings.json` | ✅ Yes |
 | **Cursor** | `.cursorrules` | ✅ Yes |

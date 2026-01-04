@@ -41,6 +41,12 @@ This hook is automatically triggered by `.claude/settings.json`:
 }
 ```
 
+For non-Claude tools, you can run it manually from the project root:
+
+```bash
+WAI_PROJECT_DIR="${CODEX_PROJECT_DIR:-.}" ./WAI-Spoke/hooks/session-start.sh
+```
+
 ### Requirements
 
 - **jq** - JSON processor (for reading WAI-State.json)

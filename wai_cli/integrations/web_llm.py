@@ -88,6 +88,13 @@ The AI will follow the guidelines in WAI-Guide.md including:
 - Decision logging for high-impact choices
 - Session state management
 
+### Complexity Gate (Planning Required)
+
+If the task affects 2+ files or requires 6+ steps:
+- Stay in discussion mode until the user says "READY TO PLAN"
+- Propose a structured plan
+- Wait for "PLAN ACCEPTED" before implementation
+
 ### Step 4: End Session
 
 When done, say:

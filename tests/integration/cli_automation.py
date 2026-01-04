@@ -12,6 +12,7 @@ from typing import Union, Optional, List
 
 try:
     import pexpect
+    from pexpect.popen_spawn import PopenSpawn
 except ImportError:
     raise ImportError(
         "pexpect is required for integration tests. "
@@ -62,12 +63,23 @@ class CLIAutomation:
         if args:
             command = f"{cli_cmd} {args}"
 
-        self.process = pexpect.spawn(
-            command,
-            cwd=str(self.working_dir),
-            timeout=timeout,
-            encoding='utf-8'
-        )
+        try:
+            self.process = pexpect.spawn(
+                command,
+                cwd=str(self.working_dir),
+                timeout=timeout,
+                encoding='utf-8'
+            )
+        except OSError as exc:
+            if "out of pty devices" not in str(exc):
+                raise
+            # Fall back to non-PTY spawn when PTYs are exhausted.
+            self.process = PopenSpawn(
+                command,
+                cwd=str(self.working_dir),
+                timeout=timeout,
+                encoding='utf-8'
+            )
 
         # Enable logging for debugging
         self.process.logfile_read = None  # Can be set to sys.stdout for debugging

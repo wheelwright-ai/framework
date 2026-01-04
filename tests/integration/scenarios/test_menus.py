@@ -44,12 +44,12 @@ def test_framework_menu_displays(test_env_with_spoke):
     """
     harness, spoke_dir = test_env_with_spoke
 
-    cli = CLIAutomation(spoke_dir)
+    cli = CLIAutomation(harness.framework_path)
     cli.start_cli()
 
     try:
         # Should see framework menu
-        cli.expect_output(["Hub", "Spokes", "Knowledge"], timeout=5)
+        cli.expect_output(["Hub", "Spokes", "Wheelwright"], timeout=5)
 
         # Quit gracefully
         cli.send_keys('q')
@@ -74,7 +74,7 @@ def test_navigate_to_help_menu(test_env_with_spoke):
     """
     harness, spoke_dir = test_env_with_spoke
 
-    cli = CLIAutomation(spoke_dir)
+    cli = CLIAutomation(harness.framework_path)
     cli.start_cli()
 
     try:
@@ -120,15 +120,8 @@ def test_status_command_from_menu(test_env_with_spoke):
     cli.start_cli()
 
     try:
-        # Wait for main menu
-        cli.expect_output(["Hub", "Spokes", "Knowledge"], timeout=5)
-
-        # Navigate to Spokes (option 2)
-        cli.send_keys('2')
-        time.sleep(0.5)
-
-        # Should see Spokes menu
-        cli.expect_output(["Spoke", "Status", "Sync"], timeout=5)
+        # Wait for spoke menu
+        cli.expect_output(["Spoke", "Status", "Upgrade"], timeout=5)
 
         # Select Status (option 1)
         cli.send_keys('1')
@@ -156,7 +149,7 @@ def test_quit_from_any_menu(test_env_with_spoke):
     """
     harness, spoke_dir = test_env_with_spoke
 
-    cli = CLIAutomation(spoke_dir)
+    cli = CLIAutomation(harness.framework_path)
     cli.start_cli()
 
     try:
@@ -199,7 +192,7 @@ def test_navigate_multiple_levels(test_env_with_spoke):
     """
     harness, spoke_dir = test_env_with_spoke
 
-    cli = CLIAutomation(spoke_dir)
+    cli = CLIAutomation(harness.framework_path)
     cli.start_cli()
 
     try:
@@ -252,12 +245,12 @@ def test_invalid_menu_option_handling(test_env_with_spoke):
     """
     harness, spoke_dir = test_env_with_spoke
 
-    cli = CLIAutomation(spoke_dir)
+    cli = CLIAutomation(harness.framework_path)
     cli.start_cli()
 
     try:
         # Wait for menu
-        cli.expect_output(["Hub", "Spokes"], timeout=5)
+        cli.expect_output(["Hub", "Spokes", "Wheelwright"], timeout=5)
 
         # Send invalid option (assuming 9 is not a valid option)
         cli.send_keys('9')
@@ -290,12 +283,12 @@ def test_menu_single_key_navigation(test_env_with_spoke):
     """
     harness, spoke_dir = test_env_with_spoke
 
-    cli = CLIAutomation(spoke_dir)
+    cli = CLIAutomation(harness.framework_path)
     cli.start_cli()
 
     try:
         # Wait for main menu
-        cli.expect_output(["Hub", "Spokes"], timeout=5)
+        cli.expect_output(["Hub", "Spokes", "Wheelwright"], timeout=5)
 
         # Send single key '1' (no Enter)
         cli.send_keys('1')

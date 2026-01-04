@@ -14,6 +14,7 @@ def test_init_spoke_creates_seed_folders_and_snapshot(tmp_path: Path) -> None:
     assert (wai_spoke / "seed" / "reference").is_dir()
     assert (wai_spoke / "reference").is_dir()
     assert (wai_spoke / "seed" / "README.md").exists()
+    assert (wai_spoke / "WAI-Workspace.cmd").exists()
 
     state_md = wai_spoke / "WAI-State.md"
     content = state_md.read_text()

@@ -154,6 +154,25 @@ Optimize WAI-Guide.md instructions per AI model (Claude, GPT-4, Gemini, etc.).
 
 ---
 
+### 8. Hub Recommendations Engine (Cross-Project)
+**Status:** Exploration
+**Priority:** Research
+**Description:**
+Hub-level analysis that synthesizes WAI KB, spokes' state, and trusted external sources (TBD) to recommend higher-order improvements across projects (architecture, UX, analytics, resource usage, operational efficiency).
+
+**Scope Ideas:**
+- Cross-project insights, not just local optimizations
+- Evidence-backed recommendations with confidence/impact scoring
+- Optional external sources with explicit allowlist and prompts
+
+**Questions:**
+- What signals are required before issuing recommendations?
+- How to prevent generic advice and keep it project-specific?
+- What trusted sources should be allowed and how to attribute them?
+- How should the CLI present and store reports?
+
+---
+
 ## Completed
 
 ### ✓ Folder Structure Migration
@@ -231,4 +250,4 @@ Optimize WAI-Guide.md instructions per AI model (Claude, GPT-4, Gemini, etc.).
 
 ---
 
-*Last Updated: 2025-12-30*
+*Last Updated: 2026-01-02*

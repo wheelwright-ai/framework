@@ -7,10 +7,8 @@
     "hub_path": null,
     "tagline": "We aren't reinventing the wheel - we're evolving it faster than one person ever could."
   },
-
   "_wai_bootstrap": {
     "_purpose": "Instructions for AI assistants to find or create Wheelwright components",
-
     "find_framework": {
       "check_order": [
         "1. Read framework_path from wheelwright above",
@@ -21,7 +19,6 @@
       ],
       "if_not_found": "Ask user: 'Where is your Wheelwright framework installed? (git clone https://github.com/wheelwright-ai/framework)'"
     },
-
     "find_hub": {
       "check_order": [
         "1. Read hub_path from wheelwright above",
@@ -31,7 +28,6 @@
       ],
       "if_not_found": "Run: cd <framework_path> && ./WAI hub create"
     },
-
     "create_hub": {
       "requires": "framework_path must be set",
       "command": "cd <framework_path> && ./WAI hub create --guided",
@@ -43,37 +39,31 @@
         "learnings/ (aggregated patterns)"
       ]
     },
-
     "update_paths": {
       "after_discovery": "Update framework_path and hub_path in wheelwright"
     }
   },
-
   "_project_foundation": {
     "completed": false,
     "completed_at": null,
     "completed_with": null,
-
     "identity": {
       "type": null,
       "name": null,
       "one_liner": null,
       "success_looks_like": null
     },
-
     "boundaries": {
       "in_scope": [],
       "out_of_scope": [],
       "constraints": []
     },
-
     "approach": {
       "stack_or_tools": [],
       "workflow": null,
       "ai_collaboration_style": null,
       "review_process": null
     },
-
     "philosophy": {
       "core_principle": "AI as responsible partner, not just enabler",
       "behaviors": [
@@ -83,10 +73,8 @@
         "Prefer 'are you sure?' over silent compliance"
       ]
     },
-
     "evolution_log": []
   },
-
   "_session_state": {
     "last_session_id": null,
     "last_modified_by": null,
@@ -98,7 +86,6 @@
     "last_closeout": null,
     "protocol_completed": false
   },
-
   "analytics": {
     "sessions": {
       "total_count": 0,
@@ -130,7 +117,6 @@
     "ai_wins": [],
     "last_updated": null
   },
-
   "feature_toggles": {
     "_description": "Toggle marketing features for baseline comparison and testing",
     "session_continuity": true,
@@ -140,30 +126,50 @@
     "hub_learning": true,
     "quality_gates": true
   },
-
   "wheel": {
     "name": null,
+    "abbrev": null,
     "version": "0.1.0",
     "type": null,
     "description": null,
     "repository": null,
     "created": null,
     "last_updated": null,
-    "status": "active"
+    "status": "active",
+    "workspace": {
+      "ide_cmd": null,
+      "run_cmd": null,
+      "cli_cmd": null,
+      "hub_cmd": null,
+      "paths": {
+        "primary": null,
+        "windows": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        },
+        "wsl": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        }
+      }
+    }
   },
-
   "hub": {
     "summary": null,
     "objectives": [],
     "decisions": [],
     "constraints": []
   },
-
   "spokes": {
     "active": [],
-    "available": ["meta-consultation", "document-analysis", "code-review"]
+    "available": [
+      "meta-consultation",
+      "document-analysis",
+      "code-review"
+    ]
   },
-
   "context": {
     "current_phase": null,
     "next_actions": [
@@ -174,17 +180,12 @@
     "blockers": [],
     "insights": []
   },
-
   "stack": [],
-
   "features": [],
-
   "decisions": [],
-
   "bugs": [],
-
   "ai_rules": {
-    "context_loading": "Read .WAI/WAI-Guide.md first, then WAI-State.json and WAI-State.md",
+    "context_loading": "Read WAI-Spoke/WAI-Guide.md first, then WAI-State.json and WAI-State.md",
     "session_state": "Update _session_state when making significant changes",
     "foundation_enforcement": {
       "on_incomplete": "CRITICAL: Guide user through foundation questions before any work. Do not skip.",
@@ -202,10 +203,9 @@
     },
     "signals": {
       "threshold": 8,
-      "instruction": "Append to wheel-signals.jsonl if decision impact >= 8"
+      "instruction": "Append to WAI-Signals.jsonl if decision impact >= 8"
     }
   },
-
   "ai_context": {
     "conversation_tracking": true,
     "capacity_monitoring": true,
@@ -216,7 +216,6 @@
       "closeout": "Provide updated WAI-State files for session end"
     }
   },
-
   "meta": {
     "total_sessions": 0,
     "total_turns": 0,

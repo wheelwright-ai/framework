@@ -185,7 +185,7 @@ test_content_contains "CLAUDE.md documents conversation logging" "./CLAUDE.md" "
 test_content_contains "CLAUDE.md has closeout command" "./CLAUDE.md" "Command: 'Closeout'"
 test_content_contains "CLAUDE.md has shipit command" "./CLAUDE.md" "Command: 'Shipit'"
 test_content_contains "WAI-Guide.md documents conversation logging" "./WAI-Spoke/WAI-Guide.md" "Conversation Logging"
-test_content_contains ".gitignore excludes conversation log" "./.gitignore" "session-conversation.jsonl"
+test_content_contains ".gitignore excludes conversation log" "./.gitignore" "WAI-Spoke/WAI-Session-Log.jsonl"
 
 echo ""
 echo "=== SECTION 9: Hub Learning Dependency ==="

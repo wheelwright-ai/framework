@@ -48,7 +48,15 @@ class MetricsTracker:
 
         # Update token metrics
         tokens_used = session_data.get('tokens_estimate', 0)
-        analytics['token_efficiency']['total_tokens_used'] += tokens_used
+        baseline = analytics.get('baseline_mode', {})
+        baseline_enabled = baseline.get('enabled', False)
+
+        if baseline_enabled:
+            baseline['total_tokens_used'] = baseline.get('total_tokens_used', 0) + tokens_used
+            baseline['total_sessions'] = baseline.get('total_sessions', 0) + 1
+            analytics['baseline_mode'] = baseline
+        else:
+            analytics['token_efficiency']['total_tokens_used'] += tokens_used
 
         # Update time tracking
         if 'time_together_seconds' in session_data:
@@ -207,14 +215,14 @@ class MetricsTracker:
             'started_at': datetime.now().isoformat(),
             'total_tokens_used': 0,
             'total_sessions': 0,
-            'description': 'Tracking without Wheelwright optimizations for comparison'
+            'description': 'Baseline capture: avoid Wheelwright optimizations; closeout still records session metrics'
         }
 
         self._save_state(state)
 
         return {
             'enabled': True,
-            'message': 'Baseline mode enabled. Use AI without Wheelwright workflows to establish baseline.'
+            'message': 'Baseline mode enabled. Work without Wheelwright optimizations; run Closeout to record each session.'
         }
 
     def disable_baseline_mode(self) -> Dict[str, Any]:

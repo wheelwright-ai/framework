@@ -4,8 +4,8 @@
     "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
     "project_root": "/home/mario/projects/wheelwright-ai/framework",
     "project_name": "framework",
-    "last_updated": "2025-12-30T04:13:55Z",
-    "updated_by": "Claude Sonnet 4.5"
+    "last_updated": "2026-01-03T07:26:56Z",
+    "updated_by": "WAI Update"
   },
   "core_files": {
     "WAI-State.json": {
@@ -42,13 +42,47 @@
       "auto_managed": true,
       "cleanup": "archive_after_hub_sync"
     },
+    "WAI-WebLLM-Instructions.md": {
+      "purpose": "Instructions for web-based LLM workflows",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "regenerate_on_configure"
+    },
     "WAI-Session-Log.jsonl": {
       "purpose": "Conversation log for current session",
       "required": false,
       "auto_managed": true,
       "cleanup": "delete_on_closeout"
+    },
+    "WAI-Baseline-Log.jsonl": {
+      "purpose": "Baseline comparison runs and summaries",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "append_only"
+    },
+    "WAI-Testing-Log.jsonl": {
+      "purpose": "Test run history and results",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "append_only"
     }
   },
-  "project_files": {},
+  "project_files": {
+    "WAI-Backlog.md": {
+      "purpose": "Feature backlog and planned improvements",
+      "required": false,
+      "auto_managed": false
+    },
+    "WAI-Implementation-Summary.md": {
+      "purpose": "Implementation summaries for completed work",
+      "required": false,
+      "auto_managed": false
+    },
+    "reference/seeded/.gitkeep": {
+      "purpose": "Seeded reference material",
+      "required": false,
+      "auto_managed": true
+    }
+  },
   "legacy_files": {}
 }

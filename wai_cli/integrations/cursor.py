@@ -90,6 +90,13 @@ This project uses Wheelwright for AI context persistence.
 - Update session state when making significant changes
 - Track conversation in WAI-Session-Log.jsonl
 
+### Complexity Gate (Planning Required)
+
+If the task affects 2+ files or requires 6+ steps:
+- Stay in discussion mode until the user says "READY TO PLAN"
+- Propose a structured plan
+- Wait for "PLAN ACCEPTED" before implementation
+
 ### Session Commands
 
 - **Time**: Check token usage and capacity

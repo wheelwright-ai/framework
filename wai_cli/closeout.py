@@ -19,6 +19,9 @@ from .rebalancer import FileRebalancer
 from .metrics import MetricsTracker
 from .quality_gates import QualityGates
 from .utils.input import print_success, print_error, print_info, print_warning, safe_confirm
+from .integrations.manager import IDEManager
+import os
+import subprocess
 
 
 class CloseoutProcessor:
@@ -56,7 +59,7 @@ class CloseoutProcessor:
         }
 
         # Step 0: Run Quality Gates (unless truly minor changes)
-        print_info("  Step 0/8: Running quality gates...")
+        print_info("  Step 0/10: Running quality gates...")
         gate_results = self.quality_gates.run_all_gates(skip_minor=True)
         results['quality_gates'] = gate_results
 
@@ -84,23 +87,20 @@ class CloseoutProcessor:
             print_success("    ✓ All quality gates passed")
             results['steps_completed'].append("Quality gates: Passed")
 
-        # Step 1: Scan for unknown files
-        print_info("  Step 1/8: Scanning for unknown files...")
-        unknown_files = self._scan_unknown_files(interactive)
-        if unknown_files:
-            results['warnings'].append(f"Found {len(unknown_files)} unknown files")
-            results['steps_completed'].append(f"Scanned files: {len(unknown_files)} unknown")
-        else:
-            results['steps_completed'].append("Scanned files: all known")
+        # Step 1: Process seed folders and clean up sprawl
+        print_info("  Step 1/10: Processing seed folders and cleanup...")
+        seed_result = self._process_seed_and_cleanup(interactive)
+        results['steps_completed'].append(seed_result['summary'])
+        results['warnings'].extend(seed_result.get('warnings', []))
 
         # Step 2: Reconcile WAI-Hub-Learnings.md if exists
-        print_info("  Step 2/8: Reconciling hub learnings...")
+        print_info("  Step 2/10: Reconciling hub learnings...")
         learnings_reconciled = self._reconcile_hub_learnings()
         if learnings_reconciled:
             results['steps_completed'].append("Reconciled hub learnings into WAI-Guide.md")
 
         # Step 3: Run file rebalancer
-        print_info("  Step 3/8: Rebalancing file content...")
+        print_info("  Step 3/10: Rebalancing file content...")
         rebalance_result = self.rebalancer.rebalance()
         if rebalance_result['rebalanced']:
             results['steps_completed'].append(f"Rebalanced files: {len(rebalance_result['actions'])} actions")
@@ -108,13 +108,13 @@ class CloseoutProcessor:
             results['steps_completed'].append("Files balanced: no action needed")
 
         # Step 4: Extract session summary
-        print_info("  Step 4/8: Extracting session summary...")
+        print_info("  Step 4/10: Extracting session summary...")
         session_summary = self.session.extract_session_summary()
         results['session_summary'] = session_summary
         results['steps_completed'].append(f"Extracted summary: {session_summary['turns']} turns")
 
         # Step 5: Extract high-impact signals
-        print_info("  Step 5/8: Extracting high-impact signals...")
+        print_info("  Step 5/10: Extracting high-impact signals...")
         signals_extracted = self._extract_signals()
         if signals_extracted > 0:
             results['steps_completed'].append(f"Extracted {signals_extracted} high-impact signals")
@@ -122,72 +122,64 @@ class CloseoutProcessor:
             results['steps_completed'].append("No new signals to extract")
 
         # Step 6: Record analytics
-        print_info("  Step 6/8: Recording session analytics...")
+        print_info("  Step 6/10: Recording session analytics...")
         self._record_analytics(session_summary)
         results['steps_completed'].append("Recorded session analytics")
 
         # Step 7: Update session state and clear log
-        print_info("  Step 7/8: Finalizing closeout...")
+        print_info("  Step 7/10: Finalizing closeout...")
         self._finalize_closeout(session_summary)
         results['steps_completed'].append("Finalized: state updated, log cleared")
+
+        # Step 8: Refresh integrations and optionally re-brief active session
+        print_info("  Step 8/10: Refreshing integrations...")
+        integration_status = self._refresh_integrations()
+        results['integration_status'] = integration_status
+        results['steps_completed'].append(f"Integrations refreshed: {integration_status['updated']} updated")
 
         print_success("\n✓ Closeout Complete!\n")
 
         return results
 
-    def _scan_unknown_files(self, interactive: bool) -> List[Path]:
-        """Scan for and handle unknown files."""
-        unknown_files = self.rebalancer.scan_unknown_files()
+    def _process_seed_and_cleanup(self, interactive: bool) -> Dict[str, Any]:
+        """Process seed folders and auto-archive unknown items."""
+        from .spoke_update import SpokeUpdateProcessor
 
-        if not unknown_files:
-            return []
+        updater = SpokeUpdateProcessor(self.spoke_dir)
+        plan = updater.plan_update()
 
-        print_warning(f"\n  ⚠️  Found {len(unknown_files)} unknown file(s) in WAI-Spoke/:\n")
+        ingest_count = len(plan.get("ingest_files", []))
+        ref_count = len(plan.get("reference_files", []))
+        unknown_count = len(plan.get("unknown_items", []))
 
-        for file in unknown_files:
-            print_info(f"      - {file.name}")
+        if interactive and (ingest_count or ref_count or unknown_count):
+            print_info(f"    Seed ingest: {ingest_count} file(s)")
+            print_info(f"    Seed reference: {ref_count} file(s)")
+            print_info(f"    Unknown items: {unknown_count}")
+            print_info("    Running update to ingest and archive.")
 
-        if interactive:
-            print_info("\n  What should we do with these files?")
-            print_info("    1. Keep them (manual reconciliation later)")
-            print_info("    2. Show file contents (review before deciding)")
-            print_info("    3. Delete them")
+        results = updater.run_update()
+        summary_parts = []
+        if results["ingested"]:
+            summary_parts.append(f"ingested {len(results['ingested'])}")
+            if interactive and results.get("ingest_notes"):
+                print_info("    Ingested files:")
+                for note in results["ingest_notes"]:
+                    targets = ", ".join(note.get("applied_to", []))
+                    preview = note.get("preview", "")
+                    print_info(f"      - {note.get('file')} → {targets}")
+                    if preview:
+                        print_info(f"        preview: {preview}")
+        if results["archived_reference"]:
+            summary_parts.append(f"archived {len(results['archived_reference'])} reference")
+        if results["archived_unknown"]:
+            summary_parts.append(f"archived {len(results['archived_unknown'])} unknown")
 
-            choice = input("\n  Choice [1]: ").strip() or "1"
-
-            if choice == "2":
-                for file in unknown_files:
-                    print_info(f"\n  Contents of {file.name}:")
-                    print_info(f"  {'-' * 60}")
-                    if file.is_file():
-                        content = file.read_text()[:500]  # First 500 chars
-                        print_info(f"  {content}")
-                        if len(file.read_text()) > 500:
-                            print_info("  ... (truncated)")
-                    print_info(f"  {'-' * 60}")
-
-                # Ask again after showing
-                if safe_confirm("Delete these files?", default=False):
-                    for file in unknown_files:
-                        if file.is_file():
-                            file.unlink()
-                        else:
-                            import shutil
-                            shutil.rmtree(file)
-                    print_success(f"\n  ✓ Deleted {len(unknown_files)} unknown files")
-                    return []
-
-            elif choice == "3":
-                for file in unknown_files:
-                    if file.is_file():
-                        file.unlink()
-                    else:
-                        import shutil
-                        shutil.rmtree(file)
-                print_success(f"\n  ✓ Deleted {len(unknown_files)} unknown files")
-                return []
-
-        return unknown_files
+        summary = "Seed/update: " + (", ".join(summary_parts) if summary_parts else "no changes")
+        return {
+            "summary": summary,
+            "warnings": results.get("warnings", [])
+        }
 
     def _reconcile_hub_learnings(self) -> bool:
         """
@@ -320,8 +312,68 @@ class CloseoutProcessor:
 
         print_info("\n" + "=" * 60)
         print_info("  WAI-Spoke/ folder ready for hub learning")
-        print_info("  Start new session with fresh context")
+
+        integration_status = results.get('integration_status')
+        if integration_status:
+            print_info("  Integrations verified and refreshed")
+            updated = integration_status.get('updated', 0)
+            print_info(f"  Integration files updated: {updated}")
+
+            statuses = integration_status.get('statuses', {})
+            if statuses:
+                print_info("  Integration status:")
+                for name, status in statuses.items():
+                    print_info(f"    - {name}: {status}")
+
+            if integration_status.get('session_refreshed'):
+                print_info("  Codex session refreshed - integrations active")
+            else:
+                print_info("  Start new session with fresh context")
+        else:
+            print_info("  Start new session with fresh context")
+
         print_info("=" * 60 + "\n")
+
+    def _refresh_integrations(self) -> Dict[str, Any]:
+        """Refresh integration files and optionally re-brief active session."""
+        manager = IDEManager(self.spoke_dir)
+        updated = 0
+        statuses = {}
+
+        for ide in manager.all_integrations:
+            config_path = ide.config_file_path
+            generated = ide.generate_config()
+            current = config_path.read_text() if config_path.exists() else None
+
+            if current != generated:
+                ide.write_config(generated)
+                updated += 1
+                statuses[ide.name] = "updated"
+            else:
+                statuses[ide.name] = "up_to_date"
+
+        session_refreshed = False
+        hook_output = ""
+        hook_path = self.spoke_dir / "WAI-Spoke" / "hooks" / "session-start.sh"
+        if hook_path.exists():
+            env = os.environ.copy()
+            env["WAI_PROJECT_DIR"] = str(self.spoke_dir)
+            result = subprocess.run(
+                [str(hook_path)],
+                cwd=self.spoke_dir,
+                env=env,
+                capture_output=True,
+                text=True
+            )
+            hook_output = (result.stdout or "").strip()
+            session_refreshed = True
+
+        return {
+            "updated": updated,
+            "statuses": statuses,
+            "session_refreshed": session_refreshed,
+            "briefing_emitted": bool(hook_output)
+        }
 
 
 def generate_closeout() -> None:

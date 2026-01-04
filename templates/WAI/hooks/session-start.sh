@@ -1,15 +1,15 @@
 #!/bin/bash
 #
 # Wheelwright SessionStart Hook
-# Automatically briefs the user when Claude Code starts a new session
+# Automatically briefs the user when an AI tool starts a new session
 #
 
 set -e
 
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
-STATE_FILE="$PROJECT_DIR/.WAI/WAI-State.json"
+PROJECT_DIR="${WAI_PROJECT_DIR:-${CODEX_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-.}}}"
+STATE_FILE="$PROJECT_DIR/WAI-Spoke/WAI-State.json"
 
-# Exit silently if .WAI doesn't exist (not a wheel project)
+# Exit silently if WAI-Spoke doesn't exist (not a wheel project)
 [[ ! -f "$STATE_FILE" ]] && exit 0
 
 # Check if protocol already completed this session

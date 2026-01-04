@@ -11,6 +11,7 @@ from datetime import datetime
 
 from .utils.input import safe_input, print_info, print_success, print_error, single_key_input
 from .utils.registry import add_project
+from .upgrader import SpokeUpgrader
 
 
 @dataclass
@@ -318,6 +319,28 @@ class ProjectDiscovery:
 
         return selected
 
+    def _ensure_wai_initialized(self, project: ProjectInfo) -> bool:
+        """
+        Ensure a project has the latest WAI-Spoke structure.
+
+        Returns:
+            True if project is initialized or upgraded successfully.
+        """
+        try:
+            version = SpokeUpgrader.detect_version(project.path)
+            if version == 'unknown':
+                print_info(f"  Initializing WAI-Spoke for '{project.name}'...")
+                from .init import init_spoke
+                init_spoke(project.path, is_framework=False, verbose=True)
+                return True
+            if version == '1.0':
+                print_info(f"  Upgrading legacy WAI structure for '{project.name}'...")
+                return SpokeUpgrader.upgrade_spoke(project.path, version, verbose=True)
+            return True
+        except Exception as exc:
+            print_error(f"  Failed to initialize '{project.name}': {exc}")
+            return False
+
     def register_selected_projects(
         self,
         selected: List[ProjectInfo],
@@ -346,6 +369,9 @@ class ProjectDiscovery:
 
         for project in selected:
             try:
+                if not self._ensure_wai_initialized(project):
+                    continue
+
                 # Generate description from project types
                 description = f"{project.format_types()} project"
 
@@ -357,6 +383,7 @@ class ProjectDiscovery:
                 )
 
                 print_success(f"Registered '{project.name}'")
+                print_info("  Seed folders ready: WAI-Spoke/seed/ingest and WAI-Spoke/seed/reference")
                 registered_count += 1
 
             except Exception as e:

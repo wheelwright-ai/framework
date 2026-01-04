@@ -6,21 +6,24 @@ Main CLI entry point with command routing and error handling.
 
 import sys
 import argparse
+import json
+import os
+import platform
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any, Tuple
 
-from .init import framework_first_init, init_spoke_interactive, check_spoke_initialized
+from .init import framework_first_init, init_spoke, init_spoke_interactive, check_spoke_initialized
 from .hub import HubManager
 from .projects import ProjectDiscovery
 from .groups import GroupsManager
-from .utils.input import print_info, print_success, print_error, safe_menu_choice
+from .utils.input import print_info, print_success, print_error, print_warning, safe_menu_choice
 from .utils.exceptions import WAIError
 from .utils.paths import normalize_path
 
 
 # Framework version
-FRAMEWORK_VERSION = "2.0.0"
-SPOKE_STRUCTURE_VERSION = "2.0"
+FRAMEWORK_VERSION = "2.0.1"
+SPOKE_STRUCTURE_VERSION = "2.1"
 
 
 class WheelwrightCLI:
@@ -29,6 +32,159 @@ class WheelwrightCLI:
     def __init__(self):
         """Initialize CLI."""
         self.framework_path = Path(__file__).parent.parent.resolve()
+
+    def _is_wsl(self) -> bool:
+        """Return True when running inside WSL."""
+        if os.environ.get("WSL_DISTRO_NAME"):
+            return True
+        release = platform.release().lower()
+        return "microsoft" in release or "wsl" in release
+
+    def _resolve_spoke_root(self, spoke_path: Path) -> Path:
+        """Normalize spoke root (project root, not WAI-Spoke)."""
+        if spoke_path.name == "WAI-Spoke":
+            return spoke_path.parent
+        return spoke_path
+
+    def _is_within_path(self, child: Path, parent: Path) -> bool:
+        """Return True if child is within parent directory."""
+        try:
+            child.resolve().relative_to(parent.resolve())
+            return True
+        except Exception:
+            return False
+
+    def _detect_start_context(self, cwd: Path) -> tuple:
+        """Detect startup context (hub, spoke, uninitialized)."""
+        hub_manager = HubManager()
+        hub_path = hub_manager.auto_discover_hub(cwd, verbose=False)
+        if hub_path and self._is_within_path(cwd, hub_path):
+            return ("hub", hub_path)
+
+        spoke_root = self._resolve_spoke_root(cwd)
+        if check_spoke_initialized(spoke_root):
+            return ("spoke", spoke_root)
+
+        return ("uninitialized", cwd)
+
+    def _validate_workspace_paths(self, spoke_path: Path) -> None:
+        """Validate and persist workspace paths in WAI-State.json."""
+        from .utils.input import safe_input, print_warning
+
+        spoke_root = self._resolve_spoke_root(spoke_path)
+        wai_spoke_dir = spoke_root / "WAI-Spoke"
+        state_file = wai_spoke_dir / "WAI-State.json"
+        if not state_file.exists():
+            return
+
+        try:
+            state = json.loads(state_file.read_text(encoding="utf-8"))
+        except Exception:
+            return
+
+        wheel = state.setdefault("wheel", {})
+        workspace = wheel.setdefault("workspace", {})
+        paths = workspace.setdefault("paths", {})
+        win_paths = paths.setdefault("windows", {"root": None, "spoke": None, "hub": None})
+        wsl_paths = paths.setdefault("wsl", {"root": None, "spoke": None, "hub": None})
+        primary = paths.get("primary")
+
+        is_wsl = self._is_wsl()
+        is_windows = os.name == "nt"
+        changed = False
+
+        if not primary:
+            primary = "wsl" if is_wsl else "windows"
+            paths["primary"] = primary
+            changed = True
+
+        # Infer root/spoke for current environment.
+        if is_windows:
+            win_root = str(spoke_root.resolve())
+            win_spoke = str((spoke_root / "WAI-Spoke").resolve())
+            if not win_paths.get("root"):
+                win_paths["root"] = win_root
+                changed = True
+            if not win_paths.get("spoke"):
+                win_paths["spoke"] = win_spoke
+                changed = True
+        else:
+            wsl_root = str(spoke_root.resolve())
+            wsl_spoke = str((spoke_root / "WAI-Spoke").resolve())
+            if not wsl_paths.get("root"):
+                wsl_paths["root"] = wsl_root
+                changed = True
+            if not wsl_paths.get("spoke"):
+                wsl_paths["spoke"] = wsl_spoke
+                changed = True
+
+        # Map wheelwright.hub_path into wsl/windows buckets when possible.
+        wai_meta = state.setdefault("wheelwright", {})
+        hub_path = wai_meta.get("hub_path")
+        if hub_path:
+            if hub_path.startswith("/") and not wsl_paths.get("hub"):
+                wsl_paths["hub"] = hub_path
+                changed = True
+            if ":" in hub_path[:3] and not win_paths.get("hub"):
+                win_paths["hub"] = hub_path
+                changed = True
+
+        # Prompt if primary hub path missing.
+        if primary == "wsl" and not wsl_paths.get("hub"):
+            prompt = "WSL hub path (e.g., /home/mario/projects/wheelwright-ai/hub)"
+            value = safe_input(prompt, default=hub_path or "", allow_empty=True)
+            if value:
+                wsl_paths["hub"] = value
+                wai_meta["hub_path"] = value
+                changed = True
+            else:
+                print_warning("  Hub path missing for WSL; set in WAI-State.json to avoid prompts.")
+        if primary == "windows" and not win_paths.get("hub"):
+            prompt = "Windows hub path (e.g., C:\\\\path\\\\to\\\\hub)"
+            value = safe_input(prompt, default=hub_path or "", allow_empty=True)
+            if value:
+                win_paths["hub"] = value
+                wai_meta["hub_path"] = value
+                changed = True
+            else:
+                print_warning("  Hub path missing for Windows; set in WAI-State.json to avoid prompts.")
+
+        # Validate that the primary hub path exists and is accessible.
+        if primary == "wsl" and is_wsl and wsl_paths.get("hub"):
+            hub_candidate = Path(wsl_paths["hub"])
+            if not hub_candidate.exists():
+                print_warning(f"  WSL hub path not found: {hub_candidate}")
+                prompt = "WSL hub path (must exist)"
+                value = safe_input(prompt, default=str(hub_candidate), allow_empty=True)
+                if value and Path(value).exists():
+                    wsl_paths["hub"] = value
+                    wai_meta["hub_path"] = value
+                    changed = True
+                else:
+                    print_warning("  Keeping existing WSL hub path; update WAI-State.json when ready.")
+        if primary == "windows" and is_windows and win_paths.get("hub"):
+            hub_candidate = Path(win_paths["hub"])
+            if not hub_candidate.exists():
+                print_warning(f"  Windows hub path not found: {hub_candidate}")
+                prompt = "Windows hub path (must exist)"
+                value = safe_input(prompt, default=str(hub_candidate), allow_empty=True)
+                if value and Path(value).exists():
+                    win_paths["hub"] = value
+                    wai_meta["hub_path"] = value
+                    changed = True
+                else:
+                    print_warning("  Keeping existing Windows hub path; update WAI-State.json when ready.")
+
+        # Keep wheelwright.hub_path aligned to primary.
+        if primary == "wsl" and wsl_paths.get("hub") and wai_meta.get("hub_path") != wsl_paths["hub"]:
+            wai_meta["hub_path"] = wsl_paths["hub"]
+            changed = True
+        if primary == "windows" and win_paths.get("hub") and wai_meta.get("hub_path") != win_paths["hub"]:
+            wai_meta["hub_path"] = win_paths["hub"]
+            changed = True
+
+        if changed:
+            state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
 
     def _confirm_exit(self) -> bool:
         """Confirm exit with user."""
@@ -85,6 +241,10 @@ Examples:
         status_parser = subparsers.add_parser('status', help='Show spoke status')
         status_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
+        # Update command
+        update_parser = subparsers.add_parser('update', help='Process seed folders and archive sprawl')
+        update_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+
         # Hub commands
         hub_parser = subparsers.add_parser('hub', help='Hub management')
         hub_subparsers = hub_parser.add_subparsers(dest='hub_command')
@@ -132,9 +292,9 @@ Examples:
         group_delete.add_argument('name', help='Group name')
         group_delete.add_argument('--force', '-f', action='store_true', help='Skip confirmation')
 
-        # Sync command (placeholder - will be implemented in commands/)
-        sync_parser = subparsers.add_parser('sync', help='Sync spoke with hub')
-        sync_parser.add_argument('--all', action='store_true', help='Sync all spokes')
+        # Sync command (structure upgrade)
+        sync_parser = subparsers.add_parser('sync', help='Upgrade spoke structure')
+        sync_parser.add_argument('--all', action='store_true', help='Upgrade all spokes')
 
         # Closeout command
         closeout_parser = subparsers.add_parser('closeout', help='Generate session closeout')
@@ -157,6 +317,12 @@ Examples:
 
         baseline_status = baseline_subparsers.add_parser('status', help='Show baseline mode status')
         baseline_status.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+
+        baseline_run = baseline_subparsers.add_parser('run', help='Run automated baseline comparison')
+        baseline_run.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+        baseline_run.add_argument('--ide', help='IDE name (e.g., "Codex CLI")')
+        baseline_run.add_argument('--model', help='AI model name (e.g., "GPT-5")')
+        baseline_run.add_argument('--notes', help='Optional notes for the run')
 
         # Time command
         time_parser = subparsers.add_parser('time', help='Show current session token usage and capacity')
@@ -198,6 +364,9 @@ Examples:
         config_ide_detect = config_ide_subparsers.add_parser('detect', help='Detect IDEs in use')
         config_ide_detect.add_argument('path', nargs='?', default='.', help='Project path')
 
+        config_ide_list = config_ide_subparsers.add_parser('list', help='List supported IDE integrations')
+        config_ide_list.add_argument('path', nargs='?', default='.', help='Project path')
+
         config_ide_setup = config_ide_subparsers.add_parser('setup', help='Setup IDE configuration')
         config_ide_setup.add_argument('ide', nargs='?', help='IDE name (default: all detected)')
         config_ide_setup.add_argument('path', nargs='?', default='.', help='Project path')
@@ -220,25 +389,111 @@ Examples:
         Handle no command - interactive menu based on context.
 
         Logic:
-        1. If in framework folder → framework menu
-        2. If in spoke folder → spoke menu
-        3. Otherwise → initialization menu
+        1. If in hub folder → hub menu
+        2. If in spoke folder → analysis then spoke menu
+        3. Otherwise → initialization intro
         """
-        from .utils.input import safe_choice
+        from .utils.input import safe_confirm
 
         cwd = Path.cwd()
+        context, ctx_path = self._detect_start_context(cwd)
 
-        # Check if current directory is the framework
-        if self._is_framework_directory(cwd):
-            self._show_framework_menu(cwd)
+        if context == "hub":
+            self._show_hub_actions_menu()
+            return
 
-        # Check if current directory has a spoke
-        elif check_spoke_initialized(cwd):
-            self._show_spoke_menu(cwd)
+        if context == "spoke":
+            self._show_spoke_analysis(ctx_path)
+            if self._is_framework_directory(ctx_path):
+                self._show_framework_menu(ctx_path)
+            else:
+                self._show_spoke_actions_menu(ctx_path)
+            return
 
+        self._show_uninitialized_intro(cwd)
+        if safe_confirm("Initialize WAI-Spoke here?", default=False):
+            try:
+                init_spoke(cwd, is_framework=False, verbose=True)
+                self._show_spoke_analysis(cwd)
+                self._show_spoke_actions_menu(cwd)
+            except Exception as exc:
+                print_error(f"Init failed: {exc}")
+        return
+
+    def _show_uninitialized_intro(self, project_path: Path) -> None:
+        """Show a short WAI intro for uninitialized projects."""
+        hub_manager = HubManager()
+        hub_path = hub_manager.auto_discover_hub(project_path, verbose=False)
+
+        print_info("\n" + "=" * 60)
+        print_info("            Wheelwright Project Setup")
+        print_info("=" * 60)
+        print_info("")
+        print_info("  This folder is not initialized with WAI yet.")
+        print_info("  Wheelwright (WAI) keeps project context stable for AI work.\n")
+        print_info("  Quick start:")
+        print_info("   • Initialize this project: WAI-CLI init")
+        print_info("   • Keep project state in WAI-Spoke/")
+        print_info("   • Use hub learn/teach to share knowledge across projects")
+        print_info("")
+        if hub_path:
+            print_info(f"  Detected hub: {hub_path}")
         else:
-            # No spoke detected
-            self._show_init_menu(cwd)
+            print_info("  No hub detected yet. Create one with: WAI-CLI hub create")
+        print_info("")
+        print_info("  WAI for education: it captures goals, decisions, and next steps")
+        print_info("  so you can resume work confidently across sessions.\n")
+
+    def _show_spoke_analysis(self, spoke_path: Path) -> None:
+        """Show a focused analysis for an initialized spoke project."""
+        spoke_root = self._resolve_spoke_root(spoke_path)
+        wai_spoke_dir = spoke_root / "WAI-Spoke"
+        state_file = wai_spoke_dir / "WAI-State.json"
+
+        project_name = spoke_root.name
+        hub_path = None
+        requires_review = False
+        review_reason = None
+
+        if state_file.exists():
+            try:
+                state = json.loads(state_file.read_text(encoding="utf-8"))
+                project_name = state.get("wheel", {}).get("name", project_name)
+                hub_path = state.get("wheelwright", {}).get("hub_path")
+                session_state = state.get("_session_state", {})
+                requires_review = bool(session_state.get("requires_review"))
+                review_reason = session_state.get("review_reason")
+            except Exception:
+                pass
+
+        print_info("\n" + "=" * 60)
+        print_info("             Spoke Analysis")
+        print_info("=" * 60)
+        print_info(f"  Project: {project_name}")
+        print_info(f"  Path:    {spoke_root}")
+
+        if hub_path:
+            hub_status = "OK" if Path(hub_path).exists() else "Missing"
+            print_info(f"  Hub:     {hub_path} ({hub_status})")
+        else:
+            print_warning("  Hub:     Not configured")
+
+        cli_path = spoke_root / "WAI-CLI"
+        if not cli_path.exists():
+            print_warning("  CLI:     WAI-CLI not found in project root")
+
+        if requires_review:
+            reason_text = f" ({review_reason})" if review_reason else ""
+            print_warning(f"  Review:  Required{reason_text}")
+
+        print_info("")
+        print_info("  Suggested actions:")
+        if requires_review:
+            print_info("   • Review prior changes before continuing")
+        if not hub_path or (hub_path and not Path(hub_path).exists()):
+            print_info("   • Set a valid hub path or run: WAI-CLI hub create")
+        print_info("   • Run status/sync/closeout as needed from the Actions menu")
+        print_info("")
 
     def _show_framework_menu(self, framework_path: Path):
         """Show interactive menu for framework directory."""
@@ -315,7 +570,8 @@ Examples:
                 print_info("  2/s - 🎡 Spokes       Registered projects")
                 print_info("  3/k - 🧠 Knowledge    Review learnings & insights")
                 print_info("  4/t - 📊 Statistics   Usage metrics & recommendations")
-                print_info("  5/? - ❓ Help         Getting started & commands")
+                print_info("  5/w - 🛞 Wheelwright  Evolution, features, integrations, testing")
+                print_info("  6/? - ❓ Help         Getting started & commands")
                 print_info("")
                 print_info("  v   - ℹ️Version      Show version info")
                 print_info("  q   - 👋 Quit")
@@ -326,7 +582,8 @@ Examples:
                     ('2', 's', '🎡 Spokes', 'spokes'),
                     ('3', 'k', '🧠 Knowledge', 'knowledge'),
                     ('4', 't', '📊 Statistics', 'statistics'),
-                    ('5', '?', '❓ Help', 'help'),
+                    ('5', 'w', '🛞 Wheelwright', 'wheelwright'),
+                    ('6', '?', '❓ Help', 'help'),
                     ('v', 'v', 'ℹ️Version', 'version'),
                     ('q', 'q', '👋 Quit', 'quit')
                 ]
@@ -341,6 +598,8 @@ Examples:
                     self._show_knowledge_base_menu()
                 elif choice == "statistics":
                     self._show_statistics_menu()
+                elif choice == "wheelwright":
+                    self._show_wheelwright_menu(framework_path)
                 elif choice == "help":
                     self._show_help_menu()
                 elif choice == "version":
@@ -361,20 +620,26 @@ Examples:
             print_info("  Spoke-specific actions")
             print_info("")
             print_info("  1/s - ℹ️Status          View spoke status")
-            print_info("  2/y - 🔄 Sync            Sync with hub")
+            print_info("  2/y - 🔄 Upgrade         Update spoke structure version")
             print_info("  3/c - 📝 Closeout        Session closeout")
             print_info("  4/o - 📄 Context         Export for LLM")
-            print_info("  5/? - ❓ Help            Show all commands")
+            print_info("  5/u - 🔧 Update          Process seed folders & archive sprawl")
+            print_info("  6/r - 🔎 Review          Project discovery snapshot")
+            print_info("  7/w - 🛞 Wheelwright      Evolution, features, integrations, testing")
+            print_info("  8/? - ❓ Help            Show all commands")
             print_info("")
             print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
                 ('1', 's', 'ℹ️Status', 'status'),
-                ('2', 'y', '🔄 Sync', 'sync'),
+                ('2', 'y', '🔄 Upgrade', 'sync'),
                 ('3', 'c', '📝 Closeout', 'closeout'),
                 ('4', 'o', '📄 Context', 'context'),
-                ('5', '?', '❓ Help', 'help'),
+                ('5', 'u', '🔧 Update', 'update'),
+                ('6', 'r', '🔎 Review', 'review'),
+                ('7', 'w', '🛞 Wheelwright', 'wheelwright'),
+                ('8', '?', '❓ Help', 'help'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
 
@@ -388,6 +653,12 @@ Examples:
                 self._cmd_closeout(type('Args', (), {})())
             elif choice == "context":
                 self._cmd_context(type('Args', (), {'path': '.'})())
+            elif choice == "update":
+                self._cmd_update(type('Args', (), {'path': '.'})())
+            elif choice == "review":
+                self._show_project_review(spoke_path)
+            elif choice == "wheelwright":
+                self._show_wheelwright_menu(spoke_path)
             elif choice == "help":
                 self._create_parser().print_help()
             elif choice == "quit" or choice is None:
@@ -423,6 +694,364 @@ Examples:
                 self._create_parser().print_help()
             elif choice == "quit" or choice is None:
                 return
+
+    def _show_baseline_menu(self, spoke_path: Path):
+        """Show baseline tracking menu for a spoke."""
+        import json
+
+        while True:
+            print_info("\n" + "=" * 60)
+            print_info("           Baseline Tracking")
+            print_info("=" * 60)
+
+            state_file = spoke_path / 'WAI-Spoke' / 'WAI-State.json'
+            baseline = {}
+            if state_file.exists():
+                try:
+                    state = json.loads(state_file.read_text())
+                    baseline = state.get('analytics', {}).get('baseline_mode', {})
+                except Exception:
+                    baseline = {}
+
+            status = "ENABLED" if baseline.get('enabled') else "DISABLED"
+            print_info(f"\n  Status: {status}")
+            if baseline.get('enabled'):
+                print_info(f"  Started: {baseline.get('started_at', 'Unknown')}")
+                print_info(f"  Tokens tracked: {baseline.get('total_tokens_used', 0):,}")
+                print_info(f"  Sessions tracked: {baseline.get('total_sessions', 0)}")
+            elif baseline.get('total_tokens_used', 0) > 0:
+                print_info(f"  Tokens tracked: {baseline.get('total_tokens_used', 0):,}")
+                print_info(f"  Sessions tracked: {baseline.get('total_sessions', 0)}")
+
+            print_info("\n  Baseline mode records sessions without WAI optimizations.")
+            print_info("  Closeout still records metrics for baseline sessions.")
+            print_info("")
+            print_info("  1/e - ✅ Enable         Start baseline capture")
+            print_info("  2/d - 🧊 Disable        Lock baseline data")
+            print_info("  3/s - 🔍 Status         Show detailed status")
+            print_info("")
+            print_info("  b   - ⬅️Back")
+            print_info("  q   - 👋 Quit")
+            print_info("")
+
+            options = [
+                ('1', 'e', '✅ Enable', 'enable'),
+                ('2', 'd', '🧊 Disable', 'disable'),
+                ('3', 's', '🔍 Status', 'status'),
+                ('b', 'b', '⬅️Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
+            ]
+
+            choice = safe_menu_choice("Select option", options, default='b')
+
+            if choice == "enable":
+                self._cmd_baseline(type('Args', (), {'baseline_command': 'enable', 'path': str(spoke_path)})())
+                input("\n  Press Enter to continue...")
+            elif choice == "disable":
+                self._cmd_baseline(type('Args', (), {'baseline_command': 'disable', 'path': str(spoke_path)})())
+                input("\n  Press Enter to continue...")
+            elif choice == "status":
+                self._cmd_baseline(type('Args', (), {'baseline_command': 'status', 'path': str(spoke_path)})())
+                input("\n  Press Enter to continue...")
+            elif choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "back" or choice is None:
+                return
+
+    def _show_wheelwright_menu(self, spoke_path: Path):
+        """Show Wheelwright overview menu."""
+        while True:
+            print_info("\n" + "=" * 60)
+            print_info("             Wheelwright")
+            print_info("=" * 60)
+            print_info("")
+            print_info("  1/e - 📈 Evolution       Gains over time")
+            print_info("  2/f - 🧩 Main Features   What Wheelwright delivers")
+            print_info("  3/i - 🔌 Integrations    Status + auto-regenerate")
+            print_info("  4/t - 🧪 Testing Results Run tests and view results")
+            print_info("")
+            print_info("  b   - ⬅️Back")
+            print_info("  q   - 👋 Quit")
+            print_info("")
+
+            options = [
+                ('1', 'e', '📈 Evolution', 'evolution'),
+                ('2', 'f', '🧩 Main Features', 'features'),
+                ('3', 'i', '🔌 Integrations', 'integrations'),
+                ('4', 't', '🧪 Testing Results', 'testing'),
+                ('b', 'b', '⬅️Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
+            ]
+
+            choice = safe_menu_choice("Select option", options, default='b')
+
+            if choice == "evolution":
+                self._show_evolution_menu(spoke_path)
+            elif choice == "features":
+                self._show_features_menu()
+            elif choice == "integrations":
+                self._show_integrations_menu(spoke_path)
+            elif choice == "testing":
+                self._show_testing_menu(spoke_path)
+            elif choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "back" or choice is None:
+                return
+
+    def _show_evolution_menu(self, spoke_path: Path):
+        """Show evolution metrics and baseline history."""
+        runs = self._load_baseline_runs(spoke_path)
+        total_runs = len(runs)
+        avg_savings = 0.0
+        if runs:
+            avg_savings = sum(r.get("savings", {}).get("percent_saved", 0) for r in runs) / total_runs
+
+        print_info("\n" + "=" * 60)
+        print_info("               Evolution")
+        print_info("=" * 60)
+        print_info("")
+
+        if not runs:
+            print_info("  No baseline runs recorded yet.")
+        else:
+            latest = runs[-1]
+            print_info(f"  Total runs: {total_runs}")
+            print_info(f"  Average savings: {avg_savings:.1f}%")
+            print_info(f"  Latest: {latest.get('timestamp', 'Unknown')}")
+            print_info(f"    IDE: {latest.get('ide', 'Unknown')}")
+            print_info(f"    Model: {latest.get('model', 'Unknown')}")
+            print_info(f"    Saved: {latest.get('savings', {}).get('percent_saved', 0):.1f}%")
+
+        print_info("")
+        print_info("  1/r - ⚡ Run Baseline     Run automated comparison")
+        print_info("  2/l - 📜 List Runs        Show recent runs")
+        print_info("")
+        print_info("  b   - ⬅️Back")
+        print_info("  q   - 👋 Quit")
+        print_info("")
+
+        options = [
+            ('1', 'r', '⚡ Run Baseline', 'run'),
+            ('2', 'l', '📜 List Runs', 'list'),
+            ('b', 'b', '⬅️Back', 'back'),
+            ('q', 'q', '👋 Quit', 'quit')
+        ]
+
+        choice = safe_menu_choice("Select option", options, default='b')
+
+        if choice == "run":
+            self._run_baseline_comparison(spoke_path)
+        elif choice == "list":
+            self._print_baseline_runs(runs)
+            input("\n  Press Enter to continue...")
+        elif choice == "quit":
+            if self._confirm_exit():
+                import sys
+                print_info("\n  👋 Goodbye!")
+                sys.exit(0)
+
+    def _show_features_menu(self):
+        """Show core Wheelwright features."""
+        print_info("\n" + "=" * 60)
+        print_info("            Main Features")
+        print_info("=" * 60)
+        print_info("")
+        print_info("  • Session continuity with WAI-Spoke state")
+        print_info("  • Automatic session briefing via hooks")
+        print_info("  • Smart closeout and conversation logging")
+        print_info("  • Token efficiency protocols (ADAPTIVE)")
+        print_info("  • Hub ↔ spoke learnings and signals")
+        print_info("  • IDE integrations and auto-discovery")
+        print_info("")
+        input("  Press Enter to continue...")
+
+    def _show_integrations_menu(self, spoke_path: Path):
+        """Show integrations status and auto-regenerate if needed."""
+        from .integrations.manager import IDEManager
+
+        print_info("\n" + "=" * 60)
+        print_info("             Integrations")
+        print_info("=" * 60)
+        print_info("")
+
+        manager = IDEManager(spoke_path)
+        supported = manager.list_supported()
+        updated = 0
+
+        for ide in manager.all_integrations:
+            config_path = ide.config_file_path
+            generated = ide.generate_config()
+            current = config_path.read_text() if config_path.exists() else None
+
+            if current != generated:
+                ide.write_config(generated)
+                updated += 1
+                status = "Updated"
+            else:
+                status = "Up to date"
+
+            print_info(f"  {ide.name}: {status}")
+            print_info(f"    Config: {config_path}")
+
+        if updated:
+            print_success(f"\n  ✓ Auto-regenerated {updated} integration file(s)\n")
+        else:
+            print_success("\n  ✓ All integrations up to date\n")
+
+        input("  Press Enter to continue...")
+
+    def _show_testing_menu(self, spoke_path: Path):
+        """Show testing menu and run tests."""
+        import subprocess
+        from datetime import datetime
+
+        while True:
+            print_info("\n" + "=" * 60)
+            print_info("            Testing Results")
+            print_info("=" * 60)
+            print_info("")
+            print_info("  1/s - 🧪 Smoke Tests      Run framework smoke tests")
+            print_info("  2/u - 🧩 Hook Unit Tests  Run session-start tests")
+            print_info("  3/l - 📜 View Log         Show recent test results")
+            print_info("")
+            print_info("  b   - ⬅️Back")
+            print_info("  q   - 👋 Quit")
+            print_info("")
+
+            options = [
+                ('1', 's', '🧪 Smoke Tests', 'smoke'),
+                ('2', 'u', '🧩 Hook Unit Tests', 'unit'),
+                ('3', 'l', '📜 View Log', 'log'),
+                ('b', 'b', '⬅️Back', 'back'),
+                ('q', 'q', '👋 Quit', 'quit')
+            ]
+
+            choice = safe_menu_choice("Select option", options, default='b')
+
+            if choice == "smoke":
+                result = subprocess.run(
+                    ['./smoke-tests-framework.sh'],
+                    cwd=spoke_path,
+                    capture_output=True,
+                    text=True
+                )
+                self._log_test_result(
+                    spoke_path,
+                    test_name="smoke-tests-framework.sh",
+                    exit_code=result.returncode,
+                    output=result.stdout + result.stderr
+                )
+                print(result.stdout or result.stderr)
+                input("\n  Press Enter to continue...")
+            elif choice == "unit":
+                result = subprocess.run(
+                    ['WAI-Spoke/hooks/test-session-start.sh'],
+                    cwd=spoke_path,
+                    capture_output=True,
+                    text=True
+                )
+                self._log_test_result(
+                    spoke_path,
+                    test_name="WAI-Spoke/hooks/test-session-start.sh",
+                    exit_code=result.returncode,
+                    output=result.stdout + result.stderr
+                )
+                print(result.stdout or result.stderr)
+                input("\n  Press Enter to continue...")
+            elif choice == "log":
+                self._print_test_log(spoke_path)
+                input("\n  Press Enter to continue...")
+            elif choice == "quit":
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+            elif choice == "back" or choice is None:
+                return
+
+    def _load_baseline_runs(self, spoke_path: Path) -> list:
+        """Load baseline runs from log."""
+        log_path = spoke_path / 'WAI-Spoke' / 'WAI-Baseline-Log.jsonl'
+        if not log_path.exists():
+            return []
+
+        runs = []
+        with open(log_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    import json
+                    runs.append(json.loads(line))
+                except Exception:
+                    continue
+        return runs
+
+    def _print_baseline_runs(self, runs: list):
+        """Print baseline runs summary."""
+        if not runs:
+            print_info("\n  No baseline runs recorded.")
+            return
+
+        print_info("\n  Recent runs:")
+        for run in runs[-5:]:
+            ts = run.get("timestamp", "Unknown")
+            ide = run.get("ide", "Unknown")
+            model = run.get("model", "Unknown")
+            saved = run.get("savings", {}).get("percent_saved", 0)
+            print_info(f"  - {ts} | {ide} | {model} | Saved: {saved:.1f}%")
+
+    def _log_test_result(self, spoke_path: Path, test_name: str, exit_code: int, output: str):
+        """Append test result to log."""
+        from datetime import datetime
+        import json
+
+        log_path = spoke_path / 'WAI-Spoke' / 'WAI-Testing-Log.jsonl'
+        entry = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "test": test_name,
+            "exit_code": exit_code,
+            "status": "pass" if exit_code == 0 else "fail"
+        }
+        with open(log_path, 'a') as f:
+            f.write(json.dumps(entry) + "\n")
+
+    def _print_test_log(self, spoke_path: Path):
+        """Print recent test log entries."""
+        log_path = spoke_path / 'WAI-Spoke' / 'WAI-Testing-Log.jsonl'
+        if not log_path.exists():
+            print_info("\n  No test results logged yet.")
+            return
+
+        entries = []
+        with open(log_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    import json
+                    entries.append(json.loads(line))
+                except Exception:
+                    continue
+
+        if not entries:
+            print_info("\n  No test results logged yet.")
+            return
+
+        print_info("\n  Recent test results:")
+        for entry in entries[-5:]:
+            ts = entry.get("timestamp", "Unknown")
+            test = entry.get("test", "Unknown")
+            status = entry.get("status", "unknown")
+            print_info(f"  - {ts} | {test} | {status}")
 
     def _show_spokes_menu(self, framework_path: Path):
         """Show Spokes menu with registry listing and management."""
@@ -466,32 +1095,75 @@ Examples:
 
             # Display project listing by default
             if projects:
-                print_info("  Registered Projects:")
+                print_info("  Registered Projects (compact):")
                 print_info("  Legend: 🟢 Active (updated <30 days)  🔴 Inactive (30+ days)")
                 print_info("")
                 for i, project in enumerate(projects, 1):
                     # Extract project info
                     name = project.get('name', 'Unknown')
                     preferred_name = project.get('preferred_name', name)
-                    desc = project.get('description', 'No description')
                     path = project.get('path', '')
 
                     # Try to get additional details
                     state_data = self._get_spoke_details(Path(path))
                     tech_stack = state_data.get('tech_stack', 'Unknown')
-                    last_teach = state_data.get('last_teach', 'Never')
                     signal_count = state_data.get('signal_count', 0)
                     last_update = state_data.get('last_update', 'Unknown')
                     status = state_data.get('status', 'Unknown')
 
-                    # Format display - use preferred name
-                    status_icon = "🟢" if status == "active" else "🔴"
+                    exists = state_data.get('exists', False)
+                    initialized = state_data.get('initialized', False)
+                    if not exists:
+                        status_icon = "⚪"
+                        status_label = "missing"
+                    elif not initialized:
+                        status_icon = "🟡"
+                        status_label = "not initialized"
+                    else:
+                        status_icon = "🟢" if status == "active" else "🔴"
+                        status_label = status
                     display_name = preferred_name if preferred_name != name else name
-                    print_info(f"  [{i}] {status_icon} {display_name}")
-                    print_info(f"      {desc[:60]}...")
-                    print_info(f"      Tech: {tech_stack} │ Signals: {signal_count} │ Last teach: {last_teach}")
-                    print_info(f"      Status: {status} │ Updated: {last_update}")
-                    print_info("")
+                    short_path = ""
+                    if path:
+                        try:
+                            path_obj = Path(path)
+                            short_path = f"{path_obj.parent.name}/{path_obj.name}"
+                        except Exception:
+                            short_path = path
+
+                    line = (
+                        f"  [{i}] {status_icon} {display_name} │ "
+                        f"Tech: {tech_stack} │ Signals: {signal_count} │ Updated: {last_update} │ State: {status_label}"
+                    )
+                    if short_path:
+                        line += f" │ Path: {short_path}"
+                    print_info(line)
+
+                from .utils.input import safe_confirm, safe_input, print_warning
+                selection = safe_input("  Open project # (Enter to skip)", allow_empty=True)
+                if selection:
+                    if selection.isdigit():
+                        idx = int(selection)
+                        if 1 <= idx <= len(projects):
+                            spoke_path = Path(projects[idx - 1].get('path', ''))
+                            if not spoke_path.exists():
+                                print_warning("Project path not found on disk.")
+                                continue
+                            if not check_spoke_initialized(spoke_path):
+                                print_warning("Project is not initialized with WAI-Spoke yet.")
+                                if safe_confirm("  Initialize WAI-Spoke here?", default=False):
+                                    try:
+                                        init_spoke(spoke_path, is_framework=False, verbose=True)
+                                        self._show_spoke_actions_menu(spoke_path)
+                                    except Exception as exc:
+                                        print_error(f"Init failed: {exc}")
+                                continue
+                            self._show_spoke_actions_menu(spoke_path)
+                            continue
+                        else:
+                            print_warning("Project number out of range.")
+                    else:
+                        print_warning("Please enter a numeric project number.")
             else:
                 print_info("  No projects registered yet.")
                 print_info("")
@@ -604,6 +1276,8 @@ Examples:
         from datetime import datetime
 
         details = {
+            'exists': False,
+            'initialized': False,
             'tech_stack': 'Unknown',
             'last_teach': 'Never',
             'signal_count': 0,
@@ -614,11 +1288,13 @@ Examples:
 
         if not spoke_path.exists():
             return details
+        details['exists'] = True
 
         # Check for WAI-Spoke directory
         wai_spoke = spoke_path / 'WAI-Spoke'
         if not wai_spoke.exists():
             return details
+        details['initialized'] = True
 
         # Load WAI-State.json for details
         state_file = wai_spoke / 'WAI-State.json'
@@ -748,17 +1424,24 @@ Examples:
             print_info("  Actions for the current spoke project")
             print_info("")
             print_info("  1/s - ℹ️Status          View spoke status & foundation")
-            print_info("  2/y - 🔄 Sync            Sync with hub")
+            print_info("  2/y - 🔄 Upgrade         Update spoke structure version")
             print_info("  3/c - 📝 Closeout        Generate session closeout")
             print_info("  4/o - 📄 Output Context  Export for LLM paste")
+            print_info("  5/u - 🔧 Update          Process seed folders & archive sprawl")
+            print_info("  6/a - 🧭 Analysis        Project analysis & readiness")
+            print_info("  7/r - 🔎 Project Review  Snapshot existing project context")
+            print_info("  Note: Hub Learn/Teach live in Main Menu → Hub")
             print_info("  b   - ⬅️Back")
             print_info("")
 
             options = [
                 ('1', 's', 'ℹ️Status', 'status'),
-                ('2', 'y', '🔄 Sync', 'sync'),
+                ('2', 'y', '🔄 Upgrade', 'sync'),
                 ('3', 'c', '📝 Closeout', 'closeout'),
                 ('4', 'o', '📄 Output Context', 'context'),
+                ('5', 'u', '🔧 Update', 'update'),
+                ('6', 'a', '🧭 Analysis', 'analysis'),
+                ('7', 'r', '🔎 Project Review', 'review'),
                 ('b', 'b', '⬅️Back', 'back')
             ]
 
@@ -772,8 +1455,46 @@ Examples:
                 self._cmd_closeout(type('Args', (), {})())
             elif choice == "context":
                 self._cmd_context(type('Args', (), {'path': str(spoke_path)})())
+            elif choice == "update":
+                self._cmd_update(type('Args', (), {'path': str(spoke_path)})())
+            elif choice == "analysis":
+                self._show_spoke_analysis(spoke_path)
+            elif choice == "review":
+                self._show_project_review(spoke_path)
             elif choice == "back" or choice is None:
                 return
+
+    def _show_project_review(self, spoke_path: Path) -> None:
+        """Show a project discovery snapshot."""
+        from .spoke_update import SpokeUpdateProcessor
+
+        updater = SpokeUpdateProcessor(spoke_path)
+        review = updater.review_project()
+
+        print_info("\n" + "=" * 60)
+        print_info("             Project Review")
+        print_info("=" * 60)
+        print_info("")
+        print_info(f"  Project: {review['name']}")
+        print_info(f"  Path: {review['path']}")
+        print_info(f"  WAI-Spoke: {'Yes' if review['has_wai_spoke'] else 'No'}")
+        print_info("")
+
+        if review["key_files"]:
+            print_info("  Key files found:")
+            for item in review["key_files"]:
+                print_info(f"   - {item}")
+        else:
+            print_info("  No common entry files detected.")
+
+        if review["readme_preview"]:
+            print_info("\n  README preview:")
+            print_info("  " + "-" * 56)
+            for line in review["readme_preview"].splitlines():
+                print_info(f"  {line}")
+            print_info("  " + "-" * 56)
+
+        input("\n  Press Enter to continue...")
 
     def _show_hub_actions_menu(self):
         """Show actions for Hub object with stats and enhanced features."""
@@ -1282,7 +2003,12 @@ Examples:
                 print_info("     • WAI-State.md - Strategic context")
                 print_info("     • WAI-Signals.jsonl - Learning signals")
                 print_info("")
-                print_info("  3. During development:")
+                print_info("  3. Seed folders for brownfield projects:")
+                print_info("     • WAI-Spoke/seed/ingest - ingest into WAI files")
+                print_info("     • WAI-Spoke/seed/reference - archive into WAI-Spoke/reference")
+                print_info("     Run 'WAI-CLI update' to process these folders.")
+                print_info("")
+                print_info("  4. During development:")
                 print_info("     - AI assistants read WAI-Guide.md")
                 print_info("     - Track decisions in WAI-State.json")
                 print_info("     - Sync learnings to hub periodically")
@@ -1299,6 +2025,14 @@ Examples:
                 print_info("    WAI status              Show spoke status")
                 print_info("    WAI version             Show version")
                 print_info("")
+                print_info("  Baseline:")
+                print_info("    WAI baseline enable     Start baseline capture")
+                print_info("    WAI baseline disable    Lock baseline data")
+                print_info("    WAI baseline status     Show baseline status")
+                print_info("")
+                print_info("  Update & Review:")
+                print_info("    WAI update              Process seed folders and archive sprawl")
+                print_info("")
                 print_info("  Hub:")
                 print_info("    WAI hub locate          Find hub")
                 print_info("    WAI hub create [path]   Create hub")
@@ -1309,6 +2043,11 @@ Examples:
                 print_info("    WAI group add-spoke <group> <spoke>")
                 print_info("    WAI group remove-spoke <group> <spoke>")
                 print_info("    WAI group delete <name>")
+                print_info("")
+                print_info("  Integrations:")
+                print_info("    WAI configure-ide list         List supported IDEs")
+                print_info("    WAI configure-ide detect       Detect IDEs in use")
+                print_info("    WAI configure-ide setup <ide>  Generate integration files")
                 print_info("")
                 print_info("  See 'WAI --help' for complete list")
                 print_info("")
@@ -1471,6 +2210,26 @@ Examples:
 
     def _route_command(self, args, parser):
         """Route command to appropriate handler."""
+        path_commands = {
+            "status",
+            "update",
+            "sync",
+            "closeout",
+            "stats",
+            "baseline",
+            "time",
+            "shipit",
+            "template",
+            "context"
+        }
+        if args.command in path_commands:
+            path_arg = getattr(args, "path", ".") or "."
+            try:
+                spoke_path = normalize_path(path_arg)
+                self._validate_workspace_paths(spoke_path)
+            except Exception:
+                pass
+
         if args.command == 'init':
             self._cmd_init(args)
         elif args.command == 'status':
@@ -1483,6 +2242,8 @@ Examples:
             self._cmd_group(args)
         elif args.command == 'sync':
             self._cmd_sync(args)
+        elif args.command == 'update':
+            self._cmd_update(args)
         elif args.command == 'closeout':
             self._cmd_closeout(args)
         elif args.command == 'stats':
@@ -2456,6 +3217,58 @@ Examples:
         from .commands.sync import sync_spoke
         sync_spoke(all_spokes=args.all)
 
+    def _cmd_update(self, args):
+        """Handle update command."""
+        from .spoke_update import SpokeUpdateProcessor
+        from .utils.input import safe_confirm
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                return
+
+            updater = SpokeUpdateProcessor(spoke_path)
+            plan = updater.plan_update()
+
+            ingest_files = plan.get("ingest_files", [])
+            reference_files = plan.get("reference_files", [])
+            unknown_items = plan.get("unknown_items", [])
+
+            print_info("\nUpdate Preview:")
+            print_info(f"  Seed ingest files: {len(ingest_files)}")
+            print_info(f"  Seed reference files: {len(reference_files)}")
+            print_info(f"  Unknown items to archive: {len(unknown_items)}")
+
+            if not (ingest_files or reference_files or unknown_items):
+                print_info("  Nothing to update.")
+                return
+
+            if not safe_confirm("Proceed with update?", default=True):
+                print_info("Update cancelled.")
+                return
+
+            results = updater.run_update()
+            print_success("\nUpdate complete.")
+            print_info(f"  Ingested: {len(results['ingested'])}")
+            print_info(f"  Archived reference: {len(results['archived_reference'])}")
+            print_info(f"  Archived unknown: {len(results['archived_unknown'])}")
+            if results.get("ingest_notes"):
+                print_info("\n  Ingest details:")
+                for note in results["ingest_notes"]:
+                    targets = ", ".join(note.get("applied_to", []))
+                    preview = note.get("preview", "")
+                    print_info(f"   - {note.get('file')} → {targets}")
+                    if preview:
+                        print_info(f"     preview: {preview}")
+            for warning in results.get("warnings", []):
+                print_warning(f"  ⚠️  {warning}")
+
+        except Exception as e:
+            print_error(f"Update failed: {e}")
+
     def _cmd_closeout(self, args):
         """Handle closeout command."""
         from .closeout import CloseoutProcessor
@@ -2568,7 +3381,10 @@ Examples:
 
             if args.baseline_command == 'enable':
                 result = metrics.enable_baseline_mode()
-                print_success(f"\n✓ {result['message']}\n")
+                print_success(f"\n✓ {result['message']}")
+                print_info("  Notes:")
+                print_info("  - Baseline sessions should avoid WAI optimizations (planning gates, compact, etc.)")
+                print_info("  - Run 'Closeout' at the end of each baseline session to record metrics\n")
 
             elif args.baseline_command == 'disable':
                 result = metrics.disable_baseline_mode()
@@ -2595,7 +3411,8 @@ Examples:
                     print_info(f"  Started: {baseline.get('started_at', 'Unknown')}")
                     print_info(f"  Tokens tracked: {baseline.get('total_tokens_used', 0):,}")
                     print_info(f"  Sessions tracked: {baseline.get('total_sessions', 0)}")
-                    print_info(f"\n  {baseline.get('description', '')}\n")
+                    print_info(f"\n  {baseline.get('description', '')}")
+                    print_info("  Reminder: Closeout records baseline sessions; optimized totals pause while baseline is enabled.\n")
                 else:
                     print_info("  Status: DISABLED")
                     if baseline.get('total_tokens_used', 0) > 0:
@@ -2608,11 +3425,202 @@ Examples:
                         print_info("  To enable: WAI-CLI baseline enable\n")
 
                 print_info("=" * 60 + "\n")
+            elif args.baseline_command == 'run':
+                ide = getattr(args, 'ide', None)
+                model = getattr(args, 'model', None)
+                notes = getattr(args, 'notes', None)
+                self._run_baseline_comparison(spoke_path, ide=ide, model=model, notes=notes)
 
         except Exception as e:
             print_error(f"Baseline command failed: {e}")
             import traceback
             traceback.print_exc()
+
+    def _run_baseline_comparison(self, spoke_path: Path, ide: str = None, model: str = None, notes: str = None):
+        """Run a synthetic baseline vs optimized comparison and log results."""
+        from .metrics import MetricsTracker
+        from .session import SessionManager
+        import json
+        import uuid
+
+        if not check_spoke_initialized(spoke_path):
+            print_error(f"No spoke found at {spoke_path}")
+            return
+
+        wai_spoke_dir = spoke_path / 'WAI-Spoke'
+        metrics = MetricsTracker(wai_spoke_dir)
+
+        state_file = wai_spoke_dir / 'WAI-State.json'
+        state = json.loads(state_file.read_text())
+        baseline_state = state.get('analytics', {}).get('baseline_mode', {})
+        if baseline_state.get('enabled'):
+            print_warning("Baseline mode is already enabled. Disable it before running an automated comparison.")
+            return
+
+        resolved_ide, resolved_model = self._detect_ide_model(ide, model)
+        run_id = str(uuid.uuid4())
+        started_at = datetime.utcnow().isoformat() + "Z"
+
+        pre_stats = metrics.get_session_stats()
+        pre_optimized_tokens = state.get('analytics', {}).get('token_efficiency', {}).get('total_tokens_used', 0)
+        pre_baseline_tokens = baseline_state.get('total_tokens_used', 0)
+
+        print_info("\n📏 Running automated baseline comparison...\n")
+
+        # Baseline capture
+        metrics.enable_baseline_mode()
+        baseline_session = self._simulate_session(
+            SessionManager(spoke_path),
+            ai_model=resolved_model,
+            label="baseline"
+        )
+        metrics.record_session_end(baseline_session)
+        metrics.disable_baseline_mode()
+
+        # Optimized capture
+        optimized_session = self._simulate_session(
+            SessionManager(spoke_path),
+            ai_model=resolved_model,
+            label="optimized"
+        )
+        metrics.record_session_end(optimized_session)
+
+        baseline_tokens = baseline_session['tokens_estimate']
+        optimized_tokens = optimized_session['tokens_estimate']
+        tokens_saved = baseline_tokens - optimized_tokens
+        percent_saved = (tokens_saved / baseline_tokens * 100) if baseline_tokens > 0 else 0
+
+        post_stats = metrics.get_session_stats()
+        post_state = json.loads(state_file.read_text())
+        post_optimized_tokens = post_state.get('analytics', {}).get('token_efficiency', {}).get('total_tokens_used', 0)
+        post_baseline_tokens = post_state.get('analytics', {}).get('baseline_mode', {}).get('total_tokens_used', 0)
+
+        log_entry = {
+            "timestamp": started_at,
+            "run_id": run_id,
+            "run_type": "synthetic",
+            "ide": resolved_ide,
+            "model": resolved_model,
+            "baseline": {
+                "tokens": baseline_tokens,
+                "turns": baseline_session["turns"]
+            },
+            "optimized": {
+                "tokens": optimized_tokens,
+                "turns": optimized_session["turns"]
+            },
+            "savings": {
+                "tokens_saved": tokens_saved,
+                "percent_saved": round(percent_saved, 1)
+            },
+            "pre_stats": {
+                "optimized_tokens_total": pre_optimized_tokens,
+                "baseline_tokens_total": pre_baseline_tokens,
+                "sessions_total": pre_stats.get("sessions", {}).get("total", 0)
+            },
+            "post_stats": {
+                "optimized_tokens_total": post_optimized_tokens,
+                "baseline_tokens_total": post_baseline_tokens,
+                "sessions_total": post_stats.get("sessions", {}).get("total", 0)
+            },
+            "notes": notes
+        }
+
+        log_path = wai_spoke_dir / 'WAI-Baseline-Log.jsonl'
+        with open(log_path, 'a') as f:
+            f.write(json.dumps(log_entry) + "\n")
+
+        print_success("✓ Baseline comparison complete\n")
+        print_info("Results:")
+        print_info(f"  IDE: {resolved_ide}")
+        print_info(f"  Model: {resolved_model}")
+        print_info(f"  Baseline tokens: {baseline_tokens:,}")
+        print_info(f"  Optimized tokens: {optimized_tokens:,}")
+        print_info(f"  Tokens saved: {tokens_saved:,} ({percent_saved:.1f}%)\n")
+        print_info(f"Logged to: {log_path}\n")
+
+    def _simulate_session(self, session: "SessionManager", ai_model: str, label: str) -> Dict[str, Any]:
+        """Simulate a short session and return session metrics."""
+        session.start_session(ai_name=ai_model)
+
+        if label == "baseline":
+            user_text = (
+                "Baseline benchmark: please provide a verbose walkthrough of the current "
+                "Wheelwright context, recent changes, and suggested next actions with full detail."
+            )
+            assistant_text = (
+                "Baseline response: This is a verbose baseline response used to simulate a longer, "
+                "less optimized interaction. It includes extra detail, redundancy, and longer phrasing "
+                "to represent a less efficient workflow without compacting context or applying strict "
+                "planning gates."
+            )
+        else:
+            user_text = "Optimized benchmark: summarize the current context and next actions succinctly."
+            assistant_text = "Optimized response: concise summary with key actions only."
+
+        session.log_turn("user", user_text, {"benchmark_label": label})
+        session.log_turn("assistant", assistant_text, {"benchmark_label": label, "ai_model": ai_model})
+
+        session_data = {
+            "session_id": session.session_id,
+            "turns": session.turn_count,
+            "tokens_estimate": session.tokens_estimate,
+            "duration_seconds": 1,
+            "time_together_seconds": 1,
+            "time_ai_alone_seconds": 0
+        }
+
+        session.clear_log()
+        return session_data
+
+    def _detect_ide_model(self, ide: str = None, model: str = None) -> tuple:
+        """Best-effort detection of IDE and model."""
+        import os
+
+        detected_ide = ide
+        detected_model = model
+
+        if not detected_ide:
+            if os.environ.get("CODEX_CLI") is not None or os.environ.get("CODEX_PROJECT_DIR") is not None:
+                detected_ide = "Codex CLI"
+            elif os.environ.get("CLAUDE_CLI") is not None:
+                detected_ide = "Claude Code"
+            else:
+                detected_ide = "Unknown IDE"
+
+        if not detected_model:
+            detected_model = os.environ.get("AI_MODEL", "Unknown Model")
+
+        return detected_ide, detected_model
+
+    def _get_latest_baseline_summary(self, spoke_path: Path) -> str:
+        """Return a one-line summary of the latest baseline run, if available."""
+        log_path = spoke_path / 'WAI-Spoke' / 'WAI-Baseline-Log.jsonl'
+        if not log_path.exists():
+            return ""
+
+        last_line = ""
+        with open(log_path, 'r') as f:
+            for line in f:
+                if line.strip():
+                    last_line = line
+
+        if not last_line:
+            return ""
+
+        try:
+            import json
+            entry = json.loads(last_line)
+            savings = entry.get("savings", {})
+            percent = savings.get("percent_saved")
+            ide = entry.get("ide", "Unknown IDE")
+            model = entry.get("model", "Unknown Model")
+            timestamp = entry.get("timestamp", "Unknown time")
+            if percent is None:
+                return f"Baseline run: {timestamp} | IDE: {ide} | Model: {model}"
+            return f"Baseline run: {timestamp} | IDE: {ide} | Model: {model} | Saved: {percent}%"
+        except Exception:
+            return ""
 
     def _cmd_time(self, args):
         """Handle time command - show token usage and capacity."""
@@ -2807,6 +3815,7 @@ Examples:
             summary_text = session_summary.get('summary', 'Session closeout')
             key_topics = session_summary.get('key_topics', [])
             turns = session_summary.get('turns', 0)
+            baseline_summary = self._get_latest_baseline_summary(spoke_path)
 
             # Create commit message
             commit_msg = f"""Session closeout: {summary_text[:60]}
@@ -2815,6 +3824,7 @@ Examples:
 
 Session turns: {turns}
 {f'Key topics: {", ".join(key_topics)}' if key_topics else ''}
+{baseline_summary}
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -3007,6 +4017,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
                 # Show available commands
                 print_info("\nIDE Configuration Commands:")
                 print_info("  detect        - Detect IDEs in use")
+                print_info("  list          - List supported IDE integrations")
                 print_info("  setup         - Setup IDE configuration")
                 print_info("  capabilities  - Show IDE capabilities")
                 print_info("  optimize      - Get optimization suggestions\n")
@@ -3022,6 +4033,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
                 if not ides:
                     print_info("  No IDEs detected.")
                     print_info("\n  Supported IDEs:")
+                    print_info("    - Codex CLI")
                     print_info("    - Claude Code")
                     print_info("    - VS Code")
                     print_info("    - Cursor")
@@ -3033,6 +4045,23 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
                         print_info(f"    Config: {ide_info['config_path']}")
 
                 print_info("\n" + "=" * 60 + "\n")
+
+            elif args.config_ide_command == 'list':
+                supported = manager.list_supported()
+
+                print_info("\n" + "=" * 60)
+                print_success("  Supported IDE Integrations")
+                print_info("=" * 60 + "\n")
+
+                for ide_info in supported:
+                    print_success(f"  {ide_info['name']}")
+                    print_info(f"    Config: {ide_info['config_path']}")
+                    print_info("    Capabilities:")
+                    for cap, value in ide_info['capabilities'].items():
+                        print_info(f"      - {cap}: {value}")
+                    print_info("")
+
+                print_info("=" * 60 + "\n")
 
             elif args.config_ide_command == 'setup':
                 ide_name = args.ide if hasattr(args, 'ide') and args.ide else None
@@ -3073,25 +4102,25 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
             elif args.config_ide_command == 'capabilities':
                 ide_name = args.ide if hasattr(args, 'ide') and args.ide else None
 
-                capabilities = manager.probe_capabilities(ide_name)
+                capabilities = manager.list_supported()
 
                 print_info("\n" + "=" * 60)
                 print_success("  IDE Capabilities")
                 print_info("=" * 60 + "\n")
 
-                if 'error' in capabilities:
-                    print_error(f"  {capabilities['error']}\n")
-                elif 'ide' in capabilities:
-                    # Single IDE
-                    print_info(f"  IDE: {capabilities['ide']}\n")
-                    for cap, value in capabilities['capabilities'].items():
-                        print_info(f"    {cap}: {value}")
-                    print_info("")
+                if ide_name:
+                    matched = next((i for i in capabilities if i['name'].lower() == ide_name.lower()), None)
+                    if not matched:
+                        print_error(f"  Unknown IDE: {ide_name}\n")
+                    else:
+                        print_info(f"  IDE: {matched['name']}\n")
+                        for cap, value in matched['capabilities'].items():
+                            print_info(f"    {cap}: {value}")
+                        print_info("")
                 else:
-                    # All detected
-                    for ide, caps in capabilities['capabilities'].items():
-                        print_success(f"  {ide}:")
-                        for cap, value in caps.items():
+                    for ide_info in capabilities:
+                        print_success(f"  {ide_info['name']}:")
+                        for cap, value in ide_info['capabilities'].items():
                             print_info(f"    {cap}: {value}")
                         print_info("")
 

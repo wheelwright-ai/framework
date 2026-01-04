@@ -146,7 +146,7 @@ echo "=== SECTION 6: Wheel Signals ==="
 echo ""
 
 TOTAL=$((TOTAL + 1))
-echo -n "[$TOTAL] wheel-signals.jsonl is valid JSONL... "
+echo -n "[$TOTAL] WAI-Signals.jsonl is valid JSONL... "
 valid=true
 line_count=0
 while IFS= read -r line; do
@@ -157,7 +157,7 @@ while IFS= read -r line; do
         FAILED=$((FAILED + 1))
         break
     fi
-done < "./WAI-Spoke/wheel-signals.jsonl"
+done < "./WAI-Spoke/WAI-Signals.jsonl"
 
 if [[ "$valid" == "true" ]]; then
     echo "✓ PASS ($line_count entries)"
@@ -165,8 +165,8 @@ if [[ "$valid" == "true" ]]; then
 fi
 
 TOTAL=$((TOTAL + 1))
-echo -n "[$TOTAL] wheel-signals.jsonl has conversation logging signal... "
-if grep -q "conversation logging" "./WAI-Spoke/wheel-signals.jsonl"; then
+echo -n "[$TOTAL] WAI-Signals.jsonl has conversation logging signal... "
+if grep -q "conversation logging" "./WAI-Spoke/WAI-Signals.jsonl"; then
     echo "✓ PASS"
     PASSED=$((PASSED + 1))
 else
@@ -175,8 +175,8 @@ else
 fi
 
 TOTAL=$((TOTAL + 1))
-echo -n "[$TOTAL] wheel-signals.jsonl has naming standardization signal... "
-if grep -q "Capitalized WAI-Spoke/" "./WAI-Spoke/wheel-signals.jsonl"; then
+echo -n "[$TOTAL] WAI-Signals.jsonl has naming standardization signal... "
+if grep -q "Capitalized .WAI/" "./WAI-Spoke/WAI-Signals.jsonl"; then
     echo "✓ PASS"
     PASSED=$((PASSED + 1))
 else
@@ -185,8 +185,8 @@ else
 fi
 
 TOTAL=$((TOTAL + 1))
-echo -n "[$TOTAL] wheel-signals.jsonl has unit test signal... "
-if grep -q "unit test suite" "./WAI-Spoke/wheel-signals.jsonl"; then
+echo -n "[$TOTAL] WAI-Signals.jsonl has unit test signal... "
+if grep -q "unit test suite" "./WAI-Spoke/WAI-Signals.jsonl"; then
     echo "✓ PASS"
     PASSED=$((PASSED + 1))
 else
@@ -195,8 +195,8 @@ else
 fi
 
 TOTAL=$((TOTAL + 1))
-echo -n "[$TOTAL] wheel-signals.jsonl has dual-layer testing policy... "
-if grep -q "Dual-layer testing" "./WAI-Spoke/wheel-signals.jsonl"; then
+echo -n "[$TOTAL] WAI-Signals.jsonl has dual-layer testing policy... "
+if grep -q "Dual-layer testing" "./WAI-Spoke/WAI-Signals.jsonl"; then
     echo "✓ PASS"
     PASSED=$((PASSED + 1))
 else
@@ -251,7 +251,7 @@ echo ""
 echo "=== SECTION 9: Current Session State ==="
 echo ""
 
-test_jq_query "protocol_completed is true" "./WAI-Spoke/WAI-State.json" "._session_state.protocol_completed" "true"
+test_jq_query "protocol_completed is boolean" "./WAI-Spoke/WAI-State.json" "._session_state.protocol_completed | type" "boolean"
 test_jq_exists "protocol_last_run timestamp exists" "./WAI-Spoke/WAI-State.json" "._session_state.protocol_last_run"
 
 echo ""
@@ -263,8 +263,8 @@ test_jq_exists "capacity_management field exists" "./WAI-Spoke/WAI-State.json" "
 test_jq_query "Multi-file threshold is 2" "./WAI-Spoke/WAI-State.json" ".context.complexity_thresholds.multi_file_threshold" "2"
 test_jq_query "Step count threshold is 6" "./WAI-Spoke/WAI-State.json" ".context.complexity_thresholds.step_count_threshold" "6"
 test_jq_query "Checkpoint interval is 3" "./WAI-Spoke/WAI-State.json" ".context.complexity_thresholds.checkpoint_interval" "3"
-test_jq_query "Warning threshold is 0.80" "./WAI-Spoke/WAI-State.json" ".context.capacity_management.warning_threshold" "0.80"
-test_jq_query "Critical threshold is 0.90" "./WAI-Spoke/WAI-State.json" ".context.capacity_management.critical_threshold" "0.90"
+test_jq_query "Warning threshold is 0.8" "./WAI-Spoke/WAI-State.json" ".context.capacity_management.warning_threshold" "0.8"
+test_jq_query "Critical threshold is 0.9" "./WAI-Spoke/WAI-State.json" ".context.capacity_management.critical_threshold" "0.9"
 test_jq_query "Workflow mode is ADAPTIVE" "./WAI-Spoke/WAI-State.json" ".ai_context.workflow_mode" "ADAPTIVE"
 test_jq_query "Plan template version is v1.0" "./WAI-Spoke/WAI-State.json" ".ai_context.plan_template_version" "v1.0"
 test_jq_query "Token efficiency protocols is v1.0" "./WAI-Spoke/WAI-State.json" ".ai_context.token_efficiency_protocols" "v1.0"

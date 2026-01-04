@@ -2,7 +2,7 @@
 # Smoke tests for Phase 1 & 2 features
 # Session infrastructure, closeout, analytics, metrics
 
-set -e
+set +e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"

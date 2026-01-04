@@ -42,6 +42,11 @@ def show_status(path: str = '.') -> None:
     foundation = state.get('_project_foundation', {})
     session = state.get('_session_state', {})
     wai_meta = state.get('wheelwright', {})
+    workspace = wheel.get('workspace', {})
+    paths = workspace.get('paths', {})
+    primary = paths.get('primary')
+    win_paths = paths.get('windows', {})
+    wsl_paths = paths.get('wsl', {})
 
     print(f"\n    Wheelwright Status")
     print(f"   " + "=" * 50)
@@ -66,6 +71,15 @@ def show_status(path: str = '.') -> None:
         print(f"\n    Hub: {wai_meta['hub_path']}")
     else:
         print(f"\n    Hub: Not connected")
+
+    if primary or win_paths or wsl_paths:
+        print(f"\n    Workspace Paths:")
+        if primary:
+            print(f"   Primary: {primary}")
+        if win_paths:
+            print(f"   Windows: {win_paths}")
+        if wsl_paths:
+            print(f"   WSL:     {wsl_paths}")
 
     # Check signals
     signals_path = wai_dir / 'WAI-Signals.jsonl'

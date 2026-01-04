@@ -54,12 +54,6 @@ class ClaudeCodeIntegration(IDEIntegration):
     def generate_config(self, template_vars: Optional[Dict[str, Any]] = None) -> str:
         """Generate CLAUDE.md configuration."""
 
-        # Read WAI-Guide.md for instructions
-        guide_file = self.wai_spoke_dir / 'WAI-Guide.md'
-        guide_content = ""
-        if guide_file.exists():
-            guide_content = guide_file.read_text()
-
         # Read WAI-State.json for project info
         state_file = self.wai_spoke_dir / 'WAI-State.json'
         import json
@@ -71,6 +65,16 @@ class ClaudeCodeIntegration(IDEIntegration):
         project_name = state.get('wheel', {}).get('name', 'Project')
         project_description = state.get('wheel', {}).get('description', '')
 
+        template_path = self.spoke_dir / 'templates' / 'claude' / 'CLAUDE.md'
+        if project_name == "Wheelwright Framework" and template_path.exists():
+            template_content = template_path.read_text()
+            return (
+                template_content
+                .replace('{{PROJECT_NAME}}', project_name)
+                .replace('{{PROJECT_DESCRIPTION}}', project_description)
+            )
+
+        # Fallback to minimal config for other projects
         config = f"""# Claude Code Instructions for {project_name}
 
 **CRITICAL: This project uses Wheelwright for session continuity.**
@@ -100,6 +104,13 @@ Follow the guidelines in `WAI-Spoke/WAI-Guide.md` for:
 - Session state management
 - High-impact decision logging (impact >= 8)
 - Conversation logging to WAI-Session-Log.jsonl
+
+### Complexity Gate (Planning Required)
+
+If the task affects 2+ files or requires 6+ steps:
+- Stay in discussion mode until the user says "READY TO PLAN"
+- Propose a structured plan
+- Wait for "PLAN ACCEPTED" before implementation
 
 ## Priority 2: Session Commands
 

@@ -4,7 +4,7 @@
     "structure_version": "v1",
     "description": "Wheelwright Framework - Core code and wheel templates for AI context persistence",
     "framework_path": "~/projects/wheelwright-ai/framework",
-    "hub_path": "/home/mario/wheelwright-hub",
+    "hub_path": "/home/mario/projects/wheelwright-ai/hub",
     "_paths_note": "This IS the framework. hub_path points to the developer's personal hub.",
     "github_repo": "wheelwright-ai/framework",
     "migrated_from_scf": "2.2.0",
@@ -90,8 +90,8 @@
       },
       {
         "date": "2025-12-29",
-        "change": "Implemented conversation logging and naming standardization (WWAI → WAI)",
-        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI → WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "change": "Implemented conversation logging and naming standardization (WWAI \u2192 WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI \u2192 WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
         "acknowledged_by": "Mario Vaccari",
         "ai_partner": "Claude Sonnet 4.5"
       }
@@ -99,29 +99,40 @@
   },
   "_session_state": {
     "last_session_id": "integration-test-framework-2026-01-01",
-    "last_modified_by": "Claude Sonnet 4.5",
-    "last_modified_at": "2026-01-01T00:00:00Z",
-    "requires_review": false,
-    "review_reason": null,
-    "session_count": 5,
+    "last_modified_by": "GPT-5",
+    "last_modified_at": "2026-01-04T23:37:18.430956+00:00",
+    "requires_review": true,
+    "review_reason": "Updated WSL workspace launcher, CLI tab naming, hub paths, and CLI startup analysis behavior.",
+    "session_count": 6,
     "protocol_completed": true,
     "protocol_last_run": "2026-01-03T07:34:16Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": "mario-2026-01-02-233416",
-      "started_at": "2026-01-03T07:34:16Z",
+      "session_id": null,
+      "started_at": null,
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "mario-2026-01-02-232656",
-      "started_at": "2026-01-03T07:26:56Z",
+      "session_id": "mario-2026-01-02-233416",
+      "started_at": "2026-01-03T07:34:16Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-02T23:34:16.933115",
-      "summary": "No conversation log found",
-      "key_topics": [],
-      "files_modified": []
+      "closed_at": "2026-01-04T23:37:18.430956+00:00",
+      "summary": "Fixed WSL workspace launcher to open tabs in correct directories using wsl.exe --cd, renamed the WAI tab to CLI, removed the hub tab, and ensured hub paths align to /home/mario/projects/wheelwright-ai/hub. Added CLI startup awareness: hub/spoke/uninitialized routing with auto-analysis for initialized spokes and a short WAI intro for uninitialized projects; added an analysis option in project actions.",
+      "key_topics": [
+        "WSL launcher tab working directories",
+        "CLI startup context routing",
+        "Spoke analysis default",
+        "Uninitialized project intro",
+        "Hub path alignment"
+      ],
+      "files_modified": [
+        "WAI-Spoke/WAI-Workspace.cmd",
+        "templates/WAI/WAI-Workspace.cmd",
+        "wai_cli/core.py",
+        "WAI-Spoke/WAI-State.json"
+      ]
     }
   },
   "analytics": {
@@ -153,13 +164,33 @@
   },
   "wheel": {
     "name": "Wheelwright Framework",
+    "abbrev": "WAI",
     "version": "1.0.0",
     "type": "framework",
     "description": "Build AI wheels that roll forward forever - universal context persistence for any knowledge work",
     "repository": "https://github.com/wheelwright-ai/framework",
     "created": "2024-11-01T00:00:00Z",
     "last_updated": "2025-12-28T00:00:00Z",
-    "status": "active"
+    "status": "active",
+    "workspace": {
+      "ide_cmd": null,
+      "run_cmd": null,
+      "cli_cmd": null,
+      "hub_cmd": null,
+      "paths": {
+        "primary": "wsl",
+        "windows": {
+          "root": "Z:\\home\\mario\\projects\\wheelwright-ai\\framework",
+          "spoke": "Z:\\home\\mario\\projects\\wheelwright-ai\\framework\\WAI-Spoke",
+          "hub": "Z:\\home\\mario\\projects\\wheelwright-ai\\hub"
+        },
+        "wsl": {
+          "root": "/home/mario/projects/wheelwright-ai/framework",
+          "spoke": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
+          "hub": "/home/mario/projects/wheelwright-ai/hub"
+        }
+      }
+    }
   },
   "hub": {
     "summary": "Core framework for Wheelwright - the wheel metaphor for AI context persistence",
@@ -210,7 +241,7 @@
       "current_capacity_estimate": 0.0,
       "warning_threshold": 0.8,
       "critical_threshold": 0.9,
-      "last_compact_at": null,
+      "last_compact_at": "2026-01-04T23:37:18.430956+00:00",
       "compact_frequency": "before_closeout_or_shipit",
       "description": "Token capacity tracking and auto-compact triggers"
     }
@@ -388,7 +419,7 @@
     },
     {
       "date": "2025-12-29",
-      "decision": "WWAI → WAI naming standardization",
+      "decision": "WWAI \u2192 WAI naming standardization",
       "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
       "impact": 9,
       "by": "Claude Sonnet 4.5"
@@ -410,21 +441,21 @@
     {
       "date": "2025-12-29",
       "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
-      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion → READY TO PLAN → PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
+      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion \u2192 READY TO PLAN \u2192 PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
@@ -438,30 +469,44 @@
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
+    },
+    {
+      "date": "2026-01-04",
+      "decision": "Added wheel.workspace.paths with primary flag and CLI validation to keep Windows/WSL paths in sync; WAI-Workspace now launches using those paths.",
+      "rationale": "Bridges Windows and WSL workflows without path drift, ensures correct tab icons/paths, and avoids repeated manual fixes.",
+      "impact": 8,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-04",
+      "decision": "WSL workspace launcher now uses explicit wsl.exe --cd per tab; CLI auto-routes based on start context with default analysis for initialized spokes.",
+      "rationale": "Ensures tabs open in correct directories and users get immediate project guidance on CLI start.",
+      "impact": 7,
+      "by": "GPT-5"
     }
   ],
   "next_steps": [
