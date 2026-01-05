@@ -105,12 +105,20 @@ Follow the guidelines in `WAI-Spoke/WAI-Guide.md` for:
 - High-impact decision logging (impact >= 8)
 - Conversation logging to WAI-Session-Log.jsonl
 
+### Conversation Logging
+Log every user and assistant turn to `WAI-Spoke/WAI-Session-Log.jsonl`.
+Hub learning cannot proceed until Closeout processes and clears the log.
+
 ### Complexity Gate (Planning Required)
+Assess task complexity before acting.
 
 If the task affects 2+ files or requires 6+ steps:
 - Stay in discussion mode until the user says "READY TO PLAN"
 - Propose a structured plan
 - Wait for "PLAN ACCEPTED" before implementation
+
+### PRIORITY 1.5: TOKEN EFFICIENCY
+Assess task complexity before acting. Use ADAPTIVE workflow when needed.
 
 ## Priority 2: Session Commands
 
@@ -118,9 +126,11 @@ If the task affects 2+ files or requires 6+ steps:
 Check token usage and context capacity.
 
 ### 'Compact'
+Command: 'Compact'
 Compress context by summarizing resolved discussions.
 
 ### 'Closeout'
+Command: 'Closeout'
 End session with smart processing:
 - Scan WAI-Spoke/ for unknown files
 - Reconcile hub learnings
@@ -130,6 +140,7 @@ End session with smart processing:
 - Clear logs
 
 ### 'Shipit'
+Command: 'Shipit'
 Closeout + git commit in one command.
 
 ## Project Context

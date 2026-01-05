@@ -1,4 +1,4 @@
-# Claude Code Instructions for Wheelwright Framework
+# Claude Code Instructions for {{PROJECT_NAME}}
 
 **CRITICAL: This project uses Wheelwright for session continuity.**
 
@@ -12,7 +12,7 @@ When you first receive a message in this project directory, execute the session 
    - Read `WAI-Spoke/WAI-State.md` (strategic vision)
 
 2. **Brief the User**:
-   - Project: Wheelwright Framework
+   - Project: {{PROJECT_NAME}}
    - Last session info from WAI-State.json
    - Current phase and next actions
 
@@ -68,7 +68,7 @@ Closeout + git commit in one command.
 
 ## Project Context
 
-Build AI wheels that roll forward forever - universal context persistence for any knowledge work
+{{PROJECT_DESCRIPTION}}
 
 **See WAI-Spoke/ for complete project context and instructions.**
 
