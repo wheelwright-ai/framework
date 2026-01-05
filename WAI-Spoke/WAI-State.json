@@ -105,20 +105,20 @@
     "review_reason": "Adjusted unit test gate to ignore test file modifications.",
     "session_count": 15,
     "protocol_completed": true,
-    "protocol_last_run": "2026-01-05T05:06:39Z",
+    "protocol_last_run": "2026-01-05T06:02:46Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": "mario-2026-01-04-210639",
-      "started_at": "2026-01-05T05:06:39Z",
+      "session_id": "mario-2026-01-04-220246",
+      "started_at": "2026-01-05T06:02:46Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "mario-2026-01-04-210404",
-      "started_at": "2026-01-05T05:04:04Z",
+      "session_id": "mario-2026-01-04-210639",
+      "started_at": "2026-01-05T05:06:39Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-04T21:06:38.976666",
+      "closed_at": "2026-01-04T22:02:46.002192",
       "summary": "No conversation log found",
       "key_topics": [],
       "files_modified": []
@@ -126,10 +126,10 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 22,
+      "total_count": 23,
       "total_turns": 8,
       "total_duration_seconds": 4,
-      "avg_duration_seconds": 0.18181818181818182
+      "avg_duration_seconds": 0.17391304347826086
     },
     "token_efficiency": {
       "total_tokens_used": 66,
@@ -149,7 +149,7 @@
       "ended_at": "2026-01-01T23:50:38.642573"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-04T21:06:38.975739"
+    "last_updated": "2026-01-04T22:02:46.001312"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -559,6 +559,20 @@
       "rationale": "Prevents false warnings when only test files were modified.",
       "impact": 5,
       "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "impact": 7,
+      "by": "WAI Auto-Upgrade"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "impact": 7,
+      "by": "WAI Auto-Upgrade"
     }
   ],
   "next_steps": [
