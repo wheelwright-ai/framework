@@ -3691,6 +3691,7 @@ Examples:
     def _cmd_shipit(self, args):
         """Handle shipit command - closeout + git commit."""
         from .closeout import CloseoutProcessor
+        from .bootstrap import refresh_bootstrap
         from .utils.input import safe_confirm
         import subprocess
 
@@ -3727,6 +3728,12 @@ Examples:
             if results.get('errors') and any('aborted' in e.lower() for e in results['errors']):
                 print_error("\nShipit aborted due to closeout errors.")
                 return
+
+            # Step 1.5: Refresh bootstrap (framework repo only)
+            framework_root = Path(__file__).resolve().parent.parent
+            if spoke_path.resolve() == framework_root.resolve():
+                print_info("\n  Refreshing bootstrap folder...")
+                refresh_bootstrap(framework_root, verbose=True)
 
             # Step 2: Git workflow
             print_info("\n" + "=" * 60)

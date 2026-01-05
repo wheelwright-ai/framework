@@ -1,10 +1,17 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+set "LOG_FALLBACK=%TEMP%\WAI-Workspace.log"
+echo [%DATE% %TIME%] WAI-Workspace start > "%LOG_FALLBACK%"
+
 pushd "%~dp0" >nul 2>&1
 set "PROJECT_DIR=%CD%"
 for %%A in ("%PROJECT_DIR%\..") do set "ROOT_DIR=%%~fA"
-set "LOG_FILE=%TEMP%\WAI-Workspace.log"
+set "LOG_FILE=%PROJECT_DIR%\WAI-Workspace.log"
+echo [%DATE% %TIME%] WAI-Workspace running >> "%LOG_FALLBACK%"
+echo [%DATE% %TIME%] WAI-Workspace running > "%LOG_FILE%"
+echo [%DATE% %TIME%] ENV: WAI_WSL_DISTRO=%WAI_WSL_DISTRO% WAI_WORKSPACE_TEST=%WAI_WORKSPACE_TEST% WAI_FORCE_WSL=%WAI_FORCE_WSL% >> "%LOG_FILE%"
+set "WT_DISABLE_FILE=%PROJECT_DIR%\\.wai-wt-disabled"
 echo [%DATE% %TIME%] Launching WAI-Workspace from !PROJECT_DIR! > "%LOG_FILE%"
 echo [%DATE% %TIME%] Root dir: !ROOT_DIR! >> "%LOG_FILE%"
 
@@ -20,19 +27,9 @@ set "WAI_WSL_SPOKE="
 set "WAI_WSL_HUB="
 
 if exist "%STATE_FILE%" (
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $abbr=$j.wheel.abbrev; if ([string]::IsNullOrWhiteSpace($abbr)) { $abbr=Read-Host 'Enter project abbreviation (e.g., CRM)'; if (-not [string]::IsNullOrWhiteSpace($abbr)) { if (-not $j.wheel) { $j | Add-Member -NotePropertyName wheel -NotePropertyValue @{} }; $j.wheel.abbrev=$abbr; $j | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $p } }; $abbr } catch { '' }"`) do set "ABBR=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.ide_cmd } catch { '' }"`) do set "WAI_IDE_CMD=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.run_cmd } catch { '' }"`) do set "WAI_RUN_CMD=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.cli_cmd } catch { '' }"`) do set "WAI_CLI_CMD=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.hub_cmd } catch { '' }"`) do set "WAI_HUB_CMD=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.paths.primary } catch { '' }"`) do set "WAI_PATHS_PRIMARY=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.paths.windows.root } catch { '' }"`) do set "WAI_WIN_ROOT=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.paths.windows.spoke } catch { '' }"`) do set "WAI_WIN_SPOKE=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.paths.windows.hub } catch { '' }"`) do set "WAI_WIN_HUB=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.paths.wsl.root } catch { '' }"`) do set "WAI_WSL_ROOT=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.paths.wsl.spoke } catch { '' }"`) do set "WAI_WSL_SPOKE=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheel.workspace.paths.wsl.hub } catch { '' }"`) do set "WAI_WSL_HUB=%%A"
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $j.wheelwright.hub_path } catch { '' }"`) do set "HUB_DIR=%%A"
+  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p='%STATE_FILE%'; try { $j=Get-Content -Raw $p | ConvertFrom-Json; $vals=@{ ABBR=$j.wheel.abbrev; WAI_IDE_CMD=$j.wheel.workspace.ide_cmd; WAI_RUN_CMD=$j.wheel.workspace.run_cmd; WAI_CLI_CMD=$j.wheel.workspace.cli_cmd; WAI_HUB_CMD=$j.wheel.workspace.hub_cmd; WAI_PATHS_PRIMARY=$j.wheel.workspace.paths.primary; WAI_WIN_ROOT=$j.wheel.workspace.paths.windows.root; WAI_WIN_SPOKE=$j.wheel.workspace.paths.windows.spoke; WAI_WIN_HUB=$j.wheel.workspace.paths.windows.hub; WAI_WSL_ROOT=$j.wheel.workspace.paths.wsl.root; WAI_WSL_SPOKE=$j.wheel.workspace.paths.wsl.spoke; WAI_WSL_HUB=$j.wheel.workspace.paths.wsl.hub; HUB_DIR=$j.wheelwright.hub_path }; $vals.GetEnumerator() | ForEach-Object { $v=$_.Value; if ($null -eq $v) { $v='' } else { $v=[string]$v }; '{0}={1}' -f $_.Key, $v } } catch { }"`) do (
+    for /f "tokens=1* delims==" %%K in ("%%A") do set "%%K=%%L"
+  )
 )
 
 if not defined ABBR (
@@ -65,36 +62,16 @@ if "!WAI_USE_WSL!"=="1" (
   set "WAI_WSL_DISTRO_INPUT="
   if defined WAI_WSL_DISTRO set "WAI_WSL_DISTRO_INPUT=!WAI_WSL_DISTRO!"
   if defined WAI_WSL_DISTRO_INPUT (
-    for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$d=$env:WAI_WSL_DISTRO; if ($d) { $d.Trim() }"`) do set "WAI_WSL_DISTRO_INPUT=%%A"
+    for /f "tokens=* delims= " %%A in ("!WAI_WSL_DISTRO_INPUT!") do set "WAI_WSL_DISTRO_INPUT=%%A"
   )
   if defined WAI_WSL_DISTRO_INPUT (
     set "WAI_WSL_DISTRO=!WAI_WSL_DISTRO_INPUT!"
-  ) else (
-    for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "[Console]::OutputEncoding=[Text.UTF8Encoding]::UTF8; $picked=''; foreach ($line in ^& wsl.exe -l -q) { $t=$line.Trim(); if ($t) { $picked=$t; break } }; $picked"`) do set "WAI_WSL_DISTRO=%%A"
   )
-  set "WAI_WSL_DISTRO_CHECK="
-  for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "[Console]::OutputEncoding=[Text.UTF8Encoding]::UTF8; $picked=''; foreach ($line in ^& wsl.exe -l -q) { $t=$line.Trim(); if ($t) { $picked=$t; break } }; $picked"`) do set "WAI_WSL_DISTRO_CHECK=%%A"
-  if not defined WAI_WSL_DISTRO_INPUT (
-    if defined WAI_WSL_DISTRO (
-      if not exist "\\wsl$\\!WAI_WSL_DISTRO!\\." (
-        if defined WAI_WSL_DISTRO_CHECK (
-          for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$d='!WAI_WSL_DISTRO_CHECK!'; if ($d) { $d.Trim() }"`) do set "WAI_WSL_DISTRO=%%A"
-          echo [%DATE% %TIME%] WSL distro fallback to "!WAI_WSL_DISTRO!" >> "%LOG_FILE%"
-        )
-      )
-    )
-  )
-  if defined WAI_WSL_DISTRO_INPUT if not defined WAI_WSL_DISTRO (
-    echo [%DATE% %TIME%] WSL distro "%WAI_WSL_DISTRO_INPUT%" not found in list; resetting >> "%LOG_FILE%"
-  )
-  if not defined WAI_WSL_DISTRO (
-    echo [%DATE% %TIME%] WSL not available; falling back to cmd.exe >> "%LOG_FILE%"
-    set "WAI_USE_WSL=0"
-  ) else (
+  if defined WAI_WSL_DISTRO (
     wsl.exe -d "!WAI_WSL_DISTRO!" -- true >nul 2>&1
     if errorlevel 1 (
-      echo [%DATE% %TIME%] WSL distro "%WAI_WSL_DISTRO%" not found; falling back to cmd.exe >> "%LOG_FILE%"
-      set "WAI_USE_WSL=0"
+      echo [%DATE% %TIME%] Invalid WSL distro "%WAI_WSL_DISTRO%"; using default >> "%LOG_FILE%"
+      set "WAI_WSL_DISTRO="
     )
   )
 )
@@ -176,48 +153,49 @@ if not defined WT_EXE (
 )
 
 if "!WAI_USE_WSL!"=="1" (
-  set "WT_WSL_PROFILE="
-  if defined WAI_WSL_DISTRO set "WT_WSL_PROFILE=-p !WAI_WSL_DISTRO!"
-  set "UNC_SPOKE="
-  set "UNC_ROOT="
-  set "UNC_HUB="
-  if defined WAI_WSL_DISTRO (
-    if defined WSL_PATH (
-      set "UNC_SPOKE=!WSL_PATH:/=\!"
-      set "UNC_SPOKE=\\wsl$\\!WAI_WSL_DISTRO!!UNC_SPOKE!"
-    )
-    if defined WSL_ROOT (
-      set "UNC_ROOT=!WSL_ROOT:/=\!"
-      set "UNC_ROOT=\\wsl$\\!WAI_WSL_DISTRO!!UNC_ROOT!"
-    )
-    if defined WSL_HUB (
-      set "UNC_HUB=!WSL_HUB:/=\!"
-      set "UNC_HUB=\\wsl$\\!WAI_WSL_DISTRO!!UNC_HUB!"
-    )
+  set "WSL_DISTRO_ARG="
+  if defined WAI_WSL_DISTRO set "WSL_DISTRO_ARG=-d \"!WAI_WSL_DISTRO!\""
+  if not defined WAI_USE_WT set "WAI_USE_WT=1"
+  if "%WAI_FORCE_WT%"=="1" if exist "!WT_DISABLE_FILE!" del /q "!WT_DISABLE_FILE!" >nul 2>&1
+  if exist "!WT_DISABLE_FILE!" set "WAI_USE_WT=0"
+  if "%WAI_FORCE_WT%"=="1" set "WAI_USE_WT=1"
+  echo [%DATE% %TIME%] WAI_USE_WT=!WAI_USE_WT! >> "%LOG_FILE%"
+  echo [%DATE% %TIME%] Entered WSL block >> "%LOG_FILE%"
+  if "%WAI_WORKSPACE_TEST%"=="1" (
+    echo [%DATE% %TIME%] Running workspace self-test >> "%LOG_FILE%"
+    echo [%DATE% %TIME%] WAI_WORKSPACE_TEST=1 >> "%LOG_FILE%"
+    wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash -lc "pwd" >> "%LOG_FILE%" 2>&1
+    wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_PATH!" -- bash -lc "pwd" >> "%LOG_FILE%" 2>&1
+    wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash -lc "ls -l ./WAI-CLI" >> "%LOG_FILE%" 2>&1
+    wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash -lc "bash ./WAI-Spoke/wai-cli-launch.sh" >> "%LOG_FILE%" 2>&1
+    goto :eof
   )
-  set "WT_DIR_SPOKE="
-  set "WT_DIR_ROOT="
-  set "WT_DIR_HUB="
-  if defined UNC_SPOKE set WT_DIR_SPOKE=-d "!UNC_SPOKE!"
-  if defined UNC_ROOT set WT_DIR_ROOT=-d "!UNC_ROOT!"
-  if defined UNC_HUB (
-    if exist "!UNC_HUB!" (set WT_DIR_HUB=-d "!UNC_HUB!") else (set "WT_DIR_HUB=!WT_DIR_SPOKE!")
+  if "!WAI_USE_WT!"=="1" (
+    set "WT_FAILED=0"
+    echo [%DATE% %TIME%] WT cmd: %WT_EXE% -w new new-tab --title "🧠 %ABBR% - IDE" --tabColor "#4A90E2" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🧠 %ABBR% - IDE" ; new-tab --title "🚀 %ABBR% - RUN" --tabColor "#E74C3C" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🚀 %ABBR% - RUN" ; new-tab --title "🧭 %ABBR% - CLI" --tabColor "#2ECC71" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-cli-launch.sh "🧭 %ABBR% - CLI" >> "%LOG_FILE%"
+    call "%WT_EXE%" -w new ^
+      new-tab --title "🧠 %ABBR% - IDE" --tabColor "#4A90E2" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🧠 %ABBR% - IDE" ^
+      ; new-tab --title "🚀 %ABBR% - RUN" --tabColor "#E74C3C" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🚀 %ABBR% - RUN" ^
+      ; new-tab --title "🧭 %ABBR% - CLI" --tabColor "#2ECC71" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-cli-launch.sh "🧭 %ABBR% - CLI"
+    echo [%DATE% %TIME%] WT exit=%ERRORLEVEL% >> "%LOG_FILE%"
+    if errorlevel 1 set "WT_FAILED=1"
+    if "%WAI_FORCE_WSL%"=="1" set "WT_FAILED=1"
   ) else (
-    set "WT_DIR_HUB=!WT_DIR_SPOKE!"
+    set "WT_FAILED=1"
   )
-  if not defined WT_DIR_SPOKE if defined WSL_PATH set WT_DIR_SPOKE=-d "!WSL_PATH!"
-  if not defined WT_DIR_ROOT if defined WSL_ROOT set WT_DIR_ROOT=-d "!WSL_ROOT!"
-  if not defined WT_DIR_HUB if defined WSL_HUB set WT_DIR_HUB=-d "!WSL_HUB!"
-  echo [%DATE% %TIME%] UNC_SPOKE=!UNC_SPOKE! >> "%LOG_FILE%"
-  echo [%DATE% %TIME%] UNC_ROOT=!UNC_ROOT! >> "%LOG_FILE%"
-  echo [%DATE% %TIME%] UNC_HUB=!UNC_HUB! >> "%LOG_FILE%"
-  echo [%DATE% %TIME%] WT_DIR_SPOKE=!WT_DIR_SPOKE! >> "%LOG_FILE%"
-  echo [%DATE% %TIME%] WT_DIR_ROOT=!WT_DIR_ROOT! >> "%LOG_FILE%"
-  echo [%DATE% %TIME%] WT_DIR_HUB=!WT_DIR_HUB! >> "%LOG_FILE%"
-  start "" /D "%WT_START_DIR%" "%WT_EXE%" -w new --title "%ABBR% - IDE" --suppressApplicationTitle --tabColor "#4A90E2" wsl.exe -d "!WAI_WSL_DISTRO!" --cd "!WSL_ROOT!"
-  timeout /t 1 /nobreak >nul
-  start "" /D "%WT_START_DIR%" "%WT_EXE%" -w 0 new-tab --title "%ABBR% - RUN" --suppressApplicationTitle --tabColor "#E74C3C" wsl.exe -d "!WAI_WSL_DISTRO!" --cd "!WSL_ROOT!"
-  start "" /D "%WT_START_DIR%" "%WT_EXE%" -w 0 new-tab --title "%ABBR% - CLI" --suppressApplicationTitle --tabColor "#2ECC71" wsl.exe -d "!WAI_WSL_DISTRO!" --cd "!WSL_ROOT!" --exec bash -lc "./WAI-CLI && exec bash"
+  if "!WT_FAILED!"=="1" (
+    echo [%DATE% %TIME%] WT skipped/failed; opening standalone WSL windows. >> "%LOG_FILE%"
+    if "%WAI_FORCE_WT%"=="1" (
+      echo [%DATE% %TIME%] WT failed but WAI_FORCE_WT=1 set; not disabling WT. >> "%LOG_FILE%"
+    ) else (
+      echo [%DATE% %TIME%] WT disabled for next run; remove "!WT_DISABLE_FILE!" to retry. >> "%LOG_FILE%"
+      echo WT disabled due to failure > "!WT_DISABLE_FILE!"
+    )
+    start "" "%ComSpec%" /k wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh
+    start "" "%ComSpec%" /k wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh
+    start "" "%ComSpec%" /k wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-cli-launch.sh
+  )
+  if "%WAI_CLOSE_CMD%"=="1" exit /b 0
 ) else (
   set "CLI_BIN=WAI-CLI"
   if exist "%ROOT_DIR%\\WAI-CLI" set "CLI_BIN=%ROOT_DIR%\\WAI-CLI"

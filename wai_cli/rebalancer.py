@@ -237,7 +237,10 @@ class FileRebalancer:
             'WAI-Backlog.md',
             'WAI-Implementation-Summary.md',
             'WAI-Hub-Learnings.md',  # Created by Teach, reconciled by Closeout
-            'WAI-File-Index.json'  # File index for tracking modifications
+            'WAI-File-Index.json',  # File index for tracking modifications
+            'WAI-Workspace.cmd',
+            'wai-shell.sh',
+            'wai-cli-launch.sh'
         }
 
         known_dirs = {'hooks', 'seed', 'reference'}

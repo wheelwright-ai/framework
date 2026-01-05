@@ -5,10 +5,14 @@ Ensures code quality before session closeout.
 """
 
 import json
+import os
+import time
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 import subprocess
 import re
+
+from .utils.input import print_info
 
 
 class QualityGates:
@@ -145,6 +149,12 @@ class QualityGates:
         Returns:
             Dict with test coverage results
         """
+        live_env = os.environ.get("WAI_QG_LIVE", "").strip()
+        live_output = live_env not in ("0", "false", "FALSE", "no", "NO")
+        timeout_env = os.environ.get("WAI_QG_TIMEOUT", "").strip()
+        timeout = 300
+        if timeout_env.isdigit():
+            timeout = max(60, int(timeout_env))
         # Look for test files
         test_patterns = ['test_*.py', '*_test.py', 'test*.sh', 'smoke-tests-*.sh']
         test_files = []
@@ -164,32 +174,34 @@ class QualityGates:
         test_results = []
         for test_file in test_files:
             if test_file.suffix == '.py':
+                if live_output:
+                    print_info(f"    Running: {test_file.name}")
                 # Python test
-                result = subprocess.run(
+                returncode, output = self._run_command(
                     ['python3', '-m', 'pytest', str(test_file), '-v'],
                     cwd=self.spoke_dir,
-                    capture_output=True,
-                    text=True,
-                    timeout=120
+                    timeout=timeout,
+                    live_output=live_output
                 )
                 test_results.append({
                     'file': test_file.name,
-                    'passed': result.returncode == 0,
-                    'output': result.stdout if result.returncode == 0 else result.stderr
+                    'passed': returncode == 0,
+                    'output': "" if live_output else output
                 })
             elif test_file.suffix == '.sh':
+                if live_output:
+                    print_info(f"    Running: {test_file.name}")
                 # Shell test
-                result = subprocess.run(
+                returncode, output = self._run_command(
                     ['bash', str(test_file)],
                     cwd=self.spoke_dir,
-                    capture_output=True,
-                    text=True,
-                    timeout=120
+                    timeout=timeout,
+                    live_output=live_output
                 )
                 test_results.append({
                     'file': test_file.name,
-                    'passed': result.returncode == 0,
-                    'output': result.stdout if result.returncode == 0 else result.stderr
+                    'passed': returncode == 0,
+                    'output': "" if live_output else output
                 })
 
         # Analyze results
@@ -210,6 +222,63 @@ class QualityGates:
             'message': f"All {len(test_files)} test file(s) passed.",
             'test_files': [str(f) for f in test_files]
         }
+
+    def _run_command(
+        self,
+        command: List[str],
+        cwd: Path,
+        timeout: int,
+        live_output: bool
+    ) -> Tuple[int, str]:
+        """Run a command with optional live output and inactivity timeout."""
+        if not live_output:
+            result = subprocess.run(
+                command,
+                cwd=cwd,
+                capture_output=True,
+                text=True,
+                timeout=timeout
+            )
+            output = result.stdout if result.returncode == 0 else result.stderr
+            return result.returncode, output or ""
+
+        proc = subprocess.Popen(
+            command,
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+
+        output_lines = []
+        last_output = time.time()
+
+        while True:
+            line = proc.stdout.readline()
+            if line:
+                print_info(f"      {line.rstrip()}")
+                output_lines.append(line)
+                if len(output_lines) > 200:
+                    output_lines = output_lines[-200:]
+                last_output = time.time()
+                continue
+
+            if proc.poll() is not None:
+                break
+
+            if time.time() - last_output > timeout:
+                proc.terminate()
+                try:
+                    proc.wait(timeout=5)
+                except Exception:
+                    proc.kill()
+                output_lines.append(f"\n[Timeout after {timeout}s of inactivity]\n")
+                return 124, "".join(output_lines)
+
+            time.sleep(0.1)
+
+        return proc.returncode, "".join(output_lines)
 
     def _check_unit_tests(self) -> Dict[str, Any]:
         """

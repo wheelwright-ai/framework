@@ -4,7 +4,7 @@
     "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
     "project_root": "/home/mario/projects/wheelwright-ai/framework",
     "project_name": "framework",
-    "last_updated": "2026-01-03T07:26:56Z",
+    "last_updated": "2026-01-05T04:30:26Z",
     "updated_by": "WAI Update"
   },
   "core_files": {
@@ -80,6 +80,26 @@
     },
     "reference/seeded/.gitkeep": {
       "purpose": "Seeded reference material",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Workspace.log": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/wai-cli-launch.sh": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Workspace.cmd": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/wai-shell.sh": {
+      "purpose": "Auto-archived from WAI-Spoke root",
       "required": false,
       "auto_managed": true
     }

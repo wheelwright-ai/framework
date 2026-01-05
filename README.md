@@ -236,6 +236,18 @@ This creates a `WAI-Spoke/` directory containing your project's memory:
 - `WAI-Signals.jsonl` - High-impact learnings ready for Hub collection
 - `WAI-KB-Sync.json` - Hub synchronization status
 
+### GPT Bootstrap (Single-File Mode)
+
+If you are working in a GPT session without the CLI, use the bootstrap folder:
+
+1) Open `bootstrap/README.md` and `bootstrap/WAI-Minimal.template.md`.
+2) Ask GPT to fill the template into ONE file (save as `WAI-Minimal.md`).
+3) After initializing Wheelwright locally, move it to:
+   `WAI-Spoke/seed/ingest/WAI-Minimal.md`
+4) Run `WAI-CLI closeout` (or `WAI shipit`) to reconcile it into the full WAI files.
+
+The bootstrap folder is refreshed on every Shipit for the framework.
+
 ### Step 3: Create Your Hub (After 1+ Spoke-Projects)
 
 Once you have one or more Spoke-Projects, create a Hub to centralize learning:

@@ -215,17 +215,26 @@ def init_spoke(
         if verbose:
             print_info("  Created seed/README.md")
 
-    # Create WAI-Workspace.cmd in WAI-Spoke
-    workspace_template = templates_dir / 'WAI-Workspace.cmd'
-    workspace_target = spoke_dir / 'WAI-Workspace.cmd'
-    if workspace_template.exists() and not workspace_target.exists():
-        try:
-            workspace_target.write_text(workspace_template.read_text(encoding='utf-8'), encoding='utf-8')
-            if verbose:
-                print_info("  Created WAI-Workspace.cmd")
-        except Exception as e:
-            if verbose:
-                print_warning(f"  Failed to create WAI-Workspace.cmd: {e}")
+    # Create workspace launcher files in WAI-Spoke
+    workspace_files = ['WAI-Workspace.cmd', 'wai-shell.sh', 'wai-cli-launch.sh']
+    for filename in workspace_files:
+        workspace_template = templates_dir / filename
+        workspace_target = spoke_dir / filename
+        if workspace_template.exists() and not workspace_target.exists():
+            try:
+                workspace_target.write_text(
+                    workspace_template.read_text(encoding='utf-8'),
+                    encoding='utf-8'
+                )
+                if verbose:
+                    print_info(f"  Created {filename}")
+            except Exception as e:
+                if verbose:
+                    print_warning(f"  Failed to create {filename}: {e}")
+
+    if verbose:
+        print_info("  Workspace usage:")
+        print_info("    Run WAI-Spoke/WAI-Workspace.cmd to open IDE/RUN/CLI tabs")
 
     # Capture initial project discovery snapshot
     try:
