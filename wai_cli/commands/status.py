@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 from typing import Optional
 
+from ..hub import HubManager
+
 
 def show_status(path: str = '.') -> None:
     """
@@ -37,11 +39,24 @@ def show_status(path: str = '.') -> None:
         print(f"    Error loading WAI-State.json: {e}")
         return
 
+    hub_manager = HubManager()
+    discovered_hub = hub_manager.auto_discover_hub(project_path, verbose=False)
+    wai_meta = state.get('wheelwright', {})
+    stored_hub = wai_meta.get('hub_path')
+
+    if discovered_hub and str(discovered_hub) != stored_hub:
+        wai_meta['hub_path'] = str(discovered_hub)
+        state['wheelwright'] = wai_meta
+        try:
+            state_path.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding='utf-8')
+            stored_hub = wai_meta.get('hub_path')
+        except Exception as e:
+            print(f"    Warning: Failed to update hub path: {e}")
+
     # Display status
     wheel = state.get('wheel', {})
     foundation = state.get('_project_foundation', {})
     session = state.get('_session_state', {})
-    wai_meta = state.get('wheelwright', {})
     workspace = wheel.get('workspace', {})
     paths = workspace.get('paths', {})
     primary = paths.get('primary')
@@ -67,8 +82,8 @@ def show_status(path: str = '.') -> None:
     print(f"   Last modified by: {session.get('last_modified_by', 'Unknown')}")
     print(f"   Sessions: {session.get('session_count', 0)}")
 
-    if wai_meta.get('hub_path'):
-        print(f"\n    Hub: {wai_meta['hub_path']}")
+    if stored_hub:
+        print(f"\n    Hub: {stored_hub}")
     else:
         print(f"\n    Hub: Not connected")
 

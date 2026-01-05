@@ -5,6 +5,7 @@ Intelligent hub discovery with scoring, verification, and creation.
 """
 
 import os
+import json
 from pathlib import Path
 from typing import Optional, List, Tuple
 from datetime import datetime, timedelta
@@ -104,6 +105,8 @@ class HubManager:
         # Score all candidates
         for candidate in candidates:
             self._score_candidate(candidate)
+            if self._candidate_has_project(candidate.path, current_path):
+                candidate.add_score(12, "Registry contains current project")
 
         # Sort by score (highest first)
         candidates.sort(key=lambda c: c.score, reverse=True)
@@ -165,10 +168,44 @@ class HubManager:
 
                     candidates.append(candidate)
 
+                # Check for nested hubs within sibling repos (e.g., repo/hub)
+                nested_hub = item / 'hub'
+                if nested_hub.exists() and nested_hub.is_dir():
+                    candidate = HubCandidate(nested_hub)
+                    candidate.add_score(4, f"Nested hub in {item.name}/hub")
+                    candidates.append(candidate)
+
+                nested_wai_hub = item / 'WAI-Hub'
+                if nested_wai_hub.exists() and nested_wai_hub.is_dir():
+                    candidate = HubCandidate(nested_wai_hub)
+                    candidate.add_score(4, f"Nested hub in {item.name}/WAI-Hub")
+                    candidates.append(candidate)
+
         except PermissionError:
             pass  # Can't read parent directory
 
         return candidates
+
+    def _candidate_has_project(self, hub_path: Path, project_path: Path) -> bool:
+        """Return True if hub registry lists the given project path."""
+        try:
+            registry = hub_path / 'registry' / 'wheel-projects.json'
+            if not registry.exists():
+                return False
+            data = json.loads(registry.read_text())
+            for project in data.get('projects', []):
+                path = project.get('path')
+                if not path:
+                    continue
+                try:
+                    if Path(path).resolve() == project_path.resolve():
+                        return True
+                except Exception:
+                    if path == str(project_path):
+                        return True
+        except Exception:
+            return False
+        return False
 
     def _score_candidate(self, candidate: HubCandidate) -> None:
         """

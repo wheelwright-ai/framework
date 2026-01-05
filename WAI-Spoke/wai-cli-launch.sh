@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+WAI_WORKSPACE_VERSION="2026.01.05"
+
 WAI_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WAI_TAB_NAME="${1:-WAI - CLI}"
 export WAI_ROOT

@@ -7,8 +7,10 @@ Generates .vscode/settings.json configuration for VS Code with AI extensions.
 from pathlib import Path
 from typing import Dict, Any, Optional
 import json
+from datetime import datetime, timezone
 
 from .base import IDEIntegration
+from ..utils.input import print_warning
 
 
 class VSCodeIntegration(IDEIntegration):
@@ -46,8 +48,22 @@ class VSCodeIntegration(IDEIntegration):
         # Read existing settings if they exist
         existing_settings = {}
         if self.config_file_path.exists():
-            with open(self.config_file_path) as f:
-                existing_settings = json.load(f)
+            try:
+                with open(self.config_file_path, encoding='utf-8') as f:
+                    existing_settings = json.load(f)
+            except json.JSONDecodeError:
+                timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+                backup = self.config_file_path.with_suffix(f".json.bak-{timestamp}")
+                try:
+                    self.config_file_path.replace(backup)
+                except Exception:
+                    backup = None
+                msg = "VS Code settings.json is invalid JSON; using fresh settings."
+                if backup:
+                    msg += f" Backup saved to {backup.name}."
+                print_warning(msg)
+            except Exception as exc:
+                print_warning(f"Failed to read VS Code settings.json: {exc}")
 
         # Add WAI-specific settings
         wai_settings = {

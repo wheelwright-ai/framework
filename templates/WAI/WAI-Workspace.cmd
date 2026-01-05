@@ -1,6 +1,8 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+set "WAI_WORKSPACE_VERSION=2026.01.05"
+
 set "LOG_FALLBACK=%TEMP%\WAI-Workspace.log"
 echo [%DATE% %TIME%] WAI-Workspace start > "%LOG_FALLBACK%"
 
@@ -141,12 +143,12 @@ set "WT_START_DIR=%USERPROFILE%"
 if not defined WT_EXE (
   echo Windows Terminal not found. Opening three command windows...
   echo [%DATE% %TIME%] WT not found. Falling back to cmd.exe >> "%LOG_FILE%"
-    start "🧠 %ABBR%-IDE" cmd.exe /k "pushd \"%ROOT_DIR%\""
-    start "🚀 %ABBR%-RUN" cmd.exe /k "pushd \"%ROOT_DIR%\""
+    start "%ABBR%-IDE" cmd.exe /k "pushd \"%ROOT_DIR%\""
+    start "%ABBR%-RUN" cmd.exe /k "pushd \"%ROOT_DIR%\""
     if exist "%ROOT_DIR%\\WAI-CLI" (
-      start "🧭 %ABBR%-CLI" cmd.exe /k "pushd \"%ROOT_DIR%\" && \"%ROOT_DIR%\\WAI-CLI\""
+      start "%ABBR%-CLI" cmd.exe /k "pushd \"%ROOT_DIR%\" && \"%ROOT_DIR%\\WAI-CLI\""
     ) else (
-      start "🧭 %ABBR%-CLI" cmd.exe /k "pushd \"%ROOT_DIR%\" && WAI-CLI"
+      start "%ABBR%-CLI" cmd.exe /k "pushd \"%ROOT_DIR%\" && WAI-CLI"
     )
   if "%WAI_DEBUG%"=="1" pause
   goto :eof
@@ -172,11 +174,11 @@ if "!WAI_USE_WSL!"=="1" (
   )
   if "!WAI_USE_WT!"=="1" (
     set "WT_FAILED=0"
-    echo [%DATE% %TIME%] WT cmd: %WT_EXE% -w new new-tab --title "🧠 %ABBR% - IDE" --tabColor "#4A90E2" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🧠 %ABBR% - IDE" ; new-tab --title "🚀 %ABBR% - RUN" --tabColor "#E74C3C" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🚀 %ABBR% - RUN" ; new-tab --title "🧭 %ABBR% - CLI" --tabColor "#2ECC71" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-cli-launch.sh "🧭 %ABBR% - CLI" >> "%LOG_FILE%"
+    echo [%DATE% %TIME%] WT cmd: %WT_EXE% -w new new-tab --title "%ABBR% - IDE" --tabColor "#4A90E2" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "%ABBR% - IDE" ; new-tab --title "%ABBR% - RUN" --tabColor "#E74C3C" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "%ABBR% - RUN" ; new-tab --title "%ABBR% - CLI" --tabColor "#2ECC71" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-cli-launch.sh "%ABBR% - CLI" >> "%LOG_FILE%"
     call "%WT_EXE%" -w new ^
-      new-tab --title "🧠 %ABBR% - IDE" --tabColor "#4A90E2" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🧠 %ABBR% - IDE" ^
-      ; new-tab --title "🚀 %ABBR% - RUN" --tabColor "#E74C3C" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "🚀 %ABBR% - RUN" ^
-      ; new-tab --title "🧭 %ABBR% - CLI" --tabColor "#2ECC71" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-cli-launch.sh "🧭 %ABBR% - CLI"
+      new-tab --title "%ABBR% - IDE" --tabColor "#4A90E2" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "%ABBR% - IDE" ^
+      ; new-tab --title "%ABBR% - RUN" --tabColor "#E74C3C" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-shell.sh "%ABBR% - RUN" ^
+      ; new-tab --title "%ABBR% - CLI" --tabColor "#2ECC71" --suppressApplicationTitle wsl.exe !WSL_DISTRO_ARG! --cd "!WSL_ROOT!" -- bash ./WAI-Spoke/wai-cli-launch.sh "%ABBR% - CLI"
     echo [%DATE% %TIME%] WT exit=%ERRORLEVEL% >> "%LOG_FILE%"
     if errorlevel 1 set "WT_FAILED=1"
     if "%WAI_FORCE_WSL%"=="1" set "WT_FAILED=1"

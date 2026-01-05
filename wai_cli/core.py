@@ -54,6 +54,18 @@ class WheelwrightCLI:
         except Exception:
             return False
 
+    def _format_datetime(self, value: str) -> str:
+        """Return a human-readable UTC timestamp for ISO-like inputs."""
+        if not value:
+            return "Unknown"
+        try:
+            from datetime import datetime
+            normalized = value.replace('Z', '+00:00')
+            parsed = datetime.fromisoformat(normalized)
+            return parsed.strftime("%Y-%m-%d %H:%M UTC")
+        except Exception:
+            return value
+
     def _detect_start_context(self, cwd: Path) -> tuple:
         """Detect startup context (hub, spoke, uninitialized)."""
         hub_manager = HubManager()
@@ -242,7 +254,11 @@ Examples:
         status_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
         # Update command
-        update_parser = subparsers.add_parser('update', help='Process seed folders and archive sprawl')
+        update_parser = subparsers.add_parser(
+            'absorbe',
+            aliases=['update'],
+            help='Process seed folders and archive sprawl'
+        )
         update_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
         # Hub commands
@@ -623,7 +639,7 @@ Examples:
             print_info("  2/y - 🔄 Upgrade         Update spoke structure version")
             print_info("  3/c - 📝 Closeout        Session closeout")
             print_info("  4/o - 📄 Context         Export for LLM")
-            print_info("  5/u - 🔧 Update          Process seed folders & archive sprawl")
+            print_info("  5/u - 🔧 Absorbe         Process seed folders & archive sprawl")
             print_info("  6/r - 🔎 Review          Project discovery snapshot")
             print_info("  7/w - 🛞 Wheelwright      Evolution, features, integrations, testing")
             print_info("  8/? - ❓ Help            Show all commands")
@@ -636,7 +652,7 @@ Examples:
                 ('2', 'y', '🔄 Upgrade', 'sync'),
                 ('3', 'c', '📝 Closeout', 'closeout'),
                 ('4', 'o', '📄 Context', 'context'),
-                ('5', 'u', '🔧 Update', 'update'),
+                ('5', 'u', '🔧 Absorbe', 'update'),
                 ('6', 'r', '🔎 Review', 'review'),
                 ('7', 'w', '🛞 Wheelwright', 'wheelwright'),
                 ('8', '?', '❓ Help', 'help'),
@@ -650,7 +666,7 @@ Examples:
             elif choice == "sync":
                 self._cmd_sync(type('Args', (), {'all': False})())
             elif choice == "closeout":
-                self._cmd_closeout(type('Args', (), {})())
+                self._cmd_closeout(type('Args', (), {'path': str(spoke_path)})())
             elif choice == "context":
                 self._cmd_context(type('Args', (), {'path': '.'})())
             elif choice == "update":
@@ -1417,17 +1433,36 @@ Examples:
     def _show_spoke_actions_menu(self, spoke_path: Path):
         """Show actions for Spoke object."""
         while True:
+            foundation_complete = False
+            try:
+                state_file = spoke_path / 'WAI-Spoke' / 'WAI-State.json'
+                if state_file.exists():
+                    state = json.loads(state_file.read_text())
+                    foundation_complete = bool(state.get('_project_foundation', {}).get('completed'))
+            except Exception:
+                foundation_complete = False
+
+            recommended_action = 's'
+            recommended_label = "View status"
+            if not foundation_complete:
+                recommended_action = 'f'
+                recommended_label = "Complete foundation"
+
             print_info("\n" + "=" * 60)
             print_info("           This Project Actions")
             print_info("=" * 60)
             print_info("")
-            print_info("  Actions for the current spoke project")
+            print_info("  Recommended next step")
+            print_info("")
+            print_info(f"  f - 🧱 Foundation      {recommended_label}")
+            print_info("")
+            print_info("  Actions you can take")
             print_info("")
             print_info("  1/s - ℹ️Status          View spoke status & foundation")
             print_info("  2/y - 🔄 Upgrade         Update spoke structure version")
             print_info("  3/c - 📝 Closeout        Generate session closeout")
             print_info("  4/o - 📄 Output Context  Export for LLM paste")
-            print_info("  5/u - 🔧 Update          Process seed folders & archive sprawl")
+            print_info("  5/u - 🔧 Absorbe         Process seed folders & archive sprawl")
             print_info("  6/a - 🧭 Analysis        Project analysis & readiness")
             print_info("  7/r - 🔎 Project Review  Snapshot existing project context")
             print_info("  Note: Hub Learn/Teach live in Main Menu → Hub")
@@ -1435,24 +1470,27 @@ Examples:
             print_info("")
 
             options = [
+                ('f', 'f', '🧱 Foundation', 'foundation'),
                 ('1', 's', 'ℹ️Status', 'status'),
                 ('2', 'y', '🔄 Upgrade', 'sync'),
                 ('3', 'c', '📝 Closeout', 'closeout'),
                 ('4', 'o', '📄 Output Context', 'context'),
-                ('5', 'u', '🔧 Update', 'update'),
+                ('5', 'u', '🔧 Absorbe', 'update'),
                 ('6', 'a', '🧭 Analysis', 'analysis'),
                 ('7', 'r', '🔎 Project Review', 'review'),
                 ('b', 'b', '⬅️Back', 'back')
             ]
 
-            choice = safe_menu_choice("Select action", options, default='1')
+            choice = safe_menu_choice("Select action", options, default=recommended_action)
 
-            if choice == "status":
+            if choice == "foundation":
+                self._run_foundation_setup(spoke_path)
+            elif choice == "status":
                 self._cmd_status(type('Args', (), {'path': str(spoke_path)})())
             elif choice == "sync":
                 self._cmd_sync(type('Args', (), {'all': False})())
             elif choice == "closeout":
-                self._cmd_closeout(type('Args', (), {})())
+                self._cmd_closeout(type('Args', (), {'path': str(spoke_path)})())
             elif choice == "context":
                 self._cmd_context(type('Args', (), {'path': str(spoke_path)})())
             elif choice == "update":
@@ -1463,6 +1501,118 @@ Examples:
                 self._show_project_review(spoke_path)
             elif choice == "back" or choice is None:
                 return
+
+    def _run_foundation_setup(self, spoke_path: Path) -> None:
+        """Prompt for foundation info and update WAI-State.json."""
+        from .utils.input import safe_input, safe_confirm, print_info, print_success, print_warning, print_error
+        from datetime import datetime
+
+        state_file = spoke_path / 'WAI-Spoke' / 'WAI-State.json'
+        if not state_file.exists():
+            print_error("WAI-State.json not found for this spoke.")
+            return
+
+        try:
+            state = json.loads(state_file.read_text())
+        except Exception as exc:
+            print_error(f"Failed to read WAI-State.json: {exc}")
+            return
+
+        foundation = state.get('_project_foundation', {})
+        identity = foundation.get('identity', {})
+        boundaries = foundation.get('boundaries', {})
+        approach = foundation.get('approach', {})
+
+        def parse_list(value: str):
+            items = []
+            for chunk in (value or "").split(','):
+                item = chunk.strip()
+                if item:
+                    items.append(item)
+            return items
+
+        print_info("\n🧱 Foundation Setup\n")
+        print_info("  Examples:")
+        print_info("    Project name: CondoShield CRM")
+        print_info("    One-liner: CRM for CondoShield sales/support ops")
+        print_info("    Success looks like: Clear pipeline, fast response, accurate history")
+        print_info("    Project type: software | research | design | writing")
+        print_info("")
+
+        name = safe_input("Project name", default=identity.get('name', spoke_path.name))
+        one_liner = safe_input("One-liner", default=identity.get('one_liner', ''))
+        success = safe_input("Success looks like", default=identity.get('success_looks_like', ''))
+        proj_type = safe_input("Project type", default=identity.get('type', 'software'))
+
+        print_info("")
+        print_info("  Examples (comma-separated):")
+        print_info("    In scope: lead management, contact history, support workflows")
+        print_info("    Out of scope: marketing site, billing system, infra changes")
+        print_info("    Constraints: keep data model, ship weekly")
+        print_info("")
+
+        in_scope = safe_input(
+            "In scope (comma-separated)",
+            default=", ".join(boundaries.get('in_scope', []))
+        )
+        out_scope = safe_input(
+            "Out of scope (comma-separated)",
+            default=", ".join(boundaries.get('out_of_scope', []))
+        )
+        constraints = safe_input(
+            "Constraints (comma-separated)",
+            default=", ".join(boundaries.get('constraints', []))
+        )
+
+        print_info("")
+        print_info("  Examples:")
+        print_info("    AI collaboration style: yolo | check-in")
+        print_info("    Review process: Closeout logs | PR review")
+        print_info("")
+
+        ai_style = safe_input(
+            "AI collaboration style",
+            default=approach.get('ai_collaboration_style', 'yolo')
+        )
+        review = safe_input(
+            "Review process",
+            default=approach.get('review_process', 'Closeout logs')
+        )
+
+        if not safe_confirm("Save foundation changes?", default=True):
+            print_info("Cancelled.")
+            return
+
+        updated = dict(foundation)
+        updated['completed'] = True
+        updated['completed_at'] = datetime.utcnow().isoformat() + "Z"
+        updated['completed_with'] = "WAI-CLI"
+        updated['identity'] = {
+            'type': proj_type or 'software',
+            'name': name or spoke_path.name,
+            'one_liner': one_liner or '',
+            'success_looks_like': success or ''
+        }
+        updated['boundaries'] = {
+            'in_scope': parse_list(in_scope),
+            'out_of_scope': parse_list(out_scope),
+            'constraints': parse_list(constraints),
+            'deferred': boundaries.get('deferred', [])
+        }
+        updated['approach'] = {
+            'stack_or_tools': approach.get('stack_or_tools', []),
+            'workflow': approach.get('workflow', ''),
+            'ai_collaboration_style': ai_style or 'yolo',
+            'review_process': review or 'Closeout logs'
+        }
+
+        state['_project_foundation'] = updated
+
+        try:
+            state_file.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n")
+            print_success("Foundation saved.")
+        except Exception as exc:
+            print_error(f"Failed to write WAI-State.json: {exc}")
 
     def _show_project_review(self, spoke_path: Path) -> None:
         """Show a project discovery snapshot."""
@@ -2006,7 +2156,7 @@ Examples:
                 print_info("  3. Seed folders for brownfield projects:")
                 print_info("     • WAI-Spoke/seed/ingest - ingest into WAI files")
                 print_info("     • WAI-Spoke/seed/reference - archive into WAI-Spoke/reference")
-                print_info("     Run 'WAI-CLI update' to process these folders.")
+                print_info("     Run 'WAI-CLI absorbe' (or update) to process these folders.")
                 print_info("")
                 print_info("  4. During development:")
                 print_info("     - AI assistants read WAI-Guide.md")
@@ -2031,7 +2181,8 @@ Examples:
                 print_info("    WAI baseline status     Show baseline status")
                 print_info("")
                 print_info("  Update & Review:")
-                print_info("    WAI update              Process seed folders and archive sprawl")
+                print_info("    WAI absorbe             Process seed folders and archive sprawl")
+                print_info("    WAI update              Alias for absorbe")
                 print_info("")
                 print_info("  Hub:")
                 print_info("    WAI hub locate          Find hub")
@@ -2598,6 +2749,7 @@ Examples:
         """Trigger learn event - spokes learn from hub (called by 'Teach' menu option)."""
         from .utils.registry import load_registry
         from .utils.input import safe_confirm
+        from .init import init_spoke
 
         print_info("\n🎓 Teach Event - Hub Distributes Knowledge to Spokes\n")
 
@@ -2611,14 +2763,73 @@ Examples:
                 print_info("  Add spokes first: Main Menu → Spokes → Add Projects")
                 return
 
+            def ensure_spoke_workspace(spoke_path: Path):
+                spoke_dir = spoke_path / 'WAI-Spoke'
+                created_spoke = False
+                workspace_created = []
+
+                if not spoke_dir.exists():
+                    try:
+                        init_spoke(spoke_path, is_framework=False, verbose=False)
+                        created_spoke = True
+                    except Exception as exc:
+                        return False, created_spoke, workspace_created, f"Init failed: {exc}"
+
+                templates_dir = Path(__file__).parent.parent / 'templates' / 'WAI'
+                if not templates_dir.exists():
+                    return False, created_spoke, workspace_created, "Templates directory not found"
+
+                workspace_files = ['WAI-Workspace.cmd', 'wai-shell.sh', 'wai-cli-launch.sh']
+
+                def parse_version(value: str) -> tuple:
+                    if not value:
+                        return (0, 0, 0)
+                    try:
+                        parts = [int(p) for p in value.strip().split(".")]
+                        while len(parts) < 3:
+                            parts.append(0)
+                        return tuple(parts[:3])
+                    except Exception:
+                        return (0, 0, 0)
+
+                def extract_version(path: Path) -> tuple:
+                    try:
+                        text = path.read_text(encoding='utf-8', errors='ignore')
+                    except Exception:
+                        return (0, 0, 0)
+                    for line in text.splitlines()[:10]:
+                        if "WAI_WORKSPACE_VERSION" in line:
+                            raw = line.split("=", 1)[-1].strip().strip('"').strip("'")
+                            return parse_version(raw)
+                    return (0, 0, 0)
+
+                for filename in workspace_files:
+                    src = templates_dir / filename
+                    dst = spoke_dir / filename
+                    if not src.exists():
+                        continue
+
+                    needs_update = False
+                    if not dst.exists():
+                        needs_update = True
+                    else:
+                        src_version = extract_version(src)
+                        dst_version = extract_version(dst)
+                        if src_version > dst_version:
+                            needs_update = True
+
+                    if needs_update:
+                        try:
+                            dst.write_text(src.read_text(encoding='utf-8'), encoding='utf-8')
+                            workspace_created.append(filename)
+                        except Exception as exc:
+                            return False, created_spoke, workspace_created, f"Failed to write {filename}: {exc}"
+
+                return True, created_spoke, workspace_created, None
+
             # Check if hub has knowledge to share
             kb_dir = hub_path / 'knowledge-base'
             has_knowledge = kb_dir.exists() and any(kb_dir.glob('*.jsonl'))
-
-            if not has_knowledge:
-                print_info("  ⚠️  Hub knowledge base is empty.")
-                print_info("  Run 'Learn' first to gather patterns from spokes.")
-                return
 
             print_info("  📊 Preview of what will happen:")
             print_info("")
@@ -2632,11 +2843,17 @@ Examples:
                 print_info(f"    ... and {len(spokes) - 5} more")
             print_info("")
             print_info("  Actions:")
-            print_info("    1. Read hub knowledge base patterns")
-            print_info("    2. Update each spoke's WAI-Guide.md")
-            print_info("    3. Add relevant best practices and learnings")
-            print_info("    4. Record teach timestamp")
+            print_info("    1. Ensure each spoke has WAI-Spoke and workspace files")
+            if has_knowledge:
+                print_info("    2. Read hub knowledge base patterns")
+                print_info("    3. Update each spoke's WAI-Guide.md")
+                print_info("    4. Add relevant best practices and learnings")
+                print_info("    5. Record teach timestamp")
             print_info("")
+
+            if not has_knowledge:
+                print_info("  ⚠️  Hub knowledge base is empty.")
+                print_info("  Proceeding will bootstrap WAI-Spoke + workspace files only.")
 
             if not safe_confirm("  Proceed with distributing knowledge to spokes?", default=False):
                 print_info("  Cancelled.")
@@ -2650,6 +2867,7 @@ Examples:
             from datetime import datetime
 
             total_updated = 0
+            total_bootstrapped = 0
             spoke_updates = []
 
             # Read all hub knowledge base files
@@ -2677,12 +2895,13 @@ Examples:
                 except Exception:
                     pass
 
-            if not kb_patterns:
+            if has_knowledge and not kb_patterns:
                 print_error("  No patterns found in knowledge base to distribute.")
                 return
 
-            print_info(f"  Found {len(kb_patterns)} pattern(s) to distribute")
-            print_info("")
+            if has_knowledge:
+                print_info(f"  Found {len(kb_patterns)} pattern(s) to distribute")
+                print_info("")
 
             # Update each spoke
             for spoke in spokes:
@@ -2690,8 +2909,23 @@ Examples:
                 spoke_name = spoke.get('preferred_name', spoke_path.name)
                 wai_spoke_dir = spoke_path / 'WAI-Spoke'
 
-                if not wai_spoke_dir.exists():
-                    spoke_updates.append((spoke_name, 0, "No WAI-Spoke directory"))
+                bootstrap_status = ""
+                ok, created_spoke, workspace_created, bootstrap_error = ensure_spoke_workspace(spoke_path)
+                if not ok:
+                    spoke_updates.append((spoke_name, 0, f"Bootstrap failed: {bootstrap_error}", bootstrap_status))
+                    continue
+
+                if created_spoke or workspace_created:
+                    total_bootstrapped += 1
+                    parts = []
+                    if created_spoke:
+                        parts.append("initialized")
+                    if workspace_created:
+                        parts.append("workspace files")
+                    bootstrap_status = f"bootstrapped ({', '.join(parts)})"
+
+                if not has_knowledge:
+                    spoke_updates.append((spoke_name, 0, "Bootstrap only (no hub knowledge)", bootstrap_status))
                     continue
 
                 try:
@@ -2722,16 +2956,18 @@ Examples:
 
                     # Write the file
                     learnings_file.write_text(content)
-                    spoke_updates.append((spoke_name, len(kb_patterns), "✓ Updated"))
+                    spoke_updates.append((spoke_name, len(kb_patterns), "✓ Updated", bootstrap_status))
                     total_updated += 1
 
                 except Exception as e:
-                    spoke_updates.append((spoke_name, 0, f"Error: {str(e)[:30]}"))
+                    spoke_updates.append((spoke_name, 0, f"Error: {str(e)[:30]}", bootstrap_status))
 
             # Display results
             print_info("  Results by spoke:")
             print_info("")
-            for spoke_name, count, status in spoke_updates:
+            for spoke_name, count, status, bootstrap_status in spoke_updates:
+                if bootstrap_status:
+                    status = f"{status} | {bootstrap_status}"
                 if "✓" in status:
                     print_success(f"    ✓ {spoke_name}: {count} pattern(s) - {status}")
                 else:
@@ -2740,6 +2976,8 @@ Examples:
             print_info("")
             if total_updated > 0:
                 print_success(f"  ✓ Teach complete! Updated {total_updated} spoke(s) with hub knowledge")
+                if total_bootstrapped > 0:
+                    print_info(f"  ✓ Bootstrapped {total_bootstrapped} spoke(s) with workspace files")
 
                 # Update hub profile with last teach timestamp
                 profile_path = hub_path / 'hub-profile.json'
@@ -2766,7 +3004,10 @@ Examples:
                 print_info("")
                 print_info("  💡 This enables seamless learning on the fly!")
             else:
-                print_info(f"  No spokes were updated.")
+                if total_bootstrapped > 0:
+                    print_success(f"  ✓ Bootstrapped {total_bootstrapped} spoke(s) with workspace files")
+                else:
+                    print_info(f"  No spokes were updated.")
 
         except Exception as e:
             print_error(f"  Error loading registry: {e}")
@@ -3237,7 +3478,7 @@ Examples:
             reference_files = plan.get("reference_files", [])
             unknown_items = plan.get("unknown_items", [])
 
-            print_info("\nUpdate Preview:")
+            print_info("\nAbsorbe Preview:")
             print_info(f"  Seed ingest files: {len(ingest_files)}")
             print_info(f"  Seed reference files: {len(reference_files)}")
             print_info(f"  Unknown items to archive: {len(unknown_items)}")
@@ -3247,11 +3488,11 @@ Examples:
                 return
 
             if not safe_confirm("Proceed with update?", default=True):
-                print_info("Update cancelled.")
+                print_info("Absorbe cancelled.")
                 return
 
             results = updater.run_update()
-            print_success("\nUpdate complete.")
+            print_success("\nAbsorbe complete.")
             print_info(f"  Ingested: {len(results['ingested'])}")
             print_info(f"  Archived reference: {len(results['archived_reference'])}")
             print_info(f"  Archived unknown: {len(results['archived_unknown'])}")
@@ -3267,14 +3508,15 @@ Examples:
                 print_warning(f"  ⚠️  {warning}")
 
         except Exception as e:
-            print_error(f"Update failed: {e}")
+            print_error(f"Absorbe failed: {e}")
 
     def _cmd_closeout(self, args):
         """Handle closeout command."""
         from .closeout import CloseoutProcessor
 
         try:
-            spoke_path = normalize_path(args.path)
+            raw_path = getattr(args, 'path', '.')
+            spoke_path = normalize_path(raw_path)
 
             # Check if spoke exists
             if not check_spoke_initialized(spoke_path):
@@ -3284,7 +3526,7 @@ Examples:
 
             # Run closeout processor
             processor = CloseoutProcessor(spoke_path)
-            interactive = not args.non_interactive
+            interactive = not getattr(args, 'non_interactive', False)
             results = processor.process_closeout(interactive=interactive)
             processor.print_summary(results)
 
@@ -3408,7 +3650,7 @@ Examples:
 
                 if baseline.get('enabled'):
                     print_success("  Status: ENABLED")
-                    print_info(f"  Started: {baseline.get('started_at', 'Unknown')}")
+                    print_info(f"  Started: {self._format_datetime(baseline.get('started_at'))}")
                     print_info(f"  Tokens tracked: {baseline.get('total_tokens_used', 0):,}")
                     print_info(f"  Sessions tracked: {baseline.get('total_sessions', 0)}")
                     print_info(f"\n  {baseline.get('description', '')}")
@@ -3419,7 +3661,7 @@ Examples:
                         print_info(f"\n  Baseline data (locked):")
                         print_info(f"    Tokens: {baseline.get('total_tokens_used', 0):,}")
                         print_info(f"    Sessions: {baseline.get('total_sessions', 0)}")
-                        print_info(f"    Period: {baseline.get('started_at', 'Unknown')} to {baseline.get('ended_at', 'Unknown')}\n")
+                        print_info(f"    Period: {self._format_datetime(baseline.get('started_at'))} to {self._format_datetime(baseline.get('ended_at'))}\n")
                     else:
                         print_info("\n  No baseline data collected yet.\n")
                         print_info("  To enable: WAI-CLI baseline enable\n")
@@ -3442,6 +3684,7 @@ Examples:
         from .session import SessionManager
         import json
         import uuid
+        from datetime import datetime
 
         if not check_spoke_initialized(spoke_path):
             print_error(f"No spoke found at {spoke_path}")
