@@ -299,13 +299,17 @@ class QualityGates:
             if result.returncode != 0:
                 return {'passed': True, 'message': 'Unable to check git diff'}
 
-            modified_files = [
-                f for f in result.stdout.strip().split('\n')
-                if f.endswith('.py')
-                and not f.startswith('test_')
-                and not f.endswith('_test.py')
-                and not f.startswith('tests/')
-            ]
+            modified_files = []
+            for f in result.stdout.strip().split('\n'):
+                if not f.endswith('.py'):
+                    continue
+                path = Path(f)
+                name = path.name
+                if name.startswith('test_') or name.endswith('_test.py'):
+                    continue
+                if 'tests' in path.parts:
+                    continue
+                modified_files.append(f)
 
             if not modified_files:
                 return {'passed': True, 'message': 'No Python files modified'}

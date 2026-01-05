@@ -100,25 +100,25 @@
   "_session_state": {
     "last_session_id": "integration-test-framework-2026-01-01",
     "last_modified_by": "GPT-5",
-    "last_modified_at": "2026-01-05T04:28:00.328843+00:00",
+    "last_modified_at": "2026-01-05T05:04:33.024609+00:00",
     "requires_review": false,
-    "review_reason": "Switched quality gate timeout to inactivity-based with 5-minute default and WAI_QG_TIMEOUT override.",
-    "session_count": 14,
+    "review_reason": "Adjusted unit test gate to ignore test file modifications.",
+    "session_count": 15,
     "protocol_completed": true,
-    "protocol_last_run": "2026-01-05T05:04:04Z",
+    "protocol_last_run": "2026-01-05T05:06:39Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": "mario-2026-01-04-210404",
-      "started_at": "2026-01-05T05:04:04Z",
+      "session_id": "mario-2026-01-04-210639",
+      "started_at": "2026-01-05T05:06:39Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "mario-2026-01-04-210157",
-      "started_at": "2026-01-05T05:01:57Z",
+      "session_id": "mario-2026-01-04-210404",
+      "started_at": "2026-01-05T05:04:04Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-04T21:04:04.876458",
+      "closed_at": "2026-01-04T21:06:38.976666",
       "summary": "No conversation log found",
       "key_topics": [],
       "files_modified": []
@@ -126,10 +126,10 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 21,
+      "total_count": 22,
       "total_turns": 8,
       "total_duration_seconds": 4,
-      "avg_duration_seconds": 0.19047619047619047
+      "avg_duration_seconds": 0.18181818181818182
     },
     "token_efficiency": {
       "total_tokens_used": 66,
@@ -149,7 +149,7 @@
       "ended_at": "2026-01-01T23:50:38.642573"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-04T21:04:04.875572"
+    "last_updated": "2026-01-04T21:06:38.975739"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -551,6 +551,13 @@
       "decision": "Quality gate timeouts now apply to inactivity (default 5 minutes), not total runtime.",
       "rationale": "Long tests can run safely if they keep producing output; avoids killing healthy long-running gates.",
       "impact": 6,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Quality gates now ignore test files when checking for missing unit tests.",
+      "rationale": "Prevents false warnings when only test files were modified.",
+      "impact": 5,
       "by": "GPT-5"
     }
   ],
