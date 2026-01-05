@@ -90,8 +90,8 @@
       },
       {
         "date": "2025-12-29",
-        "change": "Implemented conversation logging and naming standardization (WWAI \u2192 WAI)",
-        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI \u2192 WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "change": "Implemented conversation logging and naming standardization (WWAI → WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI → WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
         "acknowledged_by": "Mario Vaccari",
         "ai_partner": "Claude Sonnet 4.5"
       }
@@ -100,47 +100,36 @@
   "_session_state": {
     "last_session_id": "integration-test-framework-2026-01-01",
     "last_modified_by": "GPT-5",
-    "last_modified_at": "2026-01-04T23:37:18.430956+00:00",
-    "requires_review": true,
-    "review_reason": "Updated WSL workspace launcher, CLI tab naming, hub paths, and CLI startup analysis behavior.",
-    "session_count": 6,
+    "last_modified_at": "2026-01-05T04:28:00.328843+00:00",
+    "requires_review": false,
+    "review_reason": "Switched quality gate timeout to inactivity-based with 5-minute default and WAI_QG_TIMEOUT override.",
+    "session_count": 14,
     "protocol_completed": true,
-    "protocol_last_run": "2026-01-03T07:34:16Z",
+    "protocol_last_run": "2026-01-05T04:30:26Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": null,
-      "started_at": null,
+      "session_id": "mario-2026-01-04-203026",
+      "started_at": "2026-01-05T04:30:26Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "mario-2026-01-02-233416",
-      "started_at": "2026-01-03T07:34:16Z",
+      "session_id": null,
+      "started_at": null,
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-04T23:37:18.430956+00:00",
-      "summary": "Fixed WSL workspace launcher to open tabs in correct directories using wsl.exe --cd, renamed the WAI tab to CLI, removed the hub tab, and ensured hub paths align to /home/mario/projects/wheelwright-ai/hub. Added CLI startup awareness: hub/spoke/uninitialized routing with auto-analysis for initialized spokes and a short WAI intro for uninitialized projects; added an analysis option in project actions.",
-      "key_topics": [
-        "WSL launcher tab working directories",
-        "CLI startup context routing",
-        "Spoke analysis default",
-        "Uninitialized project intro",
-        "Hub path alignment"
-      ],
-      "files_modified": [
-        "WAI-Spoke/WAI-Workspace.cmd",
-        "templates/WAI/WAI-Workspace.cmd",
-        "wai_cli/core.py",
-        "WAI-Spoke/WAI-State.json"
-      ]
+      "closed_at": "2026-01-04T20:30:26.343870",
+      "summary": "No conversation log found",
+      "key_topics": [],
+      "files_modified": []
     }
   },
   "analytics": {
     "sessions": {
-      "total_count": 14,
+      "total_count": 15,
       "total_turns": 8,
       "total_duration_seconds": 4,
-      "avg_duration_seconds": 0.2857142857142857
+      "avg_duration_seconds": 0.26666666666666666
     },
     "token_efficiency": {
       "total_tokens_used": 66,
@@ -160,7 +149,7 @@
       "ended_at": "2026-01-01T23:50:38.642573"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-02T23:34:16.932532"
+    "last_updated": "2026-01-04T20:30:26.343117"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -419,7 +408,7 @@
     },
     {
       "date": "2025-12-29",
-      "decision": "WWAI \u2192 WAI naming standardization",
+      "decision": "WWAI → WAI naming standardization",
       "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
       "impact": 9,
       "by": "Claude Sonnet 4.5"
@@ -441,21 +430,21 @@
     {
       "date": "2025-12-29",
       "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
-      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion \u2192 READY TO PLAN \u2192 PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
+      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion → READY TO PLAN → PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
@@ -469,28 +458,28 @@
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-02",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u2192 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
@@ -506,6 +495,62 @@
       "decision": "WSL workspace launcher now uses explicit wsl.exe --cd per tab; CLI auto-routes based on start context with default analysis for initialized spokes.",
       "rationale": "Ensures tabs open in correct directories and users get immediate project guidance on CLI start.",
       "impact": 7,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-04",
+      "decision": "Unified WT launch into a single command and start shells without rc files for faster, cleaner startup.",
+      "rationale": "Single WT invocation avoids multi-window flakiness and reduces overhead; skipping rc files removes noisy prompt output and keeps the shell consistent.",
+      "impact": 7,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Added GPT bootstrap folder with a single-file template, refreshed on Shipit.",
+      "rationale": "Provides a GPT-friendly entry point that captures minimal WAI context and can be reconciled into full WAI files on closeout.",
+      "impact": 7,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Init now copies workspace launcher scripts and prints usage guidance.",
+      "rationale": "Ensures new projects have working workspace tabs immediately and know how to launch them.",
+      "impact": 6,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Increased quality gate test timeout to 5 minutes.",
+      "rationale": "Smoke tests can exceed 120s; longer timeout prevents false closeout failures.",
+      "impact": 6,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Added live output option for quality gate test runs via WAI_QG_LIVE=1.",
+      "rationale": "Allows readable progress during long-running smoke tests without waiting blindly.",
+      "impact": 5,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Quality gate test output is now live by default; WAI_QG_LIVE=0 disables it.",
+      "rationale": "Improves visibility during long-running gates while preserving an opt-out for quiet runs.",
+      "impact": 5,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Quality gate timeout is now 10 minutes by default with WAI_QG_TIMEOUT override.",
+      "rationale": "Smoke tests can exceed 5 minutes; configurable timeout prevents false closeout failures while allowing shorter runs.",
+      "impact": 6,
+      "by": "GPT-5"
+    },
+    {
+      "date": "2026-01-05",
+      "decision": "Quality gate timeouts now apply to inactivity (default 5 minutes), not total runtime.",
+      "rationale": "Long tests can run safely if they keep producing output; avoids killing healthy long-running gates.",
+      "impact": 6,
       "by": "GPT-5"
     }
   ],
