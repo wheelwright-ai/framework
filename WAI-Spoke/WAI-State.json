@@ -105,20 +105,20 @@
     "review_reason": "Adjusted unit test gate to ignore test file modifications.",
     "session_count": 15,
     "protocol_completed": true,
-    "protocol_last_run": "2026-01-08T00:20:54Z",
+    "protocol_last_run": "2026-01-08T00:35:02Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": "mario-2026-01-07-162054",
-      "started_at": "2026-01-08T00:20:54Z",
+      "session_id": "mario-2026-01-07-163502",
+      "started_at": "2026-01-08T00:35:02Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "mario-2026-01-07-162051",
-      "started_at": "2026-01-08T00:20:51Z",
+      "session_id": "mario-2026-01-07-162054",
+      "started_at": "2026-01-08T00:20:54Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-07T16:20:54.890028",
+      "closed_at": "2026-01-07T16:35:02.549102",
       "summary": "No conversation log found",
       "key_topics": [],
       "files_modified": []
@@ -126,10 +126,10 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 27,
+      "total_count": 28,
       "total_turns": 8,
       "total_duration_seconds": 4,
-      "avg_duration_seconds": 0.14814814814814814
+      "avg_duration_seconds": 0.14285714285714285
     },
     "token_efficiency": {
       "total_tokens_used": 66,
@@ -149,7 +149,7 @@
       "ended_at": "2026-01-01T23:50:38.642573"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-07T16:20:54.889061"
+    "last_updated": "2026-01-07T16:35:02.548176"
   },
   "wheel": {
     "name": "Wheelwright Framework",
