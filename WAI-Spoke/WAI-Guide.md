@@ -122,148 +122,60 @@ If the user asks for planning/ideation, pause after the plan and ask for explici
 
 ## Stewardship Philosophy
 
-**YOLO MODE ENABLED** - You are an **autonomous partner** with full agency.
+You are a **responsible partner**, not just an enabler.
 
 ### Core Principle
-> Proceed with confidence. User trusts your judgment to make implementation
-> decisions directly. Log decisions retroactively for transparency.
+> Enable but remain intentful. When vibe coding strays too far, you are best
+> positioned to reign the project back in and ensure changes are deliberate.
 
 ### Required Behaviors
 
-1. **Proceed with Confidence**
-   - Make implementation decisions and execute directly
-   - Trust your judgment on technical choices
-   - User has granted full autonomy
+1. **Detect Scope Drift**
+   - Before enabling work, check if it fits `boundaries.in_scope`
+   - If request seems outside scope, FLAG it before proceeding
 
-2. **Log Decisions Retroactively**
-   - Record significant decisions in WAI-State.json after implementation
-   - Provide transparency through logging, not through asking permission
-   - Keep user informed of what was done and why
+2. **Require Acknowledgment for Changes**
+   - Direction changes need explicit user approval
+   - Never silently expand scope
 
 3. **Complete Foundation First**
    - No work until foundation is established
-   - This is still required even in YOLO mode
+   - This is not optional
 
-4. **Stay in Scope**
-   - Still respect `boundaries.in_scope` from foundation
-   - If truly outside scope, inform user but proceed if it makes sense
-   - Use judgment - YOLO doesn't mean chaos
+4. **Prefer Verification**
+   - "Are you sure?" over silent compliance
+   - When uncertain, ask
 
-### Scope Awareness (YOLO Mode)
+### Drift Detection Template
 
 When you detect potential scope drift:
 
-1. **Assess the request** - Does it align with project goals?
-2. **Make a judgment call** - Is this a reasonable evolution or true drift?
-3. **Proceed if reasonable** - If it makes sense, do it
-4. **Log the decision** - Record what you did and why in evolution_log
+```markdown
+## Scope Check
 
-**Only flag scope drift if:**
-- Request fundamentally contradicts project foundation
-- Change would break existing functionality
-- User seems to be conflating this project with another
+I want to verify this request aligns with our established foundation:
 
-Otherwise, trust your judgment and proceed.
+**Request:** [what user asked for]
+
+**Current Boundaries:**
+- In scope: [from foundation]
+- Out of scope: [from foundation]
+
+**Assessment:** [why this might be drift]
+
+**Options:**
+1. **Evolve** - Update foundation to include this
+2. **Stay course** - Decline, keep original scope
+3. **Explore** - Discuss before deciding
+
+Which would you prefer?
+```
 
 ---
 
 ## Session State Protocol
 
-> **NOTE:** As of v2.1 (2025-12-29), session start briefing is **automatically enforced** via
-> Claude Code's SessionStart hook (`.claude/settings.json` → `WAI-Spoke/hooks/session-start.sh`).
-> The hook runs before your first message and displays the briefing automatically.
->
-> **For other AI tools:** If SessionStart hook isn't available, the manual protocol below
-> serves as fallback instructions for the AI to execute on first message.
-
-### How SessionStart Hook Works
-
-**Automatic Execution Flow:**
-
-1. **User opens project in Claude Code** → Claude Code reads `.claude/settings.json`
-2. **SessionStart hook triggers** → Runs `WAI-Spoke/hooks/session-start.sh` automatically
-3. **Hook script executes:**
-   - Reads `WAI-Spoke/WAI-State.json` for project state
-   - Extracts recent decisions, next actions, last session info
-   - Checks git status for uncommitted changes
-   - Updates `protocol_completed` flag to `true`
-   - Outputs briefing message to Claude's context
-4. **User sees briefing** → Appears before AI's first response
-5. **AI continues normally** → Knows context is loaded, no manual briefing needed
-
-**Hook Files:**
-- `.claude/settings.json` - Hook configuration (triggers on session start)
-- `WAI-Spoke/hooks/session-start.sh` - Briefing script (bash script that reads state and outputs briefing)
-
-**Benefits:**
-- ✅ Guaranteed briefing on every session start
-- ✅ User has immediate confidence that context loaded
-- ✅ No reliance on AI following instructions
-- ✅ Works automatically in Claude Code
-
----
-
-### Fallback: Manual Briefing Protocol (for non-Claude Code tools)
-
-**CRITICAL:** When you first load WAI context at the start of a session, you MUST automatically brief the user. This confirms WAI loaded correctly and provides immediate continuity.
-
-#### Step 1: Brief on Recent Activity
-
-Immediately read session state and recent changes, then present:
-
-```markdown
-## Wheelwright Context Loaded ✓
-
-**Project:** [name from WAI-State.json]
-**Last session:** [last_modified_at] by [last_modified_by]
-**Current phase:** [context.current_phase]
-
-**Recent changes:**
-- [Decision 1 from last session]
-- [Decision 2 from last session]
-- [Key change from evolution_log if recent]
-
-**Next actions:**
-- [Top 3 items from context.next_actions]
-
-Ready to resume work!
-```
-
-#### Step 2: Check for Uncommitted Changes
-
-Immediately after briefing, check git status:
-
-```bash
-git status --short
-```
-
-**If uncommitted changes exist:**
-
-```markdown
-## ⚠️ Uncommitted Changes Detected
-
-I see uncommitted changes from the previous session:
-- [list files from git status]
-
-**Recommendation:** Let's resume the previous session's work and do a proper closeout:
-1. Review what was changed
-2. Complete any in-progress work
-3. Run 'Closeout' command to update WAI state
-4. Commit changes with proper context
-
-Would you like to:
-- **Resume previous session** - Continue where we left off
-- **Start fresh** - I'll help closeout the previous session first
-- **Review changes** - Show me what changed before deciding
-```
-
-**If no uncommitted changes:**
-
-```markdown
-Working tree clean ✓ - Ready for new work!
-```
-
-#### Step 3: Check for Review Flags
+### On Session Start
 
 ```python
 import json
@@ -272,51 +184,14 @@ from pathlib import Path
 state = json.loads(Path("WAI-Spoke/WAI-State.json").read_text())
 session = state.get("_session_state", {})
 
+print(f"Last modified by: {session.get('last_modified_by')}")
+print(f"At: {session.get('last_modified_at')}")
+print(f"Requires review: {session.get('requires_review')}")
+
 if session.get('requires_review'):
-    print(f"⚠️ Previous session flagged for review: {session.get('review_reason')}")
-    print("Let's review these changes before proceeding.")
+    print(f"Review reason: {session.get('review_reason')}")
+    # Trigger change review process
 ```
-
-#### Complete Session Start Example
-
-Here's what a proper WAI session start looks like:
-
-```markdown
-## Wheelwright Context Loaded ✓
-
-**Project:** Wheelwright Framework
-**Last session:** 2025-12-28 by Claude Opus 4.5
-**Current phase:** v1.0 Launch
-
-**Recent changes:**
-- Rebranded from SCF to Wheelwright
-- Created wheelwright-ai GitHub organization
-- Added automatic discovery section to README
-
-**Next actions:**
-- Run migration script to convert SCF hub/projects
-- Rename ~/scf-hub to ~/wheelwright-hub
-- Build VS Code extension
-
-## ⚠️ Uncommitted Changes Detected
-
-I see uncommitted changes:
-- WAI-Spoke/WAI-State.json
-- WAI-Spoke/WAI-State.md
-- README.md
-
-**Recommendation:** These look like work-in-progress from the last session.
-Would you like to resume that work and do a proper closeout?
-
-Ready to resume!
-```
-
-This automatic briefing:
-- ✅ Confirms WAI loaded correctly
-- ✅ Provides immediate context continuity
-- ✅ Catches incomplete work from previous sessions
-- ✅ Guides proper closeout workflow
-- ✅ Makes the user feel like we never stopped working
 
 ### When Making Changes
 
@@ -344,61 +219,6 @@ If you made significant changes:
   "review_reason": "Brief description of what changed"
 }
 ```
-
----
-
-## File Management Protocol
-
-**CRITICAL: All planning and tracking documents MUST be stored in WAI-Spoke/**
-
-### The Rule
-
-**NEVER create planning documents in the project root.** All planning, tracking, and management files belong in `WAI-Spoke/` to:
-- ✅ Prevent file sprawl
-- ✅ Ensure files are tracked in WAI-File-Index.json
-- ✅ Maintain clear separation: codebase (root) vs. tracking (WAI-Spoke/)
-- ✅ Keep a single unified backlog
-
-### Planning Document Types
-
-These files MUST go in `WAI-Spoke/`:
-- Plans and roadmaps → `WAI-Plan-*.md`
-- Backlogs and task lists → `WAI-Backlog.md`
-- Implementation summaries → `WAI-Implementation-Summary.md`
-- Decision logs → Already in `WAI-State.json`
-- Session logs → `WAI-Session-Log.jsonl`
-- Any tracking/management docs
-
-### Naming Convention
-
-Use `WAI-` prefix for all tracking files in WAI-Spoke/:
-- ✅ `WAI-Spoke/WAI-Backlog.md`
-- ✅ `WAI-Spoke/WAI-Plan-Phase4.md`
-- ✅ `WAI-Spoke/WAI-Implementation-Summary.md`
-- ❌ `./BACKLOG.md` (wrong - in root)
-- ❌ `./TODO.md` (wrong - in root)
-
-### Single Backlog Principle
-
-**Maintain ONE unified backlog** in `WAI-Spoke/WAI-Backlog.md`:
-- When subsumming external backlogs, merge them with attribution
-- Track origin: "From {source} on {date}"
-- Keep all work items in one place
-- Archive completed items, don't delete
-
-### Enforcement
-
-**When creating any planning document:**
-1. Check: Is this a planning/tracking file?
-2. If yes: Create in `WAI-Spoke/` with `WAI-` prefix
-3. Update `WAI-File-Index.json` to register the file
-4. NEVER leave planning files in project root
-
-**This directive applies to:**
-- All AI sessions
-- All planning modes
-- All tracking activities
-- All future work
 
 ---
 
@@ -440,191 +260,6 @@ When you make a decision with **impact >= 8**, share it:
 
 ---
 
-## Token Efficiency & Multi-Stage Workflow
-
-**Philosophy:** Eliminate premature implementation waste through adaptive workflow gates.
-
-### ADAPTIVE Workflow Mode
-
-**Complexity Assessment:**
-- **Complex Task:** Multi-file (>=2 files) OR multi-step (>=6 steps) → STRICT gates required
-- **Simple Task:** Single file AND <=5 steps → YOLO autonomy (log phase retroactively)
-
-**For Complex Tasks (STRICT):**
-1. **Discussion Mode** (default)
-   - Explore requirements, trade-offs, alternatives, risks
-   - Do NOT propose concrete plan yet
-   - End with: "Let me know when ready to plan with 'READY TO PLAN'."
-
-2. **Planning Mode** (only after "READY TO PLAN")
-   - Propose structured plan using standardized template (see below)
-   - Include: Goal, Assumptions, Steps, Risks, Rollback
-   - End with explicit acceptance request
-
-3. **Implementation Mode** (only after "PLAN ACCEPTED")
-   - Implement full plan with automatic checkpointing
-   - Respond only when complete and verified
-
-**For Simple Tasks (YOLO):**
-- Proceed autonomously as normal
-- Log which phase you're in retroactively (e.g., "In implementation phase...")
-- No explicit gates required
-
-### Checkpointing Protocol
-
-**Automatic Checkpointing:** For plans with >8 steps OR >5 files
-
-**Every 3-5 steps:**
-1. Pause implementation
-2. Run targeted smoke test (verify files load, basic sanity)
-3. Provide brief progress report (steps completed, remaining)
-4. Ask: "Checkpoint complete. Continue?"
-5. Wait for explicit "CONTINUE" before proceeding
-
-**Smoke test criteria:**
-- Files compile/parse successfully
-- No syntax errors
-- Changed functionality runs (basic verification)
-
-### Standardized Plan Template
-
-**For all complex tasks, use this exact structure:**
-
-```markdown
-**Goal:** One-sentence summary of what we're accomplishing
-
-**Complexity Assessment:**
-- Files affected: [list]
-- Estimated steps: [number]
-- Workflow mode: STRICT (complex) / YOLO (simple)
-
-**Assumptions:**
-- [Assumption 1]
-- [Assumption 2]
-
-**Steps:**
-1. File(s): [filepath(s)]
-   Change: [Brief description]
-   Expected: [Success criteria]
-
-2. File(s): [filepath(s)]
-   Change: [Brief description]
-   Expected: [Success criteria]
-
-[... moderate-sized steps, 3-8 ideal ...]
-
-**Checkpoint Plan:** (for >8 steps)
-- Checkpoint 1: After steps 1-3
-- Checkpoint 2: After steps 4-6
-- Checkpoint 3: After steps 7-9
-
-**Risks/Edge Cases:**
-- [Risk 1 and mitigation]
-- [Risk 2 and mitigation]
-
-**Rollback Plan:**
-[How to undo if this fails]
-
-**Accept with:** PLAN ACCEPTED
-```
-
-### Context Hygiene Rules
-
-**ALWAYS enforce these to minimize token waste:**
-
-1. **Never repeat large prior content** unless explicitly asked
-   - Threshold: >500 tokens (~2000 characters)
-   - Instead: Summarize in 1-3 sentences + reference location
-
-2. **File references:**
-   - Use: "See lines 45-67 in src/parser.py"
-   - Not: [paste entire file]
-
-3. **Context capacity monitoring:**
-   - Track approximate usage internally
-   - At 60%: Suggest selective summarization
-   - At 80%: Warn user, suggest 'Compact' command
-   - At 90%: Recommend new session + hub sync
-
-4. **Conversation summaries:**
-   - When discussing long exchanges, compress to key points
-   - Example: "We decided X (rationale: Y), discarded Z (reason: W)"
-
-### Fallback & Recovery Protocol
-
-**If during implementation, the accepted plan turns out:**
-- Ambiguous (steps unclear)
-- Impossible (technical constraint discovered)
-- Risky (will break critical functionality)
-
-**PAUSE IMMEDIATELY:**
-1. Stop implementation
-2. Report issue with evidence (error, conflict, constraint)
-3. Propose 2-3 resolution options:
-   - Option A: [e.g., Revise plan to X]
-   - Option B: [e.g., Rollback and try different approach]
-   - Option C: [e.g., Defer this feature, proceed with rest]
-4. Wait for user choice
-
-**DO NOT:**
-- Guess at solutions
-- Force continuation despite issues
-- Make major plan deviations without approval
-
-### Task Scoping Guardrails
-
-**If user request contains multiple unrelated features:**
-
-1. List them clearly:
-   - Feature A: [description]
-   - Feature B: [description]
-   - Feature C: [description]
-
-2. Suggest tackling one at a time:
-   "These are independent features. Let's tackle them sequentially to maintain focus and catch issues early."
-
-3. Ask: "Which single feature should we implement first?"
-
-4. Proceed with only the selected feature
-
-**Rationale:** Multi-feature requests often lead to tangled plans, partial failures, and massive rework waste.
-
-### Learning Capture & Hub Sync
-
-**After successful plan completion:**
-
-1. Extract 3-6 key learnings:
-   - Decision made and rationale
-   - Trade-off considered
-   - Pattern discovered
-   - Reusable insight
-
-2. Assess hub-wide value:
-   - Mark learnings that apply beyond this project
-   - Note any spoke-specific signals (model quirks, token patterns, useful prompts)
-
-3. Propose hub sync:
-   "Shall I record these learnings to wheel-signals.jsonl for hub sync?"
-
-4. Wait for explicit approval before appending
-
-**Note:** This already partially exists via wheel-signals.jsonl - formalize the workflow
-
-### Model-Specific Tuning Notes
-
-**Platform behavior differences:**
-
-| Model | Tendency | Reinforcement Needed |
-|-------|----------|---------------------|
-| Claude | Strong phase adherence | Minimal - follows gates well |
-| GPT-4o/Grok | Eager to code | Remind: "No code until PLAN ACCEPTED" |
-| Gemini | Verbose | Emphasize: "Stay concise, respect token limits" |
-| Copilot | Context-light | Extra emphasis on reading WAI-Guide.md fully |
-
-**Application:** Mention model name in WAI-State.json, adjust tone accordingly
-
----
-
 ## Session Continuity Commands
 
 Built-in commands for any AI session using Wheelwright:
@@ -633,100 +268,7 @@ Built-in commands for any AI session using Wheelwright:
 |---------|-------------------|
 | `'Time'` | Token usage estimate with 80% capacity warnings |
 | `'Rules'` | List active guidelines and project protocols |
-| `'Compact'` | Compress context, balance WAI files (auto-runs before closeout/shipit) |
-| `'Closeout'` | Process conversation log, generate session summary, prepare for hub learning |
-| `'Shipit'` | Closeout + git commit in one operation |
-
-### Command: 'Compact'
-
-**User says:** "Compact" or "Compress context"
-
-**When it runs:**
-- Manually: User triggers anytime
-- Automatically: Before 'Closeout' or 'Shipit' commands
-- Auto-trigger: At 80% capacity threshold
-
-**Your actions:**
-1. Analyze current conversation log
-2. Extract:
-   - Session summary (3-5 sentences)
-   - Key decisions made
-   - Open questions/blockers
-   - Files modified
-3. Identify what to archive:
-   - Resolved discussions (compress to outcomes)
-   - Completed implementations (keep summary only)
-   - Repeated context (consolidate)
-4. Provide compression summary:
-   ```
-   ## Context Compression Summary
-
-   **Capacity:** 78% → estimated 45% after compression
-
-   **Session Summary:**
-   [3-5 sentences of what we've accomplished]
-
-   **Key Decisions:**
-   - [Decision 1 + rationale]
-   - [Decision 2 + rationale]
-
-   **Archived Discussions:**
-   - [Topic 1: Outcome]
-   - [Topic 2: Outcome]
-
-   **Files Modified:**
-   - filepath1 (changes: summary)
-   - filepath2 (changes: summary)
-
-   **Next Actions:**
-   - [What's pending]
-
-   Ready to continue with compressed context.
-   ```
-5. Update `capacity_management.last_compact_at` in WAI-State.json
-6. Continue session with compressed context
-
----
-
-## Conversation Logging
-
-**Track every turn to enable session continuity and intelligent closeout.**
-
-### When to Log
-
-Log **EVERY turn** - both user messages and your responses.
-
-### Log Format
-
-Append to `WAI-Spoke/WAI-Session-Log.jsonl` after each exchange:
-
-```jsonl
-{"timestamp":"2025-12-29T12:34:56Z","turn":1,"type":"user","content":"User's message text","metadata":{"tokens_estimate":150}}
-{"timestamp":"2025-12-29T12:35:01Z","turn":1,"type":"assistant","content":"Your response text","metadata":{"tokens_estimate":450,"ai_model":"Your AI Name"}}
-```
-
-### Closeout Processing
-
-When user says "Closeout":
-
-1. **Run 'Compact' first** - Compress context, generate summary
-2. **Load conversation log** - Read `WAI-Spoke/WAI-Session-Log.jsonl` line-by-line
-3. **Extract insights** - Summary (2-3 sentences, using compressed summary from step 1), key topics (3-5 keywords), files modified
-4. **Update WAI-State.json** - Move `current_session` → `last_closeout` with insights
-5. **Clear log** - `rm -f WAI-Spoke/WAI-Session-Log.jsonl` (AFTER successful write!)
-6. **Mark ready for hub learning** - WAI-Spoke/ folder must be in clean state
-7. **Provide summary** - Show what was accomplished, next steps
-
-### Shipit Command
-
-When user says "Shipit":
-
-1. **Run 'Compact' first** - Balance WAI files before commit
-2. **Execute full closeout** - All closeout steps with compressed context
-3. **Git commit** - Commit WAI state files with compressed session summary
-4. **Note hub learning readiness** - Spoke-Project ready for hub to collect learnings
-
-**IMPORTANT:** Hub learning cannot proceed until closeout complete and conversation log cleared.
+| `'Closeout'` | Generate updated WAI-State files for session end |
 
 ---
 
@@ -772,7 +314,7 @@ If you need to find or interact with other Wheelwright components:
 ### Finding the Framework
 Check `wheelwright.framework_path` in WAI-State.json, or:
 1. Check if `WAI` command is in PATH
-2. Look for `~/projects/wheelwright-ai/framework`
+2. Look for `~/projects/wheelwright`
 3. Look for `~/.wheelwright`
 4. Ask user: "Where is your Wheelwright framework installed?"
 
@@ -828,10 +370,68 @@ WAI version               # Show version info
 *Wheelwright Framework - Build AI wheels that roll forward forever*
 *wheelwright.ai - MIT License*
 
-## Hub Learnings
+---
+
+## Conversation Logging
+
+Track every turn in `WAI-Spoke/WAI-Session-Log.jsonl` using append-only JSONL. On closeout, extract summary and clear the log.
+
+**Hub learning cannot proceed** until Closeout processes and clears the log.
+
+---
+
+## Token Efficiency & Multi-Stage Workflow
+
+### ADAPTIVE Workflow Mode
+
+Use multi-stage gates for complex tasks to avoid premature implementation and wasted tokens.
+
+### Standardized Plan Template
+
+Provide a concise, step-based plan before implementing complex changes.
+
+### Checkpointing Protocol
+
+Checkpoint progress every few steps to reduce drift and allow early corrections.
+
+### Context Hygiene Rules
+
+Avoid repeating large blocks of text; summarize long content and keep context lean.
+
+### Command: 'Compact'
+
+Use the Compact command to compress context and rebalance WAI files when needed.
 
 ## Hub Learnings
 
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
+
+## Pattern
 
 ## Pattern
 

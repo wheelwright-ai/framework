@@ -238,3 +238,126 @@ WAI context        Output context for LLM paste
 *Wheelwright Framework - wheelwright.ai*
 
 ## Seeded Context (Ingested) - 2026-01-03T07:26:56Z
+
+## Archived Decisions
+
+- **2025-12-29**: Enabled YOLO mode for AI collaboration
+- **2025-12-29**: CLAUDE.md v2.0 - Priority levels and enforcement architecture
+- **2025-12-29**: Automatic session start briefing protocol
+- **2025-12-29**: Automatic discovery as critical feature in README
+- **2025-12-29**: Corrected wheel metaphor terminology
+- **2025-12-28**: Rebrand from SCF to Wheelwright
+- **2025-12-28**: GitHub organization wheelwright-ai
+- **2025-12-28**: WAI file naming convention
+- **2025-12-28**: Local folder structure mirrors GitHub
+- **2025-12-22**: Framework-Hub separation
+- **2025-12-22**: AI as responsible partner philosophy
+- **2025-12-29**: Conversation logging with JSONL for session continuity
+- **2025-12-29**: Shipit command - closeout + git commit workflow
+- **2025-12-29**: WAI naming standardization
+- **2025-12-29**: Comprehensive unit test suite for session-start hook
+- **2025-12-29**: Dual-layer testing policy: smoke tests + unit tests
+- **2025-12-29**: Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates
+- **2025-12-30**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2025-12-30**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-01**: Comprehensive integration test framework implementation
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-04**: Added wheel.workspace.paths with primary flag and CLI validation to keep Windows/WSL paths in sync; WAI-Workspace now launches using those paths.
+- **2026-01-04**: WSL workspace launcher now uses explicit wsl.exe --cd per tab; CLI auto-routes based on start context with default analysis for initialized spokes.
+- **2026-01-04**: Unified WT launch into a single command and start shells without rc files for faster, cleaner startup.
+- **2026-01-05**: Added GPT bootstrap folder with a single-file template, refreshed on Shipit.
+- **2026-01-05**: Init now copies workspace launcher scripts and prints usage guidance.
+- **2026-01-05**: Increased quality gate test timeout to 5 minutes.
+- **2026-01-05**: Added live output option for quality gate test runs via WAI_QG_LIVE=1.
+- **2026-01-05**: Quality gate test output is now live by default; WAI_QG_LIVE=0 disables it.
+- **2026-01-05**: Quality gate timeout is now 10 minutes by default with WAI_QG_TIMEOUT override.
+- **2026-01-05**: Quality gate timeouts now apply to inactivity (default 5 minutes), not total runtime.
+- **2026-01-05**: Quality gates now ignore test files when checking for missing unit tests.
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Added CLI health checks and hub-wide upgrade pipeline
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2025-12-29**: Enabled YOLO mode for AI collaboration
+- **2025-12-29**: CLAUDE.md v2.0 - Priority levels and enforcement architecture
+- **2025-12-29**: Automatic session start briefing protocol
+- **2025-12-29**: Automatic discovery as critical feature in README
+- **2025-12-29**: Corrected wheel metaphor terminology
+- **2025-12-28**: Rebrand from SCF to Wheelwright
+- **2025-12-28**: GitHub organization wheelwright-ai
+- **2025-12-28**: WAI file naming convention
+- **2025-12-28**: Local folder structure mirrors GitHub
+- **2025-12-22**: Framework-Hub separation
+- **2025-12-22**: AI as responsible partner philosophy
+- **2025-12-29**: Conversation logging with JSONL for session continuity
+- **2025-12-29**: Shipit command - closeout + git commit workflow
+- **2025-12-29**: WAI naming standardization
+- **2025-12-29**: Comprehensive unit test suite for session-start hook
+- **2025-12-29**: Dual-layer testing policy: smoke tests + unit tests
+- **2025-12-29**: Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates
+- **2025-12-30**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2025-12-30**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-01**: Comprehensive integration test framework implementation
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-04**: Added wheel.workspace.paths with primary flag and CLI validation to keep Windows/WSL paths in sync; WAI-Workspace now launches using those paths.
+- **2026-01-04**: WSL workspace launcher now uses explicit wsl.exe --cd per tab; CLI auto-routes based on start context with default analysis for initialized spokes.
+- **2026-01-04**: Unified WT launch into a single command and start shells without rc files for faster, cleaner startup.
+- **2026-01-05**: Added GPT bootstrap folder with a single-file template, refreshed on Shipit.
+- **2026-01-05**: Init now copies workspace launcher scripts and prints usage guidance.
+- **2026-01-05**: Increased quality gate test timeout to 5 minutes.
+- **2026-01-05**: Added live output option for quality gate test runs via WAI_QG_LIVE=1.
+- **2026-01-05**: Quality gate test output is now live by default; WAI_QG_LIVE=0 disables it.
+- **2026-01-05**: Quality gate timeout is now 10 minutes by default with WAI_QG_TIMEOUT override.
+- **2026-01-05**: Quality gate timeouts now apply to inactivity (default 5 minutes), not total runtime.
+- **2026-01-05**: Quality gates now ignore test files when checking for missing unit tests.
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Added CLI health checks and hub-wide upgrade pipeline
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2025-12-29**: Enabled YOLO mode for AI collaboration
+- **2025-12-29**: CLAUDE.md v2.0 - Priority levels and enforcement architecture
+- **2025-12-29**: Automatic session start briefing protocol
+- **2025-12-29**: Automatic discovery as critical feature in README
+- **2025-12-29**: Corrected wheel metaphor terminology
+- **2025-12-28**: Rebrand from SCF to Wheelwright
+- **2025-12-28**: GitHub organization wheelwright-ai
+- **2025-12-28**: WAI file naming convention
+- **2025-12-28**: Local folder structure mirrors GitHub
+- **2025-12-22**: Framework-Hub separation
+- **2025-12-22**: AI as responsible partner philosophy
+- **2025-12-29**: Conversation logging with JSONL for session continuity
+- **2025-12-29**: Shipit command - closeout + git commit workflow
+- **2025-12-29**: WAI naming standardization
+- **2025-12-29**: Comprehensive unit test suite for session-start hook
+- **2025-12-29**: Dual-layer testing policy: smoke tests + unit tests
+- **2025-12-29**: Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates
+- **2025-12-30**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2025-12-30**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-01**: Comprehensive integration test framework implementation
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-02**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-04**: Added wheel.workspace.paths with primary flag and CLI validation to keep Windows/WSL paths in sync; WAI-Workspace now launches using those paths.
+- **2026-01-04**: WSL workspace launcher now uses explicit wsl.exe --cd per tab; CLI auto-routes based on start context with default analysis for initialized spokes.
+- **2026-01-04**: Unified WT launch into a single command and start shells without rc files for faster, cleaner startup.
+- **2026-01-05**: Added GPT bootstrap folder with a single-file template, refreshed on Shipit.
+- **2026-01-05**: Init now copies workspace launcher scripts and prints usage guidance.
+- **2026-01-05**: Increased quality gate test timeout to 5 minutes.
+- **2026-01-05**: Added live output option for quality gate test runs via WAI_QG_LIVE=1.
+- **2026-01-05**: Quality gate test output is now live by default; WAI_QG_LIVE=0 disables it.
+- **2026-01-05**: Quality gate timeout is now 10 minutes by default with WAI_QG_TIMEOUT override.
+- **2026-01-05**: Quality gate timeouts now apply to inactivity (default 5 minutes), not total runtime.
+- **2026-01-05**: Quality gates now ignore test files when checking for missing unit tests.
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Added CLI health checks and hub-wide upgrade pipeline
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
