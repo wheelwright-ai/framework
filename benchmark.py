@@ -33,6 +33,10 @@ PROFILES = {
 BENCHMARK_DIR = Path(__file__).parent / "benchmarks"
 SPOKE_DIR = Path(__file__).parent / "WAI-Spoke"
 
+# Mode identifiers
+MODE_WAI = "wai"          # With Wheelwright optimizations
+MODE_BASELINE = "baseline" # Naive approach (no optimizations)
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DATA CLASSES
@@ -69,6 +73,7 @@ class BenchmarkResult:
     timestamp: str
     platform: str
     python_version: str
+    mode: str = MODE_WAI  # "wai" or "baseline"
     
     profiles: dict = field(default_factory=dict)
     
@@ -190,9 +195,10 @@ def delta_indicator(current: float, previous: float, lower_is_better: bool = Tru
 # ═══════════════════════════════════════════════════════════════════════════════
 
 class BenchmarkRunner:
-    def __init__(self, profile_name: str, profile_config: dict):
+    def __init__(self, profile_name: str, profile_config: dict, mode: str = MODE_WAI):
         self.profile_name = profile_name
         self.config = profile_config
+        self.mode = mode  # "wai" or "baseline"
         self.temp_dir = None
         self.lugs_data = []
         
@@ -288,16 +294,20 @@ class BenchmarkRunner:
     
     def measure_token_efficiency(self) -> tuple[int, int, float]:
         """Calculate token usage for context loading."""
-        # Optimized: Load only open lugs
-        open_lugs = [l for l in self.lugs_data if l["status"] == "open"]
-        optimized_context = json.dumps(open_lugs)
-        context_tokens = calculate_tokens(optimized_context)
+        # Baseline: Load ALL lugs every time (naive approach)
+        all_context = json.dumps(self.lugs_data)
+        baseline_tokens = calculate_tokens(all_context)
         
-        # Baseline: Load all lugs
-        baseline_context = json.dumps(self.lugs_data)
-        baseline_tokens = calculate_tokens(baseline_context)
-        
-        savings = ((baseline_tokens - context_tokens) / baseline_tokens * 100) if baseline_tokens > 0 else 0
+        if self.mode == MODE_BASELINE:
+            # No optimization - load everything
+            context_tokens = baseline_tokens
+            savings = 0.0
+        else:
+            # WAI Optimized: Load only open lugs + summaries
+            open_lugs = [l for l in self.lugs_data if l["status"] == "open"]
+            optimized_context = json.dumps(open_lugs)
+            context_tokens = calculate_tokens(optimized_context)
+            savings = ((baseline_tokens - context_tokens) / baseline_tokens * 100) if baseline_tokens > 0 else 0
         
         return context_tokens, baseline_tokens, savings
     
@@ -366,11 +376,14 @@ def calculate_scores(profiles: dict[str, ProfileMetrics]) -> tuple[float, float,
     return overall, file_size_score, speed_score, token_score
 
 
-def load_previous_result() -> Optional[BenchmarkResult]:
-    """Load the most recent benchmark result for comparison."""
+def load_previous_result(mode: str = MODE_WAI) -> Optional[BenchmarkResult]:
+    """Load the most recent benchmark result for comparison (matching mode)."""
     BENCHMARK_DIR.mkdir(exist_ok=True)
     
-    results = sorted(BENCHMARK_DIR.glob("benchmark-*.json"), reverse=True)
+    # Find results matching this mode
+    pattern = f"benchmark-{mode}-*.json" if mode else "benchmark-*.json"
+    results = sorted(BENCHMARK_DIR.glob(pattern), reverse=True)
+    
     if results:
         try:
             data = json.loads(results[0].read_text())
@@ -378,6 +391,11 @@ def load_previous_result() -> Optional[BenchmarkResult]:
         except Exception:
             pass
     return None
+
+
+def load_baseline_result() -> Optional[BenchmarkResult]:
+    """Load the baseline (no-WAI) result for comparison."""
+    return load_previous_result(MODE_BASELINE)
 
 
 def generate_callouts(current: BenchmarkResult, previous: Optional[BenchmarkResult]) -> list[str]:
@@ -531,10 +549,17 @@ def print_footer(log_path: Path):
 # MAIN ENTRY POINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def run_benchmark(save: bool = True, tag: bool = False) -> BenchmarkResult:
+def run_benchmark(save: bool = True, tag: bool = False, mode: str = MODE_WAI) -> BenchmarkResult:
     """Run the full benchmark suite."""
     
     print_header()
+    
+    # Mode banner
+    if mode == MODE_BASELINE:
+        print(color("  ┌─────────────────────────────────────────────────────────┐", "yellow"))
+        print(color("  │  BASELINE MODE: Simulating naive approach (no WAI)      │", "yellow"))
+        print(color("  └─────────────────────────────────────────────────────────┘", "yellow"))
+        print()
     
     # Get system info
     version = get_version()
@@ -543,8 +568,8 @@ def run_benchmark(save: bool = True, tag: bool = False) -> BenchmarkResult:
     platform = f"{sys.platform}"
     python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
     
-    # Load previous for comparison
-    previous = load_previous_result()
+    # Load previous for comparison (same mode)
+    previous = load_previous_result(mode)
     
     # Create result object
     result = BenchmarkResult(
@@ -554,6 +579,7 @@ def run_benchmark(save: bool = True, tag: bool = False) -> BenchmarkResult:
         timestamp=timestamp,
         platform=platform,
         python_version=python_version,
+        mode=mode,
         previous_run=previous.timestamp if previous else None,
     )
     
@@ -561,12 +587,13 @@ def run_benchmark(save: bool = True, tag: bool = False) -> BenchmarkResult:
     print_system_info(result)
     
     # Run each profile
-    print(color("  Running Benchmarks...", "bold"))
+    mode_label = "BASELINE" if mode == MODE_BASELINE else "WAI"
+    print(color(f"  Running {mode_label} Benchmarks...", "bold"))
     print()
     
     for profile_name, profile_config in PROFILES.items():
         print(f"  ⏳ Running {profile_name} profile...", end=" ", flush=True)
-        runner = BenchmarkRunner(profile_name, profile_config)
+        runner = BenchmarkRunner(profile_name, profile_config, mode=mode)
         metrics = runner.run()
         result.profiles[profile_name] = asdict(metrics)
         print(color("✓", "green"))
@@ -604,14 +631,15 @@ def run_benchmark(save: bool = True, tag: bool = False) -> BenchmarkResult:
     # Save results
     if save:
         BENCHMARK_DIR.mkdir(exist_ok=True)
-        log_filename = f"benchmark-{timestamp.replace(':', '-').replace('T', '_')[:19]}.json"
+        ts_clean = timestamp.replace(':', '-').replace('T', '_')[:19]
+        log_filename = f"benchmark-{mode}-{ts_clean}.json"
         log_path = BENCHMARK_DIR / log_filename
         log_path.write_text(json.dumps(asdict(result), indent=2))
         print_footer(log_path)
         
         # Create git tag if requested
         if tag:
-            tag_name = f"benchmark-v{version}-{timestamp[:10]}"
+            tag_name = f"benchmark-{mode}-v{version}-{timestamp[:10]}"
             try:
                 subprocess.run(["git", "tag", tag_name], check=True, capture_output=True, cwd=Path(__file__).parent)
                 print(f"  🏷️  Git tag created: {tag_name}")
@@ -621,10 +649,14 @@ def run_benchmark(save: bool = True, tag: bool = False) -> BenchmarkResult:
     return result
 
 
-def show_history():
+def show_history(mode: Optional[str] = None):
     """Show benchmark history."""
     BENCHMARK_DIR.mkdir(exist_ok=True)
-    results = sorted(BENCHMARK_DIR.glob("benchmark-*.json"))
+    
+    if mode:
+        results = sorted(BENCHMARK_DIR.glob(f"benchmark-{mode}-*.json"))
+    else:
+        results = sorted(BENCHMARK_DIR.glob("benchmark-*.json"))
     
     if not results:
         print("  No benchmark history found.")
@@ -632,22 +664,23 @@ def show_history():
     
     print()
     print(color("  BENCHMARK HISTORY", "bold"))
-    print(color("  " + "═" * 72, "cyan"))
-    print(f"  {'Date':<20} {'Version':<10} {'Commit':<10} {'Score':>8} {'Δ':>8}")
-    print(color("  " + "─" * 72, "dim"))
+    print(color("  " + "═" * 76, "cyan"))
+    print(f"  {'Date':<12} {'Mode':<10} {'Version':<10} {'Commit':<10} {'Score':>8} {'Δ':>8}")
+    print(color("  " + "─" * 76, "dim"))
     
-    prev_score = None
+    prev_scores = {}  # Track per-mode
     for result_path in results:
         try:
             data = json.loads(result_path.read_text())
             date = data["timestamp"][:10]
+            result_mode = data.get("mode", "wai")
             version = data["version"]
             commit = data["git_commit"][:8]
             score = data["overall_score"]
             
             delta = ""
-            if prev_score is not None:
-                d = score - prev_score
+            if result_mode in prev_scores:
+                d = score - prev_scores[result_mode]
                 if d > 0:
                     delta = color(f"+{d:.1f}", "green")
                 elif d < 0:
@@ -655,11 +688,87 @@ def show_history():
                 else:
                     delta = color("0.0", "dim")
             
-            print(f"  {date:<20} {version:<10} {commit:<10} {score:>8.1f} {delta:>8}")
-            prev_score = score
+            mode_display = color("BASE", "yellow") if result_mode == "baseline" else color("WAI", "cyan")
+            print(f"  {date:<12} {mode_display:<19} {version:<10} {commit:<10} {score:>8.1f} {delta:>8}")
+            prev_scores[result_mode] = score
         except Exception:
             continue
     
+    print()
+
+
+def show_comparison():
+    """Compare WAI vs Baseline performance."""
+    wai_result = load_previous_result(MODE_WAI)
+    baseline_result = load_previous_result(MODE_BASELINE)
+    
+    if not wai_result or not baseline_result:
+        print()
+        print(color("  ⚠️  Need both WAI and Baseline runs for comparison", "yellow"))
+        if not baseline_result:
+            print("     Run: python benchmark.py --baseline")
+        if not wai_result:
+            print("     Run: python benchmark.py")
+        print()
+        return
+    
+    print()
+    print(color("╔══════════════════════════════════════════════════════════════════════════════╗", "cyan"))
+    print(color("║", "cyan") + color("                    WAI vs BASELINE COMPARISON                               ", "bold") + color("║", "cyan"))
+    print(color("╚══════════════════════════════════════════════════════════════════════════════╝", "cyan"))
+    print()
+    
+    print(color("  Overall Scores", "bold"))
+    print(color("  ─────────────────────────────────────────────────────────────────────", "dim"))
+    
+    wai_score = wai_result.overall_score
+    base_score = baseline_result.overall_score
+    improvement = ((wai_score - base_score) / base_score * 100) if base_score > 0 else 0
+    
+    print(f"  {'Metric':<25} {'Baseline':>12} {'WAI':>12} {'Improvement':>15}")
+    print(color("  " + "─" * 70, "dim"))
+    
+    def fmt_improvement(wai_val, base_val, higher_better=True):
+        if base_val == 0:
+            return ""
+        delta = ((wai_val - base_val) / base_val * 100)
+        if higher_better:
+            is_better = delta > 0
+        else:
+            is_better = delta < 0
+        arrow = "↑" if delta > 0 else "↓"
+        col = "green" if is_better else "red"
+        return color(f"{arrow}{abs(delta):>5.1f}%", col)
+    
+    print(f"  {'Overall Score':<25} {base_score:>12.1f} {wai_score:>12.1f} {fmt_improvement(wai_score, base_score):>15}")
+    print(f"  {'File Size Score':<25} {baseline_result.file_size_score:>12.1f} {wai_result.file_size_score:>12.1f} {fmt_improvement(wai_result.file_size_score, baseline_result.file_size_score):>15}")
+    print(f"  {'Speed Score':<25} {baseline_result.speed_score:>12.1f} {wai_result.speed_score:>12.1f} {fmt_improvement(wai_result.speed_score, baseline_result.speed_score):>15}")
+    print(f"  {'Token Efficiency':<25} {baseline_result.token_efficiency_score:>12.1f} {wai_result.token_efficiency_score:>12.1f} {fmt_improvement(wai_result.token_efficiency_score, baseline_result.token_efficiency_score):>15}")
+    print()
+    
+    # Per-profile comparison
+    print(color("  Profile Comparison (Token Savings)", "bold"))
+    print(color("  ─────────────────────────────────────────────────────────────────────", "dim"))
+    
+    for profile_name in PROFILES:
+        if profile_name in wai_result.profiles and profile_name in baseline_result.profiles:
+            wai_p = wai_result.profiles[profile_name]
+            base_p = baseline_result.profiles[profile_name]
+            
+            wai_savings = wai_p.get("token_savings_percent", 0)
+            base_savings = base_p.get("token_savings_percent", 0)
+            delta = wai_savings - base_savings
+            
+            indicator = color(f"+{delta:.1f}%", "green") if delta > 0 else color(f"{delta:.1f}%", "red")
+            print(f"  {profile_name.upper():<10} Baseline: {base_savings:>5.1f}%  WAI: {wai_savings:>5.1f}%  {indicator}")
+    
+    print()
+    
+    # Summary
+    if improvement > 0:
+        print(color(f"  🚀 WAI provides {improvement:.1f}% overall performance improvement over baseline!", "green"))
+    else:
+        print(color(f"  ⚠️ WAI showing {abs(improvement):.1f}% regression - investigate!", "red"))
     print()
 
 
@@ -672,12 +781,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python benchmark.py              Run benchmark and save results
+  python benchmark.py              Run WAI benchmark and save results
+  python benchmark.py --baseline   Run baseline (no-WAI) benchmark
+  python benchmark.py --compare    Compare WAI vs Baseline performance
   python benchmark.py --tag        Run benchmark and create git tag
   python benchmark.py --history    Show benchmark history
   python benchmark.py --no-save    Run benchmark without saving
         """
     )
+    parser.add_argument("--baseline", action="store_true", help="Run baseline (no-WAI) benchmark")
+    parser.add_argument("--compare", action="store_true", help="Compare WAI vs Baseline results")
     parser.add_argument("--tag", action="store_true", help="Create git tag for this run")
     parser.add_argument("--history", action="store_true", help="Show benchmark history")
     parser.add_argument("--no-save", action="store_true", help="Don't save results")
@@ -686,8 +799,11 @@ Examples:
     
     if args.history:
         show_history()
+    elif args.compare:
+        show_comparison()
     else:
-        run_benchmark(save=not args.no_save, tag=args.tag)
+        mode = MODE_BASELINE if args.baseline else MODE_WAI
+        run_benchmark(save=not args.no_save, tag=args.tag, mode=mode)
 
 
 if __name__ == "__main__":
