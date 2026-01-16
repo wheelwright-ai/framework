@@ -546,6 +546,93 @@ def print_footer(log_path: Path):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# VERBOSE EXPLANATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+VERBOSE_EXPLANATION = """
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    BENCHMARK METHODOLOGY                                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+  WHAT WE MEASURE
+  ───────────────────────────────────────────────────────────────────────────────
+  This benchmark measures Wheelwright's impact on AI-assisted development by
+  simulating realistic workloads across three project sizes.
+
+  TEST PROFILES
+  ───────────────────────────────────────────────────────────────────────────────
+  • SMALL   50 work items   (solo project, early stage)
+  • MEDIUM  200 work items  (growing project, multiple features)
+  • LARGE   500 work items  (mature project, full backlog)
+
+  Each profile creates synthetic "Lugs" (work items) with realistic metadata:
+  IDs, titles, status, priority, impact scores, timestamps, tags, descriptions,
+  and dependency chains. 50% are marked closed to simulate project history.
+
+  METRICS EXPLAINED
+  ───────────────────────────────────────────────────────────────────────────────
+
+  📁 FILE SIZE
+     Measures total spoke directory size in KB. Smaller = better for storage
+     and faster git operations. Scored against expected size thresholds.
+
+  ⚡ QUERY TIME
+     Time (ms) to find all open, high-priority items by scanning JSONL.
+     Simulates "what should I work on?" queries. Target: <1ms for small.
+
+  ✏️  UPDATE TIME  
+     Time (ms) to modify a single item and rewrite the file.
+     Simulates status changes, adding notes, etc. Target: <5ms for small.
+
+  📦 CLOSEOUT TIME
+     Time (ms) to archive closed items to a separate file.
+     Simulates session-end cleanup. Target: <10ms for small.
+
+  🎯 TOKEN SAVINGS
+     Percentage reduction in context tokens when loading project state.
+     BASELINE: Loads ALL items every time (naive approach)
+     WAI: Loads only OPEN items + summaries (smart filtering)
+     This directly impacts AI API costs and context window usage.
+
+  SCORING (0-100)
+  ───────────────────────────────────────────────────────────────────────────────
+  • File Size Score:    Based on actual vs expected size ratios
+  • Speed Score:        Based on query/update/closeout vs target times
+  • Token Efficiency:   Direct percentage of tokens saved (0-100)
+  • Overall Score:      Weighted: 25% size + 35% speed + 40% tokens
+
+  TWO MODES
+  ───────────────────────────────────────────────────────────────────────────────
+  BASELINE (--baseline)
+    Simulates naive approach WITHOUT Wheelwright optimizations.
+    - Loads all items into context regardless of status
+    - No token savings (0%)
+    - Establishes the "before" comparison point
+
+  WAI (default)
+    Simulates WITH Wheelwright optimizations.
+    - Loads only open/relevant items
+    - Achieves ~50% token savings
+    - Shows actual improvement from using WAI
+
+  COMPARISON (--compare)
+    Shows side-by-side WAI vs Baseline with improvement percentages.
+    Run both modes first, then compare to see WAI's value.
+
+  FILES
+  ───────────────────────────────────────────────────────────────────────────────
+  Results saved to: benchmarks/benchmark-{mode}-{timestamp}.json
+  History tracked per-mode for longitudinal performance analysis.
+  Use --tag to create git tags for easy commit reference.
+
+"""
+
+def show_verbose():
+    """Print detailed explanation of benchmark methodology."""
+    print(VERBOSE_EXPLANATION)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # MAIN ENTRY POINT
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -718,6 +805,12 @@ def show_comparison():
     print(color("╚══════════════════════════════════════════════════════════════════════════════╝", "cyan"))
     print()
     
+    # Show versions being compared
+    print(color("  Comparing:", "bold"))
+    print(f"    BASELINE  v{baseline_result.version}  {baseline_result.timestamp[:10]}  ({baseline_result.git_commit})")
+    print(f"    WAI       v{wai_result.version}  {wai_result.timestamp[:10]}  ({wai_result.git_commit})")
+    print()
+    
     print(color("  Overall Scores", "bold"))
     print(color("  ─────────────────────────────────────────────────────────────────────", "dim"))
     
@@ -784,6 +877,7 @@ Examples:
   python benchmark.py              Run WAI benchmark and save results
   python benchmark.py --baseline   Run baseline (no-WAI) benchmark
   python benchmark.py --compare    Compare WAI vs Baseline performance
+  python benchmark.py --verbose    Explain benchmark methodology
   python benchmark.py --tag        Run benchmark and create git tag
   python benchmark.py --history    Show benchmark history
   python benchmark.py --no-save    Run benchmark without saving
@@ -791,13 +885,16 @@ Examples:
     )
     parser.add_argument("--baseline", action="store_true", help="Run baseline (no-WAI) benchmark")
     parser.add_argument("--compare", action="store_true", help="Compare WAI vs Baseline results")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Explain benchmark methodology")
     parser.add_argument("--tag", action="store_true", help="Create git tag for this run")
     parser.add_argument("--history", action="store_true", help="Show benchmark history")
     parser.add_argument("--no-save", action="store_true", help="Don't save results")
     
     args = parser.parse_args()
     
-    if args.history:
+    if args.verbose:
+        show_verbose()
+    elif args.history:
         show_history()
     elif args.compare:
         show_comparison()
