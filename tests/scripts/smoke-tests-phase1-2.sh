@@ -39,7 +39,7 @@ setup_test_env() {
     cd "$TEST_DIR"
 
     # Initialize a test spoke
-    "$SCRIPT_DIR/WAI-CLI" init "$TEST_DIR" >/dev/null 2>&1
+    "$SCRIPT_DIR/../../WAI" init "$TEST_DIR" >/dev/null 2>&1
 
     echo "$TEST_DIR"
 }
@@ -85,21 +85,21 @@ echo ""
 info "Testing CLI commands availability..."
 
 # Test 2: Stats command exists
-if ./WAI-CLI stats --help >/dev/null 2>&1; then
+if ../../WAI stats --help >/dev/null 2>&1; then
     pass "stats command available"
 else
     fail "stats command available"
 fi
 
 # Test 3: Baseline command exists
-if ./WAI-CLI baseline --help >/dev/null 2>&1; then
+if ../../WAI baseline --help >/dev/null 2>&1; then
     pass "baseline command available"
 else
     fail "baseline command available"
 fi
 
 # Test 4: Closeout command exists
-if ./WAI-CLI closeout --help >/dev/null 2>&1; then
+if ../../WAI closeout --help >/dev/null 2>&1; then
     pass "closeout command available"
 else
     fail "closeout command available"
@@ -132,56 +132,56 @@ info "Testing with test spoke..."
 TEST_DIR=$(setup_test_env)
 
 # Test 7: Stats command on new spoke
-if ./WAI-CLI stats "$TEST_DIR" 2>&1 | grep -q "Session Analytics"; then
+if ../../WAI stats "$TEST_DIR" 2>&1 | grep -q "Session Analytics"; then
     pass "Stats command runs on spoke"
 else
     fail "Stats command runs on spoke"
 fi
 
 # Test 8: Stats shows zero sessions initially
-if ./WAI-CLI stats "$TEST_DIR" 2>&1 | grep -q "Total: 0"; then
+if ../../WAI stats "$TEST_DIR" 2>&1 | grep -q "Total: 0"; then
     pass "Stats shows zero sessions initially"
 else
     fail "Stats shows zero sessions initially"
 fi
 
 # Test 9: Baseline status command
-if ./WAI-CLI baseline status "$TEST_DIR" 2>&1 | grep -q "Baseline Mode Status"; then
+if ../../WAI baseline status "$TEST_DIR" 2>&1 | grep -q "Baseline Mode Status"; then
     pass "Baseline status command works"
 else
     fail "Baseline status command works"
 fi
 
 # Test 10: Baseline initially disabled
-if ./WAI-CLI baseline status "$TEST_DIR" 2>&1 | grep -q "DISABLED"; then
+if ../../WAI baseline status "$TEST_DIR" 2>&1 | grep -q "DISABLED"; then
     pass "Baseline initially disabled"
 else
     fail "Baseline initially disabled"
 fi
 
 # Test 11: Enable baseline mode
-if ./WAI-CLI baseline enable "$TEST_DIR" 2>&1 | grep -q "enabled"; then
+if ../../WAI baseline enable "$TEST_DIR" 2>&1 | grep -q "enabled"; then
     pass "Baseline enable works"
 else
     fail "Baseline enable works"
 fi
 
 # Test 12: Baseline status shows enabled
-if ./WAI-CLI baseline status "$TEST_DIR" 2>&1 | grep -q "ENABLED"; then
+if ../../WAI baseline status "$TEST_DIR" 2>&1 | grep -q "ENABLED"; then
     pass "Baseline status shows enabled"
 else
     fail "Baseline status shows enabled"
 fi
 
 # Test 13: Disable baseline mode
-if ./WAI-CLI baseline disable "$TEST_DIR" 2>&1 | grep -q "disabled"; then
+if ../../WAI baseline disable "$TEST_DIR" 2>&1 | grep -q "disabled"; then
     pass "Baseline disable works"
 else
     fail "Baseline disable works"
 fi
 
 # Test 14: Baseline status shows disabled after disable
-if ./WAI-CLI baseline status "$TEST_DIR" 2>&1 | grep -q "DISABLED"; then
+if ../../WAI baseline status "$TEST_DIR" 2>&1 | grep -q "DISABLED"; then
     pass "Baseline status shows disabled after disable"
 else
     fail "Baseline status shows disabled after disable"
@@ -539,7 +539,7 @@ echo ""
 echo -e "${YELLOW}→${NC} Testing critical priority features..."
 
 # Test 31: Time command works
-TEST_RESULT=$(./WAI-CLI time "$TEST_DIR" 2>&1)
+TEST_RESULT=$(../../WAI time "$TEST_DIR" 2>&1)
 if echo "$TEST_RESULT" | grep -q "Token Usage Estimate" && \
    echo "$TEST_RESULT" | grep -q "Estimated usage:"; then
     pass "Time command runs on spoke"
@@ -638,7 +638,7 @@ cd - > /dev/null 2>&1
 # Make a change to test shipit
 echo "test" > "$TEST_DIR/test.txt"
 
-TEST_RESULT=$(./WAI-CLI shipit "$TEST_DIR" --non-interactive 2>&1)
+TEST_RESULT=$(../../WAI shipit "$TEST_DIR" --non-interactive 2>&1)
 if echo "$TEST_RESULT" | grep -q "Shipit: Closeout + Git Commit" && \
    echo "$TEST_RESULT" | grep -q "Git Commit Workflow"; then
     pass "Shipit command runs workflow"

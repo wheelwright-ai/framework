@@ -5,6 +5,7 @@ Input validation and error handling with KeyboardInterrupt support.
 """
 
 import sys
+import time
 from typing import Optional, Callable, List
 
 from .exceptions import ValidationError
@@ -41,39 +42,47 @@ def single_key_input(prompt: str, valid_keys: List[str]) -> Optional[str]:
 
     Returns:
         The pressed key (lowercase) or None if cancelled
-
-    Examples:
-        >>> single_key_input("[1] Add project?", ['y', 'n', 'a', 'c'])
-        'y'  # User just pressed 'y', no Enter needed
     """
-    print(f"   {prompt} ", end='', flush=True)
+    import time
+    import sys
+    import tty
+    import termios
+
+    sys.stdout.write(f"{prompt} ")
+    sys.stdout.flush()
 
     valid_keys_lower = [k.lower() for k in valid_keys]
 
-    while True:
-        try:
-            ch = getch()
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
 
-            # Handle special keys
-            if ch == '\x03' or ch == '\x04':  # Ctrl+C or Ctrl+D
-                print()
+    try:
+        tty.setraw(fd)  # Set terminal to raw mode
+        while True:
+            ch = sys.stdin.read(1)  # Read a single character
+
+            if ch == '\x03':  # Ctrl+C
+                raise KeyboardInterrupt
+            elif ch == '\x04':  # Ctrl+D
                 return None
 
             response = ch.lower()
 
             if response in valid_keys_lower:
-                print(ch)  # Echo the character
+                sys.stdout.write(ch + '\n') # Echo valid character and newline
+                sys.stdout.flush()
                 return response
             else:
-                # Invalid key, just beep or ignore
+                # Invalid key, ignore but don't echo
+                sys.stdout.write('\a') # Bell sound for invalid input
+                sys.stdout.flush()
                 continue
-
-        except KeyboardInterrupt:
-            print()
-            return None
-        except Exception:
-            print()
-            return None
+    except KeyboardInterrupt:
+        print("\nOperation cancelled.")
+        return None
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings) # Restore terminal settings
+        time.sleep(0.05) # Small delay to prevent flickering in some terminals
 
 
 def safe_input(
@@ -92,6 +101,7 @@ def safe_input(
     - Length limits
     - Ctrl+C handling (returns None or default)
     - Input sanitization
+    - 'cancel'/'quit'/'exit' returns None
 
     Args:
         prompt: Input prompt to display
@@ -113,13 +123,21 @@ def safe_input(
     # Build prompt with default hint
     display_prompt = prompt
     if default is not None:
-        display_prompt = f"{prompt} [{default}]: "
-    elif not display_prompt.endswith(': '):
-        display_prompt = f"{prompt}: "
+        display_prompt = f"{prompt} [{default}]"
+    else:
+        display_prompt = prompt
+    if "cancel" not in display_prompt.lower():
+        display_prompt = f"{display_prompt} (cancel)"
+    if not display_prompt.endswith(": "):
+        display_prompt = f"{display_prompt}: "
 
     while True:
         try:
             user_input = input(display_prompt).strip()
+
+            lowered = user_input.lower()
+            if lowered in {"cancel", "quit", "exit"}:
+                return None
 
             # Handle empty input
             if not user_input:
@@ -366,16 +384,6 @@ def safe_menu_choice(
 
     Returns:
         Return value of selected option, or None if cancelled
-
-    Examples:
-        >>> options = [
-        ...     ('1', 'h', '🏢 Hub', 'hub'),
-        ...     ('2', 's', '🎡 Spokes', 'spokes'),
-        ...     ('q', 'q', '👋 Quit', 'quit')
-        ... ]
-        >>> safe_menu_choice("Select", options, default='2')
-        # First prompt: "Select [2]: "
-        # If invalid: "Invalid. Choose: 1/h/2/s/q"
     """
     # Build valid inputs mapping
     valid_inputs = {}
@@ -413,6 +421,7 @@ def safe_menu_choice(
         try:
             # Read single character (no Enter needed)
             ch = getch()
+            time.sleep(0.05) # Small delay to prevent flickering
 
             # Handle special keys
             if ch == '\x03':  # Ctrl+C

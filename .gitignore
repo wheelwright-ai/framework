@@ -80,3 +80,7 @@ WAI-Spoke/WAI-Testing-Log.jsonl
 WAI-Spoke/WAI-WebLLM-Instructions.md
 AGENTS.md
 .cursorrules
+
+# Benchmark results (keep some for history, ignore bulk)
+# Commit specific benchmark runs manually with --tag
+benchmarks/*.json

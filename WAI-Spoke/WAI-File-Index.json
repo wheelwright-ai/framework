@@ -1,10 +1,10 @@
 {
-  "version": "1.0",
+  "version": "2.1",
   "metadata": {
     "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
     "project_root": "/home/mario/projects/wheelwright-ai/framework",
     "project_name": "framework",
-    "last_updated": "2026-01-05T04:30:26Z",
+    "last_updated": "2026-01-08T00:13:06Z",
     "updated_by": "WAI Update"
   },
   "core_files": {
@@ -49,10 +49,17 @@
       "cleanup": "regenerate_on_configure"
     },
     "WAI-Session-Log.jsonl": {
-      "purpose": "Conversation log for current session",
+      "purpose": "Conversation log for current session (legacy, see sessions/)",
       "required": false,
       "auto_managed": true,
       "cleanup": "delete_on_closeout"
+    },
+    "sessions/": {
+      "purpose": "Per-environment session logs for multi-agent support",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "reconcile_on_closeout",
+      "contents": "{tool}-{machine}.jsonl files"
     },
     "WAI-Baseline-Log.jsonl": {
       "purpose": "Baseline comparison runs and summaries",
@@ -99,6 +106,16 @@
       "auto_managed": true
     },
     "reference/auto/wai-shell.sh": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Workspace.psout": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Workspace.pserr": {
       "purpose": "Auto-archived from WAI-Spoke root",
       "required": false,
       "auto_managed": true

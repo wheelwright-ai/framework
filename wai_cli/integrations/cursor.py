@@ -4,14 +4,20 @@ Cursor IDE integration.
 Generates .cursorrules configuration for Cursor AI editor.
 """
 
+import json
 from pathlib import Path
 from typing import Dict, Any, Optional
 
 from .base import IDEIntegration
+from . import commands
 
 
 class CursorIntegration(IDEIntegration):
     """Cursor integration."""
+
+    # Cursor doesn't have a slash command directory like Claude Code
+    # Commands are embedded in .cursorrules as reference
+    commands_subdir = None
 
     @property
     def name(self) -> str:
@@ -57,13 +63,15 @@ class CursorIntegration(IDEIntegration):
 
         # Read project info
         state_file = self.wai_spoke_dir / 'WAI-State.json'
-        import json
         state = {}
         if state_file.exists():
             with open(state_file) as f:
                 state = json.load(f)
 
         project_name = state.get('wheel', {}).get('name', 'Project')
+
+        # Get command section from shared templates
+        command_section = commands.get_command_section()
 
         config = f"""# Cursor Rules for {project_name}
 
@@ -97,11 +105,7 @@ If the task affects 2+ files or requires 6+ steps:
 - Propose a structured plan
 - Wait for "PLAN ACCEPTED" before implementation
 
-### Session Commands
-
-- **Time**: Check token usage and capacity
-- **Closeout**: End session with smart processing
-- **Shipit**: Closeout + git commit
+{command_section}
 
 ### Key Instructions
 

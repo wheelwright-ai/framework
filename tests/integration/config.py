@@ -17,7 +17,7 @@ class IntegrationTestConfig:
         """Initialize test configuration from environment variables."""
 
         # CLI command to use for testing
-        self.cli_command = os.getenv('WAI_CLI_COMMAND', 'WAI-CLI')
+        self.cli_command = os.getenv('WAI_CLI_COMMAND', 'WAI')
 
         # Framework path
         framework_path_env = os.getenv('WAI_FRAMEWORK_PATH')

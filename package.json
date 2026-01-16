@@ -31,7 +31,10 @@
   "scripts": {
     "test": "python -m pytest tests/",
     "lint": "python -m flake8 *.py",
-    "format": "python -m black *.py"
+    "format": "python -m black *.py",
+    "benchmark": "python3 benchmark.py",
+    "benchmark:tag": "python3 benchmark.py --tag",
+    "benchmark:history": "python3 benchmark.py --history"
   },
   "engines": {
     "node": ">=18.0.0",

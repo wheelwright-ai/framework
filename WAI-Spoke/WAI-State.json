@@ -98,46 +98,57 @@
     ]
   },
   "_session_state": {
-    "last_session_id": "integration-test-framework-2026-01-01",
-    "last_modified_by": "GPT-5",
-    "last_modified_at": "2026-01-05T05:04:33.024609+00:00",
+    "last_session_id": "claude-sonnet-2026-01-16-hub-indexer",
+    "last_modified_by": "Claude Sonnet 3.7",
+    "last_modified_at": "2026-01-16T14:30:00Z",
     "requires_review": false,
-    "review_reason": "Adjusted unit test gate to ignore test file modifications.",
-    "session_count": 15,
+    "review_reason": null,
+    "session_count": 17,
     "protocol_completed": true,
-    "protocol_last_run": "2026-01-08T00:35:02Z",
+    "protocol_last_run": "2026-01-16T22:58:04Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": "mario-2026-01-07-163502",
-      "started_at": "2026-01-08T00:35:02Z",
+      "session_id": "mario-2026-01-16-145804",
+      "started_at": "2026-01-16T22:58:04Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "mario-2026-01-07-162054",
-      "started_at": "2026-01-08T00:20:54Z",
-      "turn_count": 0,
+      "session_id": "claude-sonnet-2026-01-16-hub-indexer",
+      "started_at": "2026-01-16T13:00:00Z",
+      "turn_count": 954,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-07T16:35:02.549102",
-      "summary": "No conversation log found",
-      "key_topics": [],
-      "files_modified": []
+      "closed_at": "2026-01-16T14:30:00Z",
+      "summary": "Implemented Hub Indexer (Map & Compass), renamed CLI to WAI, and cleaned up codebase. Fixed test routing and framework detection.",
+      "key_topics": [
+        "hub-indexer",
+        "cli-rename",
+        "codebase-cleanup",
+        "test-relocation"
+      ],
+      "files_modified": [
+        "wai_cli/hub_indexer.py",
+        "wai_cli/core.py",
+        "WAI",
+        "tests/scripts/*",
+        "tests/unit/*"
+      ]
     }
   },
   "analytics": {
     "sessions": {
-      "total_count": 28,
-      "total_turns": 8,
-      "total_duration_seconds": 4,
-      "avg_duration_seconds": 0.14285714285714285
+      "total_count": 31,
+      "total_turns": 962,
+      "total_duration_seconds": 120,
+      "avg_duration_seconds": 3.87
     },
     "token_efficiency": {
       "total_tokens_used": 66,
       "context_limit": 200000,
-      "avg_tokens_per_session": 0
+      "avg_tokens_per_session": 2
     },
     "time_tracking": {
-      "total_time_together_seconds": 4,
+      "total_time_together_seconds": 124,
       "total_time_ai_alone_seconds": 0
     },
     "baseline_mode": {
@@ -149,7 +160,7 @@
       "ended_at": "2026-01-01T23:50:38.642573"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-07T16:35:02.548176"
+    "last_updated": "2026-01-16T14:30:00Z"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -601,6 +612,41 @@
       "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
+    },
+    {
+      "date": "2026-01-08",
+      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "impact": 7,
+      "by": "WAI Auto-Upgrade"
+    },
+    {
+      "date": "2026-01-15",
+      "decision": "Implemented multi-environment session tracking for parallel AI work",
+      "rationale": "Each environment (tool + machine) gets its own session log in WAI-Spoke/sessions/. Auto-detects tool, machine, OS. Enables parallel work across Claude Code, Cursor, ChatGPT, etc. without collision. Closeout reconciles all session files, extracts decisions, updates environments registry. Supports spawned child agents via WAI_PARENT_SESSION.",
+      "impact": 10,
+      "by": "Claude Opus 4.5"
+    },
+    {
+      "date": "2026-01-16",
+      "decision": "Implemented Hub Indexer (Map & Compass architecture)",
+      "rationale": "The Hub now generates a WAI-Hub-Index.md (The Map) from its knowledge base. This index is distributed to spokes during the 'teach' command, allowing spokes to discover available knowledge. Integrated into wai_cli/hub_indexer.py.",
+      "impact": 9,
+      "by": "Claude Sonnet 3.7"
+    },
+    {
+      "date": "2026-01-16",
+      "decision": "CLI renamed from WAI-CLI to WAI",
+      "rationale": "Standardized the command-line interface to a concise 'WAI' name. Updated all documentation, internal references, and aliases. Improved UX by reducing typing friction.",
+      "impact": 8,
+      "by": "Claude Sonnet 3.7"
+    },
+    {
+      "date": "2026-01-16",
+      "decision": "Codebase cleanup and test reorganization",
+      "rationale": "Moved tests to dedicated tests/scripts and tests/unit directories. Removed obsolete backup and tracking files. Updated core routing in core.py to handle new paths and correctly detect framework directory.",
+      "impact": 7,
+      "by": "Claude Sonnet 3.7"
     }
   ],
   "next_steps": [
@@ -645,6 +691,18 @@
     "current_phase": null,
     "plan_template_version": "v1.0",
     "token_efficiency_protocols": "v1.0"
+  },
+  "environments": {
+    "_note": "Registry of environments that have worked on this project. Auto-populated by closeout.",
+    "_schema": {
+      "tool": "AI tool name (claude-code, cursor, chatgpt-web, etc.)",
+      "machine": "Machine identifier",
+      "hostname": "Full hostname",
+      "os": "Operating system",
+      "last_seen": "ISO timestamp of last activity",
+      "hub_connected": "Whether hub was connected",
+      "last_session_id": "Most recent session ID"
+    }
   },
   "meta": {
     "total_sessions": 1,

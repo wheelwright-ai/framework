@@ -104,7 +104,7 @@ Full analytics system:
 
 ### CLI Commands Added
 
-#### 5. **WAI-CLI stats [path]**
+#### 5. **WAI stats [path]**
 Display session analytics:
 - Session count, avg turns, avg duration
 - Token usage and efficiency metrics
@@ -112,13 +112,13 @@ Display session analytics:
 - Time breakdown (together vs alone)
 - Recent AI wins
 
-#### 6. **WAI-CLI baseline [enable|disable|status] [path]**
+#### 6. **WAI baseline [enable|disable|status] [path]**
 Baseline mode management:
 - `enable` - Start tracking without Wheelwright workflows
 - `disable` - Lock baseline data for comparison
 - `status` - Show current baseline state and stats
 
-#### 7. **WAI-CLI closeout [path] [--non-interactive]**
+#### 7. **WAI closeout [path] [--non-interactive]**
 Full closeout processing:
 - Runs complete 7-step workflow
 - Interactive file handling
@@ -213,25 +213,25 @@ IDE Manager:
 
 ### CLI Commands Added
 
-#### 14. **WAI-CLI configure-ide detect [path]**
+#### 14. **WAI configure-ide detect [path]**
 Detect IDEs in use:
 - Shows detected IDEs
 - Shows configuration status
 - Shows config file paths
 
-#### 15. **WAI-CLI configure-ide setup [ide] [path] [--force]**
+#### 15. **WAI configure-ide setup [ide] [path] [--force]**
 Setup IDE configuration:
 - Configure specific IDE or all detected
 - Generate IDE-specific config files
 - Force overwrite option
 
-#### 16. **WAI-CLI configure-ide capabilities [ide] [path]**
+#### 16. **WAI configure-ide capabilities [ide] [path]**
 Show IDE capabilities:
 - Display capability flags
 - Show context window sizes
 - List supported features
 
-#### 17. **WAI-CLI configure-ide optimize [path]**
+#### 17. **WAI configure-ide optimize [path]**
 Get optimization suggestions:
 - Per-IDE recommendations
 - Setup checklist
@@ -278,7 +278,7 @@ Pre-closeout validation system:
 
 ### CLI Commands Added
 
-#### 19. **WAI-CLI time [path]**
+#### 19. **WAI time [path]**
 Show current session token usage and capacity:
 - Displays estimated usage % of context window
 - Shows capacity warnings at 60%, 80%, 90% thresholds
@@ -301,7 +301,7 @@ Capacity: 200,000 tokens
 - High (80-89%): Consider closeout soon
 - Critical (≥ 90%): Recommend immediate closeout
 
-#### 20. **WAI-CLI shipit [path] [--non-interactive] [--push]**
+#### 20. **WAI shipit [path] [--non-interactive] [--push]**
 Closeout session and create git commit:
 - Runs full 8-step closeout workflow
 - Checks if directory is a git repository
@@ -461,9 +461,9 @@ b06a4c7 Implement Shipit command (Closeout + Git Commit)
 | Token savings calculation | ✅ Complete | Baseline vs optimized |
 | Time tracking | ✅ Complete | Together vs AI alone |
 | AI wins detection | ✅ Complete | Pattern detection from logs |
-| WAI-CLI stats command | ✅ Complete | Full analytics display |
-| WAI-CLI baseline command | ✅ Complete | 3 subcommands |
-| WAI-CLI closeout command | ✅ Complete | Interactive mode |
+| WAI stats command | ✅ Complete | Full analytics display |
+| WAI baseline command | ✅ Complete | 3 subcommands |
+| WAI closeout command | ✅ Complete | Interactive mode |
 | **Phase 3: IDE Integration** |
 | Base integration interface | ✅ Complete | Abstract base class |
 | Claude Code integration | ✅ Complete | CLAUDE.md generation |
@@ -484,8 +484,8 @@ b06a4c7 Implement Shipit command (Closeout + Git Commit)
 | Contradiction detection | ✅ Complete | Detects reversals of decisions |
 | Code smell detection | ✅ Complete | Flags files >500 lines |
 | UAT generation | ✅ Complete | Creates UAT templates |
-| WAI-CLI time command | ✅ Complete | Token usage with capacity warnings |
-| WAI-CLI shipit command | ✅ Complete | Closeout + git commit |
+| WAI time command | ✅ Complete | Token usage with capacity warnings |
+| WAI shipit command | ✅ Complete | Closeout + git commit |
 
 ---
 
@@ -549,35 +549,35 @@ From the original plan, these features remain:
 
 #### 1. Test Stats Command
 ```bash
-./WAI-CLI stats
+./WAI stats
 # Should show analytics with 0 sessions initially
 ```
 
 #### 2. Test Baseline Mode
 ```bash
-./WAI-CLI baseline enable
-./WAI-CLI baseline status
-./WAI-CLI baseline disable
+./WAI baseline enable
+./WAI baseline status
+./WAI baseline disable
 # Should track baseline mode state
 ```
 
 #### 3. Test IDE Detection
 ```bash
-./WAI-CLI configure-ide detect
+./WAI configure-ide detect
 # Should detect Claude Code and VS Code
 ```
 
 #### 4. Test IDE Capabilities
 ```bash
-./WAI-CLI configure-ide capabilities "Claude Code"
+./WAI configure-ide capabilities "Claude Code"
 # Should show all capabilities
 ```
 
 #### 5. Test Closeout (create test spoke first)
 ```bash
 TEST_DIR=$(mktemp -d)
-./WAI-CLI init "$TEST_DIR"
-./WAI-CLI closeout "$TEST_DIR"
+./WAI init "$TEST_DIR"
+./WAI closeout "$TEST_DIR"
 # Should complete 7-step closeout
 rm -rf "$TEST_DIR"
 ```

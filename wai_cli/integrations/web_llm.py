@@ -114,7 +114,7 @@ During your session, you can use these commands:
 - **'Time'** - Check token usage and context capacity
 - **'Compact'** - Compress context by summarizing
 - **'Closeout'** - End session and get updated state files
-- **'Shipit'** - Closeout + git commit instructions
+- **'Shipit'** - Closeout + git commit + push (use `--no-push` to skip)
 
 ## Project Context
 

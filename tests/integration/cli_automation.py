@@ -1,7 +1,7 @@
 """
 CLI Automation for Wheelwright Integration Tests.
 
-Uses pexpect to automate terminal interactions with WAI-CLI,
+Uses pexpect to automate terminal interactions with WAI,
 simulating realistic user workflows.
 """
 
@@ -21,7 +21,7 @@ except ImportError:
 
 
 class CLIAutomation:
-    """Automates WAI-CLI interactions using pexpect."""
+    """Automates WAI interactions using pexpect."""
 
     def __init__(
         self,
@@ -33,17 +33,17 @@ class CLIAutomation:
 
         Args:
             working_dir: Directory to run CLI commands in
-            cli_command: CLI command to use (defaults to WAI_CLI_COMMAND env var or 'WAI-CLI')
+            cli_command: CLI command to use (defaults to WAI_CLI_COMMAND env var or 'WAI')
         """
         self.working_dir = Path(working_dir)
         # Allow CLI command override via parameter or environment variable
-        self.cli_command = cli_command or os.getenv('WAI_CLI_COMMAND', 'WAI-CLI')
+        self.cli_command = cli_command or os.getenv('WAI_CLI_COMMAND', 'WAI')
         self.process: Optional[pexpect.spawn] = None
         self.output_history: List[str] = []
 
     def start_cli(self, args: Optional[str] = None, timeout: int = 30) -> None:
         """
-        Spawn WAI-CLI process with optional args.
+        Spawn WAI process with optional args.
 
         Args:
             args: Optional command-line arguments
@@ -187,7 +187,7 @@ class CLIAutomation:
         Args:
             timeout: Timeout in seconds
         """
-        # Common prompts in WAI-CLI
+        # Common prompts in WAI
         prompts = [
             "Select an option:",
             "Enter",

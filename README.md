@@ -223,10 +223,10 @@ Start by adding Wheelwright to an existing project (or create a new one):
 cd ~/projects/my-awesome-project
 
 # Initialize Wheelwright context
-WAI-CLI init
+WAI init
 
 # Or initialize from anywhere
-WAI-CLI init ~/projects/my-awesome-project
+WAI init ~/projects/my-awesome-project
 ```
 
 This creates a `WAI-Spoke/` directory containing your project's memory:
@@ -244,7 +244,7 @@ If you are working in a GPT session without the CLI, use the bootstrap folder:
 2) Ask GPT to fill the template into ONE file (save as `WAI-Minimal.md`).
 3) After initializing Wheelwright locally, move it to:
    `WAI-Spoke/seed/ingest/WAI-Minimal.md`
-4) Run `WAI-CLI closeout` (or `WAI shipit`) to reconcile it into the full WAI files.
+4) Run `WAI closeout` (or `WAI shipit`) to reconcile it into the full WAI files.
 
 The bootstrap folder is refreshed on every Shipit for the framework.
 
@@ -295,8 +295,8 @@ The `WAI` command-line interface orchestrates your Hub, Spoke-Projects, and the 
 
 ```bash
 # Project Commands
-WAI-CLI init [path]           # Initialize Wheelwright in a project
-WAI-CLI status                # Show current wheel state and health
+WAI init [path]           # Initialize Wheelwright in a project
+WAI status                # Show current wheel state and health
 WAI context               # Output context for LLM paste
 WAI closeout              # Generate session closeout files
 
@@ -472,7 +472,7 @@ Popular AI assistants automatically discover WAI through standard integration po
 
 ### The WAI Automatic Setup
 
-When you run `WAI-CLI init`, the framework:
+When you run `WAI init`, the framework:
 
 1. **Detects your environment** - VS Code? Claude Code? Cursor? Other?
 2. **Creates integration files** - `.vscode/settings.json`, `CLAUDE.md`, `AGENTS.md`, `.cursorrules`, etc.
@@ -530,7 +530,7 @@ WAI auto-configures for:
 | **Zed** | `.zed/settings.json` | ✅ Yes |
 | **GitHub Copilot Workspace** | `.github/copilot-instructions.md` | ✅ Yes |
 | **Aider** | `.aider.conf.yml` | ✅ Yes |
-| **Web LLMs** | Use `WAI-CLI context` command | Manual copy |
+| **Web LLMs** | Use `WAI context` command | Manual copy |
 
 ### Manual Override (When Needed)
 

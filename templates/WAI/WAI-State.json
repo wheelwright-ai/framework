@@ -216,6 +216,9 @@
       "closeout": "Provide updated WAI-State files for session end"
     }
   },
+  "environments": {
+    "_note": "Registry of environments that have worked on this project. Auto-populated by closeout."
+  },
   "meta": {
     "total_sessions": 0,
     "total_turns": 0,

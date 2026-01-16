@@ -34,7 +34,7 @@ def test_closeout_command_exists(test_env):
     Scenario: Verify closeout command is available.
 
     Expected:
-    - WAI-CLI closeout --help works
+    - WAI closeout --help works
     - Returns usage information
     """
     spoke_dir = test_env.create_spoke("closeout-help", with_git=False)

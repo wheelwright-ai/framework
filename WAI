@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WAI-CLI - Wheelwright Framework
+WAI - Wheelwright Framework
 Unified Command Line Interface
 
 Build AI wheels that roll forward forever.

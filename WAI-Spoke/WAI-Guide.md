@@ -260,15 +260,40 @@ When you make a decision with **impact >= 8**, share it:
 
 ---
 
-## Session Continuity Commands
+## Session Commands
 
-Built-in commands for any AI session using Wheelwright:
+Wheelwright commands work with or without the `WAI` prefix. If you're unsure whether a command like "Status" refers to WAI or something else, ask: *"Did you mean WAI Status?"*
 
-| Command | Response Behavior |
-|---------|-------------------|
-| `'Time'` | Token usage estimate with 80% capacity warnings |
-| `'Rules'` | List active guidelines and project protocols |
-| `'Closeout'` | Generate updated WAI-State files for session end |
+### Command Reference
+
+| Say This | Slash Command | What It Does |
+|----------|---------------|--------------|
+| **WAI** | `/wai` | Wakeup - load context, verify, brief |
+| **Status** | `/wai-status` | Health check + recommendations |
+| **Time** | `/wai-time` | Token capacity check |
+| **Rules** | `/wai-rules` | Show boundaries and protocols |
+| **Closeout** | `/wai-closeout` | End session ceremony |
+| **Shipit** | `/wai-shipit` | Closeout + commit |
+| **Teach** | `/wai-teach` | Pull learnings from hub |
+| **Learn** | `/wai-learn` | Push signals to hub |
+
+### Command Details
+
+**WAI / Wakeup**: Load WAI-Guide.md and WAI-State.json, run integration verification (hub connected, sync status, uncommitted changes, foundation complete), brief user with status and any warnings.
+
+**Status**: Health check showing hub connection, sync age, session log size, uncommitted files, foundation status. Provides recommendations like "Consider Closeout" or "Hub has new learnings".
+
+**Time**: Estimate context usage and warn if approaching limits.
+
+**Rules**: Display project identity, in-scope/out-of-scope boundaries, and approach preferences.
+
+**Closeout**: End session - extract signals, update state files, clear session log, prepare for commit.
+
+**Shipit**: Closeout + git add + commit with session summary. Asks before pushing.
+
+**Teach**: Pull new learnings from hub into this spoke's WAI-Guide.md.
+
+**Learn**: Push high-impact signals from this session to the hub.
 
 ---
 
@@ -380,6 +405,67 @@ Track every turn in `WAI-Spoke/WAI-Session-Log.jsonl` using append-only JSONL. O
 
 ---
 
+## Multi-Environment Sessions
+
+WAI is **multi-agent and multi-environment enabled**. Work safely across multiple tools and machines without collision.
+
+### How It Works
+
+Each environment (tool + machine) gets its own session log:
+
+```
+WAI-Spoke/sessions/
+  claude-code-laptop.jsonl      # Claude Code on laptop
+  claude-code-desktop.jsonl     # Claude Code on desktop
+  cursor-laptop.jsonl           # Cursor on laptop
+  chatgpt-web.jsonl             # ChatGPT web interface
+```
+
+### Environment Auto-Detection
+
+On session start, WAI automatically detects:
+- **Tool**: Claude Code, Cursor, VS Code Copilot, ChatGPT, etc.
+- **Machine**: Hostname or friendly name (set `WAI_MACHINE` env var to override)
+- **OS**: Linux, macOS, Windows, WSL
+- **Parent session**: For spawned child agents
+
+### Session File Structure
+
+Each session file contains:
+
+```json
+{"type": "env", "ts": "...", "session_id": "...", "tool": "claude-code", "machine": "laptop", "os": "linux/wsl", "integrations": {"hub_connected": true}}
+{"type": "turn", "ts": "...", "session_id": "...", "role": "user", "summary": "Asked about feature X"}
+{"type": "turn", "ts": "...", "session_id": "...", "role": "assistant", "summary": "Implemented feature X"}
+{"type": "decision", "ts": "...", "decision": "Used pattern Y", "impact": 8}
+```
+
+### Cross-Session Awareness
+
+On wakeup, scan `WAI-Spoke/sessions/` to see:
+- Which other environments have been active
+- Recent activity from other tools/machines
+- Unreconciled entries awaiting closeout
+
+### Closeout Reconciliation
+
+During closeout:
+1. Scan all session files in `WAI-Spoke/sessions/`
+2. Extract high-impact decisions to WAI-State.json
+3. Update environments registry in WAI-State.json
+4. Mark entries as `reconciled: true`
+5. Prune old reconciled entries (git preserves history)
+
+### Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `WAI_MACHINE` | Override machine identifier (default: hostname) |
+| `WAI_TOOL` | Override tool detection (for web-based tools) |
+| `WAI_PARENT_SESSION` | Set by parent when spawning child agents |
+
+---
+
 ## Token Efficiency & Multi-Stage Workflow
 
 ### ADAPTIVE Workflow Mode
@@ -404,6 +490,10 @@ Use the Compact command to compress context and rebalance WAI files when needed.
 
 ## Hub Learnings
 
+
+## Pattern
+
+## Pattern
 
 ## Pattern
 

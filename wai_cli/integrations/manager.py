@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Type
 
 from .base import IDEIntegration
+from . import commands
 from .claude_code import ClaudeCodeIntegration
 from .codex import CodexIntegration
 from .vscode import VSCodeIntegration
@@ -240,3 +241,98 @@ class IDEManager:
             lines.append("| " + " | ".join(row) + " |")
 
         return "\n".join(lines)
+
+    def get_commands_status(self) -> Dict[str, Any]:
+        """
+        Get status of WAI commands across all integrations.
+
+        Returns:
+            Dict with command version info per integration
+        """
+        current_version = commands.get_command_version()
+        status = {
+            'current_version': current_version,
+            'integrations': {}
+        }
+
+        for ide in self.all_integrations:
+            if ide.supports_slash_commands():
+                installed_version = ide.get_commands_version()
+                needs_upgrade = ide.commands_need_upgrade()
+                status['integrations'][ide.name] = {
+                    'supports_commands': True,
+                    'installed_version': installed_version,
+                    'needs_upgrade': needs_upgrade,
+                    'commands_dir': str(ide.commands_dir) if ide.commands_dir else None
+                }
+            else:
+                status['integrations'][ide.name] = {
+                    'supports_commands': False,
+                    'note': 'Commands embedded in config file'
+                }
+
+        return status
+
+    def upgrade_commands(self, ide_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Upgrade WAI commands for integrations.
+
+        Args:
+            ide_name: Specific IDE to upgrade (None for all detected)
+
+        Returns:
+            Dict with upgrade results
+        """
+        if ide_name:
+            integration = self.get_integration(ide_name)
+            if integration is None:
+                return {'success': False, 'error': f"Unknown IDE: {ide_name}"}
+
+            if not integration.supports_slash_commands():
+                return {
+                    'success': False,
+                    'error': f"{ide_name} does not support slash commands",
+                    'note': 'Regenerate config to update embedded commands'
+                }
+
+            result = integration.upgrade_commands()
+            return {'success': True, ide_name: result}
+
+        # Upgrade all detected IDEs that support slash commands
+        results = {}
+        upgraded_count = 0
+
+        for ide in self.detected_ides:
+            if ide.supports_slash_commands():
+                result = ide.upgrade_commands()
+                results[ide.name] = result
+                if result.get('upgraded'):
+                    upgraded_count += 1
+
+        return {
+            'success': True,
+            'upgraded_count': upgraded_count,
+            'current_version': commands.get_command_version(),
+            'results': results
+        }
+
+    def setup_all_detected(self, force: bool = False) -> Dict[str, Any]:
+        """
+        Full setup for all detected IDEs: config + commands.
+
+        Args:
+            force: Overwrite existing configs
+
+        Returns:
+            Dict with setup results for each IDE
+        """
+        results = {}
+
+        for ide in self.detected_ides:
+            result = ide.setup(force=force)
+            results[ide.name] = result
+
+        return {
+            'setup_count': len(results),
+            'results': results
+        }

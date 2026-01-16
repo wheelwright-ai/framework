@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "2.1",
   "metadata": {
     "spoke_path": "PLACEHOLDER_SPOKE_PATH",
     "project_root": "PLACEHOLDER_PROJECT_ROOT",
@@ -49,10 +49,17 @@
       "cleanup": "regenerate_on_configure"
     },
     "WAI-Session-Log.jsonl": {
-      "purpose": "Conversation log for current session",
+      "purpose": "Conversation log for current session (legacy, see sessions/)",
       "required": false,
       "auto_managed": true,
       "cleanup": "delete_on_closeout"
+    },
+    "sessions/": {
+      "purpose": "Per-environment session logs for multi-agent support",
+      "required": false,
+      "auto_managed": true,
+      "cleanup": "reconcile_on_closeout",
+      "contents": "{tool}-{machine}.jsonl files"
     },
     "WAI-Baseline-Log.jsonl": {
       "purpose": "Baseline comparison runs and summaries",

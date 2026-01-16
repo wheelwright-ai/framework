@@ -50,7 +50,7 @@ class IntegrationTestHarness:
         self.hub_dir.mkdir(parents=True, exist_ok=True)
 
         # Initialize hub structure (basic directory for now)
-        # TODO: Once hub initialization is implemented, call WAI-CLI here
+        # TODO: Once hub initialization is implemented, call WAI here
         (self.hub_dir / "WAI-Hub").mkdir(exist_ok=True)
 
         # Create hub metadata
@@ -89,12 +89,12 @@ class IntegrationTestHarness:
         spoke_dir = parent / spoke_name
         spoke_dir.mkdir(parents=True, exist_ok=True)
 
-        # Run WAI-CLI init to create proper spoke structure
-        wai_cli = self.framework_path / "WAI-CLI"
+        # Run WAI init to create proper spoke structure
+        wai_cli = self.framework_path / "WAI"
         if not wai_cli.exists():
-            raise FileNotFoundError(f"WAI-CLI not found at {wai_cli}")
+            raise FileNotFoundError(f"WAI not found at {wai_cli}")
 
-        # Initialize spoke using WAI-CLI
+        # Initialize spoke using WAI
         result = subprocess.run(
             [str(wai_cli), "init", str(spoke_dir)],
             cwd=str(self.framework_path),

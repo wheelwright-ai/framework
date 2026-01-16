@@ -260,7 +260,7 @@ class TemplateManager:
 ## Usage
 
 ```bash
-WAI-CLI template apply "{metadata['name']}" /path/to/new/project
+WAI template apply "{metadata['name']}" /path/to/new/project
 ```
 
 ---

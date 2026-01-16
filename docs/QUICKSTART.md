@@ -15,7 +15,7 @@ git clone https://github.com/wheelwright-ai/framework.git wheelwright
 cd wheelwright
 
 # Make CLI executable
-chmod +x WAI-CLI
+chmod +x WAI
 
 # Add to PATH (optional)
 echo 'export PATH="$PATH:'$(pwd)'"' >> ~/.bashrc
@@ -28,7 +28,7 @@ source ~/.bashrc
 
 ```bash
 cd ~/projects/my-project
-WAI-CLI init
+WAI init
 ```
 
 This creates a `WAI-Spoke/` directory with:
@@ -43,8 +43,8 @@ This creates a `WAI-Spoke/` directory with:
 Copy your wheel context to share with any AI:
 
 ```bash
-WAI-CLI context | pbcopy  # macOS
-WAI-CLI context | xclip   # Linux
+WAI context | pbcopy  # macOS
+WAI context | xclip   # Linux
 ```
 
 Or simply tell your AI to read the `WAI-Spoke/` directory.
@@ -62,7 +62,7 @@ During the session, use these commands:
 ### 4. Check Status
 
 ```bash
-WAI-CLI status
+WAI status
 ```
 
 ## Creating a Hub (Optional)
@@ -70,7 +70,7 @@ WAI-CLI status
 If you work on multiple projects, create a hub:
 
 ```bash
-WAI-CLI hub create
+WAI hub create
 ```
 
 This enables:

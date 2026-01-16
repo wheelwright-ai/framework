@@ -188,9 +188,60 @@ class SessionManager:
         Returns:
             List of signal entries to append to WAI-Signals.jsonl
         """
-        # For now, return empty - this will be enhanced with pattern detection
-        # In Phase 4, this will use AI to detect patterns from conversation
-        return []
+        signals = []
+        if not self.log_file.exists():
+            return signals
+
+        # Scan log for high-impact items
+        import re
+        
+        # Pattern for explicit decisions: "DECISION: <decision> (Impact: <N>)"
+        decision_pattern = re.compile(r'DECISION:\s*(.+?)\s*\(Impact:\s*(\d+)\)', re.IGNORECASE)
+
+        with open(self.log_file, 'r') as f:
+            for line in f:
+                try:
+                    turn = json.loads(line)
+                    content = turn.get('content', '')
+                    
+                    # check for explicit pattern
+                    match = decision_pattern.search(content)
+                    if match:
+                        decision_text = match.group(1)
+                        impact = int(match.group(2))
+                        
+                        if impact >= 8:
+                            signals.append({
+                                "timestamp": turn.get('timestamp', datetime.now().isoformat()),
+                                "by": turn.get('type', 'assistant'),
+                                "offers": [{
+                                    "type": "decision",
+                                    "topic": decision_text[:50],  # Brief topic
+                                    "impact": impact,
+                                    "context": content[:200]
+                                }],
+                                "flags": {"extracted_from_log": True}
+                            })
+                            
+                    # Check for metadata impact if present (structured logging)
+                    meta = turn.get('metadata', {})
+                    if meta.get('impact', 0) >= 8:
+                        signals.append({
+                            "timestamp": turn.get('timestamp', datetime.now().isoformat()),
+                            "by": turn.get('type', 'assistant'),
+                            "offers": [{
+                                "type": meta.get('type', 'insight'),
+                                "topic": meta.get('topic', 'High Impact Item'),
+                                "impact": meta.get('impact'),
+                                "context": content[:200]
+                            }],
+                             "flags": {"extracted_from_metadata": True}
+                        })
+                        
+                except json.JSONDecodeError:
+                    continue
+                    
+        return signals
 
     def clear_log(self) -> None:
         """Clear conversation log after successful closeout."""

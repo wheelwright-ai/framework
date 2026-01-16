@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 # Add framework to path
-framework_path = Path(__file__).parent
+framework_path = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(framework_path))
 
 def test_imports():

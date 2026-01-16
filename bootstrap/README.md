@@ -14,7 +14,7 @@ pick up the work with full context.
 3) Save the result as WAI-Minimal.md.
 4) After initializing Wheelwright locally, move it to:
    WAI-Spoke/seed/ingest/WAI-Minimal.md
-5) Run WAI-CLI closeout (or Shipit). Closeout will ingest and
+5) Run WAI closeout (or Shipit). Closeout will ingest and
    distribute the content into WAI-State.json, WAI-State.md, and WAI-Guide.md.
 
 ## Notes

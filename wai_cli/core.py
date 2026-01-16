@@ -344,6 +344,10 @@ Examples:
         time_parser = subparsers.add_parser('time', help='Show current session token usage and capacity')
         time_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
+        # Teach command (Share learnings with Hub)
+        teach_parser = subparsers.add_parser('teach', help='Share project learnings with the Hub')
+        teach_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+
         # Shipit command (closeout + git commit)
         shipit_parser = subparsers.add_parser('shipit', help='Closeout session and create git commit')
         shipit_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
@@ -448,14 +452,14 @@ Examples:
         print_info("  This folder is not initialized with WAI yet.")
         print_info("  Wheelwright (WAI) keeps project context stable for AI work.\n")
         print_info("  Quick start:")
-        print_info("   • Initialize this project: WAI-CLI init")
+        print_info("   • Initialize this project: WAI init")
         print_info("   • Keep project state in WAI-Spoke/")
         print_info("   • Use hub learn/teach to share knowledge across projects")
         print_info("")
         if hub_path:
             print_info(f"  Detected hub: {hub_path}")
         else:
-            print_info("  No hub detected yet. Create one with: WAI-CLI hub create")
+            print_info("  No hub detected yet. Create one with: WAI hub create")
         print_info("")
         print_info("  WAI for education: it captures goals, decisions, and next steps")
         print_info("  so you can resume work confidently across sessions.\n")
@@ -494,9 +498,9 @@ Examples:
         else:
             print_warning("  Hub:     Not configured")
 
-        cli_path = spoke_root / "WAI-CLI"
+        cli_path = spoke_root / "WAI"
         if not cli_path.exists():
-            print_warning("  CLI:     WAI-CLI not found in project root")
+            print_warning("  CLI:     WAI not found in project root")
 
         if requires_review:
             reason_text = f" ({review_reason})" if review_reason else ""
@@ -507,7 +511,7 @@ Examples:
         if requires_review:
             print_info("   • Review prior changes before continuing")
         if not hub_path or (hub_path and not Path(hub_path).exists()):
-            print_info("   • Set a valid hub path or run: WAI-CLI hub create")
+            print_info("   • Set a valid hub path or run: WAI hub create")
         print_info("   • Run status/sync/closeout as needed from the Actions menu")
         print_info("")
 
@@ -952,14 +956,14 @@ Examples:
 
             if choice == "smoke":
                 result = subprocess.run(
-                    ['./smoke-tests-framework.sh'],
+                    ['./tests/scripts/smoke-tests-phase1-2.sh'],
                     cwd=spoke_path,
                     capture_output=True,
                     text=True
                 )
                 self._log_test_result(
                     spoke_path,
-                    test_name="smoke-tests-framework.sh",
+                    test_name="tests/scripts/smoke-tests-phase1-2.sh",
                     exit_code=result.returncode,
                     output=result.stdout + result.stderr
                 )
@@ -1586,7 +1590,7 @@ Examples:
         updated = dict(foundation)
         updated['completed'] = True
         updated['completed_at'] = datetime.utcnow().isoformat() + "Z"
-        updated['completed_with'] = "WAI-CLI"
+        updated['completed_with'] = "WAI"
         updated['identity'] = {
             'type': proj_type or 'software',
             'name': name or spoke_path.name,
@@ -2145,7 +2149,7 @@ Examples:
                 print_info("")
                 print_info("  1. Initialize spoke in project:")
                 print_info("     $ cd /path/to/project")
-                print_info("     $ WAI-CLI init")
+                print_info("     $ WAI init")
                 print_info("")
                 print_info("  2. Key files created (WAI-Spoke/):")
                 print_info("     • WAI-Guide.md - AI instructions")
@@ -2156,7 +2160,7 @@ Examples:
                 print_info("  3. Seed folders for brownfield projects:")
                 print_info("     • WAI-Spoke/seed/ingest - ingest into WAI files")
                 print_info("     • WAI-Spoke/seed/reference - archive into WAI-Spoke/reference")
-                print_info("     Run 'WAI-CLI absorbe' (or update) to process these folders.")
+                print_info("     Run 'WAI absorbe' (or update) to process these folders.")
                 print_info("")
                 print_info("  4. During development:")
                 print_info("     - AI assistants read WAI-Guide.md")
@@ -2343,7 +2347,7 @@ Examples:
         Check if path is the framework directory.
 
         Checks:
-        - Has WAI-CLI script
+        - Has WAI script
         - Has templates/ directory
         - Has wai_cli/ package
 
@@ -2354,7 +2358,7 @@ Examples:
             True if framework directory
         """
         return (
-            (path / 'WAI-CLI').exists() and
+            (path / 'WAI').exists() and
             (path / 'templates').exists() and
             (path / 'wai_cli').exists()
         )
@@ -2369,6 +2373,7 @@ Examples:
             "stats",
             "baseline",
             "time",
+            "teach",
             "shipit",
             "template",
             "context"
@@ -2403,6 +2408,8 @@ Examples:
             self._cmd_baseline(args)
         elif args.command == 'time':
             self._cmd_time(args)
+        elif args.command == 'teach':
+            self._cmd_teach(args)
         elif args.command == 'shipit':
             self._cmd_shipit(args)
         elif args.command == 'template':
@@ -2629,6 +2636,7 @@ Examples:
             import json
             from datetime import datetime
 
+
             # Create knowledge base directory if it doesn't exist
             kb_dir = hub_path / 'knowledge-base'
             kb_dir.mkdir(exist_ok=True)
@@ -2648,66 +2656,55 @@ Examples:
 
                 try:
                     # Read spoke signals
-                    spoke_signals = []
-                    with open(signals_file, 'r') as f:
+                    new_signals = []
+                    with open(signals_file, 'r', encoding='utf-8') as f:
                         for line in f:
-                            line = line.strip()
-                            if line:
+                            if line.strip():
                                 try:
                                     signal = json.loads(line)
-                                    spoke_signals.append(signal)
-                                except json.JSONDecodeError:
+                                    if signal.get('impact', 0) >= 8:
+                                        new_signals.append(signal)
+                                except:
                                     pass
-
-                    if not spoke_signals:
-                        spoke_results.append((spoke_name, 0, "Empty signals file"))
-                        continue
-
-                    # Load existing hub signals to avoid duplicates
-                    existing_signals = set()
-                    hub_signals_file = kb_dir / f"{spoke_path.name}-signals.jsonl"
-                    if hub_signals_file.exists():
-                        with open(hub_signals_file, 'r') as f:
-                            for line in f:
-                                line = line.strip()
-                                if line:
-                                    try:
-                                        sig = json.loads(line)
-                                        # Create a simple hash to detect duplicates
-                                        sig_hash = json.dumps(sig.get('offers', []), sort_keys=True)
-                                        existing_signals.add(sig_hash)
-                                    except:
-                                        pass
-
-                    # Filter for new, high-impact signals
-                    new_signals = []
-                    for signal in spoke_signals:
-                        # Check if it's high impact or has high-impact offers
-                        has_high_impact = False
-                        for offer in signal.get('offers', []):
-                            if offer.get('impact', 0) >= 8:
-                                has_high_impact = True
-                                break
-
-                        if has_high_impact:
-                            sig_hash = json.dumps(signal.get('offers', []), sort_keys=True)
-                            if sig_hash not in existing_signals:
-                                new_signals.append(signal)
-                                existing_signals.add(sig_hash)
-
+                    
                     if new_signals:
-                        # Append new signals to hub knowledge base
-                        with open(hub_signals_file, 'a') as f:
+                        # Append to hub knowledge
+                        # For now, just a simplified append to a single file per spoke
+                        target_file = kb_dir / f"{spoke_name}-signals.jsonl"
+                        
+                        existing_ids = set()
+                        if target_file.exists():
+                            with open(target_file, 'r', encoding='utf-8') as f:
+                                for line in f:
+                                    try:
+                                        s = json.loads(line)
+                                        if 'id' in s: existing_ids.add(s['id'])
+                                    except: pass
+                        
+                        added = 0
+                        with open(target_file, 'a', encoding='utf-8') as f:
                             for signal in new_signals:
-                                f.write(json.dumps(signal) + '\n')
-
-                        spoke_results.append((spoke_name, len(new_signals), "✓ Added"))
-                        total_new_signals += len(new_signals)
+                                if signal.get('id') not in existing_ids:
+                                    f.write(json.dumps(signal) + "\n")
+                                    added += 1
+                        
+                        spoke_results.append((spoke_name, added, "Updated"))
+                        total_new_signals += added
                     else:
-                        spoke_results.append((spoke_name, 0, "Already absorbed"))
+                        spoke_results.append((spoke_name, 0, "No high-impact signals"))
 
                 except Exception as e:
-                    spoke_results.append((spoke_name, 0, f"Error: {str(e)[:30]}"))
+                    spoke_results.append((spoke_name, 0, f"Error: {e}"))
+
+            # Generate Hub Index (Map)
+            from .hub_indexer import HubIndexer
+            try:
+                print_info("  🗺️  Regenerating Hub Index...")
+                indexer = HubIndexer(hub_path)
+                index_path = indexer.generate_index()
+                print_success(f"     Index updated: {index_path.name}")
+            except Exception as e:
+                print_error(f"     Failed to generate index: {e}")
 
             # Display results
             print_info("  Results by spoke:")
@@ -3468,7 +3465,7 @@ Examples:
 
             if not check_spoke_initialized(spoke_path):
                 print_error(f"No spoke found at {spoke_path}")
-                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                print_info("Run 'WAI init' to initialize a spoke first.")
                 return
 
             updater = SpokeUpdateProcessor(spoke_path)
@@ -3521,7 +3518,7 @@ Examples:
             # Check if spoke exists
             if not check_spoke_initialized(spoke_path):
                 print_error(f"No spoke found at {spoke_path}")
-                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                print_info("Run 'WAI init' to initialize a spoke first.")
                 return
 
             # Run closeout processor
@@ -3545,7 +3542,7 @@ Examples:
             # Check if spoke exists
             if not check_spoke_initialized(spoke_path):
                 print_error(f"No spoke found at {spoke_path}")
-                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                print_info("Run 'WAI init' to initialize a spoke first.")
                 return
 
             wai_spoke_dir = spoke_path / 'WAI-Spoke'
@@ -3611,7 +3608,7 @@ Examples:
             # Check if spoke exists
             if not check_spoke_initialized(spoke_path):
                 print_error(f"No spoke found at {spoke_path}")
-                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                print_info("Run 'WAI init' to initialize a spoke first.")
                 return
 
             wai_spoke_dir = spoke_path / 'WAI-Spoke'
@@ -3664,7 +3661,7 @@ Examples:
                         print_info(f"    Period: {self._format_datetime(baseline.get('started_at'))} to {self._format_datetime(baseline.get('ended_at'))}\n")
                     else:
                         print_info("\n  No baseline data collected yet.\n")
-                        print_info("  To enable: WAI-CLI baseline enable\n")
+                        print_info("  To enable: WAI baseline enable\n")
 
                 print_info("=" * 60 + "\n")
             elif args.baseline_command == 'run':
@@ -3875,7 +3872,7 @@ Examples:
             # Check if spoke exists
             if not check_spoke_initialized(spoke_path):
                 print_error(f"No spoke found at {spoke_path}")
-                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                print_info("Run 'WAI init' to initialize a spoke first.")
                 return
 
             session = SessionManager(spoke_path)
@@ -3944,7 +3941,7 @@ Examples:
             # Check if spoke exists
             if not check_spoke_initialized(spoke_path):
                 print_error(f"No spoke found at {spoke_path}")
-                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                print_info("Run 'WAI init' to initialize a spoke first.")
                 return
 
             # Check if this is a git repository
@@ -4141,7 +4138,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
 
             if not hub_path and args.template_command != 'list':
                 print_error("No hub found. Templates require a hub.")
-                print_info("Run 'WAI-CLI hub create' to create a hub first.")
+                print_info("Run 'WAI hub create' to create a hub first.")
                 return
 
             template_manager = TemplateManager(hub_path)
@@ -4161,7 +4158,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
                 # Check if spoke exists
                 if not check_spoke_initialized(spoke_path):
                     print_error(f"No spoke found at {spoke_path}")
-                    print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                    print_info("Run 'WAI init' to initialize a spoke first.")
                     return
 
                 print_info(f"\n📝 Creating template '{args.name}'...\n")
@@ -4186,9 +4183,9 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
                 if not templates:
                     print_info("\nNo templates found.")
                     if not hub_path:
-                        print_info("Create a hub first: WAI-CLI hub create\n")
+                        print_info("Create a hub first: WAI hub create\n")
                     else:
-                        print_info("Create your first template: WAI-CLI template create <name>\n")
+                        print_info("Create your first template: WAI template create <name>\n")
                     return
 
                 print_info("\n" + "=" * 60)
@@ -4258,7 +4255,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
             # Check if spoke exists
             if not check_spoke_initialized(spoke_path):
                 print_error(f"No spoke found at {spoke_path}")
-                print_info("Run 'WAI-CLI init' to initialize a spoke first.")
+                print_info("Run 'WAI init' to initialize a spoke first.")
                 return
 
             manager = IDEManager(spoke_path)
@@ -4408,6 +4405,112 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
         """Show version information."""
         print_info(f"\nWheelwright Framework v{FRAMEWORK_VERSION}")
         print_info(f"Spoke structure version: {SPOKE_STRUCTURE_VERSION}\n")
+
+    def _cmd_teach(self, args):
+        """Handle teach command - Share learnings with Hub and get Map."""
+        from .hub import HubManager
+        from .hub_indexer import HubIndexer
+        import shutil
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI init' to initialize a spoke first.")
+                return
+            
+            # Find Hub
+            hub_manager = HubManager()
+            state_file = spoke_path / 'WAI-Spoke' / 'WAI-State.json'
+            hub_path = None
+            
+            try:
+                import json
+                if state_file.exists():
+                    state = json.loads(state_file.read_text())
+                    path_str = state.get('wheelwright', {}).get('hub_path')
+                    if path_str:
+                        hub_path = Path(path_str)
+            except:
+                pass
+                
+            if not hub_path or not hub_path.exists():
+                hub_path = hub_manager.auto_discover_hub(spoke_path, verbose=False)
+                
+            if not hub_path:
+                print_error("No hub configured or found.")
+                print_info("Run 'WAI hub create' (or configure hub path in WAI-State.json)")
+                return
+
+            print_info(f"\n🎓 Teaching Hub ({hub_path.name})...\n")
+            
+            # 1. Pull signals from this spoke to Hub
+            kb_dir = hub_path / 'knowledge-base'
+            kb_dir.mkdir(exist_ok=True)
+            
+            spoke_name = spoke_path.name
+            signals_file = spoke_path / 'WAI-Spoke' / 'WAI-Signals.jsonl'
+            
+            added_signals = 0
+            if signals_file.exists():
+                try:
+                    # Filter high impact
+                    new_signals = []
+                    import json
+                    with open(signals_file, 'r', encoding='utf-8') as f:
+                        for line in f:
+                            if line.strip():
+                                try:
+                                    s = json.loads(line)
+                                    if s.get('impact', 0) >= 8:
+                                        new_signals.append(s)
+                                except: pass
+                                
+                    if new_signals:
+                         target_file = kb_dir / f"{spoke_name}-signals.jsonl"
+                         existing_ids = set()
+                         if target_file.exists():
+                             with open(target_file, 'r', encoding='utf-8') as f:
+                                 for line in f:
+                                     try:
+                                         s = json.loads(line)
+                                         if 'id' in s: existing_ids.add(s['id'])
+                                     except: pass
+                                     
+                         with open(target_file, 'a', encoding='utf-8') as f:
+                             for signal in new_signals:
+                                 if signal.get('id') not in existing_ids:
+                                     f.write(json.dumps(signal) + "\n")
+                                     added_signals += 1
+                except Exception as e:
+                    print_warning(f"  Failed to process signals: {e}")
+            
+            if added_signals > 0:
+                print_success(f"  ✓ Shared {added_signals} high-impact signals with Hub")
+            else:
+                print_info("  No new high-impact signals to share")
+                
+            # 2. Generate Index
+            print_info("  🗺️  Regenerating Hub Index...")
+            indexer = HubIndexer(hub_path)
+            index_path = indexer.generate_index()
+            
+            # 3. Distribute Map to Spoke
+            print_info("  📦 Retrieving updated Map...")
+            ref_dir = spoke_path / 'WAI-Spoke' / 'reference'
+            ref_dir.mkdir(parents=True, exist_ok=True)
+            
+            shutil.copy2(index_path, ref_dir / "WAI-Hub-Index.md")
+            print_success(f"  ✓ Updated Map saved to: WAI-Spoke/reference/WAI-Hub-Index.md")
+            
+            print_info("\n✨ Teach complete.\n")
+
+        except Exception as e:
+            print_error(f"Teach command failed: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 def main():

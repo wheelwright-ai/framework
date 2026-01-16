@@ -139,7 +139,7 @@ class SpokeUpgrader:
         project_name = spoke_path.name
 
         index = {
-            "version": "2.0",
+            "version": "2.1",
             "metadata": {
                 "spoke_path": str(wai_dir),
                 "project_root": str(spoke_path),

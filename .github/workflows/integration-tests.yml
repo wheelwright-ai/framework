@@ -34,6 +34,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Validate shell script line endings
+        run: |
+          CRLF_FILES=$(find . -type f -name "*.sh" -print0 | xargs -0 grep -Il $'\r' || true)
+          if [ -n "$CRLF_FILES" ]; then
+            echo "CRLF line endings found in shell scripts:"
+            echo "$CRLF_FILES"
+            exit 1
+          fi
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -106,6 +115,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Validate shell script line endings
+        run: |
+          CRLF_FILES=$(find . -type f -name "*.sh" -print0 | xargs -0 grep -Il $'\r' || true)
+          if [ -n "$CRLF_FILES" ]; then
+            echo "CRLF line endings found in shell scripts:"
+            echo "$CRLF_FILES"
+            exit 1
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5

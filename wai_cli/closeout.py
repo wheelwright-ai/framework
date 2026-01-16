@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 
 from .session import SessionManager
+from .sessions import MultiEnvSessionManager
 from .rebalancer import FileRebalancer
 from .metrics import MetricsTracker
 from .quality_gates import QualityGates
@@ -34,16 +35,18 @@ class CloseoutProcessor:
 
         # Initialize components
         self.session = SessionManager(spoke_dir)
+        self.multi_session = MultiEnvSessionManager(spoke_dir)
         self.rebalancer = FileRebalancer(self.wai_spoke_dir)
         self.metrics = MetricsTracker(self.wai_spoke_dir)
         self.quality_gates = QualityGates(spoke_dir)
 
-    def process_closeout(self, interactive: bool = True) -> Dict[str, Any]:
+    def process_closeout(self, interactive: bool = True, skip_quality_gates: bool = False) -> Dict[str, Any]:
         """
         Execute complete closeout workflow.
 
         Args:
             interactive: If True, prompts user for confirmations
+            skip_quality_gates: If True, skip quality gate execution
 
         Returns:
             Dict with closeout summary
@@ -59,33 +62,38 @@ class CloseoutProcessor:
         }
 
         # Step 0: Run Quality Gates (unless truly minor changes)
-        print_info("  Step 0/10: Running quality gates...")
-        gate_results = self.quality_gates.run_all_gates(skip_minor=True)
-        results['quality_gates'] = gate_results
-
-        if gate_results.get('skip_reason'):
-            print_info(f"    ⚠️  {gate_results['skip_reason']}")
-            results['steps_completed'].append(f"Quality gates: {gate_results['skip_reason']}")
-        elif not gate_results['passed']:
-            # Quality gates failed
-            print_warning("    ⚠️  Quality gates failed!")
-
-            for blocker in gate_results.get('blockers', []):
-                print_error(f"      ✗ BLOCKER: {blocker}")
-
-            for warning in gate_results.get('warnings', []):
-                print_warning(f"      ⚠️  {warning}")
-
-            if interactive and gate_results.get('blockers'):
-                print_info("\n  Quality gate blockers detected. Continue anyway?")
-                if not safe_confirm("Proceed with closeout despite blockers?", default=False):
-                    results['errors'].append("Closeout aborted due to quality gate failures")
-                    return results
-
-            results['steps_completed'].append(f"Quality gates: Failed with {len(gate_results.get('blockers', []))} blockers")
+        if skip_quality_gates:
+            print_info("  Step 0/10: Skipping quality gates (remote upgrade)")
+            results['steps_completed'].append("Quality gates: Skipped (remote upgrade)")
+            results['quality_gates'] = {"skipped": True, "skip_reason": "remote upgrade"}
         else:
-            print_success("    ✓ All quality gates passed")
-            results['steps_completed'].append("Quality gates: Passed")
+            print_info("  Step 0/10: Running quality gates...")
+            gate_results = self.quality_gates.run_all_gates(skip_minor=True)
+            results['quality_gates'] = gate_results
+
+            if gate_results.get('skip_reason'):
+                print_info(f"    ⚠️  {gate_results['skip_reason']}")
+                results['steps_completed'].append(f"Quality gates: {gate_results['skip_reason']}")
+            elif not gate_results['passed']:
+                # Quality gates failed
+                print_warning("    ⚠️  Quality gates failed!")
+
+                for blocker in gate_results.get('blockers', []):
+                    print_error(f"      ✗ BLOCKER: {blocker}")
+
+                for warning in gate_results.get('warnings', []):
+                    print_warning(f"      ⚠️  {warning}")
+
+                if interactive and gate_results.get('blockers'):
+                    print_info("\n  Quality gate blockers detected. Continue anyway?")
+                    if not safe_confirm("Proceed with closeout despite blockers?", default=False):
+                        results['errors'].append("Closeout aborted due to quality gate failures")
+                        return results
+
+                results['steps_completed'].append(f"Quality gates: Failed with {len(gate_results.get('blockers', []))} blockers")
+            else:
+                print_success("    ✓ All quality gates passed")
+                results['steps_completed'].append("Quality gates: Passed")
 
         # Step 1: Process seed folders and clean up sprawl
         print_info("  Step 1/10: Processing seed folders and cleanup...")
@@ -131,8 +139,20 @@ class CloseoutProcessor:
         self._finalize_closeout(session_summary)
         results['steps_completed'].append("Finalized: state updated, log cleared")
 
-        # Step 8: Refresh integrations and optionally re-brief active session
-        print_info("  Step 8/10: Refreshing integrations...")
+        # Step 8: Reconcile multi-environment sessions
+        print_info("  Step 8/10: Reconciling environment sessions...")
+        reconcile_result = self.multi_session.reconcile_sessions()
+        results['session_reconciliation'] = reconcile_result
+        if reconcile_result['sessions_processed'] > 0:
+            results['steps_completed'].append(
+                f"Sessions reconciled: {reconcile_result['entries_reconciled']} entries, "
+                f"{reconcile_result['decisions_extracted']} decisions"
+            )
+        else:
+            results['steps_completed'].append("No environment sessions to reconcile")
+
+        # Step 9: Refresh integrations and optionally re-brief active session
+        print_info("  Step 9/10: Refreshing integrations...")
         integration_status = self._refresh_integrations()
         results['integration_status'] = integration_status
         results['steps_completed'].append(f"Integrations refreshed: {integration_status['updated']} updated")
@@ -219,26 +239,26 @@ class CloseoutProcessor:
         # Delete learnings file (reconciled)
         learnings_file.unlink()
 
-        print_success("  ✓ Reconciled hub learnings into WAI-Guide.md")
-
         return True
 
     def _extract_signals(self) -> int:
-        """
-        Extract high-impact signals from session.
+        """Extract high-impact signals from session log."""
+        signals = self.session.extract_high_impact_signals()
 
-        Returns:
-            Number of signals extracted
-        """
-        # For now, return 0 - this will be enhanced in Phase 4
-        # to actually analyze conversation log for patterns
-        return 0
+        if not signals:
+            return 0
+
+        # Append signals to WAI-Signals.jsonl
+        signals_file = self.wai_spoke_dir / 'WAI-Signals.jsonl'
+        with open(signals_file, 'a') as f:
+            for signal in signals:
+                f.write(json.dumps(signal) + '\n')
+
+        return len(signals)
 
     def _record_analytics(self, session_summary: Dict[str, Any]) -> None:
-        """Record session completion in analytics."""
-        # Calculate session duration (placeholder - will be real in session tracking)
+        """Record session analytics."""
         session_data = {
-            'session_id': 'manual-closeout',  # Will be real session ID
             'turns': session_summary.get('turns', 0),
             'tokens_estimate': 0,  # Will be calculated from log
             'duration_seconds': 0,  # Will be real duration

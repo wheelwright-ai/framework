@@ -4,12 +4,13 @@ Project Discovery and Selection
 Enhanced project detection with interactive checklist for registration.
 """
 
+import json
 from pathlib import Path
 from typing import List, Optional, Set
 from dataclasses import dataclass
 from datetime import datetime
 
-from .utils.input import safe_input, print_info, print_success, print_error, single_key_input
+from .utils.input import safe_input, safe_choice, print_info, print_success, print_error, single_key_input
 from .utils.registry import add_project
 from .upgrader import SpokeUpgrader
 
@@ -428,6 +429,34 @@ class ProjectDiscovery:
         discovered = self.scan_for_projects(scan_paths, exclude_paths, max_depth=2)
 
         if not discovered:
+            if scan_paths and len(scan_paths) == 1:
+                scan_root = scan_paths[0]
+                if scan_root.exists() and scan_root.is_dir() and not (scan_root / 'WAI-Spoke').exists():
+                    print_info(f"No projects discovered in {scan_root}.")
+                    choice = safe_choice(
+                        "Initialize this folder with WAI?",
+                        choices=["y", "n", "c"],
+                        default="n"
+                    )
+                    if choice == "y":
+                        try:
+                            from .init import init_spoke
+                            init_spoke(scan_root, is_framework=False, verbose=True)
+                            add_project(
+                                hub_path=hub_path,
+                                project_path=scan_root,
+                                name=scan_root.name,
+                                description="New project"
+                            )
+                            print_success(f"Registered '{scan_root.name}'")
+                            print_info("  Seed folders ready: WAI-Spoke/seed/ingest and WAI-Spoke/seed/reference")
+                            return 1
+                        except Exception as exc:
+                            print_error(f"Failed to initialize '{scan_root}': {exc}")
+                            return 0
+                    if choice in (None, "c"):
+                        print_info("Cancelled.")
+                        return 0
             print_info("No projects discovered.")
             return 0
 
@@ -437,17 +466,31 @@ class ProjectDiscovery:
             registry = load_registry(hub_path)
             registered_paths = {Path(p['path']).resolve() for p in registry.get('projects', [])}
 
-            # Filter discovered projects
-            before_count = len(discovered)
-            discovered = [p for p in discovered if p.path.resolve() not in registered_paths]
-            filtered_count = before_count - len(discovered)
+            # Separate already-registered projects
+            new_projects = []
+            registered_projects = []
+            for p in discovered:
+                if p.path.resolve() in registered_paths:
+                    registered_projects.append(p)
+                else:
+                    new_projects.append(p)
 
-            if filtered_count > 0:
-                print_info(f"Filtered {filtered_count} already-registered project(s).")
+            if registered_projects:
+                print_info(f"Found {len(registered_projects)} already-registered project(s).")
+                for project in registered_projects:
+                    choice = safe_choice(
+                        f"Project '{project.name}' is already registered. Re-sync?",
+                        choices=["y", "n"],
+                        default="n"
+                    )
+                    if choice == "y":
+                        self._resync_project(project)
 
-            if not discovered:
+            if not new_projects:
                 print_info("All discovered projects are already registered.")
                 return 0
+
+            discovered = new_projects
         except Exception:
             pass  # If registry load fails, continue with full list
 
@@ -464,3 +507,47 @@ class ProjectDiscovery:
 
         # Register projects
         return self.register_selected_projects(selected, hub_path)
+
+    def _resync_project(self, project: ProjectInfo):
+        """
+        Perform a lightweight re-sync on a project.
+        """
+        print_info(f"Re-syncing '{project.name}'...")
+        try:
+            # 1. Ensure WAI-Spoke structure is up-to-date
+            if not self._ensure_wai_initialized(project):
+                return
+
+            # 2. Add abbreviation and name if missing
+            spoke_dir = project.path / 'WAI-Spoke'
+            state_file = spoke_dir / 'WAI-State.json'
+            if state_file.exists():
+                state_data = json.loads(state_file.read_text(encoding='utf-8'))
+                if 'wheel' not in state_data:
+                    state_data['wheel'] = {}
+
+                if 'name' not in state_data['wheel'] or not state_data['wheel']['name']:
+                    state_data['wheel']['name'] = project.name
+                    print_info(f"  Added missing name '{project.name}'")
+
+                if 'abbrev' not in state_data['wheel'] or not state_data['wheel']['abbrev']:
+                    name = project.name.replace('-', ' ').replace('_', ' ')
+                    abbrev = "".join(word[0] for word in name.split()).upper()
+                    if not abbrev:
+                        abbrev = name[:4].upper()
+                    state_data['wheel']['abbrev'] = abbrev
+                    print_info(f"  Added missing abbreviation '{abbrev}'")
+                
+                state_file.write_text(
+                    json.dumps(state_data, indent=2, ensure_ascii=False) + '\n',
+                    encoding='utf-8'
+                )
+
+            # 3. Refresh workspace launchers
+            from .commands.workspace import refresh_workspace
+            refresh_workspace(project.path, verbose=True)
+
+            print_success(f"'{project.name}' re-synced successfully.")
+
+        except Exception as e:
+            print_error(f"Failed to re-sync '{project.name}': {e}")

@@ -26,7 +26,7 @@ def _bootstrap_readme() -> str:
         "3) Save the result as WAI-Minimal.md.\n"
         "4) After initializing Wheelwright locally, move it to:\n"
         "   WAI-Spoke/seed/ingest/WAI-Minimal.md\n"
-        "5) Run WAI-CLI closeout (or Shipit). Closeout will ingest and\n"
+        "5) Run WAI closeout (or Shipit). Closeout will ingest and\n"
         "   distribute the content into WAI-State.json, WAI-State.md, and WAI-Guide.md.\n\n"
         "## Notes\n"
         "- Keep the output to a single file.\n"

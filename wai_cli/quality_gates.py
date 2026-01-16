@@ -24,6 +24,10 @@ class QualityGates:
         self.wai_spoke_dir = spoke_dir / 'WAI-Spoke'
         self.state_file = self.wai_spoke_dir / 'WAI-State.json'
 
+    def _is_ignored_path(self, path: Path) -> bool:
+        ignored = {'.git', 'node_modules', '.venv', 'venv', 'dist', 'build'}
+        return any(part in ignored for part in path.parts)
+
     def run_all_gates(self, skip_minor: bool = False) -> Dict[str, Any]:
         """
         Run all quality gates.
@@ -161,6 +165,8 @@ class QualityGates:
 
         for pattern in test_patterns:
             test_files.extend(self.spoke_dir.glob(f"**/{pattern}"))
+
+        test_files = [f for f in test_files if not self._is_ignored_path(f)]
 
         if not test_files:
             return {
@@ -304,6 +310,8 @@ class QualityGates:
                 if not f.endswith('.py'):
                     continue
                 path = Path(f)
+                if self._is_ignored_path(path):
+                    continue
                 name = path.name
                 if name.startswith('test_') or name.endswith('_test.py'):
                     continue

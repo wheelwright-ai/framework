@@ -131,6 +131,7 @@ class IntegrationTestRunner:
             sys.executable, "-m", "pytest",
             *[str(f) for f in test_files],
             "-v" if verbose else "-q",
+            "-s",  # Don't capture stdout (allow prints)
             "--timeout=60",
             "--tb=short"
         ]
@@ -247,31 +248,31 @@ class IntegrationTestRunner:
         print("\n" + "="*70)
         print("  Baseline Comparison Mode")
         print("="*70)
-        print("  Running tests in BASELINE mode (features OFF)...")
+        print("  Running comparative simulations (Baseline vs Optimized)...")
 
-        # Run Phase 5 tests only (baseline mode tests)
+        # Run Phase 5 tests which contain the comparison logic
         baseline_tests = [
             self.scenarios_dir / "test_baseline_mode.py"
         ]
 
-        baseline_result = self.run_phase(
-            "Baseline Mode",
+        # The test_baseline_mode.py script itself runs both baseline and optimized 
+        # scenarios and asserts the savings. We capture its output to show the user.
+        result = self.run_phase(
+            "Comparative Simulation",
             baseline_tests,
-            verbose
+            verbose=True # Force verbose to see the assertions/print statements if any
         )
-
-        print("\n  Running tests in OPTIMIZED mode (features ON)...")
-        # Same tests run with default settings (features ON by default)
 
         comparison = {
             "timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
-            "baseline": baseline_result,
-            "comparison_summary": {
-                "baseline_tests_passed": baseline_result.get("passed", 0),
-                "conclusion": "Tests validate 50-80% token savings with optimizations enabled"
-            }
+            "test_results": result,
+            "summary": "Executed comparative simulations."
         }
-
+        
+        # Print the detailed output (which contains the comparative table)
+        if result.get('output'):
+            print("\n" + result['output'])
+            
         return comparison
 
     def generate_report(self, output_file: Optional[Path] = None) -> str:
