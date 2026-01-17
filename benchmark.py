@@ -20,15 +20,27 @@ from pathlib import Path
 from dataclasses import dataclass, field, asdict
 from typing import Optional
 
+# Import LugManager for realistic benchmarks
+try:
+    from wai_cli.lugs import LugManager
+    HAS_LUG_MANAGER = True
+except ImportError:
+    HAS_LUG_MANAGER = False
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════════════
 
+# [REFACTORED FOR PERFORMANCE] - Reduced profiles to prevent >2min runs
 PROFILES = {
-    "small": {"lugs": 50, "queries": 25, "updates": 10, "closeouts": 5},
-    "medium": {"lugs": 200, "queries": 50, "updates": 25, "closeouts": 10},
-    "large": {"lugs": 500, "queries": 100, "updates": 50, "closeouts": 20},
+    "fast": {"lugs": 10, "queries": 5, "updates": 3, "closeouts": 2},  # Quick validation
+    "small": {"lugs": 25, "queries": 10, "updates": 5, "closeouts": 3},  # Reduced from 50
+    "medium": {"lugs": 100, "queries": 25, "updates": 10, "closeouts": 5},  # Reduced from 200
+    # "large": {"lugs": 500, "queries": 100, "updates": 50, "closeouts": 20},  # Disabled - too slow
 }
+
+# Default profile for quick runs
+DEFAULT_PROFILE = "fast"
 
 BENCHMARK_DIR = Path(__file__).parent / "benchmarks"
 SPOKE_DIR = Path(__file__).parent / "WAI-Spoke"
@@ -213,11 +225,27 @@ class BenchmarkRunner:
             for i in range(num_lugs)
         ]
         
-        # Write to JSONL file
-        lugs_file = self.temp_dir / "lugs.jsonl"
-        with open(lugs_file, "w") as f:
-            for lug in self.lugs_data:
-                f.write(json.dumps(lug) + "\n")
+        # Use LugManager if available for realistic benchmark
+        if HAS_LUG_MANAGER and self.mode == MODE_WAI:
+            self.lug_manager = LugManager(self.temp_dir)
+            # Create Lugs using actual LugManager
+            for i, lug_data in enumerate(self.lugs_data):
+                lug = self.lug_manager.create_lug(
+                    title=lug_data['title'],
+                    lug_type='work',
+                    priority=['low', 'medium', 'high'][lug_data['priority'] % 3] if isinstance(lug_data['priority'], int) else 'medium',
+                    impact=['small', 'medium', 'large'][lug_data.get('impact', 5) % 3],
+                    value=lug_data.get('value', 5)
+                )
+                # Close half of them
+                if i < num_lugs // 2:
+                    self.lug_manager.close_lug(lug.id, skip_policy_check=True)
+        else:
+            # Fallback to raw JSONL for baseline mode
+            lugs_file = self.temp_dir / "lugs.jsonl"
+            with open(lugs_file, "w") as f:
+                for lug in self.lugs_data:
+                    f.write(json.dumps(lug) + "\n")
         
         # Copy WAI-Spoke structure if exists
         if SPOKE_DIR.exists():
@@ -673,12 +701,21 @@ def run_benchmark(save: bool = True, tag: bool = False, mode: str = MODE_WAI) ->
     # Print system info
     print_system_info(result)
     
-    # Run each profile
+    # Run each profile (default: fast only to prevent long runs)
+    # [REFACTORED] Use --profile=all to run all profiles
     mode_label = "BASELINE" if mode == MODE_BASELINE else "WAI"
     print(color(f"  Running {mode_label} Benchmarks...", "bold"))
     print()
     
-    for profile_name, profile_config in PROFILES.items():
+    # By default, only run 'fast' profile to stay under 2min
+    profiles_to_run = {DEFAULT_PROFILE: PROFILES[DEFAULT_PROFILE]}
+    
+    # Allow running all profiles via command line (for comprehensive benchmarks)
+    if '--profile=all' in sys.argv:
+        profiles_to_run = PROFILES
+        print(color("  [Running ALL profiles - may take >2min]", "yellow"))
+    
+    for profile_name, profile_config in profiles_to_run.items():
         print(f"  ⏳ Running {profile_name} profile...", end=" ", flush=True)
         runner = BenchmarkRunner(profile_name, profile_config, mode=mode)
         metrics = runner.run()

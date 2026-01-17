@@ -1,0 +1,238 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/mario/projects/wheelwright-ai/framework
+plugins: timeout-2.4.0, anyio-4.2.0
+collecting ... collected 49 items
+
+tests/unit/test_lug_lifecycle.py::test_lug_creation_integrity FAILED     [  2%]
+tests/unit/test_lug_lifecycle.py::test_minification_and_hierarchy PASSED [  4%]
+tests/unit/test_lug_lifecycle.py::test_policies_and_gating FAILED        [  6%]
+tests/unit/test_lug_lifecycle.py::test_yolo_gating_prompts PASSED        [  8%]
+tests/unit/test_lug_lifecycle.py::test_resilience_corrupt_jsonl PASSED   [ 10%]
+tests/unit/test_lug_lifecycle.py::test_performance_load PASSED           [ 12%]
+tests/unit/test_lug_lifecycle.py::test_hub_upgrade_simulation PASSED     [ 14%]
+tests/unit/test_lug_lifecycle.py::test_cli_command_formats PASSED        [ 16%]
+tests/unit/test_lug_lifecycle.py::test_closeout_flow_integration FAILED  [ 18%]
+tests/unit/test_lug_lifecycle.py::test_shipit_point_update PASSED        [ 20%]
+tests/unit/test_lugs.py::TestLugCreation::test_create_lug_basic PASSED   [ 22%]
+tests/unit/test_lugs.py::TestLugCreation::test_id_uniqueness PASSED      [ 24%]
+tests/unit/test_lugs.py::TestLugCreation::test_lug_with_optional_fields PASSED [ 26%]
+tests/unit/test_lugs.py::TestJSONLStorage::test_lug_persisted_to_file PASSED [ 28%]
+tests/unit/test_lugs.py::TestJSONLStorage::test_multiple_lugs_append PASSED [ 30%]
+tests/unit/test_lugs.py::TestJSONLStorage::test_reload_from_storage PASSED [ 32%]
+tests/unit/test_lugs.py::TestMinification::test_minified_storage PASSED  [ 34%]
+tests/unit/test_lugs.py::TestMinification::test_key_expansion PASSED     [ 36%]
+tests/unit/test_lugs.py::TestQuerying::test_get_lug_by_full_id PASSED    [ 38%]
+tests/unit/test_lugs.py::TestQuerying::test_get_lug_by_prefix PASSED     [ 40%]
+tests/unit/test_lugs.py::TestQuerying::test_ambiguous_prefix_raises_error PASSED [ 42%]
+tests/unit/test_lugs.py::TestQuerying::test_list_lugs_all PASSED         [ 44%]
+tests/unit/test_lugs.py::TestQuerying::test_list_lugs_by_status PASSED   [ 46%]
+tests/unit/test_lugs.py::TestQuerying::test_list_lugs_by_type PASSED     [ 48%]
+tests/unit/test_lugs.py::TestQuerying::test_list_lugs_by_priority PASSED [ 51%]
+tests/unit/test_lugs.py::TestUpdates::test_update_status PASSED          [ 53%]
+tests/unit/test_lugs.py::TestUpdates::test_update_priority PASSED        [ 55%]
+tests/unit/test_lugs.py::TestUpdates::test_update_value PASSED           [ 57%]
+tests/unit/test_lugs.py::TestDependencies::test_add_dependency PASSED    [ 59%]
+tests/unit/test_lugs.py::TestDependencies::test_dependency_chain PASSED  [ 61%]
+tests/unit/test_lugs.py::TestPolicyValidation::test_policy_loading PASSED [ 63%]
+tests/unit/test_lugs.py::TestPolicyValidation::test_policy_satisfied PASSED [ 65%]
+tests/unit/test_lugs.py::TestClosing::test_close_lug PASSED              [ 67%]
+tests/unit/test_lugs.py::TestClosing::test_closed_lug_archived PASSED    [ 69%]
+tests/unit/test_lugs.py::TestClosing::test_close_with_policy_violation_raises PASSED [ 71%]
+tests/unit/test_lugs.py::TestSessions::test_create_session PASSED        [ 73%]
+tests/unit/test_lugs.py::TestSessions::test_session_persisted PASSED     [ 75%]
+tests/unit/test_lugs.py::TestEnhancedPolicies::test_is_significant FAILED [ 77%]
+tests/unit/test_lugs.py::TestEnhancedPolicies::test_add_policy_type PASSED [ 79%]
+tests/unit/test_lugs.py::TestEnhancedPolicies::test_global_policy_no_open_blockers PASSED [ 81%]
+tests/unit/test_lugs.py::TestEnhancedPolicies::test_list_lugs_ready_to_close PASSED [ 83%]
+tests/unit/test_point.py::TestPointGeneration::test_generate_minimal_point PASSED [ 85%]
+tests/unit/test_point.py::TestPointGeneration::test_point_with_state PASSED [ 87%]
+tests/unit/test_point.py::TestPointGeneration::test_point_with_open_lugs PASSED [ 89%]
+tests/unit/test_point.py::TestPointGeneration::test_point_with_no_lugs PASSED [ 91%]
+tests/unit/test_point.py::TestPointUpdate::test_update_point PASSED      [ 93%]
+tests/unit/test_point.py::TestPointUpdate::test_load_existing_point PASSED [ 95%]
+tests/unit/test_changelog.py::test_generate_changelog_content PASSED     [ 97%]
+tests/unit/test_changelog.py::test_update_changelog_file PASSED          [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_lug_creation_integrity __________________________
+
+temp_spoke = PosixPath('/tmp/tmpbfiygr67')
+
+    def test_lug_creation_integrity(temp_spoke):
+        """Verify Lug creation: hash ID, timestamps, session_id."""
+        manager = LugManager(temp_spoke / 'WAI-Spoke')
+        title = "Test Creation Lug"
+        lug = manager.create_lug(
+            title=title,
+            lug_type="task",
+            priority="high",
+            impact="medium",
+            value=8,
+            session_id="manual-session-id"
+        )
+    
+        # Verify ID is a valid hex string (shortened by manager usually, but let's check length)
+        assert len(lug.id) >= 8
+        assert all(c in '0123456789abcdef' for c in lug.id)
+    
+        # Verify timestamps
+        assert isinstance(lug.created_at, str)
+        assert datetime.fromisoformat(lug.created_at)
+    
+        # Verify session association
+>       assert lug.session_id == "manual-session-id"
+               ^^^^^^^^^^^^^^
+E       AttributeError: 'Lug' object has no attribute 'session_id'
+
+tests/unit/test_lug_lifecycle.py:68: AttributeError
+___________________________ test_policies_and_gating ___________________________
+
+temp_spoke = PosixPath('/tmp/tmp6j8rg9nj')
+
+    def test_policies_and_gating(temp_spoke):
+        """Verify policy enforcement during closeout."""
+        manager = LugManager(temp_spoke / 'WAI-Spoke')
+    
+        # Create a bug Lug
+        bug = manager.create_lug(title="Critical Bug", lug_type="bug")
+    
+        # Attempt to close without policy flags
+        with pytest.raises(ValueError) as excinfo:
+            manager.close_lug(bug.id)
+        assert "policy" in str(excinfo.value).lower() or "violation" in str(excinfo.value).lower()
+    
+        # Add dependency on an open lug - should also fail
+        parent = manager.create_lug(title="Parent")
+>       manager.update_lug(bug.id, blocked_by=[parent.id])
+E       TypeError: LugManager.update_lug() got an unexpected keyword argument 'blocked_by'
+
+tests/unit/test_lug_lifecycle.py:112: TypeError
+________________________ test_closeout_flow_integration ________________________
+
+temp_spoke = PosixPath('/tmp/tmp8n896vqu')
+
+    def test_closeout_flow_integration(temp_spoke):
+        """Verify closeout flow integrates Lug closing and Point updates."""
+        # Mocking Git Repo
+        with patch('git.Repo') as mock_repo_cls:
+            mock_repo = MagicMock()
+            mock_repo_cls.return_value = mock_repo
+            mock_repo.git.diff.return_value = "Modified: test.py\n+ # TODO: Fix this"
+    
+            processor = CloseoutProcessor(temp_spoke)
+    
+            # Create a lug associated with the session
+            manager = LugManager(temp_spoke / 'WAI-Spoke')
+            manager.create_lug(title="Session Task", session_id="test-session-123")
+    
+            # Run closeout
+            with patch('wai_cli.closeout.QualityGates'):
+>               results = processor.process_closeout(skip_quality_gates=True)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_lug_lifecycle.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <wai_cli.closeout.CloseoutProcessor object at 0x7e11b486d610>
+interactive = True, skip_quality_gates = True
+
+    def process_closeout(self, interactive: bool = True, skip_quality_gates: bool = False) -> Dict[str, Any]:
+        """
+        Execute complete closeout workflow.
+    
+        Args:
+            interactive: If True, prompts user for confirmations
+            skip_quality_gates: If True, skip quality gate execution
+    
+        Returns:
+            Dict with closeout summary
+        """
+        print_info("\n🔄 Processing Session Closeout...\n")
+    
+        results = {
+            'steps_completed': [],
+            'warnings': [],
+            'errors': [],
+            'session_summary': {},
+            'quality_gates': {}
+        }
+    
+        # Step 0: Run Quality Gates (unless truly minor changes)
+        if skip_quality_gates:
+            print_info("  Step 0/10: Skipping quality gates (remote upgrade)")
+            results['steps_completed'].append("Quality gates: Skipped (remote upgrade)")
+            results['quality_gates'] = {"skipped": True, "skip_reason": "remote upgrade"}
+        else:
+            print_info("  Step 0/10: Running quality gates...")
+            gate_results = self.quality_gates.run_all_gates(skip_minor=True)
+            results['quality_gates'] = gate_results
+    
+            if gate_results.get('skip_reason'):
+                print_info(f"    ⚠️  {gate_results['skip_reason']}")
+                results['steps_completed'].append(f"Quality gates: {gate_results['skip_reason']}")
+            elif not gate_results['passed']:
+                # Quality gates failed
+                print_warning("    ⚠️  Quality gates failed!")
+    
+                for blocker in gate_results.get('blockers', []):
+                    print_error(f"      ✗ BLOCKER: {blocker}")
+    
+                for warning in gate_results.get('warnings', []):
+                    print_warning(f"      ⚠️  {warning}")
+    
+                if interactive and gate_results.get('blockers'):
+                    print_info("\n  Quality gate blockers detected. Continue anyway?")
+                    if not safe_confirm("Proceed with closeout despite blockers?", default=False):
+                        results['errors'].append("Closeout aborted due to quality gate failures")
+                        return results
+    
+                results['steps_completed'].append(f"Quality gates: Failed with {len(gate_results.get('blockers', []))} blockers")
+            else:
+                print_success("    ✓ All quality gates passed")
+                results['steps_completed'].append("Quality gates: Passed")
+    
+        # Step 0.5: Lug Policy Validation (Blocker check)
+        print_info("  Step 0.5/10: Validating Lug policies...")
+>       session_state = self.session.get_state()
+                        ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'SessionManager' object has no attribute 'get_state'
+
+wai_cli/closeout.py:104: AttributeError
+----------------------------- Captured stdout call -----------------------------
+   
+🔄 Processing Session Closeout...
+
+     Step 0/10: Skipping quality gates (remote upgrade)
+     Step 0.5/10: Validating Lug policies...
+___________________ TestEnhancedPolicies.test_is_significant ___________________
+
+self = <test_lugs.TestEnhancedPolicies object at 0x7e11b4835490>
+lug_manager = <wai_cli.lugs.LugManager object at 0x7e11b486da60>
+
+    def test_is_significant(self, lug_manager):
+        """Test significance check."""
+        # Significant: high pri, large impact
+        lug1 = lug_manager.create_lug(title="Sig 1", priority="high", impact="large", value=5)
+        # Significant: high pri, value >= 7
+        lug2 = lug_manager.create_lug(title="Sig 2", priority="high", impact="small", value=8)
+        # Not significant: medium pri
+        lug3 = lug_manager.create_lug(title="Not Sig 1", priority="medium", impact="large", value=9)
+        # Not significant: high pri, but small impact and value < 7
+        lug4 = lug_manager.create_lug(title="Not Sig 2", priority="high", impact="small", value=5)
+    
+        assert lug_manager.is_significant(lug1) is True
+        assert lug_manager.is_significant(lug2) is True
+>       assert lug_manager.is_significant(lug3) is False
+E       assert True is False
+E        +  where True = is_significant(<wai_cli.lugs.Lug object at 0x7e11b486ef90>)
+E        +    where is_significant = <wai_cli.lugs.LugManager object at 0x7e11b486da60>.is_significant
+
+tests/unit/test_lugs.py:460: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_lug_lifecycle.py::test_lug_creation_integrity - Attrib...
+FAILED tests/unit/test_lug_lifecycle.py::test_policies_and_gating - TypeError...
+FAILED tests/unit/test_lug_lifecycle.py::test_closeout_flow_integration - Att...
+FAILED tests/unit/test_lugs.py::TestEnhancedPolicies::test_is_significant - a...
+========================= 4 failed, 45 passed in 0.33s =========================

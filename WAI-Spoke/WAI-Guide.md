@@ -61,11 +61,11 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 
 ### Your Core Files
 
-| File | Purpose | Your Action |
-|------|---------|-------------|
 | `WAI-State.json` | Technical spec, foundation, session state | UPDATE |
 | `WAI-State.md` | Strategic context, vision | UPDATE |
+| `WAI-Point.json` | Minimal bootstrap for context restoration | READ ONLY (Update on shipit) |
 | `wheel-signals.jsonl` | High-impact learnings | APPEND (never overwrite) |
+| `lugs.jsonl` | Active task/dependency graph | UPDATE (via tools/CLI) |
 | `kb-sync.json` | Hub sync status | READ ONLY |
 | `WAI-Guide.md` (this file) | Your instructions | READ ONLY |
 
@@ -274,6 +274,7 @@ Wheelwright commands work with or without the `WAI` prefix. If you're unsure whe
 | **Rules** | `/wai-rules` | Show boundaries and protocols |
 | **Closeout** | `/wai-closeout` | End session ceremony |
 | **Shipit** | `/wai-shipit` | Closeout + commit |
+| **Lugs** | `/wai-lug` | Manage task/dependency graph |
 | **Teach** | `/wai-teach` | Pull learnings from hub |
 | **Learn** | `/wai-learn` | Push signals to hub |
 
@@ -294,6 +295,27 @@ Wheelwright commands work with or without the `WAI` prefix. If you're unsure whe
 **Teach**: Pull new learnings from hub into this spoke's WAI-Guide.md.
 
 **Learn**: Push high-impact signals from this session to the hub.
+
+---
+
+## Lug System: AI-First Task Graph
+
+Lugs are the structural backbone of WAI context. They represent tasks, bugs, or epics with explicit dependencies.
+
+### Key Commands
+- `WAI lug create "Title"`: Create a new Lug (interactive)
+- `WAI lug list`: List open Lugs (filters available)
+- `WAI lug show <id>`: Show full Lug details and history
+- `WAI lug close <id>`: Resolve a Lug and archive it
+
+### AI Workflow with Lugs
+1. **Wakeup**: Browse open Lugs to understand current priorities. If `WAI-Point.json` suggests a `next_session_lug`, prioritize it.
+2. **Execution**: Create Lugs for sub-tasks or newly discovered bugs using `wai lug add`.
+3. **Policies**: Check `WAI-Policies.json` and Lug `policy_tags` to ensure your changes meet quality gates.
+4. **Commit**: `WAI shipit` will automatically suggest closing Lugs associated with your session ID.
+
+### Context Restoration via WAI-Point
+If the conversation history is lost (e.g., new session), read `WAI-Spoke/WAI-Point.json` immediately. It contains the project summary, last shipit details, and the recommended next task.
 
 ---
 

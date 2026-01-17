@@ -16,6 +16,40 @@ from typing import Optional
 from ..lugs import LugManager
 from ..utils.input import print_success, print_error, print_info, print_warning, safe_confirm
 
+# ANSI Color Codes
+COLOR_RESET = "\033[0m"
+COLOR_BOLD = "\033[1m"
+COLOR_RED = "\033[91m"
+COLOR_GREEN = "\033[92m"
+COLOR_YELLOW = "\033[93m"
+COLOR_BLUE = "\033[94m"
+COLOR_MAGENTA = "\033[95m"
+COLOR_CYAN = "\033[96m"
+
+def _colorize(text: str, color_code: str) -> str:
+    return f"{color_code}{text}{COLOR_RESET}"
+
+def _get_priority_color(priority: str) -> str:
+    priority = priority.lower()
+    if priority == 'high': return COLOR_RED
+    if priority == 'medium': return COLOR_YELLOW
+    if priority == 'low': return COLOR_BLUE
+    return COLOR_RESET
+
+def _get_status_color(status: str) -> str:
+    status = status.lower()
+    if status in ['closed', 'done', 'completed']: return COLOR_GREEN
+    if status in ['blocked', 'rejected']: return COLOR_RED
+    if status in ['in_progress', 'working']: return COLOR_YELLOW
+    return COLOR_RESET
+
+def _get_type_color(lug_type: str) -> str:
+    lt = lug_type.lower()
+    if lt == 'bug': return COLOR_RED
+    if lt == 'feat': return COLOR_GREEN
+    if lt == 'epic': return COLOR_MAGENTA
+    return COLOR_CYAN
+
 
 def lug_command_group(args: list, spoke_dir: Path):
     """Handle all 'wai lug' commands."""
@@ -26,10 +60,12 @@ def lug_command_group(args: list, spoke_dir: Path):
     subcommand = args[0]
     manager = LugManager(spoke_dir / 'WAI-Spoke')
     
-    if subcommand == 'create':
+    if subcommand in ['create', 'add']:
         _create_lug(manager, args[1:])
     elif subcommand == 'list':
         _list_lugs(manager, args[1:])
+    elif subcommand == 'ready':
+        _list_ready_lugs(manager, args[1:])
     elif subcommand == 'show':
         _show_lug(manager, args[1:])
     elif subcommand == 'update':
@@ -48,15 +84,17 @@ def _print_lug_help():
 WAI Lug Commands - AI-first task & dependency graph
 
 Usage:
-  wai lug create <title>              Create new Lug
-  wai lug list [--status=STATUS]      List Lugs (filter optional)
-  wai lug show <id-prefix>            Show Lug details
-  wai lug update <id-prefix> [opts]   Update Lug fields
+  wai lug add <title>                 Create new Lug (alias: create)
+  wai lug list [opts]                 List Lugs (filter by --status, --type)
+  wai lug ready                       List Lugs passing policy checks
+  wai lug show <id-prefix>            Show detailed Lug info
+  wai lug update <id-prefix> [opts]   Update fields (--status, --priority, etc.)
   wai lug close <id-prefix>           Close and archive Lug
 
 Examples:
-  wai lug create "Fix login bug"
+  wai lug add "Fix login bug"
   wai lug list --status=open --type=bug
+  wai lug ready
   wai lug show a3f2
   wai lug update a3f2 --status=in_progress
   wai lug close a3f2
@@ -145,13 +183,43 @@ def _list_lugs(manager: LugManager, args: list):
         return
     
     print_info(f"\n📋 Found {len(lugs)} Lug(s):\n")
-    print_info(f"{'ID':<18} {'Type':<10} {'Priority':<10} {'Status':<12} {'Title':<50}")
-    print_info("-" * 100)
+    print_info(f"{'ID':<10} {'Type':<8} {'Pri':<8} {'Status':<12} {'Title'}")
+    print_info("-" * 80)
     
     for lug in lugs:
-        print_info(f"{lug.id:<18} {lug.type:<10} {lug.priority:<10} {lug.status:<12} {lug.title:<50}")
+        # Truncate title for clean table
+        title = (lug.title[:45] + '...') if len(lug.title) > 48 else lug.title
+        
+        type_str = _colorize(f"{lug.type:<8}", _get_type_color(lug.type))
+        pri_str = _colorize(f"{lug.priority[:3]:<8}", _get_priority_color(lug.priority))
+        status_str = _colorize(f"{lug.status:<12}", _get_status_color(lug.status))
+        
+        print_info(f"{lug.id[:8]:<10} {type_str} {pri_str} {status_str} {title}")
     
     print_info("")
+
+
+def _list_ready_lugs(manager: LugManager, args: list):
+    """List Lugs that are ready to close."""
+    lugs = manager.list_lugs_ready_to_close()
+    
+    if not lugs:
+        print_info("\nNo Lugs currently pass all policy requirements for closing.\n")
+        return
+    
+    print_info(f"\n✅ Found {len(lugs)} Lug(s) ready to close:\n")
+    print_info(f"{'ID':<10} {'Type':<8} {'Pri':<8} {'Title'}")
+    print_info("-" * 60)
+    
+    for lug in lugs:
+        title = (lug.title[:45] + '...') if len(lug.title) > 48 else lug.title
+        
+        type_str = _colorize(f"{lug.type:<8}", _get_type_color(lug.type))
+        pri_str = _colorize(f"{lug.priority[:3]:<8}", _get_priority_color(lug.priority))
+        
+        print_info(f"{lug.id[:8]:<10} {type_str} {pri_str} {title}")
+    
+    print_info("\nUse 'wai lug close <id>' to finalize.\n")
 
 
 def _show_lug(manager: LugManager, args: list):

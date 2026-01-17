@@ -35,6 +35,7 @@ MINIFIED_KEYS = {
     'p': 'priority',
     'im': 'impact',
     'v': 'value',
+    'si': 'session_id',
     'd': 'deps',
     'bb': 'blocked_by',
     'pt': 'policy_tags',
@@ -65,6 +66,9 @@ class Lug:
         self.priority: str = data.get('priority', 'medium')
         self.impact: str = data.get('impact', 'medium')
         self.value: int = data.get('value', 5)
+        self.session_id: Optional[str] = data.get('session_id')
+        
+        # Relationships
         self.deps: List[str] = data.get('deps', [])
         self.blocked_by: List[str] = data.get('blocked_by', [])
         self.policy_tags: List[str] = data.get('policy_tags', [])
@@ -88,6 +92,7 @@ class Lug:
             'priority': self.priority,
             'impact': self.impact,
             'value': self.value,
+            'session_id': self.session_id,
             'deps': self.deps,
             'blocked_by': self.blocked_by,
             'policy_tags': self.policy_tags,
@@ -203,6 +208,9 @@ class LugManager:
         priority: str = 'medium',
         impact: str = 'medium',
         value: int = 5,
+        session_id: Optional[str] = None,
+        deps: Optional[List[str]] = None,
+        blocked_by: Optional[List[str]] = None,
         justification: Optional[str] = None,
         origin: Optional[str] = None,
         from_file: Optional[str] = None,
@@ -238,8 +246,9 @@ class LugManager:
             'priority': priority,
             'impact': impact,
             'value': value,
-            'deps': [],
-            'blocked_by': [],
+            'session_id': session_id,
+            'deps': deps or [],
+            'blocked_by': blocked_by or [],
             'policy_tags': [],
             'origin': origin,
             'justification': justification,
@@ -289,6 +298,31 @@ class LugManager:
         
         return None
     
+    def get_open_lugs(self) -> List[Lug]:
+        """Get all open Lugs."""
+        return list(self.lugs.values())
+
+    def get_closed_lugs(self, since_last_shipit: bool = False) -> List[Lug]:
+        """
+        Get closed Lugs.
+        
+        Args:
+            since_last_shipit: (Placeholder) for session filtering
+        """
+        # Ensure closed lugs are loaded
+        if not self.closed_lugs and self.closed_file.exists():
+            with open(self.closed_file, 'r') as f:
+                for line in f:
+                    if line.strip():
+                        try:
+                            minified = json.loads(line)
+                            expanded = self._expand_keys(minified)
+                            lug = Lug(expanded)
+                            self.closed_lugs[lug.id] = lug
+                        except:
+                            continue
+        return list(self.closed_lugs.values())
+
     def update_lug(
         self,
         lug_id_prefix: str,
@@ -296,6 +330,8 @@ class LugManager:
         priority: Optional[str] = None,
         impact: Optional[str] = None,
         value: Optional[int] = None,
+        deps: Optional[List[str]] = None,
+        blocked_by: Optional[List[str]] = None,
         policy_tags: Optional[List[str]] = None,
         extras: Optional[Dict[str, Any]] = None
     ) -> Lug:
@@ -327,6 +363,10 @@ class LugManager:
             lug.impact = impact
         if value is not None:
             lug.value = value
+        if deps is not None:
+            lug.deps = deps
+        if blocked_by is not None:
+            lug.blocked_by = blocked_by
         if policy_tags is not None:
             lug.policy_tags = list(set(lug.policy_tags + policy_tags))
         if extras:
@@ -528,11 +568,13 @@ class LugManager:
 
     def is_significant(self, lug: Lug) -> bool:
         """
-        Check if Lug is significant (high priority/large impact/value >= 7).
+        Check if a Lug is considered high-significance.
+        Criteria: priority=high OR impact=large OR value>=7.
         """
         return (
-            lug.priority == "high" and 
-            (lug.impact == "large" or lug.value >= 7)
+            lug.priority == 'high' or 
+            lug.impact == 'large' or 
+            (isinstance(lug.value, (int, float)) and lug.value >= 7)
         )
 
     def add_policy_type(self, lug_type: str, rules: Dict[str, Any]):

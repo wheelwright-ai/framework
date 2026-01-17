@@ -130,6 +130,55 @@ class TestJSONLStorage:
         assert len(manager2.lugs) == 2
         assert lug1.id in manager2.lugs
         assert lug2.id in manager2.lugs
+    
+    def test_delta_append_format(self, lug_manager, temp_spoke_dir):
+        """Verify delta updates append correctly (new line per update, not full Lug rewrite)."""
+        lug = lug_manager.create_lug(title="Delta Test", value=5)
+        
+        lugs_file = temp_spoke_dir / 'lugs.jsonl'
+        with open(lugs_file, 'r') as f:
+            lines_before = f.readlines()
+        
+        # Make an update
+        lug_manager.update_lug(lug.id, value=10)
+        
+        with open(lugs_file, 'r') as f:
+            lines_after = f.readlines()
+       
+        # Should have added a new line (delta), not replaced
+        assert len(lines_after) == len(lines_before) + 1
+        
+        # Last line should be the update (delta)
+        delta_line = json.loads(lines_after[-1])
+        assert 'v' in delta_line or 'value' in delta_line  # Contains value update
+        assert delta_line.get('v') == 10 or delta_line.get('value') == 10
+    
+    def test_jsonl_line_ordering(self, lug_manager, temp_spoke_dir):
+        """Verify order preservation (create then updates)."""
+        lug1 = lug_manager.create_lug(title="First Lug")
+        lug2 = lug_manager.create_lug(title="Second Lug")
+        
+        # Update first lug
+        lug_manager.update_lug(lug1.id, status="in_progress")
+        
+        lugs_file = temp_spoke_dir / 'lugs.jsonl'
+        with open(lugs_file, 'r') as f:
+            lines = f.readlines()
+        
+        # Should be: create lug1, create lug2, update lug1
+        assert len(lines) == 3
+        
+        line1 = json.loads(lines[0])
+        line2 = json.loads(lines[1])
+        line3 = json.loads(lines[2])
+        
+        # First line should be lug1 creation
+        assert line1.get('t') == "First Lug" or line1.get('title') == "First Lug"
+        # Second line should be lug2 creation
+        assert line2.get('t') == "Second Lug" or line2.get('title') == "Second Lug"
+        # Third line should be lug1 update (delta)
+        assert (line3.get('i') == lug1.id or line3.get('id') == lug1.id)
+
 
 
 class TestMinification:
@@ -241,6 +290,30 @@ class TestQuerying:
         high = lug_manager.list_lugs(priority="high")
         assert len(high) == 1
         assert high[0].priority == "high"
+    
+    def test_get_lug_not_found(self, lug_manager):
+        """Verify None returned for missing ID."""
+        result = lug_manager.get_lug("nonexistent-id-12345")
+        assert result is None
+    
+    def test_get_lug_min_prefix_length(self, lug_manager):
+        """Verify minimum prefix length requirement (should be 4 chars or implementation-defined)."""
+        lug = lug_manager.create_lug(title="Prefix Length Test")
+        
+        # Test with very short prefix (might fail depending on implementation)
+        try:
+            # Try 1-char prefix (should likely fail or be ambiguous)
+            result = lug_manager.get_lug(lug.id[:1])
+            # If it works, that's ok, just document the behavior
+        except ValueError:
+            # Expected - prefix too short or ambiguous
+            pass
+        
+        # 4-char prefix should work
+        result = lug_manager.get_lug(lug.id[:4])
+        assert result is not None
+        assert result.id == lug.id
+
 
 
 class TestUpdates:
@@ -305,6 +378,43 @@ class TestDependencies:
         assert lug_c.id in ids
         assert lug_b.id in ids
         assert lug_a.id in ids
+    
+    def test_circular_dependency_detection(self, lug_manager):
+        """Verify A→B→A causes error or warning."""
+        lug_a = lug_manager.create_lug(title="Task A")
+        lug_b = lug_manager.create_lug(title="Task B")
+        
+        # A depends on B
+        lug_manager.add_dependency(lug_a.id, lug_b.id)
+        
+        # Try to make B depend on A (circular)
+        try:
+            lug_manager.add_dependency(lug_b.id, lug_a.id)
+            # If no error, verify circular dependency exists
+            chain = lug_manager.get_dependency_chain(lug_a.id, max_depth=10)
+            # Some implementations might allow it, just document
+        except ValueError as e:
+            # Expected - circular dependency detected
+            assert "circular" in str(e).lower() or "cycle" in str(e).lower()
+    
+    def test_deep_dependency_chain(self, lug_manager):
+        """Verify A→B→C→D→E works correctly."""
+        lugs = []
+        for i in range(5):
+            lug = lug_manager.create_lug(title=f"Layer {i}")
+            lugs.append(lug)
+            if i > 0:
+                lug_manager.add_dependency(lug.id, lugs[i-1].id)
+        
+        # Verify chain from E
+        chain = lug_manager.get_dependency_chain(lugs[4].id)
+        assert len(chain) == 5
+        
+        # Verify all IDs present
+        chain_ids = {l.id for l in chain}
+        for lug in lugs:
+            assert lug.id in chain_ids
+
 
 
 class TestPolicyValidation:

@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Any
 
 from .rebalancer import FileRebalancer
+from .lugs import LugManager
 
 
 class SpokeUpdateProcessor:
@@ -151,10 +152,19 @@ class SpokeUpdateProcessor:
                 self._move_to_reference(path, self.reference_dir / "seeded")
                 continue
 
-            if not self._is_text_file(path):
-                warnings.append(f"Non-text file moved to reference: {path.name}")
-                self._move_to_reference(path, self.reference_dir / "seeded")
-                continue
+            # Handle Lug Deltas (.json or .jsonl)
+            if path.suffix in ['.json', '.jsonl'] and ('lug' in path.name.lower() or 'task' in path.name.lower()):
+                lug_results = self._process_lug_delta(path)
+                if lug_results:
+                    ingested.append(path.name)
+                    notes.append({
+                        "file": path.name,
+                        "type": "lug_delta",
+                        "count": len(lug_results),
+                        "applied_to": ["lugs.jsonl"]
+                    })
+                    path.unlink()
+                    continue
 
             content = path.read_text(errors="ignore").strip()
             if not content:
@@ -285,6 +295,62 @@ class SpokeUpdateProcessor:
         meta["last_updated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         meta["updated_by"] = "WAI Update"
         self.index_file.write_text(json.dumps(index, indent=2))
+
+    def _process_lug_delta(self, path: Path) -> List[str]:
+        """Process Lug creations/updates from a JSON/JSONL file."""
+        manager = LugManager(self.spoke_path)
+        created_ids = []
+        
+        try:
+            deltas = []
+            if path.suffix == '.jsonl':
+                with open(path, 'r') as f:
+                    for line in f:
+                        if line.strip():
+                            deltas.append(json.loads(line))
+            else:
+                content = json.loads(path.read_text())
+                if isinstance(content, list):
+                    deltas = content
+                else:
+                    deltas = [content]
+            
+            for delta in deltas:
+                if not isinstance(delta, dict) or 'title' not in delta:
+                    continue
+                
+                # Check for existing ID to update, otherwise create
+                lug_id = delta.get('id')
+                if lug_id and manager.get_lug(lug_id):
+                    # Update (simplified for now)
+                    manager.update_lug(
+                        lug_id_prefix=lug_id,
+                        status=delta.get('status'),
+                        priority=delta.get('priority'),
+                        impact=delta.get('impact'),
+                        value=delta.get('value')
+                    )
+                    created_ids.append(lug_id)
+                else:
+                    # Create new
+                    lug = manager.create_lug(
+                        title=delta['title'],
+                        lug_type=delta.get('type', 'work'),
+                        priority=delta.get('priority', 'medium'),
+                        impact=delta.get('impact', 'medium'),
+                        value=delta.get('value', 5),
+                        justification=delta.get('justification'),
+                        origin=delta.get('origin', f"seed_ingest:{path.name}"),
+                        deps=delta.get('deps', []),
+                        blocked_by=delta.get('blocked_by', []),
+                        policy_tags=delta.get('policy_tags', [])
+                    )
+                    created_ids.append(lug.id)
+            
+            return created_ids
+        except Exception as e:
+            # Fallback to normal text ingestion if JSON parsing fails
+            return []
 
     def _is_text_file(self, path: Path) -> bool:
         try:

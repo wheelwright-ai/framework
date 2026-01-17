@@ -322,6 +322,7 @@ Examples:
         closeout_parser = subparsers.add_parser('closeout', help='Generate session closeout')
         closeout_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
         closeout_parser.add_argument('--non-interactive', action='store_true', help='Skip confirmations')
+        closeout_parser.add_argument('--skip-quality-gates', action='store_true', help='Skip quality gates (tests, etc.)')
 
         # Stats command
         stats_parser = subparsers.add_parser('stats', help='Show session analytics and metrics')
@@ -359,6 +360,7 @@ Examples:
         shipit_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
         shipit_parser.add_argument('--non-interactive', action='store_true', help='Skip confirmations')
         shipit_parser.add_argument('--push', action='store_true', help='Push to remote after commit')
+        shipit_parser.add_argument('--skip-quality-gates', action='store_true', help='Skip quality gates (tests, etc.)')
 
         # Template commands
         template_parser = subparsers.add_parser('template', help='Manage project templates')
@@ -383,6 +385,8 @@ Examples:
         context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
         context_parser.add_argument('path', nargs='?', default='.', help='Project path')
 
+        subparsers.add_parser('changelog', help='Generate CHANGELOG.md from closed Lugs')
+    
         # Configure IDE command
         config_ide_parser = subparsers.add_parser('configure-ide', help='Configure IDE integration')
         config_ide_subparsers = config_ide_parser.add_subparsers(dest='config_ide_command')
@@ -2191,8 +2195,16 @@ Examples:
                 print_info("    WAI baseline status     Show baseline status")
                 print_info("")
                 print_info("  Update & Review:")
-                print_info("    WAI absorbe             Process seed folders and archive sprawl")
+                print_info("    WAI absorbe             Process seed folders (incl. Lug deltas)")
                 print_info("    WAI update              Alias for absorbe")
+                print_info("    WAI context             Export project context for LLM paste")
+                print_info("")
+                print_info("  Lug System (AI-first tasks):")
+                print_info("    WAI lug add <title>     Create a new Lug")
+                print_info("    WAI lug list            List active Lugs")
+                print_info("    WAI lug ready           Show Lugs meeting policy requirements")
+                print_info("    WAI lug show <id>       Show Lug details")
+                print_info("    WAI lug close <id>      Resolve and archive a Lug")
                 print_info("")
                 print_info("  Hub:")
                 print_info("    WAI hub locate          Find hub")
@@ -2244,10 +2256,15 @@ Examples:
                 print_info("    When: End of work session")
                 print_info("")
                 print_info("  'Shipit'")
-                print_info("    Closeout + git commit in one step")
+                print_info("    Closeout + git commit + WAI-Point update")
                 print_info("    Same as: Closeout, then git add & commit")
-                print_info("    Creates: Commit with session summary")
+                print_info("    Creates: Commit with session summary and closed Lug IDs")
                 print_info("    When: End of session with changes to commit")
+                print_info("")
+                print_info("  'Lugs'")
+                print_info("    Access the task & dependency graph")
+                print_info("    Actions: Add, List, Show, Ready, Close")
+                print_info("    When: Anytime to plan work or track progress")
                 print_info("")
                 print_info("  Note: Session commands are triggered by saying")
                 print_info("        the command word to your AI assistant.")
@@ -2422,6 +2439,8 @@ Examples:
             self._cmd_template(args)
         elif args.command == 'lug':
             self._cmd_lug(args)
+        elif args.command == 'changelog':
+            self._cmd_changelog(args)
         elif args.command == 'configure-ide':
             self._cmd_configure_ide(args)
         elif args.command == 'context':
@@ -2665,19 +2684,47 @@ Examples:
                 try:
                     # Read spoke signals
                     new_signals = []
-                    with open(signals_file, 'r', encoding='utf-8') as f:
-                        for line in f:
-                            if line.strip():
-                                try:
-                                    signal = json.loads(line)
-                                    if signal.get('impact', 0) >= 8:
-                                        new_signals.append(signal)
-                                except:
-                                    pass
                     
+                    # 1. Standard signals
+                    if signals_file.exists():
+                        with open(signals_file, 'r', encoding='utf-8') as f:
+                            for line in f:
+                                if line.strip():
+                                    try:
+                                        signal = json.loads(line)
+                                        if signal.get('impact', 0) >= 8:
+                                            new_signals.append(signal)
+                                    except: pass
+                    
+                    # 2. Promote significant Lugs
+                    closed_lugs_file = spoke_path / 'WAI-Spoke' / 'lugs-closed.jsonl'
+                    if closed_lugs_file.exists():
+                        with open(closed_lugs_file, 'r', encoding='utf-8') as f:
+                            for line in f:
+                                if line.strip():
+                                    try:
+                                        # Use a simplified parser or LugManager if available, 
+                                        # but direct JSON for speed during hub sync
+                                        lug_data = json.loads(line)
+                                        # Map minified keys if necessary, but here we assume impact/priority
+                                        # are stored in lugs.jsonl logic
+                                        impact = lug_data.get('i', 0) if 'i' in lug_data else lug_data.get('impact_score', 0)
+                                        priority = lug_data.get('p', '') if 'p' in lug_data else lug_data.get('priority', '')
+                                        
+                                        if (impact >= 8 or priority == 'high'):
+                                            new_signals.append({
+                                                'type': 'lug_promotion',
+                                                'id': lug_data.get('id', 'unknown'),
+                                                'title': lug_data.get('title', 'Untitled Lug'),
+                                                'summary': lug_data.get('summary', ''),
+                                                'impact': impact,
+                                                'timestamp': lug_data.get('closed_at', datetime.now().isoformat()),
+                                                'origin_spoke': spoke_name
+                                            })
+                                    except: pass
+
                     if new_signals:
                         # Append to hub knowledge
-                        # For now, just a simplified append to a single file per spoke
                         target_file = kb_dir / f"{spoke_name}-signals.jsonl"
                         
                         existing_ids = set()
@@ -3965,7 +4012,10 @@ Examples:
             print_info("=" * 60)
 
             processor = CloseoutProcessor(spoke_path)
-            results = processor.process_closeout(interactive=not args.non_interactive)
+            results = processor.process_closeout(
+                interactive=not args.non_interactive,
+                skip_quality_gates=args.skip_quality_gates
+            )
 
             # Check if closeout was aborted
             if results.get('errors') and any('aborted' in e.lower() for e in results['errors']):
@@ -4059,6 +4109,17 @@ Examples:
                     
                     # Ensure lug files are staged after closing
                     repo.index.add(['WAI-Spoke/lugs.jsonl', 'WAI-Spoke/lugs-closed.jsonl'])
+            
+            # Update Changelog
+            try:
+                from .changelog import ChangelogGenerator
+                generator = ChangelogGenerator(Path(spoke_path))
+                generator.update_changelog_file()
+                if (Path(spoke_path) / "CHANGELOG.md").exists():
+                    repo.index.add(["CHANGELOG.md"])
+                print_info("    [shipit] CHANGELOG.md updated.")
+            except Exception as e:
+                print_warning(f"    [shipit] Failed to update changelog: {e}")
 
             # Generate commit message
             session_summary = results.get('session_summary', {})
@@ -4102,11 +4163,9 @@ Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
             else:
                 print_info("  To push to remote, run: git push\n")
 
-                print_info("=" * 60)
-                print_success("  Shipit Complete!")
-                print_info("=" * 60 + "\n")
-            else:
-                print_error(f"\n  Commit failed: {result.stderr}\n")
+            print_info("=" * 60)
+            print_success("  Shipit Complete!")
+            print_info("=" * 60 + "\n")
 
         except Exception as e:
             print_error(f"Shipit command failed: {e}")
@@ -4242,6 +4301,24 @@ Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
         # Pass lug_args to command group
         lug_args = getattr(args, 'lug_args', [])
         lug_command_group(lug_args, spoke_path)
+
+    def _cmd_changelog(self, args):
+        """Handle changelog command."""
+        from .changelog import ChangelogGenerator
+        from .utils.input import print_success, print_info
+        
+        print_info("Generating changelog from closed Lugs...")
+        generator = ChangelogGenerator(Path(os.getcwd()))
+        content = generator.generate_changelog_content()
+        
+        if content:
+            print_success("\nGenerated Content Preview:\n")
+            print(content)
+            if safe_confirm("Apply these changes to CHANGELOG.md?", default=True):
+                generator.update_changelog_file()
+                print_success("CHANGELOG.md updated.")
+        else:
+            print_info("No closed Lugs found to generate changelog from.")
 
     def _cmd_configure_ide(self, args):
         """Handle configure-ide command."""

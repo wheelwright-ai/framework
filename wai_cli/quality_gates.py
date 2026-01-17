@@ -508,7 +508,7 @@ class QualityGates:
         Returns:
             UAT instruction text
         """
-        return f\"\"\"# User Acceptance Testing - {feature_description}
+        return f"""# User Acceptance Testing - {feature_description}
 
 ## Pre-Test Checklist
 - [ ] All unit tests pass
@@ -542,4 +542,4 @@ class QualityGates:
 - Tested by: ___________
 - Date: ___________
 - Status: [ ] PASS [ ] FAIL
-\"\"\"
+        """

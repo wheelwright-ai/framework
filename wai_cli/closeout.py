@@ -205,9 +205,18 @@ class CloseoutProcessor:
         results['steps_completed'].append(f"Integrations refreshed: {integration_status['updated']} updated")
 
         # Step 10: Update WAI-Point bootstrap
-        print_info("  Step 10/10: Updating WAI-Point bootstrap...")
+        print_info("  Step 10/11: Updating WAI-Point bootstrap...")
         self.point_manager.update_from_state()
         results['steps_completed'].append("Updated WAI-Point bootstrap")
+
+        # Step 10.5: Update Website Content (if exists)
+        # [REFACTORED] Added as rule - update website content on each closeout
+        print_info("  Step 10.5/11: Updating website content...")
+        website_updated = self._update_website_content(session_summary)
+        if website_updated:
+            results['steps_completed'].append("Updated website content")
+        else:
+            results['steps_completed'].append("No website content to update")
 
         print_success("\n✓ Closeout Complete!\n")
 
@@ -394,17 +403,44 @@ class CloseoutProcessor:
             statuses = integration_status.get('statuses', {})
             if statuses:
                 print_info("  Integration status:")
-                for name, status in statuses.items():
-                    print_info(f"    - {name}: {status}")
-
-            if integration_status.get('session_refreshed'):
-                print_info("  Codex session refreshed - integrations active")
+    def _update_website_content(self, session_summary: Dict[str, Any]) -> bool:
+        """
+        Update website content file with session changes (if file exists).
+        
+        [REFACTORED] Added as closeout rule - updates WAI-Website-Content.md
+        with latest project state, features, and updates from session.
+        
+        Returns:
+            True if website content was updated
+        """
+        # Check for website content file
+        website_file = self.wai_spoke_dir / 'WAI-Website-Content.md'
+        if not website_file.exists():
+            return False
+        
+        try:
+            content = website_file.read_text()
+            
+            # Add session summary to "Recent Updates" section
+            update_entry = f"\n### {datetime.now().strftime('%Y-%m-%d')}\n"
+            update_entry += f"{session_summary.get('summary', 'Session update')}\n"
+            
+            # Check if "Recent Updates" section exists
+            if "## Recent Updates" in content:
+                # Insert at beginning of Recent Updates section
+                parts = content.split("## Recent Updates")
+                content = parts[0] + "## Recent Updates\n" + update_entry + parts[1]
             else:
-                print_info("  Start new session with fresh context")
-        else:
-            print_info("  Start new session with fresh context")
-
-        print_info("=" * 60 + "\n")
+                # Add section at end
+                content += "\n\n## Recent Updates\n" + update_entry
+            
+            # Write updated content
+            website_file.write_text(content)
+            return True
+            
+        except Exception:
+            # Non-blocking - website update failure doesn't stop closeout
+            return False
 
     def _refresh_integrations(self) -> Dict[str, Any]:
         """Refresh integration files and optionally re-brief active session."""

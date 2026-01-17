@@ -43,12 +43,14 @@ class TestPointGeneration:
         """Test generating Point with no state or Lugs."""
         point = point_manager.generate_point()
         
-        assert 'version' in point
+        assert point['schema_version'] == 1
         assert 'generated_at' in point
         assert 'summary' in point
         assert 'open_lugs_summary' in point
         assert 'last_shipit' in point
         assert 'key_learnings' in point
+        assert 'open_lugs' in point
+        assert 'next_session_lug' in point
     
     def test_point_with_state(self, point_manager, temp_spoke_dir):
         """Test Point generation with WAI-State.json."""
@@ -89,16 +91,18 @@ class TestPointGeneration:
         """Test Point generation with open Lugs."""
         # Create some Lugs
         lug_manager = LugManager(temp_spoke_dir / 'WAI-Spoke')
-        lug_manager.create_lug(title="High priority task", priority="high")
+        lug_manager.create_lug(title="High priority task", priority="high", value=9)
         lug_manager.create_lug(title="Medium priority task", priority="medium")
         lug_manager.create_lug(title="Low priority task", priority="low")
         
         point = point_manager.generate_point()
         
-        assert "3 open Lugs" in point['open_lugs_summary']
-        assert "1 high priority" in point['open_lugs_summary']
-        assert "1 medium priority" in point['open_lugs_summary']
-        assert "1 low priority" in point['open_lugs_summary']
+        assert "3 open" in point['open_lugs_summary']
+        assert "1 high" in point['open_lugs_summary']
+        assert "1 medium" in point['open_lugs_summary']
+        assert "1 low" in point['open_lugs_summary']
+        assert len(point['open_lugs']) == 3
+        assert point['next_session_lug']['title'] == "High priority task"
     
     def test_point_with_no_lugs(self, point_manager):
         """Test Point when no Lugs system initialized."""
@@ -131,7 +135,7 @@ class TestPointUpdate:
         loaded = point_manager.load_point()
         
         assert loaded is not None
-        assert 'version' in loaded
+        assert loaded['schema_version'] == 1
         assert 'summary' in loaded
 
 

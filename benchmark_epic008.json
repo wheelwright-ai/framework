@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-01-16T23:26:54.599576",
+  "scenario": {
+    "total_lugs": 100,
+    "open_lugs": 50,
+    "closed_lugs": 50
+  },
+  "file_sizes": {
+    "lugs_active_kb": 17.86,
+    "lugs_closed_kb": 22.24,
+    "total_kb": 40.1
+  },
+  "performance": {
+    "load_time_ms": 0.76,
+    "query_open_time_ms": 0.0035,
+    "query_closed_time_ms": 0.6061
+  },
+  "token_estimates": {
+    "active_tokens": 6733,
+    "full_tokens": 14278,
+    "token_savings_percent": 52.84
+  }
+}
