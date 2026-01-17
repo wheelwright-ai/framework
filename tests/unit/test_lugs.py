@@ -441,5 +441,93 @@ class TestSessions:
         assert len(lines) == 1
 
 
+class TestEnhancedPolicies:
+    """Test enhanced policy features."""
+    
+    def test_is_significant(self, lug_manager):
+        """Test significance check."""
+        # Significant: high pri, large impact
+        lug1 = lug_manager.create_lug(title="Sig 1", priority="high", impact="large", value=5)
+        # Significant: high pri, value >= 7
+        lug2 = lug_manager.create_lug(title="Sig 2", priority="high", impact="small", value=8)
+        # Not significant: medium pri
+        lug3 = lug_manager.create_lug(title="Not Sig 1", priority="medium", impact="large", value=9)
+        # Not significant: high pri, but small impact and value < 7
+        lug4 = lug_manager.create_lug(title="Not Sig 2", priority="high", impact="small", value=5)
+        
+        assert lug_manager.is_significant(lug1) is True
+        assert lug_manager.is_significant(lug2) is True
+        assert lug_manager.is_significant(lug3) is False
+        assert lug_manager.is_significant(lug4) is False
+        
+    def test_add_policy_type(self, lug_manager, temp_spoke_dir):
+        """Test dynamic policy type addition."""
+        rules = {"close_requires": ["research_complete"]}
+        lug_manager.add_policy_type("research", rules)
+        
+        policies_file = temp_spoke_dir / 'WAI-Policies.json'
+        assert policies_file.exists()
+        
+        with open(policies_file, 'r') as f:
+            policies = json.load(f)
+        
+        assert policies["lug_policies"]["research"] == rules
+        
+        # Verify it applies
+        lug = lug_manager.create_lug(title="Res Lug", lug_type="research")
+        violations = lug_manager.validate_policies(lug)
+        assert "research_complete" in violations[0]
+
+    def test_global_policy_no_open_blockers(self, lug_manager, temp_spoke_dir):
+        """Test global policy: no_open_blockers."""
+        policies = {
+            "lug_policies": {},
+            "global_policies": ["no_open_blockers"]
+        }
+        policies_file = temp_spoke_dir / 'WAI-Policies.json'
+        with open(policies_file, 'w') as f:
+            json.dump(policies, f)
+            
+        lug_a = lug_manager.create_lug(title="Task A")
+        lug_b = lug_manager.create_lug(title="Task B") # B depends on A
+        lug_manager.add_dependency(lug_b.id, lug_a.id)
+        
+        # A is open, so B should have global violation
+        violations = lug_manager._validate_global_policies(lug_b)
+        assert any("still open" in v for v in violations)
+        
+        # Close A
+        lug_manager.close_lug(lug_a.id, skip_policy_check=True)
+        
+        # Now B should pass
+        violations = lug_manager._validate_global_policies(lug_b)
+        assert len(violations) == 0
+
+    def test_list_lugs_ready_to_close(self, lug_manager, temp_spoke_dir):
+        """Test listing Lugs ready to close."""
+        policies = {
+            "lug_policies": {
+                "bug": {"close_requires": ["test_verified"]}
+            },
+            "global_policies": []
+        }
+        policies_file = temp_spoke_dir / 'WAI-Policies.json'
+        with open(policies_file, 'w') as f:
+            json.dump(policies, f)
+            
+        lug1 = lug_manager.create_lug(title="Bug (Blocked)", lug_type="bug")
+        lug2 = lug_manager.create_lug(title="Work (Ready)", lug_type="work")
+        
+        ready = lug_manager.list_lugs_ready_to_close()
+        assert len(ready) == 1
+        assert ready[0].id == lug2.id
+        
+        # Add tag to lug1
+        lug_manager.update_lug(lug1.id, policy_tags=["test_verified"])
+        
+        ready = lug_manager.list_lugs_ready_to_close()
+        assert len(ready) == 2
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

@@ -21,8 +21,10 @@ from .metrics import MetricsTracker
 from .quality_gates import QualityGates
 from .utils.input import print_success, print_error, print_info, print_warning, safe_confirm
 from .integrations.manager import IDEManager
+from .lugs import LugManager
+from .point import PointManager
 import os
-import subprocess
+from git import Repo, exc as git_exc
 
 
 class CloseoutProcessor:
@@ -39,6 +41,8 @@ class CloseoutProcessor:
         self.rebalancer = FileRebalancer(self.wai_spoke_dir)
         self.metrics = MetricsTracker(self.wai_spoke_dir)
         self.quality_gates = QualityGates(spoke_dir)
+        self.lug_manager = LugManager(spoke_dir)
+        self.point_manager = PointManager(spoke_dir)
 
     def process_closeout(self, interactive: bool = True, skip_quality_gates: bool = False) -> Dict[str, Any]:
         """
@@ -94,6 +98,49 @@ class CloseoutProcessor:
             else:
                 print_success("    ✓ All quality gates passed")
                 results['steps_completed'].append("Quality gates: Passed")
+
+        # Step 0.5: Lug Policy Validation (Blocker check)
+        print_info("  Step 0.5/10: Validating Lug policies...")
+        session_state = self.session.get_state()
+        session_id = session_state.get('session_id')
+        
+        if session_id:
+            session_lugs = self.lug_manager.get_session_lugs(session_id)
+            if session_lugs:
+                violations_found = False
+                for lug in session_lugs:
+                    violations = self.lug_manager.validate_policies(lug)
+                    if violations:
+                        print_warning(f"    ⚠️  Policy violations for Lug {lug.id} ({lug.title}):")
+                        for v in violations:
+                            print_error(f"      ✗ {v}")
+                        violations_found = True
+                
+                if violations_found and interactive:
+                    if not safe_confirm("Proceed despite Lug policy violations?", default=False):
+                        results['errors'].append("Closeout aborted due to Lug policy violations")
+                        return results
+                
+                results['steps_completed'].append(f"Lug policies: Validated {len(session_lugs)} Lugs")
+            else:
+                # Suggest inferring Lugs if none found for session
+                try:
+                    repo = Repo(self.spoke_dir, search_parent_directories=True)
+                    suggestions = self.lug_manager.infer_lugs_from_git(repo)
+                    if suggestions:
+                        print_info(f"    💡 Found {len(suggestions)} possible Lugs in your changes.")
+                        if interactive and safe_confirm("Create suggested Lugs?", default=False):
+                            for sug in suggestions:
+                                self.lug_manager.create_lug(
+                                    title=sug['title'],
+                                    lug_type=sug['type'],
+                                    priority=sug['priority'],
+                                    from_file=sug['from_file'],
+                                    extras={'session_id': session_id, 'inferred_reason': sug['reason']}
+                                )
+                            results['steps_completed'].append(f"Lugs: Inferred and created {len(suggestions)} Lugs")
+                except Exception:
+                    pass
 
         # Step 1: Process seed folders and clean up sprawl
         print_info("  Step 1/10: Processing seed folders and cleanup...")
@@ -156,6 +203,11 @@ class CloseoutProcessor:
         integration_status = self._refresh_integrations()
         results['integration_status'] = integration_status
         results['steps_completed'].append(f"Integrations refreshed: {integration_status['updated']} updated")
+
+        # Step 10: Update WAI-Point bootstrap
+        print_info("  Step 10/10: Updating WAI-Point bootstrap...")
+        self.point_manager.update_from_state()
+        results['steps_completed'].append("Updated WAI-Point bootstrap")
 
         print_success("\n✓ Closeout Complete!\n")
 

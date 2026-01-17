@@ -17,6 +17,7 @@ import hashlib
 import json
 import random
 import string
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Set
@@ -457,6 +458,9 @@ class LugManager:
             if tag not in lug.policy_tags:
                 violations.append(f"Missing required policy tag: {tag}")
         
+        # Add global violations
+        violations.extend(self._validate_global_policies(lug))
+        
         return violations
     
     def list_lugs(
@@ -521,3 +525,129 @@ class LugManager:
         self._atomic_append(self.sessions_file, session.to_dict())
         
         return session
+
+    def is_significant(self, lug: Lug) -> bool:
+        """
+        Check if Lug is significant (high priority/large impact/value >= 7).
+        """
+        return (
+            lug.priority == "high" and 
+            (lug.impact == "large" or lug.value >= 7)
+        )
+
+    def add_policy_type(self, lug_type: str, rules: Dict[str, Any]):
+        """
+        Add or update a custom Lug type policy.
+        """
+        policies_file = self.spoke_dir / 'WAI-Policies.json'
+        
+        if policies_file.exists():
+            with open(policies_file, 'r') as f:
+                policies = json.load(f)
+        else:
+            policies = {"lug_policies": {}}
+        
+        if 'lug_policies' not in policies:
+            policies['lug_policies'] = {}
+        
+        policies['lug_policies'][lug_type] = rules
+        
+        with open(policies_file, 'w') as f:
+            json.dump(policies, f, indent=2)
+
+    def list_lugs_ready_to_close(self) -> List[Lug]:
+        """
+        List Lugs that pass all policies and are ready to close.
+        """
+        ready = []
+        for lug in self.lugs.values():
+            if lug.status != 'open':
+                continue
+            
+            if not self.validate_policies(lug):
+                ready.append(lug)
+        
+        return ready
+
+    def _validate_global_policies(self, lug: Lug) -> List[str]:
+        """
+        Validate global policies that apply to all Lugs.
+        """
+        violations = []
+        
+        # Load policies
+        policies_file = self.spoke_dir / 'WAI-Policies.json'
+        if not policies_file.exists():
+            return violations
+        
+        with open(policies_file, 'r') as f:
+            policies = json.load(f)
+        
+        global_rules = policies.get('global_policies', [])
+        
+        for rule in global_rules:
+            if rule == "no_open_blockers":
+                for dep_id in lug.deps:
+                    dep = self.get_lug(dep_id)
+                    if dep and dep.status == 'open':
+                        violations.append(f"Dependency {dep_id} ({dep.title}) is still open")
+            
+            elif rule == "no_blocked_by":
+                if lug.blocked_by:
+                    violations.append(f"This Lug is blocking {len(lug.blocked_by)} other Lugs")
+        
+        return violations
+
+    def get_session_lugs(self, session_id: str) -> List[Lug]:
+        """
+        Get all Lugs associated with a specific session.
+        """
+        return [l for l in self.lugs.values() if l.extras.get('session_id') == session_id]
+
+    def infer_lugs_from_git(self, repo: Any) -> List[Dict[str, Any]]:
+        """
+        Infer possible Lugs from staged git changes.
+        """
+        suggestions = []
+        
+        try:
+            # Get staged diffs
+            diff_index = repo.index.diff("HEAD")
+            
+            for diff in diff_index:
+                # Check if file name indicates a python file
+                if not str(diff.a_path).endswith('.py'):
+                    continue
+                    
+                path = Path(diff.a_path)
+                try:
+                    # diff.diff might be empty or blob
+                    content = diff.diff.decode('utf-8', errors='ignore') if diff.diff else ""
+                except Exception:
+                    content = ""
+                
+                # Look for TODOs
+                todos = re.findall(r'#\s*TODO:?\s*(.*)', content, re.IGNORECASE)
+                for todo in todos:
+                    suggestions.append({
+                        'title': todo.strip(),
+                        'type': 'task',
+                        'priority': 'medium',
+                        'reason': f"Found TODO in {path.name}",
+                        'from_file': str(path)
+                    })
+                    
+                # Look for deleted tests
+                if "test_" in content and content.startswith('-'):
+                    suggestions.append({
+                        'title': f"Verify regression for {path.name} (tests modified)",
+                        'type': 'bug',
+                        'priority': 'high',
+                        'reason': f"Test removal detected in {path.name}",
+                        'from_file': str(path)
+                    })
+                    
+        except Exception:
+            pass
+            
+        return suggestions

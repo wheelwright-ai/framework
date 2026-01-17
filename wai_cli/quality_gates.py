@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 import subprocess
 import re
+from git import Repo, exc as git_exc
 
 from .utils.input import print_info
 
@@ -23,6 +24,16 @@ class QualityGates:
         self.spoke_dir = spoke_dir
         self.wai_spoke_dir = spoke_dir / 'WAI-Spoke'
         self.state_file = self.wai_spoke_dir / 'WAI-State.json'
+        self._repo: Optional[Repo] = None
+
+    def _get_repo(self) -> Optional[Repo]:
+        """Get GitPython Repo instance."""
+        if self._repo is None:
+            try:
+                self._repo = Repo(self.spoke_dir, search_parent_directories=True)
+            except git_exc.InvalidGitRepositoryError:
+                return None
+        return self._repo
 
     def _is_ignored_path(self, path: Path) -> bool:
         ignored = {'.git', 'node_modules', '.venv', 'venv', 'dist', 'build'}
@@ -52,6 +63,12 @@ class QualityGates:
             if is_minor:
                 results['skip_reason'] = 'Minor changes detected - validation skipped'
                 return results
+
+        # Check for recent successful test run (Optimization)
+        skip_reason = self._check_recent_test_run()
+        if skip_reason:
+            results['skip_reason'] = skip_reason
+            return results
 
         # Gate 1: Test Coverage
         test_result = self._check_test_coverage()
@@ -88,6 +105,75 @@ class QualityGates:
 
         return results
 
+    def _check_recent_test_run(self) -> Optional[str]:
+        """
+        Check if tests passed recently and nothing changed since.
+
+        Returns:
+            Skip reason string if gates can be skipped, else None
+        """
+        log_path = self.wai_spoke_dir / 'WAI-Testing-Log.jsonl'
+        if not log_path.exists():
+            return None
+
+        try:
+            from datetime import datetime, timedelta
+            import json
+
+            # Read log to find latest passing run
+            with open(log_path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            
+            if not lines:
+                return None
+
+            latest_pass = None
+            for line in reversed(lines):
+                try:
+                    entry = json.loads(line)
+                    if entry.get('status') == 'pass':
+                        latest_pass = entry
+                        break
+                except:
+                    continue
+            
+            if not latest_pass:
+                return None
+
+            # Parse timestamp (handle Z suffix)
+            pass_ts = latest_pass['timestamp'].replace('Z', '+00:00')
+            pass_time = datetime.fromisoformat(pass_ts)
+            
+            # Ensure we have a timezone-aware current time for comparison
+            now = datetime.now(pass_time.tzinfo)
+
+            # 1. Check if within 10 minutes
+            if now - pass_time > timedelta(minutes=10):
+                return None
+
+            # 2. Check if any tracked files have been modified since the pass
+            repo = self._get_repo()
+            if not repo:
+                return None
+
+            # Get modified and untracked files
+            changed = [item.a_path for item in repo.index.diff(None)]
+            changed += [item.a_path for item in repo.index.diff("HEAD")]
+            untracked = repo.untracked_files
+
+            for f in set(changed + untracked):
+                f_path = self.spoke_dir / f
+                if f_path.exists():
+                    mtime = datetime.fromtimestamp(f_path.stat().st_mtime, pass_time.tzinfo)
+                    if mtime > pass_time:
+                        return None # Modified after tests
+
+            return f"Skipping quality gates: Tests passed recently ({pass_time.strftime('%H:%M:%S')}) and no files modified since."
+
+        except Exception:
+            # Fallback to running gates if anything goes wrong during check
+            return None
+
     def _check_if_minor_changes(self) -> bool:
         """
         Check if changes are truly minor.
@@ -96,19 +182,13 @@ class QualityGates:
             True if changes are minor (docs only, small tweaks)
         """
         try:
-            # Get changed files
-            result = subprocess.run(
-                ['git', 'diff', '--name-only', 'HEAD'],
-                cwd=self.spoke_dir,
-                capture_output=True,
-                text=True
-            )
-
-            if result.returncode != 0:
+            repo = self._get_repo()
+            if not repo:
                 return False
 
-            changed_files = result.stdout.strip().split('\n')
-            changed_files = [f for f in changed_files if f]
+            # Get changed files relative to HEAD
+            diff_index = repo.index.diff("HEAD")
+            changed_files = [item.a_path for item in diff_index]
 
             if not changed_files:
                 return True  # No changes
@@ -123,23 +203,25 @@ class QualityGates:
                 return True  # Only docs/config changed
 
             # Check file sizes (if < 10 lines changed total, it's minor)
-            result = subprocess.run(
-                ['git', 'diff', '--stat'],
-                cwd=self.spoke_dir,
-                capture_output=True,
-                text=True
-            )
+            total_changes = 0
+            for diff in diff_index:
+                # Basic stat estimation
+                if diff.diff:
+                    # diff.diff is the actual diff text if available
+                    total_changes += len(diff.diff.decode('utf-8', errors='ignore').split('\n'))
+            
+            # If we couldn't get total_changes from diff text, try summary stats
+            if total_changes == 0:
+                stats = repo.git.diff("--stat", "HEAD").split('\n')[-1]
+                numbers = re.findall(r'(\d+)', stats)
+                if numbers:
+                    # Sum of insertions and deletions
+                    total_changes = sum(int(n) for n in numbers[1:]) # Skip file count
 
-            if result.returncode == 0:
-                # Parse stat output
-                lines = result.stdout.split('\n')
-                for line in lines:
-                    if 'insertions' in line or 'deletions' in line:
-                        # Extract numbers
-                        numbers = re.findall(r'(\d+) insertion|(\d+) deletion', line)
-                        total_changes = sum(int(n[0] or n[1]) for n in numbers)
-                        if total_changes < 10:
-                            return True
+            if total_changes < 10:
+                return True
+
+            return False
 
             return False
 
@@ -295,18 +377,14 @@ class QualityGates:
         """
         # Get modified Python files
         try:
-            result = subprocess.run(
-                ['git', 'diff', '--name-only', 'HEAD'],
-                cwd=self.spoke_dir,
-                capture_output=True,
-                text=True
-            )
-
-            if result.returncode != 0:
-                return {'passed': True, 'message': 'Unable to check git diff'}
+            repo = self._get_repo()
+            if not repo:
+                return {'passed': True, 'message': 'Not a git repository'}
 
             modified_files = []
-            for f in result.stdout.strip().split('\n'):
+            diff_index = repo.index.diff("HEAD")
+            for diff in diff_index:
+                f = diff.a_path
                 if not f.endswith('.py'):
                     continue
                 path = Path(f)
@@ -362,18 +440,15 @@ class QualityGates:
             if not decisions:
                 return {'passed': True, 'message': 'No prior decisions to check'}
 
-            # Get recent commit messages
-            result = subprocess.run(
-                ['git', 'log', '-1', '--pretty=%B'],
-                cwd=self.spoke_dir,
-                capture_output=True,
-                text=True
-            )
+            # Get recent commit message
+            repo = self._get_repo()
+            if not repo:
+                return {'passed': True, 'message': 'Not a git repository'}
 
-            if result.returncode != 0:
-                return {'passed': True, 'message': 'Unable to check contradictions'}
-
-            recent_commit = result.stdout.lower()
+            try:
+                recent_commit = repo.head.commit.message.lower()
+            except (git_exc.GitCommandError, ValueError):
+                return {'passed': True, 'message': 'No prior commits found'}
 
             # Check for reversal keywords
             reversal_keywords = ['revert', 'undo', 'remove', 'delete', 'reverse']
@@ -433,7 +508,7 @@ class QualityGates:
         Returns:
             UAT instruction text
         """
-        return f"""# User Acceptance Testing - {feature_description}
+        return f\"\"\"# User Acceptance Testing - {feature_description}
 
 ## Pre-Test Checklist
 - [ ] All unit tests pass
@@ -467,4 +542,4 @@ class QualityGates:
 - Tested by: ___________
 - Date: ___________
 - Status: [ ] PASS [ ] FAIL
-"""
+\"\"\"

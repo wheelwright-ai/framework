@@ -11,6 +11,8 @@ import os
 import platform
 from pathlib import Path
 from typing import Optional, Dict, Any, Tuple
+import subprocess
+from git import Repo, exc as git_exc
 
 from .init import framework_first_init, init_spoke, init_spoke_interactive, check_spoke_initialized
 from .hub import HubManager
@@ -3951,14 +3953,9 @@ Examples:
                 return
 
             # Check if this is a git repository
-            result = subprocess.run(
-                ['git', 'rev-parse', '--git-dir'],
-                cwd=spoke_path,
-                capture_output=True,
-                text=True
-            )
-
-            if result.returncode != 0:
+            try:
+                repo = Repo(spoke_path, search_parent_directories=True)
+            except git_exc.InvalidGitRepositoryError:
                 print_error("Not a git repository.")
                 print_info("Initialize git first: git init")
                 return
@@ -3981,76 +3978,55 @@ Examples:
                 print_info("\n  Refreshing bootstrap folder...")
                 refresh_bootstrap(framework_root, verbose=True)
 
-            # Step 2: Git workflow
+            # Step 2: Git workflow using GitPython
             print_info("\n" + "=" * 60)
             print_info("  Git Commit Workflow")
             print_info("=" * 60 + "\n")
 
-            # Check git status
-            result = subprocess.run(
-                ['git', 'status', '--short'],
-                cwd=spoke_path,
-                capture_output=True,
-                text=True
-            )
-
-            if not result.stdout.strip():
+            if not repo.is_dirty(untracked_files=True):
                 print_info("  Working tree clean - nothing to commit.\n")
                 return
 
             # Show what changed
             print_info("  Changed files:")
-            for line in result.stdout.strip().split('\n'):
-                print_info(f"    {line}")
+            for item in repo.index.diff(None) + repo.index.diff("HEAD"):
+                print_info(f"    M {item.a_path}")
+            for f in repo.untracked_files:
+                print_info(f"    ?? {f}")
             print_info("")
 
-            # Stage WAI state files automatically
+            # Stage WAI state files and Lugs
             wai_files = [
                 'WAI-Spoke/WAI-State.json',
                 'WAI-Spoke/WAI-State.md',
                 'WAI-Spoke/WAI-Guide.md',
-                'WAI-Spoke/WAI-Signals.jsonl'
+                'WAI-Spoke/WAI-Signals.jsonl',
+                'WAI-Spoke/lugs.jsonl',
+                'WAI-Spoke/lugs-closed.jsonl',
+                'WAI-Spoke/lug-sessions.jsonl',
+                'WAI-Spoke/WAI-Point.json'
             ]
 
             files_to_commit = []
             for wai_file in wai_files:
-                wai_file_path = spoke_path / wai_file
-                if wai_file_path.exists():
-                    # Check if file is modified
-                    result = subprocess.run(
-                        ['git', 'status', '--short', wai_file],
-                        cwd=spoke_path,
-                        capture_output=True,
-                        text=True
-                    )
-                    if result.stdout.strip():
+                if (spoke_path / wai_file).exists():
+                    # Check if file is modified or untracked
+                    is_modified = any(item.a_path == wai_file for item in repo.index.diff(None))
+                    is_untracked = wai_file in repo.untracked_files
+                    if is_modified or is_untracked:
                         files_to_commit.append(wai_file)
 
             if files_to_commit:
                 print_info("  Auto-staging WAI files:")
                 for f in files_to_commit:
                     print_info(f"    + {f}")
-                    subprocess.run(['git', 'add', f], cwd=spoke_path)
+                    repo.index.add([f])
                 print_info("")
 
             # Ask about other files
-            result = subprocess.run(
-                ['git', 'status', '--short'],
-                cwd=spoke_path,
-                capture_output=True,
-                text=True
-            )
-
-            unstaged_files = []
-            for line in result.stdout.strip().split('\n'):
-                if line and not line.strip().startswith('A'):
-                    # Extract filename (handle both modified and untracked)
-                    parts = line.strip().split(maxsplit=1)
-                    if len(parts) == 2:
-                        filename = parts[1]
-                        if not filename.startswith('WAI-Spoke/'):
-                            unstaged_files.append(filename)
-
+            unstaged_files = [item.a_path for item in repo.index.diff(None)] + repo.untracked_files
+            unstaged_files = [f for f in unstaged_files if not f.startswith('WAI-Spoke/')]
+            
             if unstaged_files and not args.non_interactive:
                 print_info("  Other modified files:")
                 for f in unstaged_files:
@@ -4059,66 +4035,72 @@ Examples:
 
                 if safe_confirm("  Stage these files too?", default=False):
                     for f in unstaged_files:
-                        subprocess.run(['git', 'add', f], cwd=spoke_path)
+                        repo.index.add([f])
                         print_info(f"    + {f}")
                     print_info("")
 
-            # Generate commit message from session summary
+            # Get Lugs for this session to close
+            session_state = processor.session.get_state()
+            session_id = session_state.get('session_id')
+            closed_lugs_info = []
+            
+            if session_id:
+                from .lugs import LugManager
+                lug_manager = LugManager(spoke_path)
+                session_lugs = lug_manager.get_session_lugs(session_id)
+                
+                if session_lugs:
+                    print_info(f"  Found {len(session_lugs)} Lugs associated with this session.")
+                    for lug in session_lugs:
+                        if lug.status == 'open':
+                            if args.non_interactive or safe_confirm(f"  Close Lug {lug.id} ({lug.title})?", default=True):
+                                lug_manager.close_lug(lug.id, summary=results.get('session_summary', {}).get('summary', 'Closed via shipit'))
+                                closed_lugs_info.append(f"{lug.id} ({lug.title})")
+                    
+                    # Ensure lug files are staged after closing
+                    repo.index.add(['WAI-Spoke/lugs.jsonl', 'WAI-Spoke/lugs-closed.jsonl'])
+
+            # Generate commit message
             session_summary = results.get('session_summary', {})
             summary_text = session_summary.get('summary', 'Session closeout')
             key_topics = session_summary.get('key_topics', [])
             turns = session_summary.get('turns', 0)
             baseline_summary = self._get_latest_baseline_summary(spoke_path)
 
-            # Create commit message
+            lugs_msg = ""
+            if closed_lugs_info:
+                lugs_msg = "\nClosed Lugs:\n" + "\n".join([f"- {info}" for info in closed_lugs_info])
+
             commit_msg = f"""Session closeout: {summary_text[:60]}
 
 {summary_text}
 
 Session turns: {turns}
 {f'Key topics: {", ".join(key_topics)}' if key_topics else ''}
+{lugs_msg}
 {baseline_summary}
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
+🤖 Generated with [Wheelwright AI](https://github.com/mario/wheelwright-ai)
+Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
 
             # Create commit
-            result = subprocess.run(
-                ['git', 'commit', '-m', commit_msg],
-                cwd=spoke_path,
-                capture_output=True,
-                text=True
-            )
+            commit = repo.index.commit(commit_msg)
+            print_success(f"\n  ✓ Commit {commit.hexsha[:7]} created successfully!\n")
 
-            if result.returncode == 0:
-                print_success("\n  ✓ Commit created successfully!\n")
+            # Show commit details
+            print_info(repo.git.log("-1", "--stat"))
 
-                # Show commit details
-                result = subprocess.run(
-                    ['git', 'log', '-1', '--stat'],
-                    cwd=spoke_path,
-                    capture_output=True,
-                    text=True
-                )
-                print_info(result.stdout)
-
-                # Push to remote if requested
-                if args.push:
-                    print_info("  Pushing to remote...")
-                    result = subprocess.run(
-                        ['git', 'push'],
-                        cwd=spoke_path,
-                        capture_output=True,
-                        text=True
-                    )
-
-                    if result.returncode == 0:
-                        print_success("  ✓ Pushed to remote successfully!\n")
-                    else:
-                        print_error(f"  Push failed: {result.stderr}")
-                else:
-                    print_info("  To push to remote, run: git push\n")
+            # Push to remote if requested
+            if args.push:
+                print_info("  Pushing to remote...")
+                try:
+                    origin = repo.remote(name='origin')
+                    origin.push()
+                    print_success("  ✓ Pushed to remote successfully!\n")
+                except Exception as e:
+                    print_error(f"  Push failed: {e}")
+            else:
+                print_info("  To push to remote, run: git push\n")
 
                 print_info("=" * 60)
                 print_success("  Shipit Complete!")
