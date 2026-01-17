@@ -308,6 +308,10 @@ Examples:
         group_delete.add_argument('name', help='Group name')
         group_delete.add_argument('--force', '-f', action='store_true', help='Skip confirmation')
 
+        # Lug commands
+        lug_parser = subparsers.add_parser('lug', help='Lug task/dependency graph management')
+        lug_parser.add_argument('lug_args', nargs='*', help='Lug sub-command and arguments')
+
         # Sync command (structure upgrade)
         sync_parser = subparsers.add_parser('sync', help='Upgrade spoke structure')
         sync_parser.add_argument('--all', action='store_true', help='Upgrade all spokes')
@@ -2414,6 +2418,8 @@ Examples:
             self._cmd_shipit(args)
         elif args.command == 'template':
             self._cmd_template(args)
+        elif args.command == 'lug':
+            self._cmd_lug(args)
         elif args.command == 'configure-ide':
             self._cmd_configure_ide(args)
         elif args.command == 'context':
@@ -4244,6 +4250,16 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"""
             print_error(f"Template command failed: {e}")
             import traceback
             traceback.print_exc()
+
+    def _cmd_lug(self, args):
+        """Handle lug command."""
+        from .commands.lug import lug_command_group
+        
+        spoke_path = normalize_path(getattr(args, 'path', '.') or '.')
+        
+        # Pass lug_args to command group
+        lug_args = getattr(args, 'lug_args', [])
+        lug_command_group(lug_args, spoke_path)
 
     def _cmd_configure_ide(self, args):
         """Handle configure-ide command."""
