@@ -203,9 +203,20 @@ class WheelwrightCLI:
     def _show_brand_banner(self) -> None:
         """Show the standard Wheelwright brand banner."""
         from .utils.input import print_info
+        
+        # ASCII Art Logo
+        logo = r"""
+ __        __ _               _                 _       _     _ 
+ \ \      / /| |__   ___  ___| |_      __ _ __ (_) __ _| |__ | |_ 
+  \ \ /\ / / | '_ \ / _ \/ _ \ \ \ /\ / / '__|| |/ _` | '_ \| __|
+   \ V  V /  | | | |  __/  __/ |\ V  V /| |   | | (_| | | | | |_ 
+    \_/\_/   |_| |_|\___|\___|_| \_/\_/ |_|   |_|\__, |_| |_|\__|
+                                                 |___/           """
+        
         print_info("\n" + "=" * 60)
-        print_info("                 🛞 Wheelwright.AI")
-        print_info("          Build projects that roll forward")
+        print_info(logo)
+        print_info("")
+        print_info("            Build projects that roll forward")
         print_info("=" * 60)
         print_info("")
 
@@ -596,7 +607,7 @@ Examples:
 
     def _show_framework_menu(self, framework_path: Path):
         """Show interactive menu for framework directory."""
-        self._show_brand_banner()
+        # Banner already shown by _show_spoke_analysis in interactive flow
 
         is_initialized = check_spoke_initialized(framework_path)
 
