@@ -464,7 +464,7 @@ Examples:
         shipit_parser = subparsers.add_parser('shipit', help='Closeout session and create git commit')
         shipit_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
         shipit_parser.add_argument('--non-interactive', action='store_true', help='Skip confirmations')
-        shipit_parser.add_argument('--push', action='store_true', help='Push to remote after commit')
+        shipit_parser.add_argument('--no-push', action='store_true', help='Skip pushing to remote')
         shipit_parser.add_argument('--skip-quality-gates', action='store_true', help='Skip quality gates (tests, etc.)')
 
         # Template commands
@@ -4349,6 +4349,9 @@ Examples:
                 for f in unstaged_files:
                     print_info(f"    {f}")
                 print_info("")
+                
+                print_info("  The following files are modified or untracked but were not automatically staged by the Framework.")
+                print_info("  You can choose to include them in this commit.")
 
                 if safe_confirm("  Stage these files too?", default=False):
                     for f in unstaged_files:
@@ -4418,8 +4421,8 @@ Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
             # Show commit details
             print_info(repo.git.log("-1", "--stat"))
 
-            # Push to remote if requested
-            if args.push:
+            # Push to remote by default (unless --no-push)
+            if not args.no_push:
                 print_info("  Pushing to remote...")
                 try:
                     origin = repo.remote(name='origin')
