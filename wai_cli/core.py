@@ -200,6 +200,15 @@ class WheelwrightCLI:
         if changed:
             state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
 
+    def _show_brand_banner(self) -> None:
+        """Show the standard Wheelwright brand banner."""
+        from .utils.input import print_info
+        print_info("\n" + "=" * 60)
+        print_info("                 🛞 Wheelwright.AI")
+        print_info("          Build projects that roll forward")
+        print_info("=" * 60)
+        print_info("")
+
     # Menu rendering utilities
     def _render_menu_header(self, title: str, breadcrumb: Optional[List[str]] = None, status: Optional[str] = None):
         """
@@ -274,7 +283,7 @@ class WheelwrightCLI:
 
         # Handle no command - context detection
         if not args.command:
-            self._handle_no_command()
+            self._handle_no_command(parser)
             return
 
         # Route to command handlers
@@ -476,7 +485,7 @@ Examples:
 
         return parser
 
-    def _handle_no_command(self):
+    def _handle_no_command(self, parser):
         """
         Handle no command - interactive menu based on context.
 
@@ -514,12 +523,10 @@ Examples:
 
     def _show_uninitialized_intro(self, project_path: Path) -> None:
         """Show a short WAI intro for uninitialized projects."""
+        self._show_brand_banner()
         hub_manager = HubManager()
         hub_path = hub_manager.auto_discover_hub(project_path, verbose=False)
 
-        print_info("\n" + "=" * 60)
-        print_info("            Wheelwright Project Setup")
-        print_info("=" * 60)
         print_info("")
         print_info("  This folder is not initialized with WAI yet.")
         print_info("  Wheelwright (WAI) keeps project context stable for AI work.\n")
@@ -559,11 +566,7 @@ Examples:
                 pass
 
         # Branded intro banner
-        print_info("\n" + "=" * 60)
-        print_info("                 🛞 Wheelwright.AI")
-        print_info("          Build projects that roll forward")
-        print_info("=" * 60)
-        print_info("")
+        self._show_brand_banner()
         
         print_info("=" * 60)
         print_info("             Spoke Analysis")
@@ -593,11 +596,7 @@ Examples:
 
     def _show_framework_menu(self, framework_path: Path):
         """Show interactive menu for framework directory."""
-        print_info("\n" + "=" * 60)
-        print_info("          Wheelwright Framework")
-        print_info("=" * 60)
-        print_info("Build projects with the help of AI that roll forward")
-        print_info("faster and more efficiently with each iteration.\n")
+        self._show_brand_banner()
 
         is_initialized = check_spoke_initialized(framework_path)
 
@@ -4821,3 +4820,5 @@ def main():
         import traceback
         traceback.print_exc()
         sys.exit(1)
+if __name__ == "__main__":
+    main()
