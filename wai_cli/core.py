@@ -2504,7 +2504,7 @@ Examples:
                 print_info("    When: End of work session")
                 print_info("")
                 print_info("  'Shipit'")
-                print_info("    Closeout + git commit + WAI-Point update")
+                print_info("    Closeout + git commit + WAI Point update")
                 print_info("    Same as: Closeout, then git add & commit")
                 print_info("    Creates: Commit with session summary and closed Lug IDs")
                 print_info("    When: End of session with changes to commit")
@@ -4555,7 +4555,7 @@ Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
     def _cmd_changelog(self, args):
         """Handle changelog command."""
         from .changelog import ChangelogGenerator
-        from .utils.input import print_success, print_info
+        from .utils.input import print_success, print_info, print_markdown
         
         print_info("Generating changelog from closed Lugs...")
         generator = ChangelogGenerator(Path(os.getcwd()))
@@ -4563,7 +4563,7 @@ Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
         
         if content:
             print_success("\nGenerated Content Preview:\n")
-            print(content)
+            print_markdown(content)
             if safe_confirm("Apply these changes to CHANGELOG.md?", default=True):
                 generator.update_changelog_file()
                 print_success("CHANGELOG.md updated.")

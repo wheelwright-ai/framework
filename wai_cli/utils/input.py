@@ -461,7 +461,51 @@ def safe_menu_choice(
         except KeyboardInterrupt:
             print()
             return None
-        except Exception:
-            # Fallback to regular input on any error
-            print()
             return None
+
+
+def print_json(data: object):
+    """
+    Print pretty-formatted JSON.
+    """
+    import json
+    try:
+        from rich import print as rprint
+        from rich.json import JSON
+        if isinstance(data, str):
+            rprint(JSON(data))
+        else:
+            rprint(data)
+    except ImportError:
+        # Fallback for when rich is not installed
+        if isinstance(data, str):
+            try:
+                parsed = json.loads(data)
+                print(json.dumps(parsed, indent=2))
+            except Exception:
+                print(data)
+        else:
+            print(json.dumps(data, indent=2, default=str))
+
+
+def print_markdown(text: str):
+    """
+    Print rendered markdown.
+    """
+    try:
+        from rich.console import Console
+        from rich.markdown import Markdown
+        console = Console()
+        console.print(Markdown(text))
+    except ImportError:
+        # Simple ANSI fallback
+        lines = text.split('\n')
+        for line in lines:
+            if line.startswith('#'):
+                # Bold headers
+                clean = line.lstrip('#').strip()
+                print(f"\033[1m{clean}\033[0m")
+                print("-" * len(clean))
+            else:
+                print(line)
+

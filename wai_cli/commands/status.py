@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Optional
 
 from ..hub import HubManager
+from ..utils.input import print_json
 
 
 def show_status(path: str = '.') -> None:
@@ -92,9 +93,9 @@ def show_status(path: str = '.') -> None:
         if primary:
             print(f"   Primary: {primary}")
         if win_paths:
-            print(f"   Windows: {win_paths}")
+            print("   Windows:"); print_json(win_paths)
         if wsl_paths:
-            print(f"   WSL:     {wsl_paths}")
+            print("   WSL:     "); print_json(wsl_paths)
 
     # Check signals
     signals_path = wai_dir / 'WAI-Signals.jsonl'
