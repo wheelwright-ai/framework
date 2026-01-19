@@ -204,19 +204,19 @@ class WheelwrightCLI:
         """Show the standard Wheelwright brand banner."""
         from .utils.input import print_info
         
-        # Enhanced ASCII Art Logo (ANSI Shadow / Block style)
+        # Full Width ASCII Art Logo (ANSI Shadow)
         logo = r"""
-██╗    ██╗██╗  ██╗███████╗███████╗██╗     
-██║    ██║██║  ██║██╔════╝██╔════╝██║     
-██║ █╗ ██║███████║█████╗  █████╗  ██║     
-██║███╗██║██╔══██║██╔══╝  ██╔══╝  ██║     
-╚███╔███╔╝██║  ██║███████╗███████╗███████╗
- ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
-WRIGHT.AI  >>  Build projects that roll forward"""
+██╗    ██╗██╗  ██╗███████╗███████╗██╗     ██╗    ██╗██████╗ ██╗ ██████╗ ██╗  ██╗████████╗
+██║    ██║██║  ██║██╔════╝██╔════╝██║     ██║    ██║██╔══██╗██║██╔════╝ ██║  ██║╚══██╔══╝
+██║ █╗ ██║███████║█████╗  █████╗  ██║     ██║ █╗ ██║██████╔╝██║██║  ███╗███████║   ██║   
+██║███╗██║██╔══██║██╔══╝  ██╔══╝  ██║     ██║███╗██║██╔══██╗██║██║   ██║██╔══██║   ██║   
+╚███╔███╔╝██║  ██║███████╗███████╗███████╗╚███╔███╔╝██║  ██║██║╚██████╔╝██║  ██║   ██║   
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   
+             >> Build projects that roll forward"""
         
-        print_info("\n" + "=" * 60)
+        print_info("\n" + "=" * 90) # Expanded for wider logo
         print_info(logo)
-        print_info("=" * 60)
+        print_info("=" * 90)
         print_info("")
 
     # Menu rendering utilities
