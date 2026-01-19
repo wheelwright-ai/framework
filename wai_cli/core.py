@@ -201,11 +201,12 @@ class WheelwrightCLI:
             state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
 
     def _show_brand_banner(self) -> None:
-        """Show the standard Wheelwright brand banner."""
+        """Show the standard Wheelwright brand banner (Rotating)."""
         from .utils.input import print_info
+        import random
         
-        # Full Width ASCII Art Logo (ANSI Shadow)
-        logo = r"""
+        # Variant 1: Wide Block (The "Maximized" look)
+        v1 = r"""
 ██╗    ██╗██╗  ██╗███████╗███████╗██╗     ██╗    ██╗██████╗ ██╗ ██████╗ ██╗  ██╗████████╗
 ██║    ██║██║  ██║██╔════╝██╔════╝██║     ██║    ██║██╔══██╗██║██╔════╝ ██║  ██║╚══██╔══╝
 ██║ █╗ ██║███████║█████╗  █████╗  ██║     ██║ █╗ ██║██████╔╝██║██║  ███╗███████║   ██║   
@@ -213,10 +214,33 @@ class WheelwrightCLI:
 ╚███╔███╔╝██║  ██║███████╗███████╗███████╗╚███╔███╔╝██║  ██║██║╚██████╔╝██║  ██║   ██║   
  ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   
              >> Build projects that roll forward"""
+
+        # Variant 2: Sleek Slant (Speed / Kinetic feel)
+        v2 = r"""
+   _       __ __                  __                 _       __    __    __ 
+  | |     / // /_   ___   ___    / /_      __ _____ (_)___ _/ /_  / /_  / / 
+  | | /| / // __ \ / _ \ / _ \  / /| | /| / // ___// // __ `// __ \/ __/ / /  
+  | |/ |/ // / / //  __//  __/ / / | |/ |/ // /   / // /_/ // / / / /_  /_/   
+  |__/|__/ \_\/_/ \___/ \___/ /_/  |__/|__/ \_/  /_/ \__, / \_/ /_/_\  (_)    
+                                                    /____/                    
+           >> Build projects that roll forward"""
+
+        # Variant 3: Compact Stack (Dense / Tech feel)
+        v3 = r"""
+ __        __ _               _                 _       _     _ 
+ \ \      / /| |__   ___  ___| |_      __ _ __ (_) __ _| |__ | |_ 
+  \ \ /\ / / | '_ \ / _ \/ _ \ \ \ /\ / / '__|| |/ _` | '_ \| __|
+   \ V  V /  | | | |  __/  __/ |\ V  V /| |   | | (_| | | | | |_ 
+    \_/\_/   |_| |_|\___|\___|_| \_/\_/ |_|   |_|\__, |_| |_|\__|
+                                                 |___/           
+       >> Build projects that roll forward"""
+
+        variants = [(v1, 90), (v2, 80), (v3, 60)]
+        logo, width = random.choice(variants)
         
-        print_info("\n" + "=" * 90) # Expanded for wider logo
+        print_info("\n" + "=" * width)
         print_info(logo)
-        print_info("=" * 90)
+        print_info("=" * width)
         print_info("")
 
     # Menu rendering utilities
