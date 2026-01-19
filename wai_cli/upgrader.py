@@ -203,6 +203,8 @@ class SpokeUpgrader:
         """
         Log upgrade decision to WAI-State.json.
 
+        Includes deduplication to prevent spam from repeated upgrades.
+
         Args:
             wai_dir: Path to WAI-Spoke directory
             from_version: Version upgraded from
@@ -217,17 +219,36 @@ class SpokeUpgrader:
             with open(state_file, encoding='utf-8') as f:
                 state = json.load(f)
 
-            # Add to decisions array
-            decision = {
-                "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                "decision": f"Auto-upgraded spoke structure from v{from_version} to v{to_version}",
-                "rationale": f"Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-                "impact": 7,
-                "by": "WAI Auto-Upgrade"
-            }
+            decision_text = f"Auto-upgraded spoke structure from v{from_version} to v{to_version}"
+            decision_by = "WAI Auto-Upgrade"
+            today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
+            # Check for existing duplicate (same decision, by, within last 30 days)
             if 'decisions' not in state:
                 state['decisions'] = []
+            
+            # Look for duplicates in recent decisions
+            dominated = False
+            dominated_date = datetime.now(timezone.utc)
+            for existing in state['decisions']:
+                if (existing.get('decision') == decision_text and 
+                    existing.get('by') == decision_by):
+                    # Already logged this upgrade - skip
+                    dominated = True
+                    break
+            
+            if dominated:
+                # Already have this decision logged, skip adding duplicate
+                return
+
+            # Add new decision
+            decision = {
+                "date": today,
+                "decision": decision_text,
+                "rationale": f"Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+                "impact": 7,
+                "by": decision_by
+            }
 
             state['decisions'].append(decision)
 

@@ -84,3 +84,8 @@ AGENTS.md
 # Benchmark results (keep some for history, ignore bulk)
 # Commit specific benchmark runs manually with --tag
 benchmarks/*.json
+benchmarks/benchmark-*.json
+
+# Runtime artifacts
+test_results.txt
+benchmark_epic008.json

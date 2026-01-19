@@ -197,13 +197,13 @@ def safe_confirm(
 
     if default is True:
         # Yes is default (Enter), No is action
-        hint = f" ([Yes] / {COLOR}N{RESET}o)"
+        hint = f" ([Yes] / {COLOR}No{RESET})"
     elif default is False:
         # No is default (Enter), Yes is action
-        hint = f" ({COLOR}Y{RESET}es / [No])"
+        hint = f" ({COLOR}Yes{RESET} / [No])"
     else:
         # No default, both are actions
-        hint = f" ({COLOR}Y{RESET}es / {COLOR}N{RESET}o)"
+        hint = f" ({COLOR}Yes{RESET} / {COLOR}No{RESET})"
 
     display_prompt = prompt.rstrip() + hint + ": "
 

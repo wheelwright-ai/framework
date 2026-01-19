@@ -42,8 +42,8 @@ PROFILES = {
 # Default profile for quick runs
 DEFAULT_PROFILE = "fast"
 
-BENCHMARK_DIR = Path(__file__).parent / "benchmarks"
-SPOKE_DIR = Path(__file__).parent / "WAI-Spoke"
+BENCHMARK_DIR = Path(__file__).parent.parent.parent / "benchmarks"
+SPOKE_DIR = Path(__file__).parent.parent.parent / "WAI-Spoke"
 
 # Mode identifiers
 MODE_WAI = "wai"          # With Wheelwright optimizations
@@ -424,6 +424,152 @@ def load_previous_result(mode: str = MODE_WAI) -> Optional[BenchmarkResult]:
 def load_baseline_result() -> Optional[BenchmarkResult]:
     """Load the baseline (no-WAI) result for comparison."""
     return load_previous_result(MODE_BASELINE)
+
+
+def load_baseline() -> Optional[BenchmarkResult]:
+    """Load the most recent benchmark result from benchmarks/ as the baseline for regression detection."""
+    BENCHMARK_DIR.mkdir(exist_ok=True)
+    results = sorted(BENCHMARK_DIR.glob("benchmark-*.json"), reverse=True)
+    
+    if results:
+        try:
+            data = json.loads(results[0].read_text())
+            return BenchmarkResult(**data)
+        except Exception:
+            pass
+    return None
+
+
+def save_baseline(result: BenchmarkResult) -> Path:
+    """Save current run as new baseline for regression detection."""
+    BENCHMARK_DIR.mkdir(exist_ok=True)
+    ts_clean = result.timestamp.replace(':', '-').replace('T', '_')[:19]
+    baseline_path = BENCHMARK_DIR / f"benchmark-{result.mode}-{ts_clean}.json"
+    baseline_path.write_text(json.dumps(asdict(result), indent=2))
+    return baseline_path
+
+
+def compare_to_baseline(current: BenchmarkResult, baseline: BenchmarkResult, threshold: float = 20.0) -> dict:
+    """
+    Compare current run to baseline and detect regressions/improvements.
+    
+    Args:
+        current: Current benchmark result
+        baseline: Baseline benchmark result to compare against
+        threshold: Percentage threshold for flagging regressions/improvements (default: 20%)
+    
+    Returns:
+        dict with comparison results including regressions, improvements, and summary
+    """
+    comparison = {
+        "baseline_timestamp": baseline.timestamp,
+        "current_timestamp": current.timestamp,
+        "threshold_percent": threshold,
+        "regressions": [],
+        "improvements": [],
+        "unchanged": [],
+        "summary": {},
+    }
+    
+    def check_metric(name: str, current_val: float, baseline_val: float, lower_is_better: bool = True):
+        if baseline_val == 0:
+            return
+        
+        delta_pct = ((current_val - baseline_val) / baseline_val) * 100
+        
+        if lower_is_better:
+            is_regression = delta_pct > threshold
+            is_improvement = delta_pct < -threshold
+        else:
+            is_regression = delta_pct < -threshold
+            is_improvement = delta_pct > threshold
+        
+        result = {
+            "metric": name,
+            "baseline": baseline_val,
+            "current": current_val,
+            "delta_percent": delta_pct,
+        }
+        
+        if is_regression:
+            comparison["regressions"].append(result)
+        elif is_improvement:
+            comparison["improvements"].append(result)
+        else:
+            comparison["unchanged"].append(result)
+    
+    check_metric("overall_score", current.overall_score, baseline.overall_score, lower_is_better=False)
+    check_metric("file_size_score", current.file_size_score, baseline.file_size_score, lower_is_better=False)
+    check_metric("speed_score", current.speed_score, baseline.speed_score, lower_is_better=False)
+    check_metric("token_efficiency_score", current.token_efficiency_score, baseline.token_efficiency_score, lower_is_better=False)
+    
+    for profile_name in current.profiles:
+        if profile_name not in baseline.profiles:
+            continue
+        
+        curr_p = current.profiles[profile_name]
+        base_p = baseline.profiles[profile_name]
+        
+        check_metric(f"{profile_name}/avg_query_time_ms", curr_p["avg_query_time_ms"], base_p["avg_query_time_ms"], lower_is_better=True)
+        check_metric(f"{profile_name}/avg_update_time_ms", curr_p["avg_update_time_ms"], base_p["avg_update_time_ms"], lower_is_better=True)
+        check_metric(f"{profile_name}/avg_closeout_time_ms", curr_p["avg_closeout_time_ms"], base_p["avg_closeout_time_ms"], lower_is_better=True)
+        check_metric(f"{profile_name}/token_savings_percent", curr_p["token_savings_percent"], base_p["token_savings_percent"], lower_is_better=False)
+    
+    comparison["summary"] = {
+        "total_regressions": len(comparison["regressions"]),
+        "total_improvements": len(comparison["improvements"]),
+        "has_regressions": len(comparison["regressions"]) > 0,
+        "has_improvements": len(comparison["improvements"]) > 0,
+    }
+    
+    return comparison
+
+
+def print_comparison_report(comparison: dict):
+    """Print a simple report showing regressions and improvements."""
+    print()
+    print(color("╔══════════════════════════════════════════════════════════════════════════════╗", "cyan"))
+    print(color("║", "cyan") + color("                   PERFORMANCE REGRESSION REPORT                             ", "bold") + color("║", "cyan"))
+    print(color("╚══════════════════════════════════════════════════════════════════════════════╝", "cyan"))
+    print()
+    
+    print(f"  Baseline: {comparison['baseline_timestamp']}")
+    print(f"  Current:  {comparison['current_timestamp']}")
+    print(f"  Threshold: >{comparison['threshold_percent']:.0f}% change")
+    print()
+    
+    if comparison["regressions"]:
+        print(color("  ⚠️  REGRESSIONS DETECTED", "red"))
+        print(color("  " + "─" * 70, "dim"))
+        for reg in comparison["regressions"]:
+            delta = reg["delta_percent"]
+            arrow = "↑" if delta > 0 else "↓"
+            print(color(f"  ❌ {reg['metric']:<35} {reg['baseline']:>10.2f} → {reg['current']:>10.2f}  ({arrow}{abs(delta):.1f}%)", "red"))
+        print()
+    
+    if comparison["improvements"]:
+        print(color("  🚀 IMPROVEMENTS", "green"))
+        print(color("  " + "─" * 70, "dim"))
+        for imp in comparison["improvements"]:
+            delta = imp["delta_percent"]
+            arrow = "↑" if delta > 0 else "↓"
+            print(color(f"  ✓ {imp['metric']:<35} {imp['baseline']:>10.2f} → {imp['current']:>10.2f}  ({arrow}{abs(delta):.1f}%)", "green"))
+        print()
+    
+    if not comparison["regressions"] and not comparison["improvements"]:
+        print(color("  ✓ No significant changes detected (within ±{:.0f}% threshold)".format(comparison['threshold_percent']), "green"))
+        print()
+    
+    summary = comparison["summary"]
+    print(color("  Summary", "bold"))
+    print(color("  " + "─" * 70, "dim"))
+    print(f"  Regressions:  {summary['total_regressions']}")
+    print(f"  Improvements: {summary['total_improvements']}")
+    
+    if summary["has_regressions"]:
+        print()
+        print(color("  ⚠️  Performance regressions detected! Review before merging.", "yellow"))
+    print()
 
 
 def generate_callouts(current: BenchmarkResult, previous: Optional[BenchmarkResult]) -> list[str]:
@@ -902,6 +1048,33 @@ def show_comparison():
     print()
 
 
+def run_regression_check():
+    """Run benchmark and compare to baseline for regression detection."""
+    baseline = load_baseline()
+    
+    if not baseline:
+        print()
+        print(color("  ⚠️  No baseline found for regression detection", "yellow"))
+        print("     Running first benchmark to establish baseline...")
+        print()
+        result = run_benchmark(save=True, tag=False, mode=MODE_WAI)
+        print(color("  ✓ Baseline established. Run --regression again to compare.", "green"))
+        print()
+        return result
+    
+    print()
+    print(color("  Running benchmark for regression detection...", "bold"))
+    print(f"  Comparing against: {baseline.timestamp}")
+    print()
+    
+    result = run_benchmark(save=True, tag=False, mode=MODE_WAI)
+    
+    comparison = compare_to_baseline(result, baseline)
+    print_comparison_report(comparison)
+    
+    return result, comparison
+
+
 def main():
     """Main entry point."""
     import argparse
@@ -914,6 +1087,7 @@ Examples:
   python benchmark.py              Run WAI benchmark and save results
   python benchmark.py --baseline   Run baseline (no-WAI) benchmark
   python benchmark.py --compare    Compare WAI vs Baseline performance
+  python benchmark.py --regression Run benchmark and detect regressions (>20% slower)
   python benchmark.py --verbose    Explain benchmark methodology
   python benchmark.py --tag        Run benchmark and create git tag
   python benchmark.py --history    Show benchmark history
@@ -922,6 +1096,7 @@ Examples:
     )
     parser.add_argument("--baseline", action="store_true", help="Run baseline (no-WAI) benchmark")
     parser.add_argument("--compare", action="store_true", help="Compare WAI vs Baseline results")
+    parser.add_argument("--regression", action="store_true", help="Run benchmark and detect regressions (>20%% change)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Explain benchmark methodology")
     parser.add_argument("--tag", action="store_true", help="Create git tag for this run")
     parser.add_argument("--history", action="store_true", help="Show benchmark history")
@@ -935,6 +1110,8 @@ Examples:
         show_history()
     elif args.compare:
         show_comparison()
+    elif args.regression:
+        run_regression_check()
     else:
         mode = MODE_BASELINE if args.baseline else MODE_WAI
         run_benchmark(save=not args.no_save, tag=args.tag, mode=mode)

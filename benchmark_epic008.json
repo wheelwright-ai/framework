@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-01-16T23:26:54.599576",
+  "timestamp": "2026-01-17T18:41:39.255824",
   "scenario": {
     "total_lugs": 100,
     "open_lugs": 50,
@@ -11,9 +11,9 @@
     "total_kb": 40.1
   },
   "performance": {
-    "load_time_ms": 0.76,
-    "query_open_time_ms": 0.0035,
-    "query_closed_time_ms": 0.6061
+    "load_time_ms": 1.23,
+    "query_open_time_ms": 0.0042,
+    "query_closed_time_ms": 3.9064
   },
   "token_estimates": {
     "active_tokens": 6733,

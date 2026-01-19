@@ -131,8 +131,8 @@ class TestJSONLStorage:
         assert lug1.id in manager2.lugs
         assert lug2.id in manager2.lugs
     
-    def test_delta_append_format(self, lug_manager, temp_spoke_dir):
-        """Verify delta updates append correctly (new line per update, not full Lug rewrite)."""
+    def test_delta_update_in_place(self, lug_manager, temp_spoke_dir):
+        """Verify delta updates modify in-place (same line count, updated value)."""
         lug = lug_manager.create_lug(title="Delta Test", value=5)
         
         lugs_file = temp_spoke_dir / 'lugs.jsonl'
@@ -145,39 +145,36 @@ class TestJSONLStorage:
         with open(lugs_file, 'r') as f:
             lines_after = f.readlines()
        
-        # Should have added a new line (delta), not replaced
-        assert len(lines_after) == len(lines_before) + 1
+        # In-place update: same line count
+        assert len(lines_after) == len(lines_before)
         
-        # Last line should be the update (delta)
-        delta_line = json.loads(lines_after[-1])
-        assert 'v' in delta_line or 'value' in delta_line  # Contains value update
-        assert delta_line.get('v') == 10 or delta_line.get('value') == 10
+        # The line should contain the updated value
+        updated_line = json.loads(lines_after[0])
+        assert updated_line.get('v') == 10 or updated_line.get('value') == 10
     
     def test_jsonl_line_ordering(self, lug_manager, temp_spoke_dir):
-        """Verify order preservation (create then updates)."""
+        """Verify order preservation with in-place updates."""
         lug1 = lug_manager.create_lug(title="First Lug")
         lug2 = lug_manager.create_lug(title="Second Lug")
         
-        # Update first lug
+        # Update first lug (in-place, not appended)
         lug_manager.update_lug(lug1.id, status="in_progress")
         
         lugs_file = temp_spoke_dir / 'lugs.jsonl'
         with open(lugs_file, 'r') as f:
             lines = f.readlines()
         
-        # Should be: create lug1, create lug2, update lug1
-        assert len(lines) == 3
+        # In-place updates: still 2 lines (one per lug)
+        assert len(lines) == 2
         
         line1 = json.loads(lines[0])
         line2 = json.loads(lines[1])
-        line3 = json.loads(lines[2])
         
-        # First line should be lug1 creation
+        # First line should be lug1 (now updated)
         assert line1.get('t') == "First Lug" or line1.get('title') == "First Lug"
-        # Second line should be lug2 creation
+        assert line1.get('s') == "in_progress" or line1.get('status') == "in_progress"
+        # Second line should be lug2
         assert line2.get('t') == "Second Lug" or line2.get('title') == "Second Lug"
-        # Third line should be lug1 update (delta)
-        assert (line3.get('i') == lug1.id or line3.get('id') == lug1.id)
 
 
 
@@ -557,18 +554,22 @@ class TestEnhancedPolicies:
     def test_is_significant(self, lug_manager):
         """Test significance check."""
         # Significant: high pri, large impact
+        # Significant: high priority OR large impact OR value >= 7
         lug1 = lug_manager.create_lug(title="Sig 1", priority="high", impact="large", value=5)
-        # Significant: high pri, value >= 7
         lug2 = lug_manager.create_lug(title="Sig 2", priority="high", impact="small", value=8)
-        # Not significant: medium pri
-        lug3 = lug_manager.create_lug(title="Not Sig 1", priority="medium", impact="large", value=9)
-        # Not significant: high pri, but small impact and value < 7
-        lug4 = lug_manager.create_lug(title="Not Sig 2", priority="high", impact="small", value=5)
+        lug3 = lug_manager.create_lug(title="Sig 3", priority="medium", impact="large", value=5)
+        lug4 = lug_manager.create_lug(title="Sig 4", priority="low", impact="small", value=9)
         
-        assert lug_manager.is_significant(lug1) is True
-        assert lug_manager.is_significant(lug2) is True
-        assert lug_manager.is_significant(lug3) is False
-        assert lug_manager.is_significant(lug4) is False
+        # Not significant: low priority AND small impact AND value < 7
+        lug5 = lug_manager.create_lug(title="Not Sig 1", priority="medium", impact="medium", value=5)
+        lug6 = lug_manager.create_lug(title="Not Sig 2", priority="low", impact="small", value=3)
+        
+        assert lug_manager.is_significant(lug1) is True  # high priority + large impact
+        assert lug_manager.is_significant(lug2) is True  # high priority + value >= 7
+        assert lug_manager.is_significant(lug3) is True  # large impact
+        assert lug_manager.is_significant(lug4) is True  # value >= 7
+        assert lug_manager.is_significant(lug5) is False  # medium/medium/5
+        assert lug_manager.is_significant(lug6) is False  # low/small/3
         
     def test_add_policy_type(self, lug_manager, temp_spoke_dir):
         """Test dynamic policy type addition."""

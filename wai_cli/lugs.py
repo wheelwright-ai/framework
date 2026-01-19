@@ -374,8 +374,8 @@ class LugManager:
         
         lug.updated_at = datetime.now().isoformat()
         
-        # Rewrite entire file (TODO: optimize with delta updates)
-        self._rewrite_lugs_file()
+        # Delta update - only update this lug in file
+        self._update_lug_in_file(lug.id)
         
         return lug
     
@@ -418,9 +418,10 @@ class LugManager:
         # Move to closed archive
         self._atomic_append(self.closed_file, lug.to_minified())
         
-        # Remove from active
-        del self.lugs[lug.id]
-        self._rewrite_lugs_file()
+        # Remove from active using delta removal
+        lug_id = lug.id
+        del self.lugs[lug_id]
+        self._remove_lug_from_file(lug_id)
         
         return lug
     
@@ -447,10 +448,17 @@ class LugManager:
         lug.updated_at = datetime.now().isoformat()
         dep.updated_at = lug.updated_at
         
-        self._rewrite_lugs_file()
+        # Delta updates for both modified lugs
+        self._update_lug_in_file(lug.id)
+        self._update_lug_in_file(dep.id)
     
-    def get_dependency_chain(self, lug_id_prefix: str) -> List[Lug]:
-        """Get all dependencies recursively."""
+    def get_dependency_chain(self, lug_id_prefix: str, max_depth: int = 100) -> List[Lug]:
+        """Get all dependencies recursively.
+        
+        Args:
+            lug_id_prefix: ID prefix of starting lug
+            max_depth: Maximum recursion depth (prevents infinite loops)
+        """
         lug = self.get_lug(lug_id_prefix)
         if not lug:
             return []
@@ -458,8 +466,8 @@ class LugManager:
         visited: Set[str] = set()
         chain: List[Lug] = []
         
-        def traverse(current_lug: Lug):
-            if current_lug.id in visited:
+        def traverse(current_lug: Lug, depth: int = 0):
+            if current_lug.id in visited or depth > max_depth:
                 return
             visited.add(current_lug.id)
             chain.append(current_lug)
@@ -467,7 +475,7 @@ class LugManager:
             for dep_id in current_lug.deps:
                 dep_lug = self.get_lug(dep_id)
                 if dep_lug:
-                    traverse(dep_lug)
+                    traverse(dep_lug, depth + 1)
         
         traverse(lug)
         return chain
@@ -534,8 +542,67 @@ class LugManager:
         
         return lugs
     
-    def _rewrite_lugs_file(self):
-        """Rewrite entire lugs.jsonl with current state."""
+    def _update_lug_in_file(self, lug_id: str):
+        """
+        Update a single lug in-place using a temp file for atomicity.
+        O(n) read but only for the specific update, not full rewrite.
+        """
+        if not self.lugs_file.exists():
+            return
+        
+        lug = self.lugs.get(lug_id)
+        if not lug:
+            return
+        
+        temp_file = self.lugs_file.with_suffix('.jsonl.tmp')
+        found = False
+        
+        with open(self.lugs_file, 'r') as src, open(temp_file, 'w') as dst:
+            for line in src:
+                if not line.strip():
+                    continue
+                try:
+                    data = json.loads(line)
+                    line_id = data.get('i') or data.get('id')
+                    if line_id == lug_id:
+                        dst.write(json.dumps(lug.to_minified()) + '\n')
+                        found = True
+                    else:
+                        dst.write(line)
+                except json.JSONDecodeError:
+                    dst.write(line)
+        
+        if found:
+            temp_file.replace(self.lugs_file)
+        else:
+            temp_file.unlink()
+            self._atomic_append(self.lugs_file, lug.to_minified())
+    
+    def _remove_lug_from_file(self, lug_id: str):
+        """
+        Remove a single lug from file using a temp file for atomicity.
+        """
+        if not self.lugs_file.exists():
+            return
+        
+        temp_file = self.lugs_file.with_suffix('.jsonl.tmp')
+        
+        with open(self.lugs_file, 'r') as src, open(temp_file, 'w') as dst:
+            for line in src:
+                if not line.strip():
+                    continue
+                try:
+                    data = json.loads(line)
+                    line_id = data.get('i') or data.get('id')
+                    if line_id != lug_id:
+                        dst.write(line)
+                except json.JSONDecodeError:
+                    dst.write(line)
+        
+        temp_file.replace(self.lugs_file)
+    
+    def _compact_lugs_file(self):
+        """Rewrite entire lugs.jsonl with current state (compaction/fallback)."""
         if self.lugs_file.exists():
             self.lugs_file.unlink()
         
@@ -643,8 +710,13 @@ class LugManager:
     def get_session_lugs(self, session_id: str) -> List[Lug]:
         """
         Get all Lugs associated with a specific session.
+        
+        Checks both lug.session_id and lug.extras['session_id'] for compatibility.
         """
-        return [l for l in self.lugs.values() if l.extras.get('session_id') == session_id]
+        return [
+            l for l in self.lugs.values() 
+            if l.session_id == session_id or l.extras.get('session_id') == session_id
+        ]
 
     def infer_lugs_from_git(self, repo: Any) -> List[Dict[str, Any]]:
         """

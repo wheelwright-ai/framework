@@ -10,7 +10,7 @@ import json
 import os
 import platform
 from pathlib import Path
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, Tuple, List
 import subprocess
 from git import Repo, exc as git_exc
 
@@ -199,6 +199,68 @@ class WheelwrightCLI:
 
         if changed:
             state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
+
+    # Menu rendering utilities
+    def _render_menu_header(self, title: str, breadcrumb: Optional[List[str]] = None, status: Optional[str] = None):
+        """
+        Render consistent menu header with breadcrumb and optional status.
+        
+        Args:
+            title: Menu title (used if no breadcrumb)
+            breadcrumb: List of navigation path elements, e.g., ["Main Menu", "Hub"]
+            status: Optional status line to show below title
+        """
+        from .utils.input import print_info
+        
+        # Build breadcrumb text
+        if breadcrumb and len(breadcrumb) > 1:
+            breadcrumb_text = " > ".join(breadcrumb)
+        else:
+            breadcrumb_text = title
+        
+        # Render header
+        print_info("\n" + "=" * 60)
+        print_info(f"           {breadcrumb_text}")
+        if status:
+            print_info(f"           {status}")
+        print_info("=" * 60)
+        print_info("")
+
+    def _cleanup_deprecated_files(self, spoke_path: Path) -> List[str]:
+        """
+        Clean up deprecated files during teach operation.
+        Archives files that have been replaced by the lug system.
+        
+        Args:
+            spoke_path: Path to the spoke directory
+            
+        Returns:
+            List of cleaned filenames
+        """
+        from .utils.input import print_info
+        
+        deprecated_files = [
+            'WAI-Backlog.md',              # Replaced by lugs.jsonl
+            'WAI-Implementation-Summary.md', # Replaced by lugs-closed.jsonl
+        ]
+        
+        wai_spoke = spoke_path / 'WAI-Spoke'
+        if not wai_spoke.exists():
+            return []
+        
+        cleaned = []
+        for filename in deprecated_files:
+            file_path = wai_spoke / filename
+            if file_path.exists():
+                # Archive before deleting (allows recovery if needed)
+                archive_path = wai_spoke / f'.archived-{filename}'
+                try:
+                    file_path.rename(archive_path)
+                    cleaned.append(filename)
+                except Exception:
+                    pass  # Ignore errors, continue cleanup
+        
+        return cleaned
 
     def _confirm_exit(self) -> bool:
         """Confirm exit with user."""
@@ -496,7 +558,14 @@ Examples:
             except Exception:
                 pass
 
+        # Branded intro banner
         print_info("\n" + "=" * 60)
+        print_info("                 🛞 Wheelwright.AI")
+        print_info("          Build projects that roll forward")
+        print_info("=" * 60)
+        print_info("")
+        
+        print_info("=" * 60)
         print_info("             Spoke Analysis")
         print_info("=" * 60)
         print_info(f"  Project: {project_name}")
@@ -508,10 +577,6 @@ Examples:
         else:
             print_warning("  Hub:     Not configured")
 
-        cli_path = spoke_root / "WAI"
-        if not cli_path.exists():
-            print_warning("  CLI:     WAI not found in project root")
-
         if requires_review:
             reason_text = f" ({review_reason})" if review_reason else ""
             print_warning(f"  Review:  Required{reason_text}")
@@ -522,7 +587,8 @@ Examples:
             print_info("   • Review prior changes before continuing")
         if not hub_path or (hub_path and not Path(hub_path).exists()):
             print_info("   • Set a valid hub path or run: WAI hub create")
-        print_info("   • Run status/sync/closeout as needed from the Actions menu")
+        else:
+            print_info("   • Run 'WAI teach' if hub knowledge needs distribution")
         print_info("")
 
     def _show_framework_menu(self, framework_path: Path):
@@ -576,65 +642,93 @@ Examples:
                             import json
                             from datetime import datetime
                             profile = json.loads(hub_profile.read_text())
-                            last_learn = profile.get('last_learn_at')
-                            if last_learn:
-                                learn_date = datetime.fromisoformat(last_learn.replace('Z', '+00:00'))
-                                days_ago = (datetime.now() - learn_date).days
+                            
+                            # Get both learn and teach timestamps
+                            last_learn = profile.get('last_learn_run')
+                            last_teach = profile.get('last_teach_run')
+                            
+                            # Find most recent activity
+                            recent_activity = None
+                            activity_type = None
+                            
+                            for timestamp, label in [(last_learn, 'learn'), (last_teach, 'teach')]:
+                                if timestamp and timestamp != 'never':
+                                    try:
+                                        dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                                        if recent_activity is None or dt > recent_activity:
+                                            recent_activity = dt
+                                            activity_type = label
+                                    except:
+                                        pass
+                            
+                            if recent_activity:
+                                days_ago = (datetime.now() - recent_activity).days
                                 if days_ago == 0:
-                                    last_learn_text = " │ Last learn: Today"
+                                    last_learn_text = f" │ Last {activity_type}: Today"
                                 elif days_ago == 1:
-                                    last_learn_text = " │ Last learn: Yesterday"
+                                    last_learn_text = f" │ Last {activity_type}: Yesterday"
                                 else:
-                                    last_learn_text = f" │ Last learn: {days_ago}d ago"
+                                    last_learn_text = f" │ Last {activity_type}: {days_ago}d ago"
                             else:
-                                last_learn_text = " │ Last learn: Never"
+                                last_learn_text = " │ No hub activity yet"
                         except Exception:
                             pass
 
-                print_info("\n" + "=" * 60)
-                print_info("                Main Menu")
-                print_info(last_learn_text if last_learn_text else "")
-                print_info("=" * 60)
+                # Render improved menu
+                self._render_menu_header("Wheelwright AI", status=last_learn_text.strip(" │") if last_learn_text else None)
+                
+                print_info("  WORKSPACE")
+                print_info("  1/h - 🏢 Hub               Manage shared knowledge")
+                print_info("  2/s - 🎡 Spokes            View registered projects")
+                print_info("  3/l - 📦 Lugs              Track work & dependencies")
                 print_info("")
-                print_info("  1/h - 🏢 Hub          Central knowledge repository")
-                print_info("  2/s - 🎡 Spokes       Registered projects")
-                print_info("  3/k - 🧠 Knowledge    Review learnings & insights")
-                print_info("  4/t - 📊 Statistics   Usage metrics & recommendations")
-                print_info("  5/w - 🛞 Wheelwright  Evolution, features, integrations, testing")
-                print_info("  6/? - ❓ Help         Getting started & commands")
+                print_info("  INSIGHTS")
+                print_info("  4/k - 🧠 Knowledge         Browse learnings")
+                print_info("  5/t - 📊 Stats             View metrics")
                 print_info("")
-                print_info("  v   - ℹ️Version      Show version info")
+                print_info("  SYSTEM")
+                print_info("  6/w - 🛞 About             Framework info & testing")
+                print_info("  7/? - ❓ Help              Commands & guides")
+                print_info("")
+                print_info("  b   - ⬅️  Back to system")
                 print_info("  q   - 👋 Quit")
                 print_info("")
 
                 options = [
                     ('1', 'h', '🏢 Hub', 'hub'),
                     ('2', 's', '🎡 Spokes', 'spokes'),
-                    ('3', 'k', '🧠 Knowledge', 'knowledge'),
-                    ('4', 't', '📊 Statistics', 'statistics'),
-                    ('5', 'w', '🛞 Wheelwright', 'wheelwright'),
-                    ('6', '?', '❓ Help', 'help'),
-                    ('v', 'v', 'ℹ️Version', 'version'),
+                    ('3', 'l', '📦 Lugs', 'lugs'),
+                    ('4', 'k', '🧠 Knowledge', 'knowledge'),
+                    ('5', 't', '📊 Stats', 'statistics'),
+                    ('6', 'w', '🛞 About', 'about'),
+                    ('7', '?', '❓ Help', 'help'),
+                    ('b', 'b', '⬅️ Back', 'back'),
                     ('q', 'q', '👋 Quit', 'quit')
                 ]
 
-                choice = safe_menu_choice("Select option", options, default='2')
+                choice = safe_menu_choice("Select", options, default='1')
 
                 if choice == "hub":
                     self._show_hub_actions_menu()
                 elif choice == "spokes":
                     self._show_spokes_menu(framework_path)
+                elif choice == "lugs":
+                    # Show lugs list
+                    from .commands.lug import lug_command_list
+                    args = type('Args', (), {'spoke_path': str(framework_path), 'status': None, 'type': None, 'priority': None})()
+                    lug_command_list(args)
+                    input("\n  Press Enter to continue...")
                 elif choice == "knowledge":
                     self._show_knowledge_base_menu()
                 elif choice == "statistics":
                     self._show_statistics_menu()
-                elif choice == "wheelwright":
+                elif choice == "about":
                     self._show_wheelwright_menu(framework_path)
                 elif choice == "help":
                     self._show_help_menu()
-                elif choice == "version":
-                    self._cmd_version()
-                elif choice == "quit" or choice is None:
+                elif choice == "back" or choice is None:
+                    return
+                elif choice == "quit":
                     if self._confirm_exit():
                         import sys
                         print_info("\n  👋 Goodbye!")
@@ -802,6 +896,7 @@ Examples:
             print_info("  2/f - 🧩 Main Features   What Wheelwright delivers")
             print_info("  3/i - 🔌 Integrations    Status + auto-regenerate")
             print_info("  4/t - 🧪 Testing Results Run tests and view results")
+            print_info("  5/b - 📊 Benchmarks      View benchmark logs & performance")
             print_info("")
             print_info("  b   - ⬅️Back")
             print_info("  q   - 👋 Quit")
@@ -812,6 +907,7 @@ Examples:
                 ('2', 'f', '🧩 Main Features', 'features'),
                 ('3', 'i', '🔌 Integrations', 'integrations'),
                 ('4', 't', '🧪 Testing Results', 'testing'),
+                ('5', 'b', '📊 Benchmarks', 'benchmarks'),
                 ('b', 'b', '⬅️Back', 'back'),
                 ('q', 'q', '👋 Quit', 'quit')
             ]
@@ -826,6 +922,8 @@ Examples:
                 self._show_integrations_menu(spoke_path)
             elif choice == "testing":
                 self._show_testing_menu(spoke_path)
+            elif choice == "benchmarks":
+                self._show_benchmark_logs(spoke_path)
             elif choice == "quit":
                 if self._confirm_exit():
                     import sys
@@ -1082,6 +1180,36 @@ Examples:
             test = entry.get("test", "Unknown")
             status = entry.get("status", "unknown")
             print_info(f"  - {ts} | {test} | {status}")
+
+    def _show_benchmark_logs(self, spoke_path: Path):
+        """Show benchmark execution logs."""
+        benchmark_log = spoke_path / 'WAI-Spoke' / 'benchmark-log.txt'
+        
+        if not benchmark_log.exists():
+            print_info("\n  No benchmark logs found.")
+            print_info("  Run benchmarks first: Wheelwright Menu → Testing → Run Benchmarks\n")
+            input("  Press Enter to continue...")
+            return
+        
+        # Show last 100 lines of log
+        try:
+            with open(benchmark_log, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            
+            print_info("\n" + "=" * 60)
+            print_info("         Benchmark Logs (Last 100 Lines)")
+            print_info("=" * 60 + "\n")
+            
+            for line in lines[-100:]:
+                print_info(f"  {line.rstrip()}")
+            
+            print_info("\n" + "=" * 60)
+            print_info(f"  Full log: {benchmark_log}")
+            print_info("=" * 60)
+            input("\n  Press Enter to continue...")
+        except Exception as e:
+            print_error(f"  Failed to read benchmark log: {e}")
+            input("\n  Press Enter to continue...")
 
     def _show_spokes_menu(self, framework_path: Path):
         """Show Spokes menu with registry listing and management."""
@@ -1447,72 +1575,127 @@ Examples:
     def _show_spoke_actions_menu(self, spoke_path: Path):
         """Show actions for Spoke object."""
         while True:
-            foundation_complete = False
+            # Get status info for header
+            last_modified = "Unknown"
+            wai_uptodate = True
             try:
                 state_file = spoke_path / 'WAI-Spoke' / 'WAI-State.json'
                 if state_file.exists():
                     state = json.loads(state_file.read_text())
                     foundation_complete = bool(state.get('_project_foundation', {}).get('completed'))
+                    session_state = state.get('_session_state', {})
+                    last_modified = session_state.get('last_modified_by', 'Unknown')
             except Exception:
-                foundation_complete = False
+                pass
 
-            recommended_action = 's'
-            recommended_label = "View status"
+            # Render with status header
+            project_name = spoke_path.name
+            status_line = f"Modified by: {last_modified}"
+            if not wai_uptodate:
+                status_line += " | ⚠️  Run Sync to update"
+            
+            self._render_menu_header("WAI", breadcrumb=["WAI", project_name], status=status_line)
+            
+            print_info("  PROJECT")
+            print_info("  1/s - ℹ️  Status          Project info & review")
+            print_info("  2/a - ℹ️  About            View project details")
+            print_info("")
+            print_info("  MAINTENANCE")
+            print_info("  3/y - 🔄 Sync             Update WAI files & process seed")
+            print_info("  4/n - 🧭 Analysis        Check project readiness")
+            print_info("")
             if not foundation_complete:
-                recommended_action = 'f'
-                recommended_label = "Complete foundation"
-
-            print_info("\n" + "=" * 60)
-            print_info("           This Project Actions")
-            print_info("=" * 60)
-            print_info("")
-            print_info("  Recommended next step")
-            print_info("")
-            print_info(f"  f - 🧱 Foundation      {recommended_label}")
-            print_info("")
-            print_info("  Actions you can take")
-            print_info("")
-            print_info("  1/s - ℹ️Status          View spoke status & foundation")
-            print_info("  2/y - 🔄 Upgrade         Update spoke structure version")
-            print_info("  3/c - 📝 Closeout        Generate session closeout")
-            print_info("  4/o - 📄 Output Context  Export for LLM paste")
-            print_info("  5/u - 🔧 Absorbe         Process seed folders & archive sprawl")
-            print_info("  6/a - 🧭 Analysis        Project analysis & readiness")
-            print_info("  7/r - 🔎 Project Review  Snapshot existing project context")
-            print_info("  Note: Hub Learn/Teach live in Main Menu → Hub")
-            print_info("  b   - ⬅️Back")
+                print_info("  f   - 🧱 Foundation      Complete setup")
+            if self._is_framework_directory(spoke_path):
+                print_info("  h   - 🏢 Hub             Access hub operations")
+            print_info("  b   - ⬅️  Back           Return to main menu")
+            print_info("  q   - 👋 Quit")
             print_info("")
 
             options = [
-                ('f', 'f', '🧱 Foundation', 'foundation'),
-                ('1', 's', 'ℹ️Status', 'status'),
-                ('2', 'y', '🔄 Upgrade', 'sync'),
-                ('3', 'c', '📝 Closeout', 'closeout'),
-                ('4', 'o', '📄 Output Context', 'context'),
-                ('5', 'u', '🔧 Absorbe', 'update'),
-                ('6', 'a', '🧭 Analysis', 'analysis'),
-                ('7', 'r', '🔎 Project Review', 'review'),
-                ('b', 'b', '⬅️Back', 'back')
+                ('1', 's', 'ℹ️  Status', 'status'),
+                ('2', 'a', 'ℹ️  About', 'about'),
+                ('3', 'y', '🔄 Sync', 'sync'),
+                ('4', 'n', '🧭 Analysis', 'analysis'),
             ]
+            
+            if not foundation_complete:
+                options.append(('f', 'f', '🧱 Foundation', 'foundation'))
+            
+            # Add hub/back options
+            if self._is_framework_directory(spoke_path):
+                options.append(('h', 'h', '🏢 Hub', 'hub'))
+            
+            options.extend([('b', 'b', '⬅️  Back', 'back'), ('q', 'q', '👋 Quit', 'quit')])
 
-            choice = safe_menu_choice("Select action", options, default=recommended_action)
+            choice = safe_menu_choice("Select", options, default='s')
 
             if choice == "foundation":
                 self._run_foundation_setup(spoke_path)
             elif choice == "status":
-                self._cmd_status(type('Args', (), {'path': str(spoke_path)})())
+                # Combined status + review
+                self._show_spoke_status_and_review(spoke_path)
+            elif choice == "about":
+                # New about submenu
+                self._show_project_about_menu(spoke_path)
             elif choice == "sync":
-                self._cmd_sync(type('Args', (), {'all': False})())
-            elif choice == "closeout":
-                self._cmd_closeout(type('Args', (), {'path': str(spoke_path)})())
-            elif choice == "context":
-                self._cmd_context(type('Args', (), {'path': str(spoke_path)})())
-            elif choice == "update":
+                # Combined absorb + upgrade
+                print_info("\n  Running Sync (Absorb + Upgrade)...")
                 self._cmd_update(type('Args', (), {'path': str(spoke_path)})())
+                self._cmd_sync(type('Args', (), {'all': False})())
+                input("\n  Press Enter to continue...")
             elif choice == "analysis":
                 self._show_spoke_analysis(spoke_path)
-            elif choice == "review":
+            elif choice == "hub":
+                self._show_hub_actions_menu()
+            elif choice == "back":
+                # Return to framework menu if in framework
+                if self._is_framework_directory(spoke_path):
+                    return
+                # Otherwise back goes to main menu (if we add one)
+                return
+            elif choice == "quit" or choice is None:
+                if self._confirm_exit():
+                    import sys
+                    print_info("\n  👋 Goodbye!")
+                    sys.exit(0)
+
+    def _show_spoke_status_and_review(self, spoke_path: Path) -> None:
+        """Combined status and review display."""
+        # Call existing status command
+        self._cmd_status(type('Args', (), {'path': str(spoke_path)})())
+        input("\n  Press Enter to continue...")
+
+    def _show_project_about_menu(self, spoke_path: Path) -> None:
+        """Show project about submenu with various details."""
+        while True:
+            self._render_menu_header("About Project", breadcrumb=["WAI", spoke_path.name, "About"])
+            
+            print_info("  PROJECT INFO")
+            print_info("  1 - 📊 Overview         Project summary & stats")
+            print_info("  2 - 🗂️  Structure        Directory layout")
+            print_info("  3 - 📝 Foundation       Setup details")
+            print_info("")
+            print_info("  b - ⬅️  Back")
+            print_info("")
+            
+            options = [
+                ('1', '1', '📊 Overview', 'overview'),
+                ('2', '2', '🗂️  Structure', 'structure'),
+                ('3', '3', '📝 Foundation', 'foundation'),
+                ('b', 'b', '⬅️  Back', 'back')
+            ]
+            
+            choice = safe_menu_choice("Select", options, default='b')
+            
+            if choice == "overview":
+                self._cmd_status(type('Args', (), {'path': str(spoke_path)})())
+                input("\n  Press Enter to continue...")
+            elif choice == "structure":
                 self._show_project_review(spoke_path)
+                input("\n  Press Enter to continue...")
+            elif choice == "foundation":
+                self._run_foundation_setup(spoke_path)
             elif choice == "back" or choice is None:
                 return
 
@@ -1675,10 +1858,42 @@ Examples:
                     # Load hub profile for stats
                     profile_path = hub_path / 'hub-profile.json'
                     if profile_path.exists():
+                        from datetime import datetime
                         profile = json.loads(profile_path.read_text())
-                        version = profile.get('version', 'unknown')
-                        last_learn = profile.get('last_learn_run', 'never')
-                        hub_stats = f" │ Version: {version} │ Last learn: {last_learn}"
+                        # Fix: Read version from hub_config.version
+                        hub_config = profile.get('hub_config', {})
+                        version = hub_config.get('version', profile.get('hub_version', '1.0'))
+                        
+                        # Get both learn and teach timestamps
+                        last_learn_raw = profile.get('last_learn_run')
+                        last_teach_raw = profile.get('last_teach_run')
+                        
+                        # Find most recent activity
+                        recent_activity = None
+                        activity_label = "No activity"
+                        
+                        for timestamp, label in [(last_learn_raw, 'Learn'), (last_teach_raw, 'Teach')]:
+                            if timestamp and timestamp != 'never':
+                                try:
+                                    dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                                    if recent_activity is None or dt > recent_activity[0]:
+                                        recent_activity = (dt, label)
+                                except:
+                                    pass
+                        
+                        if recent_activity:
+                            dt, label = recent_activity
+                            days_ago = (datetime.now() - dt).days
+                            if days_ago == 0:
+                                activity_label = f"{label} today"
+                            elif days_ago == 1:
+                                activity_label = f"{label} yesterday"
+                            elif days_ago < 30:
+                                activity_label = f"{label} {days_ago}d ago"
+                            else:
+                                activity_label = f"{label} on {dt.strftime('%Y-%m-%d')}"
+                        
+                        hub_stats = f" │ Version: {version} │ {activity_label}"
                 except:
                     hub_stats = f" │ {hub_path.name}"
             else:
@@ -1959,7 +2174,7 @@ Examples:
             print_info("  1/p - 📚 Patterns          Code patterns & best practices")
             print_info("  2/d - 🚨 Decisions         Architectural & design decisions")
             print_info("  3/i - 💡 Insights          Project insights & observations")
-            print_info("  4/w - ⚠️Warnings           Common pitfalls & anti-patterns")
+            print_info("  4/w - ⚠️  Warnings         Common pitfalls & anti-patterns")
             print_info("  5/a - 📋 All Learnings     View all signals chronologically")
             print_info("")
             print_info("  b   - ⬅️Back")
@@ -2952,7 +3167,8 @@ Examples:
                 return
 
             if has_knowledge:
-                print_info(f"  Found {len(kb_patterns)} pattern(s) to distribute")
+                print_info(f"  Found {len(kb_patterns)} high-impact pattern(s) from hub knowledge base")
+                print_info(f"  (Patterns = learnings, best practices, and insights to share)")
                 print_info("")
 
             # Update each spoke
@@ -3020,8 +3236,9 @@ Examples:
             for spoke_name, count, status, bootstrap_status in spoke_updates:
                 if bootstrap_status:
                     status = f"{status} | {bootstrap_status}"
-                if "✓" in status:
-                    print_success(f"    ✓ {spoke_name}: {count} pattern(s) - {status}")
+                # Don't add another checkmark if status already has one
+                if count > 0 or "Updated" in status:
+                    print_success(f"    {spoke_name}: {count} pattern(s) - {status}")
                 else:
                     print_info(f"      {spoke_name}: {count} patterns - {status}")
 

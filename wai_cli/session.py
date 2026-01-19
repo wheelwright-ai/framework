@@ -1,10 +1,17 @@
 """
-Session management for Wheelwright AI sessions.
+Single-environment session management for Wheelwright AI.
 
-Handles session lifecycle, conversation logging, and state tracking.
+This module handles session lifecycle for ONE AI tool in the current environment:
+- Conversation logging with FULL CONTENT (prompts, responses, tool usage)
+- Token estimation and capacity tracking for context management
+- Session state persistence during active work
+
+Contrast with sessions.py which handles CROSS-ENVIRONMENT coordination
+using summary-only logging for multi-tool/multi-machine workflows.
 """
 
 import json
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, Any, List
@@ -13,6 +20,8 @@ import hashlib
 
 class SessionManager:
     """Manages AI session lifecycle and state."""
+
+    CACHE_TTL_SECONDS = 5.0
 
     def __init__(self, spoke_dir: Path):
         """Initialize session manager for a spoke directory."""
@@ -27,6 +36,11 @@ class SessionManager:
         self.turn_count: int = 0
         self.started_at: Optional[datetime] = None
         self.tokens_estimate: int = 0
+
+        # State caching to reduce I/O
+        self._state_cache: Optional[Dict[str, Any]] = None
+        self._cache_valid: bool = False
+        self._cache_timestamp: float = 0.0
 
     def start_session(self, ai_name: str = "Claude Sonnet 4.5") -> Dict[str, Any]:
         """Start a new session."""
@@ -255,11 +269,78 @@ class SessionManager:
         return hashlib.md5(hash_input.encode()).hexdigest()[:12]
 
     def _load_state(self) -> Dict[str, Any]:
-        """Load WAI-State.json."""
+        """Load WAI-State.json, using cache if valid."""
+        now = time.monotonic()
+        if (self._cache_valid 
+            and self._state_cache is not None
+            and (now - self._cache_timestamp) < self.CACHE_TTL_SECONDS):
+            return self._state_cache
+        
         with open(self.state_file, 'r') as f:
-            return json.load(f)
+            state = json.load(f)
+        
+        self._state_cache = state
+        self._cache_valid = True
+        self._cache_timestamp = now
+        return state
 
     def _save_state(self, state: Dict[str, Any]) -> None:
-        """Save WAI-State.json."""
+        """Save WAI-State.json and update cache."""
         with open(self.state_file, 'w') as f:
             json.dump(state, f, indent=2)
+        
+        self._state_cache = state
+        self._cache_valid = True
+        self._cache_timestamp = time.monotonic()
+
+    def invalidate_cache(self) -> None:
+        """Invalidate cache to force reload on next access."""
+        self._cache_valid = False
+        self._state_cache = None
+
+    def flush_cache(self) -> None:
+        """Explicitly save cached state to disk if cache is valid."""
+        if self._cache_valid and self._state_cache is not None:
+            with open(self.state_file, 'w') as f:
+                json.dump(self._state_cache, f, indent=2)
+            self._cache_timestamp = time.monotonic()
+
+    def get_state(self) -> Dict[str, Any]:
+        """
+        Get current session state from WAI-State.json.
+        
+        Returns:
+            Dict with current session info (session_id, started_at, etc.)
+            or empty dict if no active session.
+        """
+        if not self.state_file.exists():
+            return {}
+        
+        state = self._load_state()
+        session_state = state.get('_session_state', {})
+        current = session_state.get('current_session') or {}
+        
+        return {
+            'session_id': current.get('session_id') or self.session_id,
+            'started_at': current.get('started_at'),
+            'ai_model': current.get('ai_model'),
+            'turns': current.get('turns', self.turn_count),
+            'protocol_completed': session_state.get('protocol_completed', False),
+            'requires_review': session_state.get('requires_review', False),
+        }
+
+    def set_state(self, updates: Dict[str, Any]) -> None:
+        """
+        Update session state in WAI-State.json.
+        
+        Args:
+            updates: Dict of fields to update in current_session
+        """
+        state = self._load_state()
+        
+        if state.get('_session_state', {}).get('current_session'):
+            state['_session_state']['current_session'].update(updates)
+        else:
+            state.setdefault('_session_state', {})['current_session'] = updates
+        
+        self._save_state(state)

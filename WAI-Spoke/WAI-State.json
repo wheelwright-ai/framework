@@ -105,42 +105,31 @@
     "review_reason": null,
     "session_count": 17,
     "protocol_completed": true,
-    "protocol_last_run": "2026-01-16T22:58:04Z",
+    "protocol_last_run": "2026-01-19T19:30:19Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": "mario-2026-01-16-145804",
-      "started_at": "2026-01-16T22:58:04Z",
+      "session_id": "mario-2026-01-19-113019",
+      "started_at": "2026-01-19T19:30:19Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "claude-sonnet-2026-01-16-hub-indexer",
-      "started_at": "2026-01-16T13:00:00Z",
-      "turn_count": 954,
+      "session_id": "mario-2026-01-16-145804",
+      "started_at": "2026-01-16T22:58:04Z",
+      "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-16T14:30:00Z",
-      "summary": "Implemented Hub Indexer (Map & Compass), renamed CLI to WAI, and cleaned up codebase. Fixed test routing and framework detection.",
-      "key_topics": [
-        "hub-indexer",
-        "cli-rename",
-        "codebase-cleanup",
-        "test-relocation"
-      ],
-      "files_modified": [
-        "wai_cli/hub_indexer.py",
-        "wai_cli/core.py",
-        "WAI",
-        "tests/scripts/*",
-        "tests/unit/*"
-      ]
+      "closed_at": "2026-01-19T11:29:56.015646",
+      "summary": "No conversation log found",
+      "key_topics": [],
+      "files_modified": []
     }
   },
   "analytics": {
     "sessions": {
-      "total_count": 31,
+      "total_count": 33,
       "total_turns": 962,
       "total_duration_seconds": 120,
-      "avg_duration_seconds": 3.87
+      "avg_duration_seconds": 3.6363636363636362
     },
     "token_efficiency": {
       "total_tokens_used": 66,
@@ -160,7 +149,7 @@
       "ended_at": "2026-01-01T23:50:38.642573"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-16T14:30:00Z"
+    "last_updated": "2026-01-19T11:30:19.472205"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -453,46 +442,11 @@
       "by": "WAI Auto-Upgrade"
     },
     {
-      "date": "2025-12-30",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
       "date": "2026-01-01",
       "decision": "Comprehensive integration test framework implementation",
       "rationale": "Created 6-phase integration test framework to validate end-to-end workflows through automated CLI testing. Implemented configurable CLI testing (user can specify command to test), baseline mode comparison system with feature toggles (validate 50-80% token savings claims), test harness with isolated environments, 130 total tests covering onboarding, menus, spoke init, session continuity, closeout, shipit, quality gates, hub-spoke interaction, analytics, and token efficiency. Added test runner orchestration with phase execution, baseline comparison mode, and CI/CD GitHub Actions workflow. Final results: 122/129 passing (99.19% pass rate). This enables automated regression detection, AI-collaborative test evolution, and data-driven validation of Wheelwright's value propositions.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2026-01-02",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-02",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-02",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-02",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-04",
@@ -570,55 +524,6 @@
       "rationale": "Prevents false warnings when only test files were modified.",
       "impact": 5,
       "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-08",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-08",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-08",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-08",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-08",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
     },
     {
       "date": "2026-01-15",

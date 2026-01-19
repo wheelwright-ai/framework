@@ -5,6 +5,14 @@ Enables parallel AI work across multiple tools and machines without collision.
 Each environment gets its own session log for tracking and later reconciliation.
 
 Environment = Tool + Machine (e.g., "claude-code-mario-laptop")
+
+This module handles CROSS-ENVIRONMENT session coordination:
+- Summary-only logging (not full content) for lightweight tracking
+- Session reconciliation during closeout to merge parallel work
+- Environment detection and conflict prevention
+
+Contrast with session.py which handles SINGLE-ENVIRONMENT management
+with full content logging and token capacity tracking.
 """
 
 import json
@@ -14,7 +22,9 @@ import socket
 import hashlib
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Iterator, Generator
+
+from wai_cli.utils.jsonl import stream_jsonl, stream_jsonl_tail
 
 
 def detect_environment() -> Dict[str, Any]:
@@ -194,11 +204,15 @@ class MultiEnvSessionManager:
     allowing parallel work without collision.
     """
 
+    MAX_SESSION_FILE_SIZE = 1024 * 1024  # 1MB default
+    MAX_ACTIVE_ENTRIES = 1000  # Keep last N entries in active file
+
     def __init__(self, spoke_dir: Path):
         """Initialize multi-environment session manager."""
         self.spoke_dir = spoke_dir
         self.wai_spoke_dir = spoke_dir / 'WAI-Spoke'
         self.sessions_dir = self.wai_spoke_dir / 'sessions'
+        self.archive_dir = self.sessions_dir / 'archive'
         self.state_file = self.wai_spoke_dir / 'WAI-State.json'
 
         # Detect current environment
@@ -322,20 +336,42 @@ class MultiEnvSessionManager:
         with open(self.session_file, 'a') as f:
             f.write(json.dumps(entry) + '\n')
 
-    def get_session_history(self, limit: int = 50) -> List[Dict[str, Any]]:
-        """Get recent entries from current environment's session file."""
+    def get_session_history(self, limit: int = 50, stream: bool = False) -> List[Dict[str, Any]] | Iterator[Dict[str, Any]]:
+        """
+        Get recent entries from current environment's session file.
+        
+        Args:
+            limit: Maximum number of entries to return
+            stream: If True, return an iterator instead of loading all into memory
+            
+        Returns:
+            List of entries (default) or iterator if stream=True
+        """
         if not self.session_file.exists():
-            return []
+            return iter([]) if stream else []
 
-        entries = []
-        with open(self.session_file, 'r') as f:
-            for line in f:
-                try:
-                    entries.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue
+        if stream:
+            return stream_jsonl_tail(self.session_file, limit)
+        
+        return list(stream_jsonl_tail(self.session_file, limit))
 
-        return entries[-limit:]
+    def iter_all_sessions(self, limit_per_file: int = 20) -> Generator[tuple[str, Iterator[Dict[str, Any]]], None, None]:
+        """
+        Iterate over all session files with streaming entries.
+        
+        Memory-efficient generator that yields (filename, entries_iterator) tuples.
+        
+        Args:
+            limit_per_file: Maximum entries to yield per file
+            
+        Yields:
+            Tuples of (filename, entries_iterator)
+        """
+        if not self.sessions_dir.exists():
+            return
+
+        for session_file in self.sessions_dir.glob('*.jsonl'):
+            yield (session_file.name, stream_jsonl_tail(session_file, limit_per_file))
 
     def get_all_sessions(self) -> Dict[str, List[Dict[str, Any]]]:
         """
@@ -344,21 +380,10 @@ class MultiEnvSessionManager:
         Returns:
             Dict mapping session filename to list of entries
         """
-        if not self.sessions_dir.exists():
-            return {}
-
-        sessions = {}
-        for session_file in self.sessions_dir.glob('*.jsonl'):
-            entries = []
-            with open(session_file, 'r') as f:
-                for line in f:
-                    try:
-                        entries.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        continue
-            sessions[session_file.name] = entries[-20:]  # Last 20 per file
-
-        return sessions
+        return {
+            filename: list(entries)
+            for filename, entries in self.iter_all_sessions(limit_per_file=20)
+        }
 
     def get_cross_session_summary(self) -> List[Dict[str, Any]]:
         """
@@ -418,7 +443,8 @@ class MultiEnvSessionManager:
             'entries_reconciled': 0,
             'decisions_extracted': 0,
             'entries_pruned': 0,
-            'environments_updated': []
+            'environments_updated': [],
+            'archives_created': []
         }
 
         if not self.sessions_dir.exists():
@@ -433,19 +459,10 @@ class MultiEnvSessionManager:
         cutoff_date = datetime.now() - timedelta(days=archive_days)
 
         for session_file in self.sessions_dir.glob('*.jsonl'):
-            entries = []
             kept_entries = []
-
-            with open(session_file, 'r') as f:
-                for line in f:
-                    try:
-                        entries.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        continue
-
             results['sessions_processed'] += 1
 
-            for entry in entries:
+            for entry in stream_jsonl(session_file):
                 entry_ts = entry.get('ts')
                 entry_date = datetime.fromisoformat(entry_ts) if entry_ts else None
 
@@ -495,6 +512,11 @@ class MultiEnvSessionManager:
                 for entry in kept_entries:
                     f.write(json.dumps(entry) + '\n')
 
+            # Check if archiving is needed for this session file
+            archive_result = self.archive_old_entries(session_file)
+            if archive_result['archived']:
+                results['archives_created'].append(archive_result)
+
         # Save updated state
         self._save_state(state)
 
@@ -511,4 +533,91 @@ class MultiEnvSessionManager:
         """Save WAI-State.json."""
         with open(self.state_file, 'w') as f:
             json.dump(state, f, indent=2)
-        f.write('\n')
+            f.write('\n')
+
+    def archive_old_entries(self, session_file: Optional[Path] = None) -> Dict[str, Any]:
+        """
+        Archive old reconciled entries if session file exceeds size limit.
+
+        Args:
+            session_file: Specific file to archive, or current session file if None
+
+        Returns:
+            Dict with archiving results
+        """
+        target_file = session_file or self.session_file
+        results = {
+            'archived': False,
+            'entries_archived': 0,
+            'archive_file': None,
+            'file_size_before': 0,
+            'file_size_after': 0
+        }
+
+        if not target_file.exists():
+            return results
+
+        file_size = target_file.stat().st_size
+        results['file_size_before'] = file_size
+
+        if file_size <= self.MAX_SESSION_FILE_SIZE:
+            return results
+
+        self.archive_dir.mkdir(parents=True, exist_ok=True)
+
+        all_entries = list(stream_jsonl(target_file))
+        total_entries = len(all_entries)
+
+        if total_entries <= self.MAX_ACTIVE_ENTRIES:
+            results['file_size_after'] = file_size
+            return results
+
+        entries_to_archive = all_entries[:-self.MAX_ACTIVE_ENTRIES]
+        entries_to_keep = all_entries[-self.MAX_ACTIVE_ENTRIES:]
+
+        archive_date = datetime.now().strftime('%Y%m%d-%H%M%S')
+        archive_filename = f"{target_file.stem}.{archive_date}.jsonl"
+        archive_path = self.archive_dir / archive_filename
+
+        with open(archive_path, 'w') as f:
+            for entry in entries_to_archive:
+                f.write(json.dumps(entry) + '\n')
+
+        with open(target_file, 'w') as f:
+            for entry in entries_to_keep:
+                f.write(json.dumps(entry) + '\n')
+
+        results['archived'] = True
+        results['entries_archived'] = len(entries_to_archive)
+        results['archive_file'] = str(archive_path)
+        results['file_size_after'] = target_file.stat().st_size
+
+        return results
+
+    def get_archive_files(self, pattern: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        List archived session files.
+
+        Args:
+            pattern: Optional glob pattern to filter archives (e.g., "claude-code-*")
+
+        Returns:
+            List of dicts with archive file info
+        """
+        if not self.archive_dir.exists():
+            return []
+
+        glob_pattern = f"{pattern}.*.jsonl" if pattern else "*.jsonl"
+        archives = []
+
+        for archive_file in self.archive_dir.glob(glob_pattern):
+            stat = archive_file.stat()
+            archives.append({
+                'filename': archive_file.name,
+                'path': str(archive_file),
+                'size': stat.st_size,
+                'modified': datetime.fromtimestamp(stat.st_mtime).isoformat(),
+                'created': datetime.fromtimestamp(stat.st_ctime).isoformat()
+            })
+
+        return sorted(archives, key=lambda x: x['modified'], reverse=True)
