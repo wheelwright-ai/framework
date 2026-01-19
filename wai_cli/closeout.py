@@ -20,7 +20,7 @@ from .sessions import MultiEnvSessionManager
 from .rebalancer import FileRebalancer
 from .metrics import MetricsTracker
 from .quality_gates import QualityGates
-from .utils.input import print_success, print_error, print_info, print_warning, safe_confirm
+from .utils.input import print_success, print_error, print_info, print_warning, safe_confirm, safe_menu_choice
 from .integrations.manager import IDEManager
 from .lugs import LugManager
 from .point import PointManager
@@ -42,7 +42,9 @@ class CloseoutProcessor:
         self.rebalancer = FileRebalancer(self.wai_spoke_dir)
         self.metrics = MetricsTracker(self.wai_spoke_dir)
         self.quality_gates = QualityGates(spoke_dir)
-        self.lug_manager = LugManager(spoke_dir)
+        self.quality_gates = QualityGates(spoke_dir)
+        self.lug_manager = LugManager(self.wai_spoke_dir)
+        self.point_manager = PointManager(spoke_dir)
         self.point_manager = PointManager(spoke_dir)
 
     def process_closeout(self, interactive: bool = True, skip_quality_gates: bool = False) -> Dict[str, Any]:
@@ -106,25 +108,95 @@ class CloseoutProcessor:
         session_id = session_state.get('session_id')
         
         if session_id:
-            session_lugs = self.lug_manager.get_session_lugs(session_id)
-            if session_lugs:
+            # Pass 1: Interactive Resolution Loop
+            while True:
+                session_lugs = self.lug_manager.get_session_lugs(session_id)
+                if not session_lugs:
+                    break
+                    
                 violations_found = False
+                unresolved = False
+                
                 for lug in session_lugs:
                     violations = self.lug_manager.validate_policies(lug)
                     if violations:
+                        violations_found = True
                         print_warning(f"    ⚠️  Policy violations for Lug {lug.id} ({lug.title}):")
                         for v in violations:
                             print_error(f"      ✗ {v}")
-                        violations_found = True
+                            
+                        if not interactive:
+                            unresolved = True
+                            continue
+                            
+                        # Interactive menu
+                        print_info("")
+                        print_info(f"    Actions for '{lug.title}':")
+                        print_info("      [f] Force Close (archive despite violation)")
+                        print_info("      [u] Unlink from Session (keep open, remove from scope)")
+                        print_info("      [d] Delete Lug (permanently remove)")
+                        print_info("      [i] Ignore for now")
+                        
+                        choice = safe_menu_choice(
+                            "    Select action",
+                            [
+                                ('f', 'f', 'Force Close', 'force'),
+                                ('u', 'u', 'Unlink', 'unlink'),
+                                ('d', 'd', 'Delete Lug', 'delete'),
+                                ('i', 'i', 'Ignore', 'ignore')
+                            ],
+                            default='i'
+                        )
+                        
+                        if choice == 'force':
+                            self.lug_manager.close_lug(lug.id, summary="Force closed during shipit", skip_policy_check=True)
+                            print_success(f"      Force closed {lug.id}")
+                        elif choice == 'unlink':
+                            self.lug_manager.update_lug(lug.id, extras={'session_id': None})
+                            print_success(f"      Unlinked {lug.id} from session")
+                        elif choice == 'delete':
+                            self.lug_manager.delete_lug(lug.id)
+                            print_success(f"      Deleted {lug.id}")
+                        else:
+                            unresolved = True
                 
-                if violations_found and interactive:
-                    if not safe_confirm("Proceed despite Lug policy violations?", default=False):
+                if not violations_found:
+                    break
+                    
+                # If we have violations but solved them all? No, logical flow:
+                # Iterate all. If we solve one, loop continues to next lug.
+                # After loop, if 'unresolved' is False, we are good.
+                # If 'unresolved' is True, we check if user wants to proceed anyway or abort.
+                
+                if unresolved:
+                    if interactive and safe_confirm("\nUnresolved violations remain. Review again?", default=True):
+                        continue # Loop again
+                    break # Break loop, handle unresolved below
+                else:
+                    break # All resolved
+            
+            # Final check (post-resolution)
+            session_lugs = self.lug_manager.get_session_lugs(session_id)
+            final_violations = False
+            for lug in session_lugs:
+                if self.lug_manager.validate_policies(lug):
+                    final_violations = True
+                    break
+            
+            if final_violations:
+                if interactive:
+                    if not safe_confirm("\nProceed despite remaining Lug policy violations?", default=False):
                         results['errors'].append("Closeout aborted due to Lug policy violations")
                         return results
-                
-                results['steps_completed'].append(f"Lug policies: Validated {len(session_lugs)} Lugs")
-            else:
-                # Suggest inferring Lugs if none found for session
+                else:
+                    # Non-interactive: fail on violations
+                    results['errors'].append("Closeout aborted due to Lug policy violations") 
+                    return results
+
+            results['steps_completed'].append(f"Lug policies: Validated {len(session_lugs)} Lugs")
+            
+            if not session_lugs:
+                 # Suggest inferring Lugs if none found/remaining for session
                 try:
                     repo = Repo(self.spoke_dir, search_parent_directories=True)
                     suggestions = self.lug_manager.infer_lugs_from_git(repo)
@@ -142,6 +214,7 @@ class CloseoutProcessor:
                             results['steps_completed'].append(f"Lugs: Inferred and created {len(suggestions)} Lugs")
                 except Exception:
                     pass
+
 
         # Step 1: Process seed folders and clean up sprawl
         print_info("  Step 1/10: Processing seed folders and cleanup...")
@@ -357,6 +430,25 @@ class CloseoutProcessor:
         # Save state
         with open(state_file, 'w') as f:
             json.dump(state, f, indent=2)
+
+        # Record session bead (Phase 0)
+        try:
+            parent_bead_id = None
+            # Ideally we'd track the actual bead hash, but for now we link to the previous session_id
+            # In a full implementation, state would track 'last_bead_id'
+            if state.get('_session_state', {}).get('last_closeout'):
+                 # Use the session_id as a proxy for the bead chain parent if real bead tracking isn't in state yet
+                 parent_bead_id = state['_session_state']['last_closeout'].get('session_id')
+
+            self.lug_manager.record_session_bead(
+                session_id=current_session.get('session_id', 'unknown'),
+                summary=session_summary.get('summary', 'Session complete'),
+                parent_id=parent_bead_id,
+                files_modified=session_summary.get('files_modified', [])
+            )
+            print_info("    recorded session bead")
+        except Exception as e:
+            print_warning(f"Failed to record session bead: {e}")
 
         # Clear conversation log
         self.session.clear_log()

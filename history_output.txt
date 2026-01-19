@@ -1,0 +1,4 @@
+usage: WAI [-h]
+           {init,status,absorbe,update,hub,projects,group,lug,sync,closeout,stats,baseline,time,teach,shipit,template,context,changelog,configure-ide,version}
+           ...
+WAI: error: argument command: invalid choice: 'history' (choose from 'init', 'status', 'absorbe', 'update', 'hub', 'projects', 'group', 'lug', 'sync', 'closeout', 'stats', 'baseline', 'time', 'teach', 'shipit', 'template', 'context', 'changelog', 'configure-ide', 'version')

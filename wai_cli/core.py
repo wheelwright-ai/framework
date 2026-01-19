@@ -553,6 +553,9 @@ Examples:
                 self._show_spoke_actions_menu(cwd)
             except Exception as exc:
                 print_error(f"Init failed: {exc}")
+        
+        # Fallback to main menu instead of exit
+        self._show_framework_menu(cwd)
         return
 
     def _show_uninitialized_intro(self, project_path: Path) -> None:
@@ -1675,6 +1678,11 @@ Examples:
                 # Combined absorb + upgrade
                 print_info("\n  Running Sync (Absorb + Upgrade)...")
                 self._cmd_update(type('Args', (), {'path': str(spoke_path)})())
+                # Also run cleanup
+                cleaned = self._cleanup_deprecated_files(spoke_path)
+                if cleaned:
+                    print_info(f"  Cleaned up deprecated files: {', '.join(cleaned)}")
+                    
                 self._cmd_sync(type('Args', (), {'all': False})())
                 input("\n  Press Enter to continue...")
             elif choice == "analysis":
@@ -1682,10 +1690,7 @@ Examples:
             elif choice == "hub":
                 self._show_hub_actions_menu()
             elif choice == "back":
-                # Return to framework menu if in framework
-                if self._is_framework_directory(spoke_path):
-                    return
-                # Otherwise back goes to main menu (if we add one)
+                # Return to parent (which will fall back to framework/main menu in _handle_no_command)
                 return
             elif choice == "quit" or choice is None:
                 if self._confirm_exit():
@@ -1762,56 +1767,64 @@ Examples:
             return items
 
         print_info("\n🧱 Foundation Setup\n")
-        print_info("  Examples:")
-        print_info("    Project name: CondoShield CRM")
-        print_info("    One-liner: CRM for CondoShield sales/support ops")
-        print_info("    Success looks like: Clear pipeline, fast response, accurate history")
-        print_info("    Project type: software | research | design | writing")
+        
+        # Show current state first
+        print_info("  Current Configuration:")
+        print_info(f"    Name: {identity.get('name', spoke_path.name)}")
+        print_info(f"    One-liner: {identity.get('one_liner', 'Not set')}")
+        print_info(f"    Type: {identity.get('type', 'software')}")
         print_info("")
+        
+        if not safe_confirm("  Update foundation settings?", default=False):
+            return
 
-        name = safe_input("Project name", default=identity.get('name', spoke_path.name))
-        one_liner = safe_input("One-liner", default=identity.get('one_liner', ''))
-        success = safe_input("Success looks like", default=identity.get('success_looks_like', ''))
-        proj_type = safe_input("Project type", default=identity.get('type', 'software'))
+        # Helper for field updates
+        def update_field(label: str, current_val: str, examples: list = None) -> str:
+            print_info(f"\n  {label}")
+            print_info(f"  Current: {current_val or 'Empty'}")
+            
+            if safe_confirm(f"  Change {label}?", default=False):
+                if examples:
+                    print_info("\n  Examples:")
+                    for ex in examples:
+                        print_info(f"   • {ex}")
+                    print_info("")
+                
+                val = safe_input(f"  New {label}", default=current_val, allow_empty=True)
+                return val
+            return current_val
+
+        # Update Identity
+        name = update_field("Project name", identity.get('name', spoke_path.name), ["CondoShield CRM", "WAI Framework"])
+        one_liner = update_field("One-liner", identity.get('one_liner', ''), ["CRM for sales ops", "AI-first dev framework"])
+        success = update_field("Success looks like", identity.get('success_looks_like', ''), ["Clear pipeline", "Fast iteration"])
+        proj_type = update_field("Project type", identity.get('type', 'software'), ["software", "research", "design"])
+
+        # Update Boundaries
+        in_scope_list = boundaries.get('in_scope', [])
+        in_scope_str = ", ".join(in_scope_list)
+        in_scope_new = update_field("In scope", in_scope_str, ["lead management", "core api", "frontend"])
+        
+        out_scope_list = boundaries.get('out_of_scope', [])
+        out_scope_str = ", ".join(out_scope_list)
+        out_scope_new = update_field("Out of scope", out_scope_str, ["marketing site", "billing", "legacy code"])
+
+        constraints_list = boundaries.get('constraints', [])
+        constraints_str = ", ".join(constraints_list)
+        constraints_new = update_field("Constraints", constraints_str, ["no external dbs", "mobile first", "offline support"])
+
+        # Update Approach
+        ai_style = update_field("AI collaboration style", approach.get('ai_collaboration_style', 'yolo'), ["yolo (fast)", "check-in (cautious)"])
+        review = update_field("Review process", approach.get('review_process', 'Closeout logs'), ["Closeout logs", "PR review", "Pair programming"])
 
         print_info("")
-        print_info("  Examples (comma-separated):")
-        print_info("    In scope: lead management, contact history, support workflows")
-        print_info("    Out of scope: marketing site, billing system, infra changes")
-        print_info("    Constraints: keep data model, ship weekly")
-        print_info("")
-
-        in_scope = safe_input(
-            "In scope (comma-separated)",
-            default=", ".join(boundaries.get('in_scope', []))
-        )
-        out_scope = safe_input(
-            "Out of scope (comma-separated)",
-            default=", ".join(boundaries.get('out_of_scope', []))
-        )
-        constraints = safe_input(
-            "Constraints (comma-separated)",
-            default=", ".join(boundaries.get('constraints', []))
-        )
-
-        print_info("")
-        print_info("  Examples:")
-        print_info("    AI collaboration style: yolo | check-in")
-        print_info("    Review process: Closeout logs | PR review")
-        print_info("")
-
-        ai_style = safe_input(
-            "AI collaboration style",
-            default=approach.get('ai_collaboration_style', 'yolo')
-        )
-        review = safe_input(
-            "Review process",
-            default=approach.get('review_process', 'Closeout logs')
-        )
-
-        if not safe_confirm("Save foundation changes?", default=True):
+        if not safe_confirm("  Save changes?", default=True):
             print_info("Cancelled.")
             return
+
+        in_scope = in_scope_new
+        out_scope = out_scope_new
+        constraints = constraints_new
 
         updated = dict(foundation)
         updated['completed'] = True
@@ -3052,6 +3065,10 @@ Examples:
         from .init import init_spoke
 
         print_info("\n🎓 Teach Event - Hub Distributes Knowledge to Spokes\n")
+
+        # Auto-Learn first: Ensure we have latest signals
+        print_info("  🔄 Auto-Learn: Gathering latest signals from spokes first...")
+        self._hub_trigger_teach(hub_path)
 
         # Load and show registered spokes
         try:

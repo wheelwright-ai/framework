@@ -1,0 +1,37 @@
+./WAI-Spoke/WAI-Guide.md:- [ ] Foundation complete?
+./WAI-Spoke/WAI-Guide.md:- [ ] Request in scope?
+./WAI-Spoke/WAI-Guide.md:- [ ] Session state updated?
+./WAI-Spoke/WAI-Guide.md:- [ ] High-impact decisions logged?
+./WAI-Spoke/WAI-Guide.md:- [ ] Signals appended (if impact >= 8)?
+./__pycache__/WAI-Spoke/WAI-Guide.md:- [ ] Foundation complete?
+./__pycache__/WAI-Spoke/WAI-Guide.md:- [ ] Request in scope?
+./__pycache__/WAI-Spoke/WAI-Guide.md:- [ ] Session state updated?
+./__pycache__/WAI-Spoke/WAI-Guide.md:- [ ] High-impact decisions logged?
+./__pycache__/WAI-Spoke/WAI-Guide.md:- [ ] Signals appended (if impact >= 8)?
+./__pycache__/WAI-Spoke/WAI-Backlog.md:- [ ] Detects .WAI vs WAI-Spoke structure
+./__pycache__/WAI-Spoke/WAI-Backlog.md:- [ ] Renames old file names (wheel-signals.jsonl → WAI-Signals.jsonl)
+./__pycache__/WAI-Spoke/WAI-Backlog.md:- [ ] Creates WAI-File-Index.json if missing
+./__pycache__/WAI-Spoke/WAI-Backlog.md:- [ ] Logs upgrade decision to WAI-State.json
+./__pycache__/WAI-Spoke/WAI-Backlog.md:- [ ] Handles edge cases (partial migrations, permission errors)
+./templates/WAI/WAI-Guide.md:- [ ] Foundation complete?
+./templates/WAI/WAI-Guide.md:- [ ] Request in scope?
+./templates/WAI/WAI-Guide.md:- [ ] Session state updated?
+./templates/WAI/WAI-Guide.md:- [ ] High-impact decisions logged?
+./templates/WAI/WAI-Guide.md:- [ ] Signals appended (if impact >= 8)?
+./templates/WAI/WAI-State.md:1. [ ] Complete project foundation
+./templates/WAI/WAI-State.md:2. [ ] Define initial scope and approach
+./templates/WAI/WAI-State.md:3. [ ] Begin work with clear context
+./examples/demo-wheel/WAI-Spoke/WAI-Guide.md:- [ ] Foundation complete?
+./examples/demo-wheel/WAI-Spoke/WAI-Guide.md:- [ ] Request in scope?
+./examples/demo-wheel/WAI-Spoke/WAI-Guide.md:- [ ] Session state updated?
+./examples/demo-wheel/WAI-Spoke/WAI-Guide.md:- [ ] High-impact decisions logged?
+./examples/demo-wheel/WAI-Spoke/WAI-Guide.md:- [ ] Signals appended (if impact >= 8)?
+./examples/demo-wheel/WAI-Spoke/WAI-State.md:1. [ ] Complete project foundation
+./examples/demo-wheel/WAI-Spoke/WAI-State.md:2. [ ] Define initial scope and approach
+./examples/demo-wheel/WAI-Spoke/WAI-State.md:3. [ ] Begin work with clear context
+./README.md:- [ ] VS Code extension for automatic context loading
+./README.md:- [ ] Browser extension for web-based LLMs
+./README.md:- [ ] Cloud sync (wheelwright.cloud)
+./README.md:- [ ] Spoke marketplace for community-contributed capabilities
+./README.md:- [ ] Team Hub sharing and collaboration
+./README.md:- [ ] Enterprise features (SSO, audit logs, compliance)

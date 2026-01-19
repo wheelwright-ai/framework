@@ -150,7 +150,7 @@ class LugManager:
         self.spoke_dir = spoke_dir
         self.lugs_file = spoke_dir / 'lugs.jsonl'
         self.closed_file = spoke_dir / 'lugs-closed.jsonl'
-        self.sessions_file = spoke_dir / 'lug-sessions.jsonl'
+        self.sessions_file = spoke_dir / 'sessions.jsonl'
         
         # In-memory indices
         self.lugs: Dict[str, Lug] = {}
@@ -178,9 +178,15 @@ class LugManager:
             with open(self.sessions_file, 'r') as f:
                 for line in f:
                     if line.strip():
-                        data = json.loads(line)
-                        session = Session(data)
-                        self.sessions[session.session_id] = session
+                        try:
+                            data = json.loads(line)
+                            # Only load items that look like full sessions (have 'who')
+                            # Beads might be minimal history nodes
+                            if 'who' in data:
+                                session = Session(data)
+                                self.sessions[session.session_id] = session
+                        except (json.JSONDecodeError, KeyError):
+                            continue
     
     def _expand_keys(self, minified: Dict[str, Any]) -> Dict[str, Any]:
         """Expand minified keys to full field names."""
@@ -193,13 +199,25 @@ class LugManager:
         """Generate SHA-256 ID from title, timestamp, and random salt."""
         salt = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
         content = f"{title}{created_at}{salt}"
-        return hashlib.sha256(content.encode()).hexdigest()[:16]  # 16 chars for readability
+        return hashlib.sha256(content.encode()).hexdigest()
     
     def _atomic_append(self, file_path: Path, data: Dict[str, Any]):
         """Atomically append JSON line to file."""
         file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, 'a') as f:
             f.write(json.dumps(data) + '\n')
+
+    def _get_active_session_id(self) -> Optional[str]:
+        """Try to get active session ID from WAI-State.json."""
+        try:
+            state_file = self.spoke_dir / 'WAI-State.json'
+            if state_file.exists():
+                with open(state_file, 'r') as f:
+                    state = json.load(f)
+                    return state.get('_session_state', {}).get('current_session', {}).get('session_id')
+        except Exception:
+            pass
+        return None
     
     def create_lug(
         self,
@@ -235,6 +253,10 @@ class LugManager:
         """
         created_at = datetime.now().isoformat()
         lug_id = self._generate_id(title, created_at)
+
+        # Auto-detect session if not provided
+        if not session_id:
+            session_id = self._get_active_session_id()
         
         lug_data = {
             'id': lug_id,
@@ -281,13 +303,17 @@ class LugManager:
         if not matches and include_closed:
             # Load closed lugs on-demand
             if not self.closed_lugs and self.closed_file.exists():
-                with open(self.closed_file, 'r') as f:
-                    for line in f:
-                        if line.strip():
-                            minified = json.loads(line)
-                            expanded = self._expand_keys(minified)
-                            lug = Lug(expanded)
-                            self.closed_lugs[lug.id] = lug
+                try:
+                    with open(self.closed_file, 'r') as f:
+                        for line in f:
+                            if line.strip():
+                                minified = json.loads(line)
+                                expanded = self._expand_keys(minified)
+                                lug = Lug(expanded)
+                                self.closed_lugs[lug.id] = lug
+                except Exception:
+                    # If file is corrupt or empty, handle gracefully
+                    pass
             
             matches = [lug for lug_id, lug in self.closed_lugs.items() if lug_id.startswith(lug_id_prefix)]
         
@@ -326,6 +352,7 @@ class LugManager:
     def update_lug(
         self,
         lug_id_prefix: str,
+        title: Optional[str] = None,
         status: Optional[str] = None,
         priority: Optional[str] = None,
         impact: Optional[str] = None,
@@ -340,6 +367,7 @@ class LugManager:
         
         Args:
             lug_id_prefix: ID prefix to identify Lug
+            title: New title
             status: New status
             priority: New priority
             impact: New impact
@@ -355,6 +383,8 @@ class LugManager:
             raise ValueError(f"No Lug found with ID prefix '{lug_id_prefix}'")
         
         # Update fields
+        if title:
+            lug.title = title
         if status:
             lug.status = status
         if priority:
@@ -370,8 +400,12 @@ class LugManager:
         if policy_tags is not None:
             lug.policy_tags = list(set(lug.policy_tags + policy_tags))
         if extras:
+            # Check for special session_id update (allows unlinking via extras={'session_id': None})
+            if 'session_id' in extras:
+                lug.session_id = extras.pop('session_id')
+            
             lug.extras.update(extras)
-        
+            
         lug.updated_at = datetime.now().isoformat()
         
         # Delta update - only update this lug in file
@@ -423,7 +457,52 @@ class LugManager:
         del self.lugs[lug_id]
         self._remove_lug_from_file(lug_id)
         
+        # Update in-memory closed cache
+        self.closed_lugs[lug_id] = lug
+        
         return lug
+    
+    def delete_lug(self, lug_id_prefix: str):
+        """
+        Permanently delete a Lug.
+        """
+        lug = self.get_lug(lug_id_prefix, include_closed=True)
+        if not lug:
+            raise ValueError(f"No Lug found with ID prefix '{lug_id_prefix}'")
+            
+        lug_id = lug.id
+        
+        # Remove from memory
+        if lug_id in self.lugs:
+            del self.lugs[lug_id]
+        if lug_id in self.closed_lugs:
+            del self.closed_lugs[lug_id]
+            
+        # Remove from both files to be safe (it's one or the other but this covers it)
+        self._remove_lug_from_file(lug_id)
+        
+        # Also remove from closed file if it was there
+        # _remove_lug_from_file uses self.lugs_file, we need to handle closed_file manually or reuse
+        # The _remove_lug_from_file implementation is tied to self.lugs_file.
+        # Let's make a generic helper or just duplicate logic for safety since I can't refactor everything.
+        # Actually _remove_lug_from_file is hardcoded to self.lugs_file.
+        # I should just execute the same logic for closed_file.
+        
+        if self.closed_file.exists():
+            temp_file = self.closed_file.with_suffix('.jsonl.tmp')
+            with open(self.closed_file, 'r') as src, open(temp_file, 'w') as dst:
+                for line in src:
+                    if not line.strip(): continue
+                    try:
+                        data = json.loads(line)
+                        line_id = data.get('i') or data.get('id')
+                        if line_id != lug_id:
+                            dst.write(line)
+                    except:
+                        dst.write(line)
+            temp_file.replace(self.closed_file)
+
+
     
     def add_dependency(self, lug_id_prefix: str, dep_id_prefix: str):
         """
@@ -632,6 +711,115 @@ class LugManager:
         self._atomic_append(self.sessions_file, session.to_dict())
         
         return session
+
+    def record_session_bead(
+        self,
+        session_id: str,
+        summary: str,
+        parent_id: Optional[str] = None,
+        files_modified: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Record an immutable session 'bead' (history node).
+        
+        Args:
+            session_id: ID of the session
+            summary: Session summary
+            parent_id: Hash of the previous session (bead)
+            files_modified: List of modified files
+            
+        Returns:
+            The recorded bead dict
+        """
+        bead = {
+            'bead_id': hashlib.sha256(f"{session_id}{datetime.now().isoformat()}".encode()).hexdigest()[:16],
+            'session_id': session_id,
+            'parent_id': parent_id,
+            'timestamp': datetime.now().isoformat(),
+            'summary': summary,
+            'files_modified': files_modified or []
+        }
+        
+        self._atomic_append(self.sessions_file, bead)
+        return bead
+
+    def get_bead_chain(self) -> List[Dict[str, Any]]:
+        """
+        Retrieve the full session bead chain, sorted by timestamp.
+        
+        Returns:
+            List of bead dicts
+        """
+        if not self.sessions_file.exists():
+            return []
+            
+        beads = []
+        with open(self.sessions_file, 'r') as f:
+            for line in f:
+                if line.strip():
+                    try:
+                        data = json.loads(line)
+                        if 'bead_id' in data: # Only load beads, skip legacy sessions if mixed
+                            beads.append(data)
+                    except json.JSONDecodeError:
+                        continue
+        
+        # Sort by timestamp to reconstruct linear history
+        # (Though append-only *should* be chronological, this handles async drift)
+        beads.sort(key=lambda x: x.get('timestamp', ''))
+        return beads
+
+    def validate_bead_chain(self) -> Dict[str, Any]:
+        """
+        Validate the integrity of the bead chain.
+        
+        Checks:
+        1. Genesis bead (parent_id is None)
+        2. Linkage (bead[i].parent_id == bead[i-1].bead_id)
+        3. Tampering (re-hashing content matches bead_id - TODO in future)
+        
+        Returns:
+            Dict with 'valid' (bool) and 'errors' (list)
+        """
+        beads = self.get_bead_chain()
+        errors = []
+        
+        if not beads:
+            return {'valid': True, 'errors': [], 'chain_length': 0}
+
+        # Check Genesis
+        # First bead in time *usually* has parent_id=None, unless we started recording mid-project
+        # So we don't strictly enforce genesis=None for the first file entry, 
+        # but we do check that if parent_id exists, the parent is found.
+        
+        bead_map = {b['bead_id']: b for b in beads}
+        
+        for i, bead in enumerate(beads):
+            parent_id = bead.get('parent_id')
+            bead_id = bead.get('bead_id')
+            
+            # Skip check for genesis-like beads (explicitly no parent)
+            if not parent_id:
+                continue
+                
+            # Check if parent exists in our known chain
+            if parent_id not in bead_map:
+                # This might be valid if the parent is from before we started tracking,
+                # or it indicates a broken chain (missing file content).
+                # For now, we flag it as a warning/break.
+                # Special case: if parent_id looks like a session_id (legacy link), we might accept it 
+                # but we can't verify the hash.
+                if len(parent_id) != 16: # Assuming our beads are 16 chars
+                     # Legacy or custom ID
+                     pass
+                else:
+                    errors.append(f"Broken link: Bead {bead_id[:8]} points to missing parent {parent_id[:8]}")
+
+        return {
+            'valid': len(errors) == 0,
+            'errors': errors,
+            'chain_length': len(beads)
+        }
 
     def is_significant(self, lug: Lug) -> bool:
         """

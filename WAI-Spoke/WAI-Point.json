@@ -1,16 +1,41 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-01-19T11:30:19.563924",
+  "generated_at": "2026-01-19T15:46:53.716987",
   "project": {
     "name": "Unknown",
     "version": "0.0.0"
   },
   "summary": "Build AI wheels that roll forward forever - universal context persistence for any knowledge work",
-  "open_lugs": [],
-  "open_lugs_summary": "No Lugs system initialized",
-  "next_session_lug": null,
+  "open_lugs": [
+    {
+      "type": "bug",
+      "priority": "high",
+      "title": "Verify test bug"
+    },
+    {
+      "type": "work",
+      "priority": "medium",
+      "title": "Test Child"
+    },
+    {
+      "type": "work",
+      "priority": "medium",
+      "title": "Test Child"
+    },
+    {
+      "type": "work",
+      "priority": "medium",
+      "title": "Test Child"
+    }
+  ],
+  "open_lugs_summary": "4 open: 1 high, 3 medium",
+  "next_session_lug": {
+    "type": "bug",
+    "priority": "high",
+    "title": "Verify test bug"
+  },
   "last_shipit": {
-    "timestamp": "2026-01-19T11:29:56.015646",
+    "timestamp": "2026-01-19T15:46:53.661970",
     "summary": "No conversation log found",
     "key_topics": []
   },

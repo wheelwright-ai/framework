@@ -1,0 +1,1 @@
+Created 2 beads in /home/mario/projects/wheelwright-ai/framework/WAI-Spoke/lug-sessions.jsonl

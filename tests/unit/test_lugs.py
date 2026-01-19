@@ -53,7 +53,7 @@ class TestLugCreation:
         )
         
         assert lug.id is not None
-        assert len(lug.id) == 16  # SHA-256 truncated to 16 chars
+        assert len(lug.id) == 64  # SHA-256 full length
         assert lug.title == "Test Lug"
         assert lug.type == "work"
         assert lug.status == "open"
@@ -539,7 +539,7 @@ class TestSessions:
             ide="Cursor"
         )
         
-        sessions_file = temp_spoke_dir / 'lug-sessions.jsonl'
+        sessions_file = temp_spoke_dir / 'sessions.jsonl'
         assert sessions_file.exists()
         
         with open(sessions_file, 'r') as f:
@@ -639,6 +639,67 @@ class TestEnhancedPolicies:
         ready = lug_manager.list_lugs_ready_to_close()
         assert len(ready) == 2
 
+        
+        ready = lug_manager.list_lugs_ready_to_close()
+        assert len(ready) == 2
 
+
+class TestBeadChain:
+    """Test Bead recording, retrieval and validation."""
+
+    def test_record_bead(self, lug_manager, temp_spoke_dir):
+        """Test recording a session bead."""
+        bead = lug_manager.record_session_bead(
+            session_id="session-1",
+            summary="Initial session",
+            files_modified=["test.py"]
+        )
+        
+        assert bead['session_id'] == "session-1"
+        assert bead['summary'] == "Initial session"
+        assert len(bead['bead_id']) == 16
+        
+        # Verify file
+        sessions_file = temp_spoke_dir / 'sessions.jsonl'
+        with open(sessions_file, 'r') as f:
+            lines = f.readlines()
+        assert len(lines) == 1
+        
+    def test_bead_chain_retrieval(self, lug_manager):
+        """Test retrieving sorted chain."""
+        lug_manager.record_session_bead(session_id="s1", summary="First")
+        lug_manager.record_session_bead(session_id="s2", summary="Second")
+        
+        chain = lug_manager.get_bead_chain()
+        assert len(chain) == 2
+        assert chain[0]['session_id'] == "s1"
+        assert chain[1]['session_id'] == "s2"
+        
+    def test_validate_chain_valid(self, lug_manager):
+        """Test validating a correct chain."""
+        b1 = lug_manager.record_session_bead(session_id="s1", summary="First")
+        b2 = lug_manager.record_session_bead(
+            session_id="s2", 
+            summary="Second",
+            parent_id=b1['bead_id']
+        )
+        
+        validation = lug_manager.validate_bead_chain()
+        assert validation['valid'] is True
+        assert len(validation['errors']) == 0
+
+    def test_validate_chain_broken(self, lug_manager):
+        """Test validating a chain with missing parent."""
+        # Create orphan bead pointing to non-existent parent
+        lug_manager.record_session_bead(
+            session_id="s2", 
+            summary="Second",
+            parent_id="deadbeef12345678"
+        )
+        
+        validation = lug_manager.validate_bead_chain()
+        assert validation['valid'] is False
+        assert len(validation['errors']) == 1
+        assert "Broken link" in validation['errors'][0]
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

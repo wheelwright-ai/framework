@@ -203,4 +203,59 @@ test_jq_array_not_empty "Description" "file.json" ".array.path"
 
 ---
 
+
+## Lug System Smoke Tests
+
+**Purpose:** Verify Lug task tracking functionality
+
+**Coverage:**
+- Lifecycle: Create → Update → Close → Archive
+- Policy Enforcement: Gating on required tags
+- Persistence: Data retention across sessions
+- ID Generation: SHA-256 collision resistance (64 char)
+
+**Manual Test Plan:**
+
+1.  **Create Lug**:
+    ```bash
+    wai lug create "Smoke test lug" --type bug --priority high
+    # Returns ID [64-char-hash]
+    ```
+
+2.  **Verify Listing**:
+    ```bash
+    wai lug list
+    # Shows new lug as "Open"
+    ```
+
+3.  **Update Lug**:
+    ```bash
+    wai lug update [ID-prefix] --status "in_progress"
+    ```
+
+4.  **Attempt Close (Pass/Fail Check)**:
+    ```bash
+    wai lug close [ID-prefix]
+    # SHOULD FAIL with "Missing required policy tag"
+    ```
+
+5.  **Policy Compliance**:
+    ```bash
+    wai lug update [ID-prefix] --policy-tags "test_verified"
+    ```
+
+6.  **Close Success**:
+    ```bash
+    wai lug close [ID-prefix]
+    # Moves to Closed
+    ```
+
+7.  **Archive Check**:
+    ```bash
+    wai lug list --status closed
+    # Shows lug in archive
+    ```
+
+---
+
 **Wheelwright Framework** - wheelwright.ai - MIT License

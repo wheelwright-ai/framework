@@ -1,0 +1,13 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/mario/projects/wheelwright-ai/framework
+plugins: timeout-2.4.0, anyio-4.2.0
+collecting ... collected 41 items / 37 deselected / 4 selected
+
+tests/unit/test_lugs.py::TestBeadChain::test_record_bead PASSED          [ 25%]
+tests/unit/test_lugs.py::TestBeadChain::test_bead_chain_retrieval PASSED [ 50%]
+tests/unit/test_lugs.py::TestBeadChain::test_validate_chain_valid PASSED [ 75%]
+tests/unit/test_lugs.py::TestBeadChain::test_validate_chain_broken PASSED [100%]
+
+======================= 4 passed, 37 deselected in 0.03s =======================
