@@ -74,7 +74,8 @@ class CloseoutProcessor:
             results['steps_completed'].append("Quality gates: Skipped (remote upgrade)")
             results['quality_gates'] = {"skipped": True, "skip_reason": "remote upgrade"}
         else:
-            print_info("\n" + "-"*30)
+            print_info("")
+            print_info("-" * 30)
             print_info("🔹 [1/13] Quality Gates")
             print_info("-" * 30)
             gate_results = self.quality_gates.run_all_gates(skip_minor=True)
@@ -105,7 +106,8 @@ class CloseoutProcessor:
                 results['steps_completed'].append("Quality gates: Passed")
 
         # Step 2: Lug Policy Validation (Blocker check)
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [2/13] Lug Policy Validation")
         print_info("-" * 30)
         session_state = self.session.get_state()
@@ -221,7 +223,8 @@ class CloseoutProcessor:
 
 
         # Step 3: Process seed folders and clean up sprawl
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [3/13] Seed Folders & Cleanup")
         print_info("-" * 30)
         seed_result = self._process_seed_and_cleanup(interactive)
@@ -229,7 +232,8 @@ class CloseoutProcessor:
         results['warnings'].extend(seed_result.get('warnings', []))
 
         # Step 4: Reconcile WAI-Hub-Learnings.md if exists
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [4/13] Hub Learnings Reconciliation")
         print_info("-" * 30)
         learnings_reconciled = self._reconcile_hub_learnings()
@@ -237,7 +241,8 @@ class CloseoutProcessor:
             results['steps_completed'].append("Reconciled hub learnings into WAI-Guide.md")
 
         # Step 5: Run file rebalancer
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [5/13] File Content Rebalancing")
         print_info("-" * 30)
         rebalance_result = self.rebalancer.rebalance()
@@ -247,7 +252,8 @@ class CloseoutProcessor:
             results['steps_completed'].append("Files balanced: no action needed")
 
         # Step 6: Extract session summary
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [6/13] Session Summary Extraction")
         print_info("-" * 30)
         session_summary = self.session.extract_session_summary()
@@ -255,7 +261,8 @@ class CloseoutProcessor:
         results['steps_completed'].append(f"Extracted summary: {session_summary['turns']} turns")
 
         # Step 7: Extract high-impact signals
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [7/13] Signal Extraction")
         print_info("-" * 30)
         signals_extracted = self._extract_signals()
@@ -265,21 +272,24 @@ class CloseoutProcessor:
             results['steps_completed'].append("No new signals to extract")
 
         # Step 8: Record analytics
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [8/13] Recording Analytics")
         print_info("-" * 30)
         self._record_analytics(session_summary)
         results['steps_completed'].append("Recorded session analytics")
 
         # Step 9: Update session state and clear log
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [9/13] Finalizing Closeout")
         print_info("-" * 30)
         self._finalize_closeout(session_summary)
         results['steps_completed'].append("Finalized: state updated, log cleared")
 
         # Step 10: Reconcile multi-environment sessions
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [10/13] Multi-Environment Reconciliation")
         print_info("-" * 30)
         reconcile_result = self.multi_session.reconcile_sessions()
@@ -293,7 +303,8 @@ class CloseoutProcessor:
             results['steps_completed'].append("No environment sessions to reconcile")
 
         # Step 11: Refresh integrations and optionally re-brief active session
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [11/13] Refreshing Integrations")
         print_info("-" * 30)
         integration_status = self._refresh_integrations()
@@ -301,7 +312,8 @@ class CloseoutProcessor:
         results['steps_completed'].append(f"Integrations refreshed: {integration_status['updated']} updated")
 
         # Step 12: Update WAI-Point bootstrap
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [12/13] WAI-Point Bootstrap")
         print_info("-" * 30)
         self.point_manager.update_from_state()
@@ -309,7 +321,8 @@ class CloseoutProcessor:
 
         # Step 13: Update Website Content (if exists)
         # [REFACTORED] Added as rule - update website content on each closeout
-        print_info("\n" + "-"*30)
+        print_info("")
+        print_info("-" * 30)
         print_info("🔹 [13/13] Website Content Update")
         print_info("-" * 30)
         website_updated = self._update_website_content(session_summary)

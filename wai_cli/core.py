@@ -4353,7 +4353,7 @@ Examples:
                 print_info("  The following files are modified or untracked but were not automatically staged by the Framework.")
                 print_info("  You can choose to include them in this commit.")
 
-                if safe_confirm("  Stage these files too?", default=False):
+                if safe_confirm("  Stage these files too?", default=True):
                     for f in unstaged_files:
                         repo.index.add([f])
                         print_info(f"    + {f}")
