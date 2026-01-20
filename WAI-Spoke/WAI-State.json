@@ -105,20 +105,20 @@
     "review_reason": null,
     "session_count": 17,
     "protocol_completed": true,
-    "protocol_last_run": "2026-01-19T23:57:52Z",
+    "protocol_last_run": "2026-01-20T00:19:54Z",
     "briefing_provided": true,
     "current_session": {
-      "session_id": "mario-2026-01-19-155752",
-      "started_at": "2026-01-19T23:57:52Z",
+      "session_id": "mario-2026-01-19-161953",
+      "started_at": "2026-01-20T00:19:53Z",
       "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
     },
     "last_closeout": {
-      "session_id": "mario-2026-01-19-154653",
-      "started_at": "2026-01-19T23:46:53Z",
-      "turn_count": 0,
-      "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-19T15:57:52.171079",
+      "session_id": "41840524a256",
+      "started_at": "2026-01-19T16:02:17.996825",
+      "ai_model": "Unknown Model",
+      "turns": 0,
+      "closed_at": "2026-01-19T16:19:53.941103",
       "summary": "No conversation log found",
       "key_topics": [],
       "files_modified": []
@@ -126,30 +126,30 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 38,
-      "total_turns": 966,
-      "total_duration_seconds": 122,
-      "avg_duration_seconds": 3.210526315789474
+      "total_count": 41,
+      "total_turns": 970,
+      "total_duration_seconds": 124,
+      "avg_duration_seconds": 3.024390243902439
     },
     "token_efficiency": {
-      "total_tokens_used": 99,
+      "total_tokens_used": 132,
       "context_limit": 200000,
       "avg_tokens_per_session": 2
     },
     "time_tracking": {
-      "total_time_together_seconds": 126,
+      "total_time_together_seconds": 128,
       "total_time_ai_alone_seconds": 0
     },
     "baseline_mode": {
       "enabled": false,
-      "started_at": "2026-01-19T12:10:29.865946",
+      "started_at": "2026-01-19T16:02:17.992516",
       "total_tokens_used": 105,
       "total_sessions": 1,
       "description": "Baseline capture: avoid Wheelwright optimizations; closeout still records session metrics",
-      "ended_at": "2026-01-19T12:10:29.870882"
+      "ended_at": "2026-01-19T16:02:17.995925"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-19T15:57:52.169656"
+    "last_updated": "2026-01-19T16:19:53.940236"
   },
   "wheel": {
     "name": "Wheelwright Framework",
