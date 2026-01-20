@@ -501,6 +501,12 @@ Examples:
         config_ide_list = config_ide_subparsers.add_parser('list', help='List supported IDE integrations')
         config_ide_list.add_argument('path', nargs='?', default='.', help='Project path')
 
+        # Ready command
+        ready_parser = subparsers.add_parser('ready', help='Show prioritized ready work')
+        ready_parser.add_argument('path', nargs='?', default='.', help='Project path')
+        ready_parser.add_argument('--limit', type=int, default=10, help='Limit number of items')
+        ready_parser.add_argument('--json', action='store_true', help='Output as JSONL')
+
         config_ide_setup = config_ide_subparsers.add_parser('setup', help='Setup IDE configuration')
         config_ide_setup.add_argument('ide', nargs='?', help='IDE name (default: all detected)')
         config_ide_setup.add_argument('path', nargs='?', default='.', help='Project path')
@@ -2659,7 +2665,8 @@ Examples:
             "teach",
             "shipit",
             "template",
-            "context"
+            "context",
+            "ready"
         }
         if args.command in path_commands:
             path_arg = getattr(args, "path", ".") or "."
@@ -2705,6 +2712,8 @@ Examples:
             self._cmd_configure_ide(args)
         elif args.command == 'context':
             self._cmd_context(args)
+        elif args.command == 'ready':
+            self._cmd_ready(args)
         elif args.command == 'version':
             self._cmd_version()
         else:
@@ -2731,6 +2740,22 @@ Examples:
         """Handle status command."""
         from .commands.status import show_status
         show_status(args.path)
+
+    def _cmd_ready(self, args):
+        """Handle ready command."""
+        from .commands.ready import ready_command
+        from .utils.paths import normalize_path
+        
+        spoke_path = normalize_path(args.path)
+        
+        # Reconstruct args for ready_command
+        cmd_args = []
+        if args.limit:
+            cmd_args.append(f"--limit={args.limit}")
+        if args.json:
+            cmd_args.append("--json")
+            
+        ready_command(cmd_args, spoke_path)
 
     def _cmd_hub(self, args):
         """Handle hub commands."""

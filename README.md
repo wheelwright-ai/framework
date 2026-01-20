@@ -13,6 +13,8 @@ Works with ChatGPT, Claude, Gemini, Copilot - **any AI you use**.
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
 > *"We aren't reinventing the wheel - we're evolving it faster than one person ever could."*
+>
+> *[Read how we stand on the shoulders of giants.](docs/INSPIRATIONS.md)*
 
 ---
 
@@ -545,6 +547,32 @@ echo "Read WAI-Spoke/WAI-Guide.md for project context" > .your-ai-tool-config
 ```
 
 **The goal:** Every AI tool should load WAI automatically. If your tool isn't listed, [open an issue](https://github.com/wheelwright-ai/framework/issues) and we'll add support.
+
+---
+
+## Multi-Agent Orchestration
+
+**Wheelwright isn't just for you - it's for your entire team of agents.**
+
+Coordinate multiple AIs (Claude, Cursor, Copilot) working on the same project simultaneously. The Hub acts as the **Shared Brain**, ensuring every agent sees the same state, follows the same rules, and contributes to the same goals.
+
+### The "Ready Queue" Pattern
+Instead of manually managing agents, use the Hub to distribute work:
+
+1.  **Planning Agent (Architect):** Creates high-level Lugs (tasks) in the Hub.
+2.  **Coding Agents (Builders):** Run `wai ready` to pick up unblocked, prioritized work.
+3.  **Reviewing Agent:** Validates completed Lugs before closing them.
+
+```bash
+# Agent asks: "What should I do next?"
+WAI ready
+# Output: [P1] Implement Auth (Lug: a1b2) - Unblocked
+
+# Agent claims it:
+WAI lug start a1b2
+```
+
+[Read the full Multi-Agent Setup Guide](docs/multi-agent-setup.md)
 
 ---
 

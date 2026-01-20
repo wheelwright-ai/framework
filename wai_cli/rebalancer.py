@@ -234,7 +234,6 @@ class FileRebalancer:
             'WAI-Baseline-Log.jsonl',
             'WAI-Testing-Log.jsonl',
             'WAI-WebLLM-Instructions.md',
-            'WAI-Backlog.md',
             'WAI-Implementation-Summary.md',
             'WAI-Hub-Learnings.md',  # Created by Teach, reconciled by Closeout
             'WAI-File-Index.json',  # File index for tracking modifications

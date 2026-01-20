@@ -471,3 +471,53 @@ class HubManager:
             return hub_path
 
         return discovered_hub
+    
+    def get_insights(self, tags: List[str], hub_path: Optional[Path] = None) -> List[str]:
+        """
+        Retrieve insights from the Hub based on project tags.
+        
+        Args:
+            tags: List of project tags (e.g. ['web', 'python', 'cli'])
+            hub_path: Optional explicit hub path
+            
+        Returns:
+            List of insight strings
+        """
+        insights = []
+        if not hub_path:
+            # Try to discover via env or standard locations
+            hub_path = self.auto_discover_hub(Path.cwd())
+            
+        if not hub_path:
+            return []
+            
+        learnings_dir = hub_path / 'learnings'
+        if not learnings_dir.exists():
+            return []
+            
+        # Scan learnings for matches
+        for item in learnings_dir.rglob('*.md'):
+            try:
+                content = item.read_text(encoding='utf-8')
+                # Simple keyword matching for now
+                for tag in tags:
+                    if tag.lower() in content.lower():
+                        # Extract the key insight (first h2 or bold line)
+                        insight = self._extract_insight(content)
+                        if insight and insight not in insights:
+                            insights.append(insight)
+            except Exception:
+                continue
+                
+        return insights[:5] # Return top 5
+        
+    def _extract_insight(self, content: str) -> Optional[str]:
+        """Extract a single-line summary from learning markdown."""
+        lines = content.splitlines()
+        for line in lines:
+            if line.startswith('## '):
+                return line.replace('## ', '').strip()
+            if line.startswith('**') and line.endswith('**'):
+                return line.strip('* ')
+        return None
+

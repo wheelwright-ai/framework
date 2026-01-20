@@ -1,11 +1,11 @@
 {
   "version": "2.1",
   "metadata": {
-    "spoke_path": "PLACEHOLDER_SPOKE_PATH",
-    "project_root": "PLACEHOLDER_PROJECT_ROOT",
-    "project_name": "PLACEHOLDER_PROJECT_NAME",
-    "last_updated": "PLACEHOLDER_TIMESTAMP",
-    "updated_by": "WAI Initialization"
+    "spoke_path": "/home/mario/projects/wheelwright-ai/framework/verification_copilot_script/WAI-Spoke",
+    "project_root": "/home/mario/projects/wheelwright-ai/framework/verification_copilot_script",
+    "project_name": "verification_copilot_script",
+    "last_updated": "2026-01-19T22:40:51.778662",
+    "updated_by": "WAI CLI (init)"
   },
   "core_files": {
     "WAI-State.json": {
@@ -75,6 +75,11 @@
     }
   },
   "project_files": {
+    "WAI-Backlog.md": {
+      "purpose": "Feature backlog and planned improvements",
+      "required": false,
+      "auto_managed": false
+    },
     "WAI-Implementation-Summary.md": {
       "purpose": "Implementation summaries for completed work",
       "required": false,

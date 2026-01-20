@@ -114,6 +114,20 @@ Do NOT proceed with any work. Instead, guide the user through establishing:
 
 ---
 
+## System Sketch (The "Thinking" Step)
+
+**Before writing code for complex tasks (multi-file changes or >6 steps), you MUST create a System Sketch.**
+
+Stop and ask yourself these 5 questions. Document the answers in your plan:
+
+1.  **Likelihood of Change:** Is this a one-off script or a foundational piece? (Foundational = higher quality bar)
+2.  **DRY (Don't Repeat Yourself):** Does similar logic exist elsewhere? Can we reuse or refactor?
+3.  **Source of Truth:** Where does the state live? Are we duplicating it? (Avoid "split brain")
+4.  **Criticality:** What happens if this breaks? (UI glitch vs Data loss vs Security hole)
+5.  **Testability:** How will we verify this? (Unit vs Integration vs Manual)
+
+---
+
 ## Implementation Approval Gate
 
 If the user asks for planning/ideation, pause after the plan and ask for explicit approval before making code changes.

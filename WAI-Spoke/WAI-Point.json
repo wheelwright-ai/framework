@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-01-19T19:24:27.575123",
+  "generated_at": "2026-01-20T13:37:47.216971",
   "project": {
     "name": "Unknown",
     "version": "0.0.0"
@@ -191,16 +191,26 @@
       "type": "task",
       "priority": "medium",
       "title": "Integrate Questions into ADAPTIVE Workflow"
+    },
+    {
+      "type": "feature",
+      "priority": "high",
+      "title": "Design Hub-Interactive Project Init"
+    },
+    {
+      "type": "task",
+      "priority": "high",
+      "title": "Update Documentation for Multi-Agent Support"
     }
   ],
-  "open_lugs_summary": "37 open: 15 high, 18 medium, 3 low",
+  "open_lugs_summary": "39 open: 17 high, 18 medium, 3 low",
   "next_session_lug": {
     "type": "bug",
     "priority": "high",
     "title": "Verify test bug"
   },
   "last_shipit": {
-    "timestamp": "2026-01-19T19:24:27.491905",
+    "timestamp": "2026-01-20T13:37:47.140358",
     "summary": "No conversation log found",
     "key_topics": []
   },

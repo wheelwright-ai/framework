@@ -4,7 +4,7 @@
     "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
     "project_root": "/home/mario/projects/wheelwright-ai/framework",
     "project_name": "framework",
-    "last_updated": "2026-01-19T19:29:56Z",
+    "last_updated": "2026-01-19T23:39:05Z",
     "updated_by": "WAI Update"
   },
   "core_files": {
@@ -136,6 +136,16 @@
       "auto_managed": true
     },
     "reference/auto/lugs-closed.jsonl": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/sessions.jsonl": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Policies.json": {
       "purpose": "Auto-archived from WAI-Spoke root",
       "required": false,
       "auto_managed": true

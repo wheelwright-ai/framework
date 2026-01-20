@@ -69,15 +69,16 @@ class Lug:
         self.session_id: Optional[str] = data.get('session_id')
         
         # Relationships
-        self.deps: List[str] = data.get('deps', [])
-        self.blocked_by: List[str] = data.get('blocked_by', [])
-        self.policy_tags: List[str] = data.get('policy_tags', [])
+        # Defensive: ensure these are always lists, even if None in data
+        self.deps: List[str] = data.get('deps') or []
+        self.blocked_by: List[str] = data.get('blocked_by') or []
+        self.policy_tags: List[str] = data.get('policy_tags') or []
         self.origin: Optional[str] = data.get('origin')
         self.resolved_by: Optional[Dict[str, Any]] = data.get('resolved_by')
         self.summary: Optional[str] = data.get('summary')
         self.justification: Optional[str] = data.get('justification')
         self.from_file: Optional[str] = data.get('from_file')
-        self.extras: Dict[str, Any] = data.get('extras', {})
+        self.extras: Dict[str, Any] = data.get('extras') or {}
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to full dict with all fields."""
@@ -127,6 +128,10 @@ class Session:
         self.mode: str = data.get('mode', 'YOLO')
         self.model: Optional[str] = data.get('model')
         self.duration: Optional[float] = data.get('duration')
+        
+        # Multi-Agent Tracking (Lug 5.1)
+        self.agent_id: Optional[str] = data.get('agent_id')
+        self.agent_role: Optional[str] = data.get('agent_role')
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dict."""
@@ -138,7 +143,9 @@ class Session:
             'timestamp_end': self.timestamp_end,
             'mode': self.mode,
             'model': self.model,
-            'duration': self.duration
+            'duration': self.duration,
+            'agent_id': self.agent_id,
+            'agent_role': self.agent_role
         }
 
 
@@ -396,9 +403,17 @@ class LugManager:
         if deps is not None:
             lug.deps = deps
         if blocked_by is not None:
+            # Defensive check: ensure list
+            if not isinstance(blocked_by, list):
+                if isinstance(blocked_by, str):
+                    blocked_by = [blocked_by]
+                else:
+                    blocked_by = list(blocked_by)
             lug.blocked_by = blocked_by
         if policy_tags is not None:
-            lug.policy_tags = list(set(lug.policy_tags + policy_tags))
+            # Defensive initialization if Lug has None
+            current_tags = lug.policy_tags or []
+            lug.policy_tags = list(set(current_tags + policy_tags))
         if extras:
             # Check for special session_id update (allows unlinking via extras={'session_id': None})
             if 'session_id' in extras:
@@ -621,6 +636,51 @@ class LugManager:
         
         return lugs
     
+    def get_ready_lugs(self, limit: int = 10) -> List[Lug]:
+        """
+        Get Lugs that are ready to work on (no open dependencies),
+        sorted by Priority and Value.
+        
+        Sorting:
+        1. Priority (Critical > High > Medium > Low)
+        2. Value (High > Low)
+        3. Age (Oldest > Newest)
+        """
+        # Helper for priority mapping
+        def prio_score(p: str) -> int:
+            p = str(p).lower()
+            if p in ('0', 'critical'): return 0
+            if p in ('1', 'high'): return 1
+            if p in ('2', 'medium'): return 2
+            if p in ('3', 'low'): return 3
+            if p in ('4', 'backlog'): return 4
+            return 2 # Default to Medium
+            
+        ready_lugs = []
+        open_lugs = self.get_open_lugs()
+        
+        for lug in open_lugs:
+            # Check dependencies
+            blocked = False
+            for dep_id in (lug.deps or []):
+                dep = self.get_lug(dep_id)
+                # If dependency exists and is NOT closed, we are blocked
+                if dep and dep.status != 'closed':
+                    blocked = True
+                    break
+            
+            if not blocked:
+                ready_lugs.append(lug)
+        
+        # Sort
+        ready_lugs.sort(key=lambda l: (
+            prio_score(l.priority),             # Lower is better (0=Critical)
+            -1 * (l.value or 0),                # Higher is better
+            l.created_at                        # Older is better (FIFO)
+        ))
+        
+        return ready_lugs[:limit]
+    
     def _update_lug_in_file(self, lug_id: str):
         """
         Update a single lug in-place using a temp file for atomicity.
@@ -694,7 +754,9 @@ class LugManager:
         who: str,
         ide: str,
         mode: str = 'YOLO',
-        model: Optional[str] = None
+        model: Optional[str] = None,
+        agent_id: Optional[str] = None,
+        agent_role: Optional[str] = None
     ) -> Session:
         """Create a new session for attribution."""
         session_data = {
@@ -703,7 +765,9 @@ class LugManager:
             'ide': ide,
             'timestamp_start': datetime.now().isoformat(),
             'mode': mode,
-            'model': model
+            'model': model,
+            'agent_id': agent_id,
+            'agent_role': agent_role
         }
         
         session = Session(session_data)

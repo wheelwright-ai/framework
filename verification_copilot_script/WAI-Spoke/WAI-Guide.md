@@ -61,11 +61,11 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 
 ### Your Core Files
 
+| File | Purpose | Your Action |
+|------|---------|-------------|
 | `WAI-State.json` | Technical spec, foundation, session state | UPDATE |
 | `WAI-State.md` | Strategic context, vision | UPDATE |
-| `WAI-Point.json` | Minimal bootstrap for context restoration | READ ONLY (Update on shipit) |
 | `wheel-signals.jsonl` | High-impact learnings | APPEND (never overwrite) |
-| `lugs.jsonl` | Active task/dependency graph | UPDATE (via tools/CLI) |
 | `kb-sync.json` | Hub sync status | READ ONLY |
 | `WAI-Guide.md` (this file) | Your instructions | READ ONLY |
 
@@ -111,6 +111,20 @@ Do NOT proceed with any work. Instead, guide the user through establishing:
 2. Set `completed: true` with timestamp and your AI name
 3. Add first entry to `evolution_log`
 4. Update WAI-State.md with the vision
+
+---
+
+## System Sketch (The "Thinking" Step)
+
+**Before writing code for complex tasks (multi-file changes or >6 steps), you MUST create a System Sketch.**
+
+Stop and ask yourself these 5 questions. Document the answers in your plan:
+
+1.  **Likelihood of Change:** Is this a one-off script or a foundational piece? (Foundational = higher quality bar)
+2.  **DRY (Don't Repeat Yourself):** Does similar logic exist elsewhere? Can we reuse or refactor?
+3.  **Source of Truth:** Where does the state live? Are we duplicating it? (Avoid "split brain")
+4.  **Criticality:** What happens if this breaks? (UI glitch vs Data loss vs Security hole)
+5.  **Testability:** How will we verify this? (Unit vs Integration vs Manual)
 
 ---
 
@@ -260,62 +274,15 @@ When you make a decision with **impact >= 8**, share it:
 
 ---
 
-## Session Commands
+## Session Continuity Commands
 
-Wheelwright commands work with or without the `WAI` prefix. If you're unsure whether a command like "Status" refers to WAI or something else, ask: *"Did you mean WAI Status?"*
+Built-in commands for any AI session using Wheelwright:
 
-### Command Reference
-
-| Say This | Slash Command | What It Does |
-|----------|---------------|--------------|
-| **WAI** | `/wai` | Wakeup - load context, verify, brief |
-| **Status** | `/wai-status` | Health check + recommendations |
-| **Time** | `/wai-time` | Token capacity check |
-| **Rules** | `/wai-rules` | Show boundaries and protocols |
-| **Closeout** | `/wai-closeout` | End session ceremony |
-| **Shipit** | `/wai-shipit` | Closeout + commit |
-| **Lugs** | `/wai-lug` | Manage task/dependency graph |
-| **Teach** | `/wai-teach` | Pull learnings from hub |
-| **Learn** | `/wai-learn` | Push signals to hub |
-
-### Command Details
-
-**WAI / Wakeup**: Load WAI-Guide.md and WAI-State.json, run integration verification (hub connected, sync status, uncommitted changes, foundation complete), brief user with status and any warnings.
-
-**Status**: Health check showing hub connection, sync age, session log size, uncommitted files, foundation status. Provides recommendations like "Consider Closeout" or "Hub has new learnings".
-
-**Time**: Estimate context usage and warn if approaching limits.
-
-**Rules**: Display project identity, in-scope/out-of-scope boundaries, and approach preferences.
-
-**Closeout**: End session - extract signals, update state files, clear session log, prepare for commit.
-
-**Shipit**: Closeout + git add + commit with session summary. Asks before pushing.
-
-**Teach**: Pull new learnings from hub into this spoke's WAI-Guide.md.
-
-**Learn**: Push high-impact signals from this session to the hub.
-
----
-
-## Lug System: AI-First Task Graph
-
-Lugs are the structural backbone of WAI context. They represent tasks, bugs, or epics with explicit dependencies.
-
-### Key Commands
-- `WAI lug create "Title"`: Create a new Lug (interactive)
-- `WAI lug list`: List open Lugs (filters available)
-- `WAI lug show <id>`: Show full Lug details and history
-- `WAI lug close <id>`: Resolve a Lug and archive it
-
-### AI Workflow with Lugs
-1. **Wakeup**: Browse open Lugs to understand current priorities. If `WAI-Point.json` suggests a `next_session_lug`, prioritize it.
-2. **Execution**: Create Lugs for sub-tasks or newly discovered bugs using `wai lug add`.
-3. **Policies**: Check `WAI-Policies.json` and Lug `policy_tags` to ensure your changes meet quality gates.
-4. **Commit**: `WAI shipit` will automatically suggest closing Lugs associated with your session ID.
-
-### Context Restoration via WAI-Point
-If the conversation history is lost (e.g., new session), read `WAI-Spoke/WAI-Point.json` immediately. It contains the project summary, last shipit details, and the recommended next task.
+| Command | Response Behavior |
+|---------|-------------------|
+| `'Time'` | Token usage estimate with 80% capacity warnings |
+| `'Rules'` | List active guidelines and project protocols |
+| `'Closeout'` | Generate updated WAI-State files for session end |
 
 ---
 
@@ -416,147 +383,3 @@ WAI version               # Show version info
 
 *Wheelwright Framework - Build AI wheels that roll forward forever*
 *wheelwright.ai - MIT License*
-
----
-
-## Conversation Logging
-
-Track every turn in `WAI-Spoke/WAI-Session-Log.jsonl` using append-only JSONL. On closeout, extract summary and clear the log.
-
-**Hub learning cannot proceed** until Closeout processes and clears the log.
-
----
-
-## Multi-Environment Sessions
-
-WAI is **multi-agent and multi-environment enabled**. Work safely across multiple tools and machines without collision.
-
-### How It Works
-
-Each environment (tool + machine) gets its own session log:
-
-```
-WAI-Spoke/sessions/
-  claude-code-laptop.jsonl      # Claude Code on laptop
-  claude-code-desktop.jsonl     # Claude Code on desktop
-  cursor-laptop.jsonl           # Cursor on laptop
-  chatgpt-web.jsonl             # ChatGPT web interface
-```
-
-### Environment Auto-Detection
-
-On session start, WAI automatically detects:
-- **Tool**: Claude Code, Cursor, VS Code Copilot, ChatGPT, etc.
-- **Machine**: Hostname or friendly name (set `WAI_MACHINE` env var to override)
-- **OS**: Linux, macOS, Windows, WSL
-- **Parent session**: For spawned child agents
-
-### Session File Structure
-
-Each session file contains:
-
-```json
-{"type": "env", "ts": "...", "session_id": "...", "tool": "claude-code", "machine": "laptop", "os": "linux/wsl", "integrations": {"hub_connected": true}}
-{"type": "turn", "ts": "...", "session_id": "...", "role": "user", "summary": "Asked about feature X"}
-{"type": "turn", "ts": "...", "session_id": "...", "role": "assistant", "summary": "Implemented feature X"}
-{"type": "decision", "ts": "...", "decision": "Used pattern Y", "impact": 8}
-```
-
-### Cross-Session Awareness
-
-On wakeup, scan `WAI-Spoke/sessions/` to see:
-- Which other environments have been active
-- Recent activity from other tools/machines
-- Unreconciled entries awaiting closeout
-
-### Closeout Reconciliation
-
-During closeout:
-1. Scan all session files in `WAI-Spoke/sessions/`
-2. Extract high-impact decisions to WAI-State.json
-3. Update environments registry in WAI-State.json
-4. Mark entries as `reconciled: true`
-5. Prune old reconciled entries (git preserves history)
-
-### Environment Variables
-
-| Variable | Purpose |
-|----------|---------|
-| `WAI_MACHINE` | Override machine identifier (default: hostname) |
-| `WAI_TOOL` | Override tool detection (for web-based tools) |
-| `WAI_PARENT_SESSION` | Set by parent when spawning child agents |
-
----
-
-## Token Efficiency & Multi-Stage Workflow
-
-### ADAPTIVE Workflow Mode
-
-Use multi-stage gates for complex tasks to avoid premature implementation and wasted tokens.
-
-### Standardized Plan Template
-
-Provide a concise, step-based plan before implementing complex changes.
-
-### Checkpointing Protocol
-
-Checkpoint progress every few steps to reduce drift and allow early corrections.
-
-### Context Hygiene Rules
-
-Avoid repeating large blocks of text; summarize long content and keep context lean.
-
-### Command: 'Compact'
-
-Use the Compact command to compress context and rebalance WAI files when needed.
-
-## Hub Learnings
-
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern
-
-## Pattern

@@ -236,6 +236,24 @@ def init_spoke(
         print_info("  Workspace usage:")
         print_info("    Run WAI-Spoke/WAI-Workspace.cmd to open IDE/RUN/CLI tabs")
 
+    # Create .github/copilot-instructions.md for IDE context awareness
+    github_dir = spoke_path / '.github'
+    copilot_file = github_dir / 'copilot-instructions.md'
+    copilot_template = templates_dir / 'copilot-instructions.md'
+
+    if copilot_template.exists():
+        ensure_directory(github_dir)
+        if not copilot_file.exists():
+            github_dir.mkdir(exist_ok=True)
+            copilot_file.write_text(
+                copilot_template.read_text(encoding='utf-8'),
+                encoding='utf-8'
+            )
+            if verbose:
+                print_info("  Created .github/copilot-instructions.md")
+        elif verbose:
+            print_info("  Skipped .github/copilot-instructions.md (already exists)")
+
     # Capture initial project discovery snapshot
     try:
         from .spoke_update import SpokeUpdateProcessor
@@ -374,6 +392,33 @@ def init_spoke_interactive(verbose: bool = True) -> None:
     # Initialize
     try:
         init_spoke(spoke_path, is_framework=False, verbose=verbose)
+        
+        # --- NEW: Run the Wizard Interview ---
+        try:
+            from .wizards.init_wizard import InitWizard
+            from .hub import HubManager
+            
+            # Find hub for context
+            hub_path = HubManager().auto_discover_hub(spoke_path)
+            
+            wizard = InitWizard(hub_path=hub_path)
+            wizard.run_interview()
+            
+            # Inject insights into WAI-State.md
+            seed_content = wizard.generate_seed_content()
+            state_md = spoke_path / 'WAI-Spoke' / 'WAI-State.md'
+            
+            if state_md.exists():
+                current_text = state_md.read_text(encoding='utf-8')
+                new_text = current_text + "\n\n" + seed_content
+                state_md.write_text(new_text, encoding='utf-8')
+                print_success("  Injected project vision and hub insights.")
+                
+        except Exception as e:
+            print_warning(f"Wizard interview skipped: {e}")
+        # -------------------------------------
+
         print_success(f"\nSpoke initialized at {spoke_path}")
     except Exception as e:
         print_error(f"Initialization failed: {e}")
+

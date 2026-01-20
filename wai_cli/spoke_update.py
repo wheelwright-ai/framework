@@ -36,7 +36,7 @@ class SpokeUpdateProcessor:
         self.reference_dir = self.wai_spoke_dir / "reference"
         self.index_file = self.wai_spoke_dir / "WAI-File-Index.json"
         self.state_md = self.wai_spoke_dir / "WAI-State.md"
-        self.backlog_md = self.wai_spoke_dir / "WAI-Backlog.md"
+        self.state_md = self.wai_spoke_dir / "WAI-State.md"
 
     def ensure_seed_structure(self) -> None:
         self.seed_ingest_dir.mkdir(parents=True, exist_ok=True)
@@ -144,7 +144,7 @@ class SpokeUpdateProcessor:
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         seed_block = [f"## Seeded Context (Ingested) - {timestamp}", ""]
 
-        backlog_block = []
+
 
         for path in files:
             if path.is_dir():
@@ -185,11 +185,8 @@ class SpokeUpdateProcessor:
             seed_block.append("")
 
             if "todo" in path.name.lower() or "backlog" in path.name.lower():
-                backlog_block.append(f"### {path.name}")
-                backlog_block.append("")
-                backlog_block.append(content)
-                backlog_block.append("")
-                note["applied_to"].append("WAI-Backlog.md")
+                # Legacy support: treat todo files as normal notes if Lugs not used
+                pass
 
             path.unlink()
             ingested.append(path.name)
@@ -199,9 +196,7 @@ class SpokeUpdateProcessor:
             existing = self.state_md.read_text()
             self.state_md.write_text(existing.rstrip() + "\n\n" + "\n".join(seed_block).rstrip() + "\n")
 
-        if backlog_block and self.backlog_md.exists():
-            existing = self.backlog_md.read_text()
-            self.backlog_md.write_text(existing.rstrip() + "\n\n## Seeded Backlog\n\n" + "\n".join(backlog_block).rstrip() + "\n")
+
 
         if ingested:
             self._record_seed_ingest(ingested, notes)
