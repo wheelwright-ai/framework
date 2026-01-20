@@ -74,13 +74,13 @@ class CloseoutProcessor:
             results['steps_completed'].append("Quality gates: Skipped (remote upgrade)")
             results['quality_gates'] = {"skipped": True, "skip_reason": "remote upgrade"}
         else:
-            print_info("  Step 0/10: Running quality gates...")
+            print_info("\n🔹 [1/13] Quality Gates...")
             gate_results = self.quality_gates.run_all_gates(skip_minor=True)
             results['quality_gates'] = gate_results
 
             if gate_results.get('skip_reason'):
-                print_info(f"    ⚠️  {gate_results['skip_reason']}")
-                results['steps_completed'].append(f"Quality gates: {gate_results['skip_reason']}")
+                print_info(f"    {gate_results['skip_reason']}")
+                results['steps_completed'].append(f"Quality gates: Skipped (recent pass)")
             elif not gate_results['passed']:
                 # Quality gates failed
                 print_warning("    ⚠️  Quality gates failed!")
@@ -102,8 +102,8 @@ class CloseoutProcessor:
                 print_success("    ✓ All quality gates passed")
                 results['steps_completed'].append("Quality gates: Passed")
 
-        # Step 0.5: Lug Policy Validation (Blocker check)
-        print_info("  Step 0.5/10: Validating Lug policies...")
+        # Step 2: Lug Policy Validation (Blocker check)
+        print_info("\n🔹 [2/13] Lug Policy Validation...")
         session_state = self.session.get_state()
         session_id = session_state.get('session_id')
         
@@ -216,52 +216,52 @@ class CloseoutProcessor:
                     pass
 
 
-        # Step 1: Process seed folders and clean up sprawl
-        print_info("  Step 1/10: Processing seed folders and cleanup...")
+        # Step 3: Process seed folders and clean up sprawl
+        print_info("\n🔹 [3/13] Seed Folders & Cleanup...")
         seed_result = self._process_seed_and_cleanup(interactive)
         results['steps_completed'].append(seed_result['summary'])
         results['warnings'].extend(seed_result.get('warnings', []))
 
-        # Step 2: Reconcile WAI-Hub-Learnings.md if exists
-        print_info("  Step 2/10: Reconciling hub learnings...")
+        # Step 4: Reconcile WAI-Hub-Learnings.md if exists
+        print_info("\n🔹 [4/13] Hub Learnings Reconciliation...")
         learnings_reconciled = self._reconcile_hub_learnings()
         if learnings_reconciled:
             results['steps_completed'].append("Reconciled hub learnings into WAI-Guide.md")
 
-        # Step 3: Run file rebalancer
-        print_info("  Step 3/10: Rebalancing file content...")
+        # Step 5: Run file rebalancer
+        print_info("\n🔹 [5/13] File Content Rebalancing...")
         rebalance_result = self.rebalancer.rebalance()
         if rebalance_result['rebalanced']:
             results['steps_completed'].append(f"Rebalanced files: {len(rebalance_result['actions'])} actions")
         else:
             results['steps_completed'].append("Files balanced: no action needed")
 
-        # Step 4: Extract session summary
-        print_info("  Step 4/10: Extracting session summary...")
+        # Step 6: Extract session summary
+        print_info("\n🔹 [6/13] Session Summary Extraction...")
         session_summary = self.session.extract_session_summary()
         results['session_summary'] = session_summary
         results['steps_completed'].append(f"Extracted summary: {session_summary['turns']} turns")
 
-        # Step 5: Extract high-impact signals
-        print_info("  Step 5/10: Extracting high-impact signals...")
+        # Step 7: Extract high-impact signals
+        print_info("\n🔹 [7/13] Signal Extraction...")
         signals_extracted = self._extract_signals()
         if signals_extracted > 0:
             results['steps_completed'].append(f"Extracted {signals_extracted} high-impact signals")
         else:
             results['steps_completed'].append("No new signals to extract")
 
-        # Step 6: Record analytics
-        print_info("  Step 6/10: Recording session analytics...")
+        # Step 8: Record analytics
+        print_info("\n🔹 [8/13] Recording Analytics...")
         self._record_analytics(session_summary)
         results['steps_completed'].append("Recorded session analytics")
 
-        # Step 7: Update session state and clear log
-        print_info("  Step 7/10: Finalizing closeout...")
+        # Step 9: Update session state and clear log
+        print_info("\n🔹 [9/13] Finalizing Closeout...")
         self._finalize_closeout(session_summary)
         results['steps_completed'].append("Finalized: state updated, log cleared")
 
-        # Step 8: Reconcile multi-environment sessions
-        print_info("  Step 8/10: Reconciling environment sessions...")
+        # Step 10: Reconcile multi-environment sessions
+        print_info("\n🔹 [10/13] Multi-Environment Reconciliation...")
         reconcile_result = self.multi_session.reconcile_sessions()
         results['session_reconciliation'] = reconcile_result
         if reconcile_result['sessions_processed'] > 0:
@@ -272,20 +272,20 @@ class CloseoutProcessor:
         else:
             results['steps_completed'].append("No environment sessions to reconcile")
 
-        # Step 9: Refresh integrations and optionally re-brief active session
-        print_info("  Step 9/10: Refreshing integrations...")
+        # Step 11: Refresh integrations and optionally re-brief active session
+        print_info("\n🔹 [11/13] Refreshing Integrations...")
         integration_status = self._refresh_integrations()
         results['integration_status'] = integration_status
         results['steps_completed'].append(f"Integrations refreshed: {integration_status['updated']} updated")
 
-        # Step 10: Update WAI-Point bootstrap
-        print_info("  Step 10/11: Updating WAI-Point bootstrap...")
+        # Step 12: Update WAI-Point bootstrap
+        print_info("\n🔹 [12/13] WAI-Point Bootstrap...")
         self.point_manager.update_from_state()
         results['steps_completed'].append("Updated WAI-Point bootstrap")
 
-        # Step 10.5: Update Website Content (if exists)
+        # Step 13: Update Website Content (if exists)
         # [REFACTORED] Added as rule - update website content on each closeout
-        print_info("  Step 10.5/11: Updating website content...")
+        print_info("\n🔹 [13/13] Website Content Update...")
         website_updated = self._update_website_content(session_summary)
         if website_updated:
             results['steps_completed'].append("Updated website content")

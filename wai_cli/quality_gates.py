@@ -168,7 +168,8 @@ class QualityGates:
                     if mtime > pass_time:
                         return None # Modified after tests
 
-            return f"Skipping quality gates: Tests passed recently ({pass_time.strftime('%H:%M:%S')}) and no files modified since."
+                return (f"✨ Skipping re-test: Quality gates passed recently at {pass_time.strftime('%H:%M:%S')}.\n"
+                        f"       (No files modified since then)")
 
         except Exception:
             # Fallback to running gates if anything goes wrong during check
