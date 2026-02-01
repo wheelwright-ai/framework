@@ -1,3 +1,14 @@
+# WAI-State.md
+**Version:** 3.0.0
+**Project:** Wheelwright Framework
+**Repository:** https://github.com/wheelwright-ai/framework
+**Purpose:** Strategic vision and project evolution tracking
+**Audience:** Human + AI
+**Managed by:** User (strategic vision) + Framework (evolution log)
+**Last Updated:** 2026-02-01T02:30:00Z
+
+---
+
 # Wheelwright Framework - Strategic State
 
 ---
@@ -62,30 +73,38 @@
 ### Approach
 - **Stack:** Python 3.9+, JSON/JSONL, Markdown
 - **Workflow:** Dogfooding - Wheelwright tracks its own development
-- **AI Collaboration:** YOLO Mode - AI proceeds autonomously, logs decisions retroactively
+- **AI Collaboration:** ADAPTIVE Mode - Autonomous for small tasks, planning for significant features
 
 ---
 
-## Core Philosophy: AI as Autonomous Partner
+## Core Philosophy: AI as Autonomous Partner with Appropriate Oversight
 
-**YOLO MODE ACTIVE** - Wheelwright's autonomous collaboration philosophy:
+**ADAPTIVE MODE ACTIVE** - Balanced collaboration philosophy:
 
-> **AI proceeds with confidence and full agency.** User trusts AI judgment
-> to make implementation decisions directly. Transparency through retroactive
-> logging, not through permission-seeking.
+> **Small tasks**: AI proceeds autonomously with confidence
+> **Significant features**: Discussion → Plan → Approval → Implement
+>
+> Best of both worlds - velocity on routine work, thoughtful planning on complexity.
 
-### Autonomous Behaviors
-1. **Proceed with confidence** - Make decisions and implement directly
-2. **Log retroactively** - Record decisions for transparency after implementation
-3. **Complete foundation first** - Still required even in YOLO mode
-4. **Stay in scope** - Respect boundaries, but use judgment on evolution
+### Collaboration Model
+1. **Small tasks/fixes** - Proceed autonomously (YOLO style)
+2. **Significant features** - Propose plan, get approval, then implement
+3. **Complete foundation first** - Required for all work
+4. **When in doubt** - Propose a plan first
+
+### Complexity Triggers
+Planning gate activates when:
+- Changes affect 2+ files, OR
+- Implementation requires 6+ steps, OR
+- Architectural decisions needed, OR
+- User explicitly requests planning
 
 ### Evolution, Not Chaos
-YOLO mode doesn't mean reckless:
-- AI still respects project foundation and boundaries
+ADAPTIVE mode maintains intentionality:
+- AI respects project foundation and boundaries
 - AI makes reasoned decisions about scope evolution
 - AI logs all significant changes in `evolution_log`
-- AI only flags truly contradictory requests
+- AI proposes plans for complex work before implementing
 
 ---
 
@@ -214,6 +233,7 @@ WAI context        Output context for LLM paste
 
 | Date | Change | Rationale | Acknowledged By |
 |------|--------|-----------|-----------------|
+| 2026-02-01 | Changed to ADAPTIVE mode | User requested planning gates for significant features while keeping autonomy for small tasks - balances velocity with oversight | Mario Vaccari |
 | 2025-12-29 | Enabled YOLO mode | User requested autonomous AI operation - AI proceeds with full agency, logs decisions retroactively | Mario Vaccari |
 | 2025-12-28 | Rebranded from SCF to Wheelwright | Wheel metaphor more intuitive, WAI branding, wheelwright.ai domain | Mario Vaccari |
 | 2025-12-28 | Created wheelwright-ai GitHub org | Clean multi-repo structure, matches local folder layout | Mario Vaccari |

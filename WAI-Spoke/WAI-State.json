@@ -1,7 +1,17 @@
 {
+  "_file_meta": {
+    "filename": "WAI-State.json",
+    "version": "3.0.0",
+    "project": "Wheelwright Framework",
+    "repository": "https://github.com/wheelwright-ai/framework",
+    "purpose": "Project state, session tracking, foundation, and analytics",
+    "audience": "AI + Framework",
+    "managed_by": "Framework (auto-updates) + User (foundation only)",
+    "last_updated": "2026-02-01T02:30:00Z"
+  },
   "wheelwright": {
     "version": "1.0.0",
-    "structure_version": "v1",
+    "structure_version": "v3",
     "description": "Wheelwright Framework - Core code and wheel templates for AI context persistence",
     "framework_path": "~/projects/wheelwright-ai/framework",
     "hub_path": "/home/mario/projects/wheelwright-ai/hub",
@@ -54,19 +64,27 @@
         "Markdown"
       ],
       "workflow": "Dogfooding - Wheelwright tracks its own development",
-      "ai_collaboration_style": "yolo",
-      "review_process": "AI proceeds autonomously, logs decisions retroactively"
+      "ai_collaboration_style": "adaptive",
+      "review_process": "ADAPTIVE: Small tasks autonomous, significant features require planning and approval"
     },
     "philosophy": {
-      "core_principle": "AI as autonomous partner with full agency",
+      "core_principle": "AI as autonomous partner with appropriate oversight",
       "behaviors": [
-        "Proceed with confidence - user trusts AI judgment",
-        "Make decisions and implement directly",
-        "Complete foundation before starting work (still required)",
-        "Log significant decisions for transparency"
+        "Small tasks/fixes: Proceed autonomously (YOLO)",
+        "Significant features: Discussion → Plan → Approval → Implement",
+        "Complete foundation before starting work (required)",
+        "Log significant decisions for transparency",
+        "When in doubt about task complexity, propose a plan first"
       ]
     },
     "evolution_log": [
+      {
+        "date": "2026-02-01",
+        "change": "Changed from YOLO to ADAPTIVE collaboration mode",
+        "rationale": "User requested planning and approval gates for significant features while maintaining autonomy for small tasks. ADAPTIVE mode: autonomous for routine work, structured planning for complex features. Balances velocity with thoughtful oversight.",
+        "acknowledged_by": "Mario Vaccari",
+        "ai_partner": "Claude Sonnet 4.5"
+      },
       {
         "date": "2025-12-22",
         "change": "Established SCF project foundation - separated framework from hub",
@@ -98,12 +116,14 @@
     ]
   },
   "_session_state": {
-    "last_session_id": "claude-sonnet-2026-01-16-hub-indexer",
-    "last_modified_by": "Claude Sonnet 3.7",
-    "last_modified_at": "2026-01-16T14:30:00Z",
+    "last_session_id": "claude-code-2026-02-01-v3-complete",
+    "last_modified_by": "Claude Sonnet 4.5",
+    "last_modified_at": "2026-02-01T03:00:00Z",
     "requires_review": false,
     "review_reason": null,
-    "session_count": 17,
+    "session_count": 20,
+    "context_usage_at_closeout": 0.62,
+    "next_session_recommendation": "WAI v3.0 COMPLETE - Test auto-briefing and file management",
     "protocol_completed": false,
     "protocol_last_run": "2026-01-20T21:37:47Z",
     "briefing_provided": true,
@@ -310,6 +330,13 @@
     }
   ],
   "decisions": [
+    {
+      "date": "2026-02-01",
+      "decision": "Switched from YOLO to ADAPTIVE collaboration mode",
+      "rationale": "User requested planning and approval gates for significant features while keeping autonomy for small tasks. ADAPTIVE mode provides best of both worlds: velocity on routine work, thoughtful planning on complex features. Complexity thresholds: 2+ files OR 6+ steps trigger planning gate.",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
     {
       "date": "2025-12-29",
       "decision": "Enabled YOLO mode for AI collaboration",

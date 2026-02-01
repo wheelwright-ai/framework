@@ -1,3 +1,14 @@
+# WAI-Guide.md
+**Version:** 3.0.0
+**Project:** Wheelwright Framework
+**Repository:** https://github.com/wheelwright-ai/framework
+**Purpose:** AI instructions, protocols, and hub learnings
+**Audience:** AI (primary)
+**Managed by:** Framework (generated from hub teachings)
+**Last Updated:** 2026-02-01T02:30:00Z
+
+---
+
 # Wheelwright Framework Guide
 
 **For Humans:** This project uses Wheelwright for AI-assisted development with continuous context across sessions.
@@ -560,3 +571,37 @@ Use the Compact command to compress context and rebalance WAI files when needed.
 ## Pattern
 
 ## Pattern
+
+---
+
+## Lug Minification Legend
+
+**Lug Type Codes (t):**
+- `t` = task
+- `d` = decision
+- `l` = learning
+- `p` = policy
+- `b` = bug
+- `e` = epic
+
+**Status Codes (s):**
+- `o` = open
+- `p` = in_progress
+- `c` = closed
+- `b` = blocked
+
+**Scope:**
+- `only_this_spoke` - Learning/policy applies to this project only
+- `all_spokes` - Applies to all projects of this type
+- `wheel` - Applies globally (hub + all spokes)
+
+**Conditional Loading Fields:**
+- `load_always` (boolean) - Auto-load on session start
+- `verify_on_closeout` (boolean) - Test/verify before closeout
+- `verification_count` (int) - How many times verified
+- `verification_target` (int) - Target verifications (default 5)
+
+**Lug Schema:**
+All lugs support extensible fields - add any data you need.
+Minimal required: `id`, `t`, `title`
+
