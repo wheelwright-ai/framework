@@ -100,6 +100,12 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
         print_warning("  No templates to teach")
         return False
     
+    # Count files by location for verification
+    files_by_location = {}
+    for f in files_taught:
+        loc = f.get('location', 'unknown')
+        files_by_location[loc] = files_by_location.get(loc, 0) + 1
+    
     # Create manifest with hub fingerprint for security
     try:
         # Get hub fingerprint if hub exists
@@ -114,7 +120,14 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
         
         teach_manager.create_manifest(files_taught, datetime.now().isoformat(), hub_fingerprint)
         print_success(f"\n  [OK] Taught {len(files_taught)} file(s)")
-        print_info(f"    Agent will review in /seed/ingest/ on next session")
+        
+        # Show breakdown by location
+        for location in sorted(files_by_location.keys()):
+            count = files_by_location[location]
+            path_hint = "root" if location == "root" else "/seed/ingest/"
+            print_info(f"    {count} file(s) → {path_hint}")
+        
+        print_info(f"    Agent will review and adopt on next session")
         if hub_fingerprint:
             print_info(f"    [OK] Signed with hub fingerprint (trusted)")
         return True
