@@ -188,6 +188,9 @@ All three work together under the "Wheelwright" umbrella.
 - **Token Efficiency (50-80% savings)** - ADAPTIVE workflow prevents premature implementation waste. Complex tasks require Discussion → Planning → Approval gates. Simple tasks run autonomously. Saves time AND money.
 - **Automatic Checkpointing** - Large plans pause every 3-5 steps for verification. No more runaway implementations. Stay in control.
 - **Context Compression** - `'Compact'` command balances WAI files and compresses context. Keep sessions lean and efficient.
+- **Auto-Discovery: AGENTS.md** - IDE auto-discovers `AGENTS.md` in project root (Claude Code, Cursor, VS Code with extensions). AI loads project context instantly, no manual prompts needed.
+- **Environment Awareness** - Detects your OS (Windows, macOS, Linux + WSL2), Python version, active IDE. Provides platform-specific guidance and path conversions automatically.
+- **Multi-Stage Work Tracking** - Monitors "Stage 1 of 3", "Phase A/B/C" style work. On closeout, surfaces incomplete stages and blockers prominently for continuity.
 - **Single Source of Truth** - Maintain perfect context across all project stages: ideation, development, implementation, and beyond
 - **Session Continuity** - Conversation logging tracks every turn, enabling intelligent closeout and recovery from disruptions
 - **LLM-Portable Memory** - Keep context and progress portable to any LLM - ChatGPT, Claude, Gemini, Copilot, whatever comes next
