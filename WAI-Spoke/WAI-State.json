@@ -108,35 +108,45 @@
       },
       {
         "date": "2025-12-29",
-        "change": "Implemented conversation logging and naming standardization (WWAI \u00e2\u2020\u2019 WAI)",
-        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI \u00e2\u2020\u2019 WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "change": "Implemented conversation logging and naming standardization (WWAI â†’ WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI â†’ WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
         "acknowledged_by": "Mario Vaccari",
         "ai_partner": "Claude Sonnet 4.5"
       }
     ]
   },
   "_session_state": {
-    "last_session_id": "claude-code-2026-02-01-v3-complete",
+    "last_session_id": "claude-code-2026-02-01-enforcement-hooks",
     "last_modified_by": "Claude Sonnet 4.5",
-    "last_modified_at": "2026-02-01T03:00:00Z",
+    "last_modified_at": "2026-02-01T19:44:19Z",
     "requires_review": false,
     "review_reason": null,
-    "session_count": 20,
-    "context_usage_at_closeout": 0.62,
-    "next_session_recommendation": "WAI v3.0 COMPLETE - Test auto-briefing and file management",
+    "session_count": 21,
+    "context_usage_at_closeout": 0.47,
+    "next_session_recommendation": "Test enforcement hooks in fresh session - verify auto-briefing and goal-setting work",
     "protocol_completed": false,
-    "protocol_last_run": "2026-01-20T21:37:47Z",
+    "protocol_last_run": "2026-02-01T19:23:04Z",
     "briefing_provided": true,
     "current_session": null,
     "last_closeout": {
-      "session_id": "mario-2026-01-20-133747",
-      "started_at": "2026-01-20T21:37:47Z",
-      "turn_count": 0,
-      "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-31T22:09:40.865695",
-      "summary": "No conversation log found",
-      "key_topics": [],
-      "files_modified": []
+      "session_id": "claude-code-2026-02-01-enforcement-hooks",
+      "started_at": "2026-02-01T19:44:19Z",
+      "turn_count": 30,
+      "closed_at": "2026-02-01T19:44:19Z",
+      "summary": "Implemented enforcement hooks pattern and session goal-setting with epic prioritization. Created 4 global lugs. Optimized lug IDs to 12-char format.",
+      "key_topics": [
+        "enforcement hooks",
+        "session goal setting",
+        "epic prioritization",
+        "lug ID optimization"
+      ],
+      "files_modified": [
+        ".claude/hooks/user-prompt-submit.sh",
+        "templates/WAI/.claude/hooks/",
+        "AGENTS.md",
+        "WAI-Lugs.jsonl",
+        "WAI-Guide.md"
+      ]
     }
   },
   "analytics": {
@@ -430,7 +440,7 @@
     },
     {
       "date": "2025-12-29",
-      "decision": "WWAI \u00e2\u2020\u2019 WAI naming standardization",
+      "decision": "WWAI â†’ WAI naming standardization",
       "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
       "impact": 9,
       "by": "Claude Sonnet 4.5"
@@ -452,14 +462,14 @@
     {
       "date": "2025-12-29",
       "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
-      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion \u00e2\u2020\u2019 READY TO PLAN \u00e2\u2020\u2019 PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
+      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion â†’ READY TO PLAN â†’ PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u00e2\u2020\u2019 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI â†’ WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },
@@ -578,9 +588,37 @@
     {
       "date": "2026-01-31",
       "decision": "AGENTS.md Auto-Discovery Integration (Enhanced)",
-      "rationale": "AGENTS.md is now a LIVING DOCUMENT that evolves with the project. (1) On init: creates AGENTS.md, on re-init appends intelligently (preserves existing). (2) On closeout: not just updating state placeholders, but generating a 'Session Focus (Must Continue)' section that surfaces incomplete multi-stage work, unfinished items, and blockers. (3) Detects patterns: 'stage/phase/part/step' \u2192 highlighted as multi-stage, 'partial/incomplete' \u2192 surfaces incomplete work, blockers \u2192 prioritized. (4) Result: AI wakes up knowing EXACTLY what to continue\u2014which stage of multi-item sequence is current, what's incomplete, what blockers exist. No manual prompts, perfect context, enables true AI autonomy.",
+      "rationale": "AGENTS.md is now a LIVING DOCUMENT that evolves with the project. (1) On init: creates AGENTS.md, on re-init appends intelligently (preserves existing). (2) On closeout: not just updating state placeholders, but generating a 'Session Focus (Must Continue)' section that surfaces incomplete multi-stage work, unfinished items, and blockers. (3) Detects patterns: 'stage/phase/part/step' → highlighted as multi-stage, 'partial/incomplete' → surfaces incomplete work, blockers → prioritized. (4) Result: AI wakes up knowing EXACTLY what to continue—which stage of multi-item sequence is current, what's incomplete, what blockers exist. No manual prompts, perfect context, enables true AI autonomy.",
       "impact": 10,
       "by": "Claude Opus 4.5"
+    },
+    {
+      "date": "2026-02-01",
+      "decision": "Enforcement Hooks Pattern - Convert passive AGENTS.md instructions to active enforcement via Claude Code hooks",
+      "rationale": "AI receives AGENTS.md as passive system-reminder context, not executable directive. Framework-level hooks inject MANDATORY requirements BEFORE AI sees user message. Hook generates live Session Focus briefing and blocks until requirements met. Transforms passive instruction-follower to actively-guided partner.",
+      "impact": 10,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-01",
+      "decision": "Session Goal Setting Pattern - Partner with user to define work cycle goals as epic lugs",
+      "rationale": "After Session Focus briefing, AI asks: What specific goal(s) for this work cycle? Creates epic lug with scope, success criteria, out-of-scope, constraints. Work within defined epic. When complete: closeout + new thread. Prevents wandering, scope drift, unclear completion. Clear session boundaries.",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-01",
+      "decision": "Session Epic Prioritization - Session goals persist across thread restarts until complete",
+      "rationale": "When user defines session epic, prioritize completing it over new work. On closeout, verify success criteria. If incomplete: flag priority=before_next_epic for next session. Session epics survive thread restarts. No lost goals, clear continuity.",
+      "impact": 9,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-01",
+      "decision": "Lug ID Optimization - 12-character hex IDs instead of 64-character SHA256",
+      "rationale": "64-char IDs too long for human reference, hard to copy-paste, waste tokens. 12-char hex (first 12 of SHA256) provides 16 trillion combinations (2^48) - collision-resistant across all projects globally. Human-readable (4f1e687a652f), token-efficient (saves 52 chars/ID), reference-friendly.",
+      "impact": 8,
+      "by": "Mario Vaccari + Claude Sonnet 4.5"
     }
   ],
   "next_steps": [

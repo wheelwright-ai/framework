@@ -576,6 +576,13 @@ Use the Compact command to compress context and rebalance WAI files when needed.
 
 ## Lug Minification Legend
 
+**Lug ID Format (i):**
+- **12-character hex strings** (e.g., `4f1e687a652f`)
+- First 12 characters of SHA256 hash
+- 16 trillion combinations (2^48) - collision-resistant
+- Human-readable, copy-paste friendly, token-efficient
+- Legacy 64-char IDs still supported for backward compatibility
+
 **Lug Type Codes (t):**
 - `t` = task
 - `d` = decision
@@ -589,6 +596,10 @@ Use the Compact command to compress context and rebalance WAI files when needed.
 - `p` = in_progress
 - `c` = closed
 - `b` = blocked
+
+**Priority Flags:**
+- `session_focus` - Current session epic
+- `before_next_epic` - Must complete before starting new epics
 
 **Scope:**
 - `only_this_spoke` - Learning/policy applies to this project only
