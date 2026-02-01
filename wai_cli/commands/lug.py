@@ -131,7 +131,7 @@ def _create_lug(manager: LugManager, args: list):
     interactive = not (parsed.lug_type or parsed.priority or parsed.impact or parsed.value)
 
     if interactive:
-        print_info(f"\n📝 Creating Lug: {title}\n")
+        print_info(f"\n[NOTE] Creating Lug: {title}\n")
         
         # Prompt for type
         print_info("Type options: epic, issue, bug, work, ask (or custom)")
@@ -178,7 +178,7 @@ def _create_lug(manager: LugManager, args: list):
         origin=origin
     )
     
-    print_success(f"\n✓ Created Lug: {lug.id}")
+    print_success(f"\n[OK] Created Lug: {lug.id}")
     print_info(f"  Title: {lug.title}")
     print_info(f"  Type: {lug.type}")
     print_info(f"  Priority: {lug.priority}")
@@ -188,7 +188,7 @@ def _create_lug(manager: LugManager, args: list):
     
     # YOLO mode gating
     if priority == 'high' or impact == 'large' or value >= 7:
-        print_warning("⚠️  High priority/impact/value detected!")
+        print_warning("[WARN] High priority/impact/value detected!")
         print_info("YOLO mode: Consider reviewing before proceeding with implementation.\n")
 
 
@@ -351,7 +351,7 @@ def _update_lug(manager: LugManager, args: list):
             value=value
         )
         
-        print_success(f"✓ Updated Lug: {lug.id}")
+        print_success(f"[OK] Updated Lug: {lug.id}")
         print_info(f"  Status: {lug.status}")
         print_info(f"  Priority: {lug.priority}")
         print_info(f"  Impact: {lug.impact}")
@@ -384,10 +384,10 @@ def _close_lug(manager: LugManager, args: list):
         summary = input("  > ").strip() or None
         
         # Check policies
-        violations = manager.validate_policies(lug)
-        if violations:
-            print_warning("⚠️  Policy violations detected:")
-            for violation in violations:
+         violations = manager.validate_policies(lug)
+         if violations:
+             print_warning("[WARN] Policy violations detected:")
+             for violation in violations:
                 print_warning(f"    - {violation}")
             
             if not safe_confirm("\nClose anyway?", default=False):
@@ -401,7 +401,7 @@ def _close_lug(manager: LugManager, args: list):
             skip_policy_check=bool(violations)  # Skip check if user confirmed
         )
         
-        print_success(f"\n✓ Closed Lug: {closed_lug.id}")
+        print_success(f"\n[OK] Closed Lug: {closed_lug.id}")
         print_info(f"  Archived to: lugs-closed.jsonl\n")
         
     except ValueError as e:

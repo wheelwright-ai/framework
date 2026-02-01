@@ -39,22 +39,22 @@ def sync_spoke(all_spokes: bool = False) -> None:
     version = SpokeUpgrader.detect_version(project_path)
 
     if version == 'unknown':
-        print(f"   ✗ No valid spoke structure found")
+        print(f"   [ERROR] No valid spoke structure found")
         print(f"   Run 'WAI init' to initialize this project")
         return
     elif version == '1.0':
         print(f"   Detected v1.0 structure (.WAI/) - auto-upgrading...")
         if SpokeUpgrader.upgrade_spoke(project_path, version, verbose=True):
-            print(f"   ✓ Spoke upgraded to v{SPOKE_STRUCTURE_VERSION}")
+            print(f"   [OK] Spoke upgraded to v{SPOKE_STRUCTURE_VERSION}")
         else:
-            print(f"   ✗ Upgrade failed - cannot proceed with sync")
+            print(f"   [ERROR] Upgrade failed - cannot proceed with sync")
             return
     else:
-        print(f"   ✓ Spoke structure is current (v{version})")
+        print(f"   [OK] Spoke structure is current (v{version})")
 
     wai_dir = project_path / 'WAI-Spoke'
 
-    print(f"\n    ✓ Spoke structure ready")
+    print(f"\n    [OK] Spoke structure ready")
     print(f"   Hub: {hub_path}")
     print(f"   Spoke: {project_path.name}")
     print(f"\n   Note: Full hub sync feature coming in future release")

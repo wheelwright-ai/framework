@@ -175,9 +175,9 @@ class ProjectDiscovery:
         Detect if directory is a project.
 
         Detection logic:
-        - WAI-Spoke/ → WAI-enabled project
-        - .git → Git repository
-        - Language markers → Specific project type
+        - WAI-Spoke/ [DEFER] WAI-enabled project
+        - .git [DEFER] Git repository
+        - Language markers [DEFER] Specific project type
 
         Args:
             directory: Directory to check
@@ -241,7 +241,7 @@ class ProjectDiscovery:
         Format:
         ```
         Found 12 projects:
-        [1] ✓ framework (WAI-enabled, Git, Python)
+        [1] [OK] framework (WAI-enabled, Git, Python)
             /home/user/projects/framework
         [2] my-app (Git, Node.js)
             /home/user/projects/my-app
@@ -309,14 +309,14 @@ class ProjectDiscovery:
 
             elif response in ('y', 'yes'):
                 selected.append(project)
-                print_success(f"  → Added '{project.name}'")
+                print_success(f"  [DEFER] Added '{project.name}'")
 
             elif response in ('n', 'no'):
-                print_info(f"  → Skipped '{project.name}'")
+                print_info(f"  [DEFER] Skipped '{project.name}'")
 
             else:
                 # Invalid input, treat as 'no' and continue
-                print_info(f"  → Invalid input ('{response}'), skipping '{project.name}'")
+                print_info(f"  [DEFER] Invalid input ('{response}'), skipping '{project.name}'")
 
         return selected
 

@@ -23,6 +23,8 @@ def normalize_path(path_str: str) -> Path:
     - Tilde expansion
     - Relative paths
     - Forward/backslash conversion
+    
+    Note: These conversions use [DEFER] operations
 
     Args:
         path_str: Path string to normalize
@@ -47,14 +49,14 @@ def normalize_path(path_str: str) -> Path:
 
     # Handle Windows drive letters in WSL
     if is_wsl and re.match(r'^[A-Za-z]:[/\\]', path_str):
-        # C:\path or C:/path → /mnt/c/path
+        # C:\path or C:/path [DEFER] /mnt/c/path
         drive = path_str[0].lower()
         rest = path_str[2:].replace('\\', '/')
         path_str = f'/mnt/{drive}{rest}'
 
     # Handle WSL paths on Windows
     if platform.system() == 'Windows' and path_str.startswith('\\\\wsl'):
-        # \\wsl$\Ubuntu\path → keep as-is, Windows can handle
+        # \\wsl$\Ubuntu\path [DEFER] keep as-is, Windows can handle
         pass
 
     # Expand user home and resolve
@@ -96,14 +98,14 @@ def detect_wsl_windows_path(path: Path) -> Optional[str]:
 
     path_str = str(path)
 
-    # Handle /mnt/c/... → C:\...
+    # Handle /mnt/c/... [DEFER] C:\...
     mnt_match = re.match(r'^/mnt/([a-z])(/.*)$', path_str)
     if mnt_match:
         drive = mnt_match.group(1).upper()
         rest = mnt_match.group(2).replace('/', '\\')
         return f'{drive}:{rest}'
 
-    # Handle /home/... or other WSL paths → \\wsl$\...
+    # Handle /home/... or other WSL paths [DEFER] \\wsl$\...
     # Detect WSL distro name
     try:
         with open('/etc/os-release') as f:

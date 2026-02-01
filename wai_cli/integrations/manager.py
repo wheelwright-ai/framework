@@ -230,7 +230,7 @@ class IDEManager:
 
                 # Format value
                 if isinstance(value, bool):
-                    value = '✓' if value else '✗'
+                    value = '[OK]' if value else '[ERROR]'
                 elif isinstance(value, list):
                     value = ', '.join(str(v) for v in value)
                 else:

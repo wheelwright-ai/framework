@@ -66,9 +66,9 @@ def _show_history(manager: LugManager):
     
     # Validation Status Footer
     if validation['valid']:
-        print_success("✓ Chain integrity verified: Valid")
+        print_success("[OK] Chain integrity verified: Valid")
     else:
-        print_warning(f"⚠️  Chain integrity issues: {len(validation['errors'])} errors")
+        print_warning(f"[WARN] Chain integrity issues: {len(validation['errors'])} errors")
         for err in validation['errors']:
             print_error(f"  - {err}")
     print_info("")

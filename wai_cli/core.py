@@ -644,7 +644,7 @@ Examples:
 
         if not is_initialized:
             while True:
-                print_info("\n⚠️  Framework not initialized yet.\n")
+                print_info("\n[WARN] Framework not initialized yet.\n")
                 print_info("  1/i - ✨ Initialize      Set up framework (recommended)")
                 print_info("  2/? - ❓ Help           Getting started")
                 print_info("")
@@ -721,7 +721,7 @@ Examples:
                 print_info("  WORKSPACE")
                 print_info("  1/h - 🏢 Hub               Manage shared knowledge")
                 print_info("  2/s - 🎡 Spokes            View registered projects")
-                print_info("  3/l - 📦 Lugs              Track work & dependencies")
+                print_info("  3/l - [PACKAGE] Lugs              Track work & dependencies")
                 print_info("")
                 print_info("  INSIGHTS")
                 print_info("  4/k - 🧠 Knowledge         Browse learnings")
@@ -738,7 +738,7 @@ Examples:
                 options = [
                     ('1', 'h', '🏢 Hub', 'hub'),
                     ('2', 's', '🎡 Spokes', 'spokes'),
-                    ('3', 'l', '📦 Lugs', 'lugs'),
+                    ('3', 'l', '[PACKAGE] Lugs', 'lugs'),
                     ('4', 'k', '🧠 Knowledge', 'knowledge'),
                     ('5', 't', '📊 Stats', 'statistics'),
                     ('6', 'w', '🛞 About', 'about'),
@@ -785,8 +785,8 @@ Examples:
             print_info("  Spoke-specific actions")
             print_info("")
             print_info("  1/s - ℹ️Status          View spoke status")
-            print_info("  2/y - 🔄 Upgrade         Update spoke structure version")
-            print_info("  3/c - 📝 Closeout        Session closeout")
+            print_info("  2/y - [PROCESS] Upgrade         Update spoke structure version")
+            print_info("  3/c - [NOTE] Closeout        Session closeout")
             print_info("  4/o - 📄 Context         Export for LLM")
             print_info("  5/u - 🔧 Absorbe         Process seed folders & archive sprawl")
             print_info("  6/r - 🔎 Review          Project discovery snapshot")
@@ -798,8 +798,8 @@ Examples:
 
             options = [
                 ('1', 's', 'ℹ️Status', 'status'),
-                ('2', 'y', '🔄 Upgrade', 'sync'),
-                ('3', 'c', '📝 Closeout', 'closeout'),
+                ('2', 'y', '[PROCESS] Upgrade', 'sync'),
+                ('3', 'c', '[NOTE] Closeout', 'closeout'),
                 ('4', 'o', '📄 Context', 'context'),
                 ('5', 'u', '🔧 Absorbe', 'update'),
                 ('6', 'r', '🔎 Review', 'review'),
@@ -4299,7 +4299,7 @@ Examples:
                 return
 
             # Step 1: Run full closeout
-            print_info("\n🚀 Shipit: Closeout + Git Commit\n")
+            print_info("\n[SHIPIT] Closeout + Git Commit\n")
             print_info("=" * 60)
 
             processor = CloseoutProcessor(spoke_path)

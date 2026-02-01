@@ -49,11 +49,11 @@ class ChangelogGenerator:
         lines = [f"## Release {datetime.now().strftime('%Y-%m-%d %H:%M')}", ""]
         
         type_labels = {
-            'feat': '🚀 Features',
-            'bug': '🐛 Bug Fixes',
-            'work': '🛠️ Refactoring & Improvements',
-            'epic': '🎯 Epics Completed',
-            'other': '📦 Other Changes'
+            'feat': '[SHIPIT] Features',
+            'bug': '[PROCESS] Bug Fixes',
+            'work': '[PROCESS] Refactoring & Improvements',
+            'epic': '[SHIPIT] Epics Completed',
+            'other': '[PACKAGE] Other Changes'
         }
 
         has_any = False

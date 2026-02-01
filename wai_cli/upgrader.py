@@ -63,8 +63,8 @@ class SpokeUpgrader:
         Upgrade from v1.0 (.WAI) to v2.0 (WAI-Spoke).
 
         Changes:
-        - Rename .WAI/ → WAI-Spoke/
-        - Rename files: wheel-signals.jsonl → WAI-Signals.jsonl, etc.
+        - Rename .WAI/ [DEFER] WAI-Spoke/
+        - Rename files: wheel-signals.jsonl [DEFER] WAI-Signals.jsonl, etc.
         - Create WAI-File-Index.json
         - Log upgrade decision to WAI-State.json
 
@@ -80,14 +80,14 @@ class SpokeUpgrader:
             new_dir = spoke_path / 'WAI-Spoke'
 
             if verbose:
-                print(f"   Upgrading spoke structure: .WAI → WAI-Spoke")
+                print(f"   Upgrading spoke structure: .WAI [DEFER] WAI-Spoke")
 
             # Rename directory
             if old_dir.exists() and not new_dir.exists():
                 old_dir.rename(new_dir)
             elif not new_dir.exists():
                 if verbose:
-                    print(f"   ✗ No .WAI directory found")
+                    print(f"   [ERROR] No .WAI directory found")
                 return False
 
             # Rename files with old naming
@@ -103,28 +103,28 @@ class SpokeUpgrader:
                 if old_file.exists() and not new_file.exists():
                     old_file.rename(new_file)
                     if verbose:
-                        print(f"   ✓ Renamed: {old_name} → {new_name}")
+                        print(f"   [OK] Renamed: {old_name} [DEFER] {new_name}")
 
             # Create WAI-File-Index.json if it doesn't exist
             index_file = new_dir / 'WAI-File-Index.json'
             if not index_file.exists():
                 SpokeUpgrader._create_file_index(spoke_path, new_dir)
                 if verbose:
-                    print(f"   ✓ Created WAI-File-Index.json")
+                    print(f"   [OK] Created WAI-File-Index.json")
 
             # Log upgrade to WAI-State.json
             SpokeUpgrader._log_upgrade(new_dir, '1.0', '2.0')
             if verbose:
-                print(f"   ✓ Logged upgrade decision")
+                print(f"   [OK] Logged upgrade decision")
 
             if verbose:
-                print(f"   ✓ Upgrade complete!")
+                print(f"   [OK] Upgrade complete!")
 
             return True
 
         except Exception as e:
             if verbose:
-                print(f"   ✗ Upgrade failed: {e}")
+                print(f"   [ERROR] Upgrade failed: {e}")
             return False
 
     @staticmethod
@@ -245,7 +245,7 @@ class SpokeUpgrader:
             decision = {
                 "date": today,
                 "decision": decision_text,
-                "rationale": f"Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+                "rationale": f"Framework auto-upgrade during sync. Migrated .WAI [DEFER] WAI-Spoke, renamed files with WAI-* prefix, created file index.",
                 "impact": 7,
                 "by": decision_by
             }

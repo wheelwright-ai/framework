@@ -58,7 +58,7 @@ class CloseoutProcessor:
         Returns:
             Dict with closeout summary
         """
-        print_info("\n🔄 Processing Session Closeout...\n")
+        print_info("\n[PROCESS] Processing Session Closeout...\n")
 
         results = {
             'steps_completed': [],
@@ -76,7 +76,7 @@ class CloseoutProcessor:
         else:
             print_info("")
             print_info("-" * 30)
-            print_info("🔹 [1/13] Quality Gates")
+            print_info("[PROCESS] [1/13] Quality Gates")
             print_info("-" * 30)
             gate_results = self.quality_gates.run_all_gates(skip_minor=True)
             results['quality_gates'] = gate_results
@@ -86,13 +86,13 @@ class CloseoutProcessor:
                 results['steps_completed'].append(f"Quality gates: Skipped (recent pass)")
             elif not gate_results['passed']:
                 # Quality gates failed
-                print_warning("    ⚠️  Quality gates failed!")
+                print_warning("    [WARN] Quality gates failed!")
 
                 for blocker in gate_results.get('blockers', []):
-                    print_error(f"      ✗ BLOCKER: {blocker}")
+                    print_error(f"      [ERROR] BLOCKER: {blocker}")
 
                 for warning in gate_results.get('warnings', []):
-                    print_warning(f"      ⚠️  {warning}")
+                    print_warning(f"      [WARN] {warning}")
 
                 if interactive and gate_results.get('blockers'):
                     print_info("\n  Quality gate blockers detected. Continue anyway?")
@@ -102,13 +102,13 @@ class CloseoutProcessor:
 
                 results['steps_completed'].append(f"Quality gates: Failed with {len(gate_results.get('blockers', []))} blockers")
             else:
-                print_success("    ✓ All quality gates passed")
+                print_success("    [OK] All quality gates passed")
                 results['steps_completed'].append("Quality gates: Passed")
 
         # Step 2: Lug Policy Validation (Blocker check)
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [2/13] Lug Policy Validation")
+        print_info("[PROCESS] [2/13] Lug Policy Validation")
         print_info("-" * 30)
         session_state = self.session.get_state()
         session_id = session_state.get('session_id')
@@ -127,9 +127,9 @@ class CloseoutProcessor:
                     violations = self.lug_manager.validate_policies(lug)
                     if violations:
                         violations_found = True
-                        print_warning(f"    ⚠️  Policy violations for Lug {lug.id} ({lug.title}):")
+                        print_warning(f"    [WARN] Policy violations for Lug {lug.id} ({lug.title}):")
                         for v in violations:
-                            print_error(f"      ✗ {v}")
+                            print_error(f"      [ERROR] {v}")
                             
                         if not interactive:
                             unresolved = True
@@ -156,13 +156,13 @@ class CloseoutProcessor:
                         
                         if choice == 'force':
                             self.lug_manager.close_lug(lug.id, summary="Force closed during shipit", skip_policy_check=True)
-                            print_success(f"      Force closed {lug.id}")
+                            print_success(f"      [OK] Force closed {lug.id}")
                         elif choice == 'unlink':
                             self.lug_manager.update_lug(lug.id, extras={'session_id': None})
-                            print_success(f"      Unlinked {lug.id} from session")
+                            print_success(f"      [OK] Unlinked {lug.id} from session")
                         elif choice == 'delete':
                             self.lug_manager.delete_lug(lug.id)
-                            print_success(f"      Deleted {lug.id}")
+                            print_success(f"      [OK] Deleted {lug.id}")
                         else:
                             unresolved = True
                 
@@ -207,7 +207,7 @@ class CloseoutProcessor:
                     repo = Repo(self.spoke_dir, search_parent_directories=True)
                     suggestions = self.lug_manager.infer_lugs_from_git(repo)
                     if suggestions:
-                        print_info(f"    💡 Found {len(suggestions)} possible Lugs in your changes.")
+                        print_info(f"    [NOTE] Found {len(suggestions)} possible Lugs in your changes.")
                         if interactive and safe_confirm("Create suggested Lugs?", default=False):
                             for sug in suggestions:
                                 self.lug_manager.create_lug(
@@ -225,7 +225,7 @@ class CloseoutProcessor:
         # Step 3: Process seed folders and clean up sprawl
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [3/13] Seed Folders & Cleanup")
+        print_info("[PROCESS] [3/13] Seed Folders & Cleanup")
         print_info("-" * 30)
         seed_result = self._process_seed_and_cleanup(interactive)
         results['steps_completed'].append(seed_result['summary'])
@@ -234,7 +234,7 @@ class CloseoutProcessor:
         # Step 4: Reconcile WAI-Hub-Learnings.md if exists
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [4/13] Hub Learnings Reconciliation")
+        print_info("[PROCESS] [4/13] Hub Learnings Reconciliation")
         print_info("-" * 30)
         learnings_reconciled = self._reconcile_hub_learnings()
         if learnings_reconciled:
@@ -243,7 +243,7 @@ class CloseoutProcessor:
         # Step 5: Run file rebalancer
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [5/13] File Content Rebalancing")
+        print_info("[PROCESS] [5/13] File Content Rebalancing")
         print_info("-" * 30)
         rebalance_result = self.rebalancer.rebalance()
         if rebalance_result['rebalanced']:
@@ -254,7 +254,7 @@ class CloseoutProcessor:
         # Step 6: Extract session summary
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [6/13] Session Summary Extraction")
+        print_info("[PROCESS] [6/13] Session Summary Extraction")
         print_info("-" * 30)
         session_summary = self.session.extract_session_summary()
         results['session_summary'] = session_summary
@@ -263,7 +263,7 @@ class CloseoutProcessor:
         # Step 7: Extract high-impact signals
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [7/13] Signal Extraction")
+        print_info("[PROCESS] [7/13] Signal Extraction")
         print_info("-" * 30)
         signals_extracted = self._extract_signals()
         if signals_extracted > 0:
@@ -274,7 +274,7 @@ class CloseoutProcessor:
         # Step 8: Record analytics
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [8/13] Recording Analytics")
+        print_info("[PROCESS] [8/13] Recording Analytics")
         print_info("-" * 30)
         self._record_analytics(session_summary)
         results['steps_completed'].append("Recorded session analytics")
@@ -282,7 +282,7 @@ class CloseoutProcessor:
         # Step 9: Update session state and clear log
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [9/13] Finalizing Closeout")
+        print_info("[PROCESS] [9/13] Finalizing Closeout")
         print_info("-" * 30)
         self._finalize_closeout(session_summary)
         results['steps_completed'].append("Finalized: state updated, log cleared")
@@ -290,7 +290,7 @@ class CloseoutProcessor:
         # Step 10: Reconcile multi-environment sessions
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [10/13] Multi-Environment Reconciliation")
+        print_info("[PROCESS] [10/13] Multi-Environment Reconciliation")
         print_info("-" * 30)
         reconcile_result = self.multi_session.reconcile_sessions()
         results['session_reconciliation'] = reconcile_result
@@ -305,7 +305,7 @@ class CloseoutProcessor:
         # Step 11: Refresh integrations and optionally re-brief active session
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [11/13] Refreshing Integrations")
+        print_info("[PROCESS] [11/13] Refreshing Integrations")
         print_info("-" * 30)
         integration_status = self._refresh_integrations()
         results['integration_status'] = integration_status
@@ -314,7 +314,7 @@ class CloseoutProcessor:
         # Step 12: Update WAI-Point bootstrap
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [12/13] WAI-Point Bootstrap")
+        print_info("[PROCESS] [12/13] WAI-Point Bootstrap")
         print_info("-" * 30)
         self.point_manager.update_from_state()
         results['steps_completed'].append("Updated WAI-Point bootstrap")
@@ -323,7 +323,7 @@ class CloseoutProcessor:
         # [REFACTORED] Added as rule - update website content on each closeout
         print_info("")
         print_info("-" * 30)
-        print_info("🔹 [13/13] Website Content Update")
+        print_info("[PROCESS] [13/13] Website Content Update")
         print_info("-" * 30)
         website_updated = self._update_website_content(session_summary)
         if website_updated:
@@ -331,7 +331,7 @@ class CloseoutProcessor:
         else:
             results['steps_completed'].append("No website content to update")
 
-        print_success("\n✓ Closeout Complete!\n")
+        print_success("\n[OK] Closeout Complete!\n")
 
         return results
 
@@ -361,7 +361,7 @@ class CloseoutProcessor:
                 for note in results["ingest_notes"]:
                     targets = ", ".join(note.get("applied_to", []))
                     preview = note.get("preview", "")
-                    print_info(f"      - {note.get('file')} → {targets}")
+                    print_info(f"      - {note.get('file')} [DEFER] {targets}")
                     if preview:
                         print_info(f"        preview: {preview}")
         if results["archived_reference"]:
@@ -495,7 +495,7 @@ class CloseoutProcessor:
     def print_summary(self, results: Dict[str, Any]) -> None:
         """Print closeout summary."""
         print_info("\n" + "=" * 60)
-        print_success("  Session Closeout Summary")
+        print_success("  [OK] Session Closeout Summary")
         print_info("=" * 60 + "\n")
 
         session_summary = results['session_summary']
@@ -511,17 +511,17 @@ class CloseoutProcessor:
 
         print_info("\n  Steps completed:")
         for step in results['steps_completed']:
-            print_success(f"    ✓ {step}")
+            print_success(f"    [OK] {step}")
 
         if results['warnings']:
             print_info("\n  Warnings:")
             for warning in results['warnings']:
-                print_warning(f"    ⚠️  {warning}")
+                print_warning(f"    [WARN] {warning}")
 
         if results['errors']:
             print_info("\n  Errors:")
             for error in results['errors']:
-                print_error(f"    ✗ {error}")
+                print_error(f"    [ERROR] {error}")
 
         print_info("\n" + "=" * 60)
         print_info("  WAI-Spoke/ folder ready for hub learning")
@@ -596,17 +596,22 @@ class CloseoutProcessor:
         hook_output = ""
         hook_path = self.spoke_dir / "WAI-Spoke" / "hooks" / "session-start.sh"
         if hook_path.exists():
-            env = os.environ.copy()
-            env["WAI_PROJECT_DIR"] = str(self.spoke_dir)
-            result = subprocess.run(
-                [str(hook_path)],
-                cwd=self.spoke_dir,
-                env=env,
-                capture_output=True,
-                text=True
-            )
-            hook_output = (result.stdout or "").strip()
-            session_refreshed = True
+            try:
+                env = os.environ.copy()
+                env["WAI_PROJECT_DIR"] = str(self.spoke_dir)
+                result = subprocess.run(
+                    [str(hook_path)],
+                    cwd=self.spoke_dir,
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                    timeout=5
+                )
+                hook_output = (result.stdout or "").strip()
+                session_refreshed = True
+            except (OSError, subprocess.TimeoutExpired) as e:
+                # On Windows or if bash not available, skip hook execution
+                print_warning(f"    Skipped hook execution (bash not available): {type(e).__name__}")
 
         return {
             "updated": updated,
@@ -617,6 +622,6 @@ class CloseoutProcessor:
 
 
 def generate_closeout() -> None:
-    """Generate session closeout (legacy function for backward compatibility)."""
-    print_warning("\n⚠️  Using legacy closeout stub.")
-    print_info("Use CloseoutProcessor for full functionality.\n")
+     """Generate session closeout (legacy function for backward compatibility)."""
+     print_warning("\n[WARN] Using legacy closeout stub.")
+     print_info("Use CloseoutProcessor for full functionality.\n")

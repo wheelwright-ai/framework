@@ -90,8 +90,8 @@
       },
       {
         "date": "2025-12-29",
-        "change": "Implemented conversation logging and naming standardization (WWAI → WAI)",
-        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI → WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "change": "Implemented conversation logging and naming standardization (WWAI \u00e2\u2020\u2019 WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI \u00e2\u2020\u2019 WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
         "acknowledged_by": "Mario Vaccari",
         "ai_partner": "Claude Sonnet 4.5"
       }
@@ -104,21 +104,16 @@
     "requires_review": false,
     "review_reason": null,
     "session_count": 17,
-    "protocol_completed": true,
+    "protocol_completed": false,
     "protocol_last_run": "2026-01-20T21:37:47Z",
     "briefing_provided": true,
-    "current_session": {
+    "current_session": null,
+    "last_closeout": {
       "session_id": "mario-2026-01-20-133747",
       "started_at": "2026-01-20T21:37:47Z",
       "turn_count": 0,
-      "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
-    },
-    "last_closeout": {
-      "session_id": "mario-2026-01-20-111619",
-      "started_at": "2026-01-20T19:16:19Z",
-      "turn_count": 0,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-01-20T13:37:47.140358",
+      "closed_at": "2026-01-31T22:09:40.865695",
       "summary": "No conversation log found",
       "key_topics": [],
       "files_modified": []
@@ -126,10 +121,10 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 47,
+      "total_count": 52,
       "total_turns": 970,
       "total_duration_seconds": 124,
-      "avg_duration_seconds": 2.6382978723404253
+      "avg_duration_seconds": 2.3846153846153846
     },
     "token_efficiency": {
       "total_tokens_used": 132,
@@ -149,7 +144,7 @@
       "ended_at": "2026-01-19T16:02:17.995925"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-20T13:37:47.139024"
+    "last_updated": "2026-01-31T22:12:57.197277"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -408,7 +403,7 @@
     },
     {
       "date": "2025-12-29",
-      "decision": "WWAI → WAI naming standardization",
+      "decision": "WWAI \u00e2\u2020\u2019 WAI naming standardization",
       "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
       "impact": 9,
       "by": "Claude Sonnet 4.5"
@@ -430,14 +425,14 @@
     {
       "date": "2025-12-29",
       "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
-      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion → READY TO PLAN → PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
+      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion \u00e2\u2020\u2019 READY TO PLAN \u00e2\u2020\u2019 PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
       "impact": 10,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
     },
     {
       "date": "2025-12-30",
       "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI → WAI-Spoke, renamed files with WAI-* prefix, created file index.",
+      "rationale": "Framework auto-upgrade during sync. Migrated .WAI \u00e2\u2020\u2019 WAI-Spoke, renamed files with WAI-* prefix, created file index.",
       "impact": 7,
       "by": "WAI Auto-Upgrade"
     },

@@ -75,7 +75,7 @@ def show_status(path: str = '.') -> None:
 
     print(f"\n    Foundation:")
     if foundation.get('completed'):
-        print(f"   ✓ Complete")
+        print(f"   [OK] Complete")
     else:
         print(f"   ⚠ Incomplete - needs setup")
 

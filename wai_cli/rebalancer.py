@@ -206,7 +206,7 @@ class FileRebalancer:
                 'percent_used': 0.0
             }
 
-        content = filepath.read_text()
+        content = filepath.read_text(encoding='utf-8', errors='replace')
         tokens = len(content) // 4  # Heuristic: 4 chars per token
 
         return {

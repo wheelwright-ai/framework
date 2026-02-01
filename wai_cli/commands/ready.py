@@ -61,7 +61,7 @@ def ready_command(args: list, spoke_dir: Path):
         print_info("No ready work found (all open lugs are blocked or backlog empty).")
         return
         
-    print_info(f"\n🚀 Ready Work ({len(ready_lugs)} items, limit={limit}):\n")
+    print_info(f"\n[SHIPIT] Ready Work ({len(ready_lugs)} items, limit={limit}):\n")
     print_info(f"{'ID':<10} {'Pri':<8} {'Value':<6} {'Title'}")
     print_info("-" * 80)
     

@@ -358,7 +358,7 @@ def print_warning(message: str):
 
 def print_success(message: str):
     """Print success message."""
-    print(f"   ✓ {message}")
+    print(f"   [OK] {message}")
 
 
 def print_info(message: str):
