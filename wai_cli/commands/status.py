@@ -10,6 +10,7 @@ from typing import Optional
 
 from ..hub import HubManager
 from ..utils.input import print_json
+from ..environment import EnvironmentDetector
 
 
 def show_status(path: str = '.') -> None:
@@ -106,5 +107,23 @@ def show_status(path: str = '.') -> None:
                 print(f"\n    Signals: {signal_count} high-impact learnings recorded")
         except:
             pass
+
+    # Display development environment
+    print(f"\n    Development Environment:")
+    try:
+        env_detector = EnvironmentDetector(project_path)
+        env = env_detector.detect()
+        print(f"   OS: {env['os']['friendly_name']}")
+        print(f"   Python: {env['python']['version']} ({env['python']['implementation']})")
+        
+        if env['os']['is_wsl']:
+            print(f"   Setup: Windows + WSL2")
+            print(f"   Linux path: {env['paths']['project_root']}")
+            print(f"   Windows equiv: {env['paths']['windows_equivalent']}")
+        
+        editors = ', '.join(env['editor']['detected_editors'])
+        print(f"   Editors: {editors}")
+    except Exception as e:
+        print(f"   (Environment detection unavailable: {e})")
 
     print()  # Final newline

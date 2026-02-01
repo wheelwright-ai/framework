@@ -24,6 +24,7 @@ from .utils.input import print_success, print_error, print_info, print_warning, 
 from .integrations.manager import IDEManager
 from .lugs import LugManager
 from .point import PointManager
+from .agents_integration import AgentsIntegration
 import os
 from git import Repo, exc as git_exc
 
@@ -591,6 +592,17 @@ class CloseoutProcessor:
                 statuses[ide.name] = "updated"
             else:
                 statuses[ide.name] = "up_to_date"
+
+        # Refresh AGENTS.md with latest state (IDE context discovery)
+        agents = AgentsIntegration(self.spoke_dir)
+        agents_refreshed = agents.refresh_agents_md()
+        if agents_refreshed:
+            updated += 1
+            statuses['AGENTS.md'] = 'updated'
+            print_info("    [OK] AGENTS.md refreshed - next session will load with fresh context")
+        else:
+            if (self.spoke_dir / 'AGENTS.md').exists():
+                statuses['AGENTS.md'] = 'up_to_date'
 
         session_refreshed = False
         hook_output = ""

@@ -15,6 +15,7 @@ from .projects import ProjectDiscovery
 from .utils.paths import ensure_directory, normalize_path
 from .utils.input import safe_confirm, print_info, print_success, print_warning, print_error
 from .utils.exceptions import SpokeAlreadyExistsError, InvalidHubError
+from .environment import EnvironmentDetector
 
 
 def framework_first_init(
@@ -162,6 +163,65 @@ def init_spoke(
         'WAI-KB-Sync.json',
         'WAI-File-Index.json'
     ]
+    
+    # Also copy AGENTS.md template to project root
+    agents_template = templates_dir.parent / 'wheel' / 'AGENTS.md'
+    if agents_template.exists():
+        agents_target = spoke_path / 'AGENTS.md'
+        content = agents_template.read_text(encoding='utf-8')
+        
+        # Detect environment for context
+        env_detector = EnvironmentDetector(spoke_path)
+        env = env_detector.detect()
+        
+        # Apply substitutions
+        content = content.replace('{{PROJECT_NAME}}', spoke_path.name)
+        content = content.replace('{{TIMESTAMP}}', datetime.now().isoformat())
+        content = content.replace('{{CURRENT_PHASE}}', 'Initialization')
+        content = content.replace('{{STATUS}}', 'Initializing wheel...')
+        content = content.replace('{{LAST_ACTIONS}}', '- Project initialization')
+        content = content.replace('{{NEXT_ACTIONS}}', '- Complete project foundation\n- Define scope and boundaries')
+        content = content.replace('{{BLOCKERS}}', 'None - ready to start')
+        
+        # Environment substitutions
+        content = content.replace('{{OS}}', env['os']['friendly_name'])
+        content = content.replace('{{PYTHON_VERSION}}', env['python']['version'])
+        content = content.replace('{{EDITOR}}', ', '.join(env['editor']['detected_editors']))
+        
+        # Environment context and notes
+        if env['os']['is_wsl']:
+            env_context = (
+                "**Windows + WSL2 Setup**\n"
+                "- Running in WSL2 Linux environment on Windows\n"
+                f"- Linux path: {env['paths']['project_root']}\n"
+                f"- Windows path: {env['paths']['windows_equivalent']}\n"
+                "- Can access Windows files at: /mnt/c, /mnt/d, etc."
+            )
+            env_notes = "You're on Windows using WSL2 - use WSL paths (/home/...) for Linux tools, convert to Z:\\ for Windows tools"
+        else:
+            env_context = f"**Running on {env['os']['friendly_name']}**"
+            env_notes = f"This project runs on {env['os']['friendly_name']}"
+        
+        content = content.replace('{{ENVIRONMENT_CONTEXT}}', env_context)
+        content = content.replace('{{ENVIRONMENT_NOTES}}', env_notes)
+        
+        if agents_target.exists():
+            # APPEND: Preserve existing context, add new briefing
+            existing = agents_target.read_text(encoding='utf-8')
+            # Only append if this is new content (different project name or significant change)
+            if spoke_path.name not in existing or '## Session Focus' not in existing:
+                # Insert new briefing before Last Update section
+                if '\n## Last Update' in content:
+                    new_section = '\n\n--- Updated by reinit ---\n\n'
+                    content = content.replace('\n## Last Update', new_section + '\n## Last Update')
+                    agents_target.write_text(content, encoding='utf-8')
+                    if verbose:
+                        print_info("  Updated AGENTS.md with new briefing")
+        else:
+            # CREATE: First time
+            agents_target.write_text(content, encoding='utf-8')
+            if verbose:
+                print_info("  Created AGENTS.md (auto-updated on closeout)")
 
     for template_file in template_files:
         src = templates_dir / template_file
