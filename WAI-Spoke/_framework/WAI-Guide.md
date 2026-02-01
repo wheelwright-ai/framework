@@ -74,6 +74,7 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 
 | `WAI-State.json` | Technical spec, foundation, session state | UPDATE |
 | `WAI-State.md` | Strategic context, vision | UPDATE |
+| `WAI-Dev-Profile.json` | Developer credentials, preferences, autonomy level | READ ONLY |
 | `WAI-Point.json` | Minimal bootstrap for context restoration | READ ONLY (Update on shipit) |
 | `wheel-signals.jsonl` | High-impact learnings | APPEND (never overwrite) |
 | `lugs.jsonl` | Active task/dependency graph | UPDATE (via tools/CLI) |
