@@ -384,10 +384,10 @@ def _close_lug(manager: LugManager, args: list):
         summary = input("  > ").strip() or None
         
         # Check policies
-         violations = manager.validate_policies(lug)
-         if violations:
-             print_warning("[WARN] Policy violations detected:")
-             for violation in violations:
+        violations = manager.validate_policies(lug)
+        if violations:
+            print_warning("[WARN] Policy violations detected:")
+            for violation in violations:
                 print_warning(f"    - {violation}")
             
             if not safe_confirm("\nClose anyway?", default=False):
