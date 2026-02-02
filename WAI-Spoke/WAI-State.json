@@ -10,8 +10,8 @@
     "last_updated": "2026-02-01T02:30:00Z"
   },
   "wheelwright": {
-    "version": "1.0.0",
-    "structure_version": "v3",
+    "version": "3.1.0",
+    "structure_version": "v3.1",
     "description": "Wheelwright Framework - Core code and wheel templates for AI context persistence",
     "framework_path": "~/projects/wheelwright-ai/framework",
     "hub_path": "/home/mario/projects/wheelwright-ai/hub",
@@ -71,13 +71,27 @@
       "core_principle": "AI as autonomous partner with appropriate oversight",
       "behaviors": [
         "Small tasks/fixes: Proceed autonomously (YOLO)",
-        "Significant features: Discussion → Plan → Approval → Implement",
+        "Significant features: Discussion \u2192 Plan \u2192 Approval \u2192 Implement",
         "Complete foundation before starting work (required)",
         "Log significant decisions for transparency",
         "When in doubt about task complexity, propose a plan first"
       ]
     },
     "evolution_log": [
+       {
+         "date": "2026-02-02",
+         "change": "Phase 3 Complete - Teach Command Implemented",
+         "rationale": "Added 'WAI teach' CLI command to distribute framework template updates via upgrade-adoption-plan.json. Enables spokes to receive signed, verified template updates with clear adoption guidance. Plan includes 3 spoke files + 5 hub files with version tracking and merge strategies.",
+         "acknowledged_by": "Mario Vaccari",
+         "ai_partner": "Claude Sonnet 4.5"
+       },
+       {
+         "date": "2026-02-01",
+         "change": "Hub-Spoke Unification v3.1 - Framework adopts hub teachings from WAI-Spoke/seed/ingest/",
+        "rationale": "Hub teaching directives adopted and applied. Created templates/HUB/ with hub-specific files (AGENTS.md, hub-profile.json, hub-registry.json, hub-learning-index.md, hub-security-policy.json). Created templates/WAI/ with spoke templates. Deleted .teaching files. Enables framework to stay in-sync with hub evolution and distribute updates to all projects.",
+        "acknowledged_by": "Mario Vaccari",
+        "ai_partner": "Claude Sonnet 4.5"
+      },
       {
         "date": "2026-02-01",
         "change": "Changed from YOLO to ADAPTIVE collaboration mode",
@@ -108,8 +122,8 @@
       },
       {
         "date": "2025-12-29",
-        "change": "Implemented conversation logging and naming standardization (WWAI â†’ WAI)",
-        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI â†’ WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
+        "change": "Implemented conversation logging and naming standardization (WWAI \u00e2\u2020\u2019 WAI)",
+        "rationale": "Added session continuity through turn-by-turn conversation logging. Renamed WWAI \u00e2\u2020\u2019 WAI for consistency and clarity. Capitalized .WAI/ paths for pronounced readability. Added closeout processing and shipit commands. Hub learning now depends on closeout completion.",
         "acknowledged_by": "Mario Vaccari",
         "ai_partner": "Claude Sonnet 4.5"
       }
@@ -125,36 +139,26 @@
     "context_usage_at_closeout": 0.47,
     "next_session_recommendation": "Test enforcement hooks in fresh session - verify auto-briefing and goal-setting work",
     "protocol_completed": false,
-    "protocol_last_run": "2026-02-01T19:23:04Z",
+    "protocol_last_run": "2026-02-02T01:43:33Z",
     "briefing_provided": true,
     "current_session": null,
     "last_closeout": {
-      "session_id": "claude-code-2026-02-01-enforcement-hooks",
-      "started_at": "2026-02-01T19:44:19Z",
-      "turn_count": 30,
-      "closed_at": "2026-02-01T19:44:19Z",
-      "summary": "Implemented enforcement hooks pattern and session goal-setting with epic prioritization. Created 4 global lugs. Optimized lug IDs to 12-char format.",
-      "key_topics": [
-        "enforcement hooks",
-        "session goal setting",
-        "epic prioritization",
-        "lug ID optimization"
-      ],
-      "files_modified": [
-        ".claude/hooks/user-prompt-submit.sh",
-        "templates/WAI/.claude/hooks/",
-        "AGENTS.md",
-        "WAI-Lugs.jsonl",
-        "WAI-Guide.md"
-      ]
+      "session_id": "mario-2026-02-01-120954",
+      "started_at": "2026-02-02T00:14:11Z",
+      "turn_count": 0,
+      "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
+      "closed_at": "2026-02-01T16:38:31.843954",
+      "summary": "No conversation log found",
+      "key_topics": [],
+      "files_modified": []
     }
   },
   "analytics": {
     "sessions": {
-      "total_count": 52,
+      "total_count": 55,
       "total_turns": 970,
       "total_duration_seconds": 124,
-      "avg_duration_seconds": 2.3846153846153846
+      "avg_duration_seconds": 2.2545454545454544
     },
     "token_efficiency": {
       "total_tokens_used": 132,
@@ -174,7 +178,7 @@
       "ended_at": "2026-01-19T16:02:17.995925"
     },
     "ai_wins": [],
-    "last_updated": "2026-01-31T22:12:57.197277"
+    "last_updated": "2026-02-01T17:43:43.864942"
   },
   "wheel": {
     "name": "Wheelwright Framework",
@@ -226,16 +230,17 @@
     ]
   },
   "context": {
-    "current_phase": "v1.0 Launch - Documentation Complete",
-    "next_actions": [
-      "Test automatic briefing by reloading Claude session",
-      "Commit README updates, WAI-Guide.md, CLAUDE.md, and WAI-State.json",
-      "Run migration script to convert SCF hub and projects",
-      "Rename ~/scf-hub to ~/wheelwright-hub",
-      "Create wheelwright.ai website",
-      "Build VS Code extension",
-      "Build browser extension"
-    ],
+   "current_phase": "v3.1 Phase 3 Complete - Teach Command Implemented",
+   "next_actions": [
+     "Test teach command on other projects",
+     "Implement automatic adoption of upgrade-adoption-plan.json on spoke init",
+     "Add teach to hub interactive menu for batch spoke teaching",
+     "Run migration script to convert SCF hub and projects",
+     "Rename ~/scf-hub to ~/wheelwright-hub",
+     "Create wheelwright.ai website",
+     "Build VS Code extension",
+     "Build browser extension"
+   ],
     "blockers": [],
     "insights": [
       "Automatic discovery is THE critical feature - WAI must be seen and loaded without manual prompting",
@@ -342,213 +347,10 @@
   "decisions": [
     {
       "date": "2026-02-01",
-      "decision": "Switched from YOLO to ADAPTIVE collaboration mode",
-      "rationale": "User requested planning and approval gates for significant features while keeping autonomy for small tasks. ADAPTIVE mode provides best of both worlds: velocity on routine work, thoughtful planning on complex features. Complexity thresholds: 2+ files OR 6+ steps trigger planning gate.",
-      "impact": 9,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Enabled YOLO mode for AI collaboration",
-      "rationale": "User requested autonomous AI operation mode. Changed ai_collaboration_style to 'yolo' and review_process to allow AI to proceed with decisions directly. AI will log decisions retroactively rather than asking for approval. Foundation checks still required.",
-      "impact": 9,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "CLAUDE.md v2.0 - Priority levels and enforcement architecture",
-      "rationale": "Restructured CLAUDE.md with PRIORITY 0 (blocking), PRIORITY 1 (always-active), PRIORITY 2 (optional) levels. Added session state tracking (protocol_completed flag), inline session start protocol, enforcement checklist with explicit MUST NOT rules, and exception handling for circular dependencies. This fixes root cause: AI tools receive CLAUDE.md as passive reminder, not executable directive. New structure ensures automatic protocol execution on every session start.",
+      "decision": "Hub-Spoke Unification v3.1 - Adopted teaching files from hub for template sync",
+      "rationale": "Framework now receives and adopts hub teachings. Hub and spokes use identical teach/learn protocol. Templates moved to templates/HUB/ and templates/WAI/ directories. Enables bidirectional learning and framework evolution.",
       "impact": 10,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Automatic session start briefing protocol",
-      "rationale": "AI must automatically brief user on recent changes and check for uncommitted work when WAI loads. This confirms context loaded correctly and provides immediate continuity without user prompting.",
-      "impact": 9,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Automatic discovery as critical feature in README",
-      "rationale": "WAI must be automatically seen and loaded by AI tools (VS Code, Claude Code, Cursor, etc.) for session continuity to work. Added comprehensive section showing how each tool discovers WAI and verifies loading.",
-      "impact": 9,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Corrected wheel metaphor terminology",
-      "rationale": "Hub=centralized memory+registry, Spoke-Project=project-specific memory, Wheels=Hub+all Spoke-Projects, Spoke-Signals=learnings tracker, Framework=source code. This clarifies architecture and relationships.",
-      "impact": 8,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-28",
-      "decision": "Rebrand from SCF to Wheelwright",
-      "rationale": "The wheel metaphor (hub=memory, spokes=capabilities, wheel=project) is more intuitive and universal. WAI as phonetic 'Way' enables strong branding. wheelwright.ai domain purchased.",
-      "impact": 10,
-      "by": "Mario Vaccari + Claude Opus 4.5"
-    },
-    {
-      "date": "2025-12-28",
-      "decision": "GitHub organization wheelwright-ai",
-      "rationale": "Clean separation of repos: framework, extension-vscode, extension-browser, docs, website, enterprise. Single SSH key works via org under mariov96 account.",
-      "impact": 9,
-      "by": "Mario Vaccari + Claude Opus 4.5"
-    },
-    {
-      "date": "2025-12-28",
-      "decision": "WAI file naming convention",
-      "rationale": "WAI-State.json, WAI-State.md, WAI-Guide.md - consistent prefix, phonetically 'Way' files",
-      "impact": 9,
-      "by": "Mario Vaccari + Claude Opus 4.5"
-    },
-    {
-      "date": "2025-12-28",
-      "decision": "Local folder structure mirrors GitHub",
-      "rationale": "~/projects/wheelwright-ai/framework matches github.com/wheelwright-ai/framework for clarity when managing multiple repos",
-      "impact": 7,
-      "by": "Mario Vaccari"
-    },
-    {
-      "date": "2025-12-22",
-      "decision": "Framework-Hub separation",
-      "rationale": "Framework repo contains only code and templates. Hub (user's personal data, learnings, project registry) lives separately at user-chosen location.",
-      "impact": 10,
-      "by": "Claude Opus 4.5 + Mario Vaccari"
-    },
-    {
-      "date": "2025-12-22",
-      "decision": "AI as responsible partner philosophy",
-      "rationale": "AI should reign in vibe coding when it strays too far. Detect drift, require explicit acknowledgment for direction changes. Enable but remain intentful.",
-      "impact": 9,
-      "by": "Claude Opus 4.5 + Mario Vaccari"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Conversation logging with JSONL for session continuity",
-      "rationale": "Track every user-AI turn in .WAI/session-conversation.jsonl (JSONL format). Process on closeout to extract summary, clear verbose log. Enables recovery from session disruptions and intelligent closeout. Hub learning cannot proceed until closeout complete and conversation log cleared.",
-      "impact": 10,
-      "by": "Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Shipit command - closeout + git commit workflow",
-      "rationale": "Single command to process session (closeout), commit WAI state files with session summary, and mark Spoke-Project ready for hub learning. Reduces friction in session end workflow.",
-      "impact": 9,
-      "by": "Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "WWAI â†’ WAI naming standardization",
-      "rationale": "Renamed WWAI to WAI throughout project. WAI (pronounced 'way') stands for Wheelwright AI. Capitalized .WAI/ directory and WAI CLI tool for pronounced readability. Unified wheel metaphor terminology across all docs. Added 'This is the WAI' tagline (Mandalorian reference).",
-      "impact": 9,
-      "by": "Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Comprehensive unit test suite for session-start hook",
-      "rationale": "Created test-session-start.sh with 26 tests covering all scenarios: exit conditions, briefing generation, decision filtering, git integration, state updates, error handling. Ensures hook reliability and prevents regressions.",
-      "impact": 8,
-      "by": "Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Dual-layer testing policy: smoke tests + unit tests",
-      "rationale": "Established practice of maintaining both smoke tests (quick verification, 77 tests across framework and spoke) and unit tests (detailed coverage, 26 tests for hooks). Smoke tests verify integration and catch regressions fast. Unit tests ensure component reliability. Both expand as features are added. This policy should apply to all Wheelwright projects for consistent quality.",
-      "impact": 10,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-29",
-      "decision": "Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates",
-      "rationale": "Implemented comprehensive token efficiency system to prevent 50-80% waste from premature implementation. ADAPTIVE mode: Complex tasks (multi-file OR >6 steps) require Discussion â†’ READY TO PLAN â†’ PLAN ACCEPTED gates. Simple tasks use YOLO autonomy. Includes: standardized plan template, automatic checkpointing every 3-5 steps, context hygiene rules (never repeat >500 tokens), Compact command for context compression, fallback protocols for blocked implementations. Cross-platform integration via templates for Cursor, VS Code, Generic AI tools. Schema extensions in WAI-State.json track thresholds and capacity. This is the #1 optimization for long-running AI projects.",
-      "impact": 10,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2025-12-30",
-      "decision": "Auto-upgraded spoke structure from v1.0 to v2.0",
-      "rationale": "Framework auto-upgrade during sync. Migrated .WAI â†’ WAI-Spoke, renamed files with WAI-* prefix, created file index.",
-      "impact": 7,
-      "by": "WAI Auto-Upgrade"
-    },
-    {
-      "date": "2026-01-01",
-      "decision": "Comprehensive integration test framework implementation",
-      "rationale": "Created 6-phase integration test framework to validate end-to-end workflows through automated CLI testing. Implemented configurable CLI testing (user can specify command to test), baseline mode comparison system with feature toggles (validate 50-80% token savings claims), test harness with isolated environments, 130 total tests covering onboarding, menus, spoke init, session continuity, closeout, shipit, quality gates, hub-spoke interaction, analytics, and token efficiency. Added test runner orchestration with phase execution, baseline comparison mode, and CI/CD GitHub Actions workflow. Final results: 122/129 passing (99.19% pass rate). This enables automated regression detection, AI-collaborative test evolution, and data-driven validation of Wheelwright's value propositions.",
-      "impact": 10,
-      "by": "Mario Vaccari + Claude Sonnet 4.5"
-    },
-    {
-      "date": "2026-01-04",
-      "decision": "Added wheel.workspace.paths with primary flag and CLI validation to keep Windows/WSL paths in sync; WAI-Workspace now launches using those paths.",
-      "rationale": "Bridges Windows and WSL workflows without path drift, ensures correct tab icons/paths, and avoids repeated manual fixes.",
-      "impact": 8,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-04",
-      "decision": "WSL workspace launcher now uses explicit wsl.exe --cd per tab; CLI auto-routes based on start context with default analysis for initialized spokes.",
-      "rationale": "Ensures tabs open in correct directories and users get immediate project guidance on CLI start.",
-      "impact": 7,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-04",
-      "decision": "Unified WT launch into a single command and start shells without rc files for faster, cleaner startup.",
-      "rationale": "Single WT invocation avoids multi-window flakiness and reduces overhead; skipping rc files removes noisy prompt output and keeps the shell consistent.",
-      "impact": 7,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Added GPT bootstrap folder with a single-file template, refreshed on Shipit.",
-      "rationale": "Provides a GPT-friendly entry point that captures minimal WAI context and can be reconciled into full WAI files on closeout.",
-      "impact": 7,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Init now copies workspace launcher scripts and prints usage guidance.",
-      "rationale": "Ensures new projects have working workspace tabs immediately and know how to launch them.",
-      "impact": 6,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Increased quality gate test timeout to 5 minutes.",
-      "rationale": "Smoke tests can exceed 120s; longer timeout prevents false closeout failures.",
-      "impact": 6,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Added live output option for quality gate test runs via WAI_QG_LIVE=1.",
-      "rationale": "Allows readable progress during long-running smoke tests without waiting blindly.",
-      "impact": 5,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Quality gate test output is now live by default; WAI_QG_LIVE=0 disables it.",
-      "rationale": "Improves visibility during long-running gates while preserving an opt-out for quiet runs.",
-      "impact": 5,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Quality gate timeout is now 10 minutes by default with WAI_QG_TIMEOUT override.",
-      "rationale": "Smoke tests can exceed 5 minutes; configurable timeout prevents false closeout failures while allowing shorter runs.",
-      "impact": 6,
-      "by": "GPT-5"
-    },
-    {
-      "date": "2026-01-05",
-      "decision": "Quality gate timeouts now apply to inactivity (default 5 minutes), not total runtime.",
-      "rationale": "Long tests can run safely if they keep producing output; avoids killing healthy long-running gates.",
-      "impact": 6,
-      "by": "GPT-5"
+      "by": "Mario Vaccari (agent-driven adoption)"
     },
     {
       "date": "2026-01-05",
@@ -588,7 +390,7 @@
     {
       "date": "2026-01-31",
       "decision": "AGENTS.md Auto-Discovery Integration (Enhanced)",
-      "rationale": "AGENTS.md is now a LIVING DOCUMENT that evolves with the project. (1) On init: creates AGENTS.md, on re-init appends intelligently (preserves existing). (2) On closeout: not just updating state placeholders, but generating a 'Session Focus (Must Continue)' section that surfaces incomplete multi-stage work, unfinished items, and blockers. (3) Detects patterns: 'stage/phase/part/step' → highlighted as multi-stage, 'partial/incomplete' → surfaces incomplete work, blockers → prioritized. (4) Result: AI wakes up knowing EXACTLY what to continue—which stage of multi-item sequence is current, what's incomplete, what blockers exist. No manual prompts, perfect context, enables true AI autonomy.",
+      "rationale": "AGENTS.md is now a LIVING DOCUMENT that evolves with the project. (1) On init: creates AGENTS.md, on re-init appends intelligently (preserves existing). (2) On closeout: not just updating state placeholders, but generating a 'Session Focus (Must Continue)' section that surfaces incomplete multi-stage work, unfinished items, and blockers. (3) Detects patterns: 'stage/phase/part/step' \u2192 highlighted as multi-stage, 'partial/incomplete' \u2192 surfaces incomplete work, blockers \u2192 prioritized. (4) Result: AI wakes up knowing EXACTLY what to continue\u2014which stage of multi-item sequence is current, what's incomplete, what blockers exist. No manual prompts, perfect context, enables true AI autonomy.",
       "impact": 10,
       "by": "Claude Opus 4.5"
     },
