@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from wai_cli.init import init_spoke
+from wai.init import init_spoke
 
 
 def test_init_spoke_creates_seed_folders_and_snapshot(tmp_path: Path) -> None:

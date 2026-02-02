@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from wai_cli.core import WheelwrightCLI
+from wai.core import WheelwrightCLI
 
 
 def test_get_latest_baseline_summary(tmp_path: Path) -> None:

@@ -21,7 +21,7 @@ from datetime import datetime
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from wai_cli.lugs import LugManager
+from wai.lugs import LugManager
 
 
 @pytest.fixture

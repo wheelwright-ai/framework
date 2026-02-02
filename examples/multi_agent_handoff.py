@@ -22,7 +22,7 @@ from datetime import datetime
 # Add framework to path
 sys.path.insert(0, os.getcwd())
 
-from wai_cli.lugs import LugManager
+from wai.lugs import LugManager
 
 DEMO_DIR = Path("examples/demo_spoke")
 

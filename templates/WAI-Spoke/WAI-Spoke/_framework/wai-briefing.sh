@@ -1,0 +1,153 @@
+#!/bin/bash
+#
+# WAI Briefing Generator
+# Unified "where are we" briefing used by hooks, commands, and natural language
+#
+
+set -e
+
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-${WAI_PROJECT_DIR:-${CODEX_PROJECT_DIR:-.}}}"
+STATE_FILE="$PROJECT_DIR/WAI-Spoke/WAI-State.json"
+LUGS_FILE="$PROJECT_DIR/WAI-Spoke/WAI-Lugs.jsonl"
+
+# Exit if WAI-Spoke doesn't exist
+[[ ! -f "$STATE_FILE" ]] && echo "WAI not initialized in this project" && exit 1
+
+generate_wai_briefing() {
+  # Project Identity
+  local project_name=$(jq -r '.wheel.name // "Unknown Project"' "$STATE_FILE")
+  local current_phase=$(jq -r '.context.current_phase // "Unknown Phase"' "$STATE_FILE")
+  local last_modified_by=$(jq -r '._session_state.last_modified_by // "Unknown"' "$STATE_FILE")
+  local last_modified_at=$(jq -r '._session_state.last_modified_at // "Unknown"' "$STATE_FILE")
+
+  # Environment Detection
+  local current_tool="claude-code"  # Default, can be enhanced
+  local current_machine=$(hostname -s 2>/dev/null || echo "unknown")
+  local current_os=$(uname -s 2>/dev/null || echo "unknown")
+
+  # Context Health
+  local token_pct=$(jq -r '._session_state.context_usage_at_closeout // 0 | . * 100 | floor' "$STATE_FILE" 2>/dev/null || echo "0")
+  local last_teach=$(jq -r '.wheelwright.sync_history[-1].date // "never"' "$STATE_FILE" 2>/dev/null || echo "never")
+  local hub_connected=$(jq -r '.wheelwright.hub_path // ""' "$STATE_FILE")
+  [[ -n "$hub_connected" ]] && hub_status="✓ Connected" || hub_status="⚠ Not connected"
+
+  # Git Status
+  cd "$PROJECT_DIR"
+  local uncommitted_count=$(git status --short 2>/dev/null | wc -l || echo "0")
+  [[ "$uncommitted_count" -gt 0 ]] && git_status="⚠ $uncommitted_count uncommitted" || git_status="✓ Clean"
+
+  # Output unified briefing
+  echo "## 🎡 WAI Point - $project_name"
+  echo ""
+  echo "**Phase:** $current_phase"
+  echo "**Last session:** $last_modified_at by $last_modified_by"
+  echo "**Environment:** $current_tool on $current_machine ($current_os)"
+  echo ""
+
+  # Active Work (if lugs exist)
+  if [[ -f "$LUGS_FILE" ]]; then
+    echo "### Active Work (Prioritized)"
+    echo ""
+
+    # Priority counts
+    local flagged=$(jq -r 'select(.priority == "before_next_epic" and .s == "open") | .i' "$LUGS_FILE" 2>/dev/null | wc -l)
+    local bugs=$(jq -r 'select(.ty == "bug" and .s == "open") | .i' "$LUGS_FILE" 2>/dev/null | wc -l)
+    local verify=$(jq -r 'select(.verify_on_closeout == true and .s == "open") | .i' "$LUGS_FILE" 2>/dev/null | wc -l)
+    local in_progress=$(jq -r 'select(.s == "p") | .i' "$LUGS_FILE" 2>/dev/null | wc -l)
+    local open_tasks=$(jq -r 'select(.s == "o" and .ty != "epic") | .i' "$LUGS_FILE" 2>/dev/null | wc -l)
+    local epics=$(jq -r 'select(.ty == "epic" and .s == "open") | .i' "$LUGS_FILE" 2>/dev/null | wc -l)
+
+    echo "- 🚨 **Flagged Priority:** $flagged items"
+    echo "- 🐛 **Bugs:** $bugs open"
+    echo "- ✓ **Verification Needed:** $verify items"
+    echo "- ⏳ **In Progress:** $in_progress items"
+    echo "- 📋 **Open Tasks:** $open_tasks items"
+    echo "- 🎪 **Epics (Blocked Until Above Clear):** $epics epics"
+    echo ""
+
+    # Show top priority item
+    local top_priority=$(jq -r '
+      select(.priority == "before_next_epic" and .s == "open") |
+      "\(.i): \(.t)"
+    ' "$LUGS_FILE" 2>/dev/null | head -1)
+
+    if [[ -n "$top_priority" ]]; then
+      echo "**Top Priority:** $top_priority"
+      echo ""
+    fi
+  fi
+
+  # Context Health
+  echo "### Context Health"
+  echo "- Token usage: ${token_pct}% of 200K"
+  echo "- Hub: $hub_status"
+  echo "- Last teach: $last_teach"
+  echo "- Git: $git_status"
+  echo ""
+
+  # Teaching Files Detection
+  local MANIFEST_FILE="$PROJECT_DIR/WAI-Spoke/seed/ingest/manifest.json"
+
+  if [[ -f "$MANIFEST_FILE" ]]; then
+    echo "### 🎓 Pending Teachings"
+
+    local TEACHING_COUNT=$(jq -r '.files_taught | length' "$MANIFEST_FILE" 2>/dev/null || echo "0")
+    local TAUGHT_AT=$(jq -r '.taught_at' "$MANIFEST_FILE" 2>/dev/null || echo "unknown")
+
+    echo "- **$TEACHING_COUNT file(s) awaiting review**"
+    echo "- Taught: $TAUGHT_AT"
+    echo ""
+    echo "**Files to review:**"
+    jq -r '.files_taught[] | "  • \(.name)"' "$MANIFEST_FILE" 2>/dev/null | head -5
+    echo ""
+    echo "**Action Required:** Review and adopt teaching files"
+    echo ""
+  fi
+
+  # Recent High-Impact Decisions
+  local recent_decisions=$(jq -r '
+    .decisions
+    | map(select(.impact >= 8))
+    | sort_by(.date)
+    | reverse
+    | .[0:3]
+    | map("- " + .decision + " (impact: " + (.impact|tostring) + ")")
+    | join("\n")
+  ' "$STATE_FILE")
+
+  if [[ -n "$recent_decisions" ]]; then
+    echo "### Recent Changes"
+    echo "$recent_decisions"
+    echo ""
+  fi
+
+  # Next Actions
+  local next_actions=$(jq -r '
+    .context.next_actions
+    | .[0:5]
+    | map("- " + .)
+    | join("\n")
+  ' "$STATE_FILE")
+
+  if [[ -n "$next_actions" ]]; then
+    echo "### Next Actions"
+    echo "$next_actions"
+    echo ""
+  fi
+
+  # Quick Commands
+  echo "### Quick Commands"
+  echo "- **/wai-status** - Integration health check"
+  echo "- **/wai-time** - Token usage estimate"
+  echo "- **/wai-rules** - Project boundaries and guidelines"
+  echo "- **/wai-closeout** - End session and extract signals"
+  echo "- **/wai-shipit** - Closeout + commit WAI files"
+  echo ""
+  echo "---"
+  echo "*Ask \"what should I work on?\" for recommendations*"
+}
+
+# Run if executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  generate_wai_briefing
+fi

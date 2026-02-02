@@ -22,7 +22,7 @@ from typing import Optional
 
 # Import LugManager for realistic benchmarks
 try:
-    from wai_cli.lugs import LugManager
+    from wai.lugs import LugManager
     HAS_LUG_MANAGER = True
 except ImportError:
     HAS_LUG_MANAGER = False

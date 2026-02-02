@@ -16,43 +16,43 @@ def test_imports():
 
     try:
         print("Importing wai_cli.core...")
-        from wai_cli.core import WheelwrightCLI, main
+        from wai.core import WheelwrightCLI, main
         print("  ✓ wai_cli.core")
 
         print("Importing wai_cli.init...")
-        from wai_cli.init import framework_first_init, init_spoke
+        from wai.init import framework_first_init, init_spoke
         print("  ✓ wai_cli.init")
 
         print("Importing wai_cli.hub...")
-        from wai_cli.hub import HubManager
+        from wai.hub import HubManager
         print("  ✓ wai_cli.hub")
 
         print("Importing wai_cli.projects...")
-        from wai_cli.projects import ProjectDiscovery
+        from wai.projects import ProjectDiscovery
         print("  ✓ wai_cli.projects")
 
         print("Importing wai_cli.groups...")
-        from wai_cli.groups import GroupsManager
+        from wai.groups import GroupsManager
         print("  ✓ wai_cli.groups")
 
         print("Importing wai_cli.upgrader...")
-        from wai_cli.upgrader import SpokeUpgrader
+        from wai.upgrader import SpokeUpgrader
         print("  ✓ wai_cli.upgrader")
 
         print("Importing wai_cli.utils.exceptions...")
-        from wai_cli.utils.exceptions import WAIError
+        from wai.utils.exceptions import WAIError
         print("  ✓ wai_cli.utils.exceptions")
 
         print("Importing wai_cli.utils.paths...")
-        from wai_cli.utils.paths import normalize_path
+        from wai.utils.paths import normalize_path
         print("  ✓ wai_cli.utils.paths")
 
         print("Importing wai_cli.utils.input...")
-        from wai_cli.utils.input import safe_input
+        from wai.utils.input import safe_input
         print("  ✓ wai_cli.utils.input")
 
         print("Importing wai_cli.utils.registry...")
-        from wai_cli.utils.registry import load_registry
+        from wai.utils.registry import load_registry
         print("  ✓ wai_cli.utils.registry")
 
         print("\n✓ All imports successful!")
@@ -70,23 +70,23 @@ def test_basic_functionality():
     print("\nTesting basic functionality...\n")
 
     try:
-        from wai_cli.core import WheelwrightCLI
+        from wai.core import WheelwrightCLI
 
         print("Creating WheelwrightCLI instance...")
         cli = WheelwrightCLI()
         print(f"  ✓ CLI created (framework_path: {cli.framework_path})")
 
-        from wai_cli.hub import HubManager
+        from wai.hub import HubManager
         print("Creating HubManager instance...")
         hub_mgr = HubManager()
         print("  ✓ HubManager created")
 
-        from wai_cli.projects import ProjectDiscovery
+        from wai.projects import ProjectDiscovery
         print("Creating ProjectDiscovery instance...")
         discovery = ProjectDiscovery()
         print("  ✓ ProjectDiscovery created")
 
-        from wai_cli.upgrader import SpokeUpgrader
+        from wai.upgrader import SpokeUpgrader
         print("Testing SpokeUpgrader.detect_version...")
         version = SpokeUpgrader.detect_version(Path.cwd())
         print(f"  ✓ Version detection works (result: {version})")

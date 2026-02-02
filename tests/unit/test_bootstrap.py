@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from wai_cli.bootstrap import refresh_bootstrap
+from wai.bootstrap import refresh_bootstrap
 
 
 def test_refresh_bootstrap_writes_files(tmp_path):

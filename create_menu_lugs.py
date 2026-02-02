@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Create 6 menu improvement lugs"""
-from wai_cli.lugs import LugManager
+from wai.lugs import LugManager
 from pathlib import Path
 
 spoke_path = Path('.')

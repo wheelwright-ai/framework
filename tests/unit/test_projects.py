@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-from wai_cli.projects import ProjectDiscovery, ProjectInfo
-from wai_cli.utils.registry import load_registry
+from wai.projects import ProjectDiscovery, ProjectInfo
+from wai.utils.registry import load_registry
 
 
 def _init_hub(hub_path: Path) -> None:

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from wai_cli.commands.status import show_status
+from wai.commands.status import show_status
 
 
 def _write_state(path: Path, hub_path: str) -> None:

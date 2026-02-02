@@ -1,6 +1,6 @@
 from pathlib import Path
 import shutil
-from wai_cli.init import init_spoke
+from wai.init import init_spoke
 
 def verify():
     test_path = Path("verification_copilot_script").resolve()

@@ -8,7 +8,7 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
-from wai_cli.lugs import LugManager
+from wai.lugs import LugManager
 
 
 def estimate_tokens(text: str) -> int:

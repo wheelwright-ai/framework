@@ -199,6 +199,7 @@ All three work together under the "Wheelwright" umbrella.
 - **Hub Learning Ready** - Closeout ensures your Spoke-Project is clean and ready for hub knowledge collection
 - **Framework for Frameworks** - Built to support other frameworks and tools as they emerge
 - **Collective Learning** - The Hub learns from all your Spoke-Projects and teaches them, creating a rising tide that lifts all boats
+- **Self-Governance Pattern** - AI self-monitors context health and autonomously recommends restart timing. Logs complete session state to WAI-State.json. New sessions boot with full context immediately. Zero manual coordination needed - pure partnership model where AI polices itself with user guidance.
 
 ---
 
@@ -842,6 +843,22 @@ Wheelwright Framework was originally developed as the Session Continuity Framewo
 Created by **Mario Vaccari**
 
 [wheelwright.ai](https://wheelwright.ai) | [GitHub](https://github.com/wheelwright-ai) | [Twitter](https://twitter.com/wheelwright_ai)
+
+---
+
+## CHANGELOG
+
+### [3.1.0] - 2026-02-01
+
+#### Added
+- **Self-Governance Pattern** - AI autonomously monitors context health, recommends restart timing, logs state to WAI-State.json. New sessions boot with full context. Partnership model where AI polices itself with user guidance.
+- **Spoke ID System** - Each wheel gets unique spoke_id (12-char hex) for cross-project file detection and warning/rejection of mismatched files.
+
+#### Improved
+- **README Auto-Update** - CHANGELOG section auto-updates on every shipit execution for release transparency.
+
+#### Fixed
+- **WAI-Guide.md Template** - Restored missing template file for project initialization.
 
 ---
 

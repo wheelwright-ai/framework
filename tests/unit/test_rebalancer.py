@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from wai_cli.rebalancer import FileRebalancer
+from wai.rebalancer import FileRebalancer
 
 
 def test_scan_unknown_files_ignores_known_dirs(tmp_path: Path) -> None:

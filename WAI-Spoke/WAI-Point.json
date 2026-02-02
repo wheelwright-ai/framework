@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-02-02T03:15:00Z",
+  "project": {
+    "name": "Wheelwright Framework",
+    "version": "3.1.0"
+  },
+  "summary": "Build AI wheels that roll forward forever - universal context persistence for any knowledge work",
+  "phase": "Phase 4: Spoke ID System - COMPLETE",
+  "completed_epics": [
+    "m8n3p7q2r6s4: Implement Spoke ID System (17 tests)",
+    "n9o4p8q3r7s5: Spoke Auto-Discovery Scanner (9 tests)"
+  ],
+  "open_lugs": [
+    {
+      "i": "2927e1d16743",
+      "title": "Fix session start hook paths for _framework files",
+      "priority": "medium",
+      "status": "open"
+    },
+    {
+      "i": "c7f2e9a4b1d6",
+      "title": "Reimplement WAI CLI with cleaner architecture",
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "i": "a2f7e9c4b1d6",
+      "title": "Implement Teaching Reconciliation on Session Events",
+      "priority": "high",
+      "status": "open"
+    }
+  ],
+  "open_lugs_summary": "3 open high-priority epics + migration/teach-learn work",
+  "next_session_focus": "Phase 4 continued: file operations middleware, migration script execution, integration testing",
+  "last_closeout": {
+    "timestamp": "2026-02-02T03:15:00Z",
+    "session": "amp-rush-2026-02-02-phase4-spoke-id",
+    "summary": "Completed Phase 4 Spoke ID System (epics m8n3p7q2r6s4 + n9o4p8q3r7s5). Built spoke_id generation, file validation, hub discovery scanner, migration tooling. 26 unit tests passing.",
+    "key_topics": ["spoke_id", "hub-registry", "auto-discovery", "migration", "integrity"],
+    "files_created": [
+      "wai/spoke_id.py",
+      "wai/file_validator.py",
+      "wai/discovery.py",
+      "migrate_scf_to_wheelwright.py",
+      "tests/unit/test_spoke_id.py",
+      "tests/unit/test_discovery.py"
+    ]
+  },
+  "last_shipit": {
+    "timestamp": "2026-02-02T03:15:00Z",
+    "summary": "Phase 4: Spoke ID System - COMPLETE. Implemented 12-char hex spoke_ids for cross-project integrity + hub auto-discovery.",
+    "key_topics": ["architecture", "integrity", "migration"]
+  },
+  "key_learnings": [
+    "Spoke_id as 12-char hex is token-efficient (saves 52 chars per reference vs 64-char SHA256)",
+    "Deterministic generation enables collision resistance (2^48 combinations) with reproducibility",
+    "Auto-discovery must scan recursively up to 10 levels to handle nested hub structures",
+    "Registry at .WAI-registry/spokes.json enables hub-level cross-project validation",
+    "File validator pattern enables middleware detection of cross-project file conflicts",
+    "Automatic discovery is THE critical feature - WAI must be seen and loaded without manual prompting",
+    "Session start briefing creates immediate continuity and confirms WAI loaded correctly",
+    "Corrected metaphor: Hub=memory+registry, Spoke-Project=project memory, Wheels=Hub+all Spokes together",
+    "The wheel metaphor resonates - hub (memory), spokes (capabilities), wheel (project)",
+    "WAI naming allows phonetic 'Way' branding"
+  ]
+}

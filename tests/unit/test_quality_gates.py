@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from wai_cli.quality_gates import QualityGates
+from wai.quality_gates import QualityGates
 
 
 def test_quality_gates_run_all_gates(tmp_path: Path) -> None:

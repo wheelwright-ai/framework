@@ -17,7 +17,7 @@ from datetime import datetime
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from wai_cli.lugs import LugManager
+from wai.lugs import LugManager
 
 
 def estimate_tokens(text: str) -> int:

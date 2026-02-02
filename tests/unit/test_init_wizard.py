@@ -3,7 +3,7 @@ import sys
 import unittest
 from unittest.mock import MagicMock, patch
 from pathlib import Path
-from wai_cli.wizards.init_wizard import InitWizard
+from wai.wizards.init_wizard import InitWizard
 
 class TestInitWizard(unittest.TestCase):
     @patch('wai_cli.wizards.init_wizard.safe_input')

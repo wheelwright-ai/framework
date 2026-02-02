@@ -303,3 +303,1044 @@ WAI context        Output context for LLM paste
 - **2026-01-05**: Quality gates now ignore test files when checking for missing unit tests.
 - **2026-01-05**: Auto-upgraded spoke structure from v1.0 to v2.0
 - **2026-01-05**: Added CLI health checks and hub-wide upgrade pipeline
+- **2026-02-01**: Switched from YOLO to ADAPTIVE collaboration mode
+- **2025-12-29**: Enabled YOLO mode for AI collaboration
+- **2025-12-29**: CLAUDE.md v2.0 - Priority levels and enforcement architecture
+- **2025-12-29**: Automatic session start briefing protocol
+- **2025-12-29**: Automatic discovery as critical feature in README
+- **2025-12-29**: Corrected wheel metaphor terminology
+- **2025-12-28**: Rebrand from SCF to Wheelwright
+- **2025-12-28**: GitHub organization wheelwright-ai
+- **2025-12-28**: WAI file naming convention
+- **2025-12-28**: Local folder structure mirrors GitHub
+- **2025-12-22**: Framework-Hub separation
+- **2025-12-22**: AI as responsible partner philosophy
+- **2025-12-29**: Conversation logging with JSONL for session continuity
+- **2025-12-29**: Shipit command - closeout + git commit workflow
+- **2025-12-29**: WWAI â†’ WAI naming standardization
+- **2025-12-29**: Comprehensive unit test suite for session-start hook
+- **2025-12-29**: Dual-layer testing policy: smoke tests + unit tests
+- **2025-12-29**: Token Efficiency Protocols - ADAPTIVE workflow with multi-stage gates
+- **2025-12-30**: Auto-upgraded spoke structure from v1.0 to v2.0
+- **2026-01-01**: Comprehensive integration test framework implementation
+- **2026-01-04**: Added wheel.workspace.paths with primary flag and CLI validation to keep Windows/WSL paths in sync; WAI-Workspace now launches using those paths.
+- **2026-01-04**: WSL workspace launcher now uses explicit wsl.exe --cd per tab; CLI auto-routes based on start context with default analysis for initialized spokes.
+- **2026-01-04**: Unified WT launch into a single command and start shells without rc files for faster, cleaner startup.
+- **2026-01-05**: Added GPT bootstrap folder with a single-file template, refreshed on Shipit.
+- **2026-01-05**: Init now copies workspace launcher scripts and prints usage guidance.
+- **2026-01-05**: Increased quality gate test timeout to 5 minutes.
+- **2026-01-05**: Added live output option for quality gate test runs via WAI_QG_LIVE=1.
+- **2026-01-05**: Quality gate test output is now live by default; WAI_QG_LIVE=0 disables it.
+- **2026-01-05**: Quality gate timeout is now 10 minutes by default with WAI_QG_TIMEOUT override.
+- **2026-01-05**: Quality gate timeouts now apply to inactivity (default 5 minutes), not total runtime.
+
+## Seeded Context (Ingested) - 2026-02-02T07:31:16Z
+
+### WAI-State.json.teaching
+
+{
+  "wheelwright": {
+    "version": "1.0.0",
+    "structure_version": "v1",
+    "description": "Wheelwright-enabled project with context persistence",
+    "framework_path": null,
+    "hub_path": null,
+    "tagline": "We aren't reinventing the wheel - we're evolving it faster than one person ever could."
+  },
+  "_wai_bootstrap": {
+    "_purpose": "Instructions for AI assistants to find or create Wheelwright components",
+    "find_framework": {
+      "check_order": [
+        "1. Read framework_path from wheelwright above",
+        "2. Check if 'WAI' command is in PATH",
+        "3. Look for ~/projects/wheelwright",
+        "4. Look for ~/.wheelwright",
+        "5. Search for directory containing 'WAI' CLI and 'teach.py'"
+      ],
+      "if_not_found": "Ask user: 'Where is your Wheelwright framework installed? (git clone https://github.com/wheelwright-ai/framework)'"
+    },
+    "find_hub": {
+      "check_order": [
+        "1. Read hub_path from wheelwright above",
+        "2. Look for ~/wheelwright-hub",
+        "3. Look for ~/.wheelwright-hub",
+        "4. Check framework's connected_wheels for this project"
+      ],
+      "if_not_found": "Run: cd <framework_path> && ./WAI hub create"
+    },
+    "create_hub": {
+      "requires": "framework_path must be set",
+      "command": "cd <framework_path> && ./WAI hub create --guided",
+      "what_it_creates": [
+        "~/wheelwright-hub/ (or user-chosen path)",
+        "hub-profile.json (user preferences)",
+        ".WAI/ (hub's own state)",
+        ".WAI-registry/ (wheel tracking)",
+        "learnings/ (aggregated patterns)"
+      ]
+    },
+    "update_paths": {
+      "after_discovery": "Update framework_path and hub_path in wheelwright"
+    }
+  },
+  "_project_foundation": {
+    "completed": false,
+    "completed_at": null,
+    "completed_with": null,
+    "identity": {
+      "type": null,
+      "name": null,
+      "one_liner": null,
+      "success_looks_like": null
+    },
+    "boundaries": {
+      "in_scope": [],
+      "out_of_scope": [],
+      "constraints": []
+    },
+    "approach": {
+      "stack_or_tools": [],
+      "workflow": null,
+      "ai_collaboration_style": null,
+      "review_process": null
+    },
+    "philosophy": {
+      "core_principle": "AI as responsible partner, not just enabler",
+      "behaviors": [
+        "Detect scope drift and flag before enabling",
+        "Require explicit acknowledgment for direction changes",
+        "Complete foundation before starting work",
+        "Prefer 'are you sure?' over silent compliance"
+      ]
+    },
+    "evolution_log": []
+  },
+  "_session_state": {
+    "last_session_id": null,
+    "last_modified_by": null,
+    "last_modified_at": null,
+    "requires_review": false,
+    "review_reason": null,
+    "session_count": 0,
+    "current_session": null,
+    "last_closeout": null,
+    "protocol_completed": false
+  },
+  "analytics": {
+    "sessions": {
+      "total_count": 0,
+      "total_turns": 0,
+      "total_duration_seconds": 0,
+      "avg_duration_seconds": 0
+    },
+    "token_efficiency": {
+      "total_tokens_used": 0,
+      "tokens_saved_estimate": 0,
+      "baseline_tokens_estimate": 0,
+      "context_limit": 200000,
+      "avg_tokens_per_session": 0
+    },
+    "quality_metrics": {
+      "decisions_count": 0,
+      "high_impact_count": 0
+    },
+    "time_tracking": {
+      "total_time_together_seconds": 0,
+      "total_time_ai_alone_seconds": 0
+    },
+    "baseline_mode": {
+      "enabled": false,
+      "total_tokens_used": 0,
+      "total_sessions": 0,
+      "description": "Track metrics without Wheelwright optimizations for comparison"
+    },
+    "ai_wins": [],
+    "last_updated": null
+  },
+  "feature_toggles": {
+    "_description": "Toggle marketing features for baseline comparison and testing",
+    "session_continuity": true,
+    "token_efficiency": true,
+    "analytics": true,
+    "closeout_processing": true,
+    "hub_learning": true,
+    "quality_gates": true
+  },
+  "wheel": {
+    "name": null,
+    "abbrev": null,
+    "version": "0.1.0",
+    "type": null,
+    "description": null,
+    "repository": null,
+    "created": null,
+    "last_updated": null,
+    "status": "active",
+    "workspace": {
+      "ide_cmd": null,
+      "run_cmd": null,
+      "cli_cmd": null,
+      "hub_cmd": null,
+      "paths": {
+        "primary": null,
+        "windows": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        },
+        "wsl": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        }
+      }
+    }
+  },
+  "hub": {
+    "summary": null,
+    "objectives": [],
+    "decisions": [],
+    "constraints": []
+  },
+  "spokes": {
+    "active": [],
+    "available": [
+      "meta-consultation",
+      "document-analysis",
+      "code-review"
+    ]
+  },
+  "context": {
+    "current_phase": null,
+    "next_actions": [
+      "Complete project foundation with AI assistant",
+      "Define project identity, boundaries, and approach",
+      "Begin development with clear context"
+    ],
+    "blockers": [],
+    "insights": []
+  },
+  "stack": [],
+  "features": [],
+  "decisions": [],
+  "bugs": [],
+  "ai_rules": {
+    "context_loading": "Read WAI-Spoke/WAI-Guide.md first, then WAI-State.json and WAI-State.md",
+    "session_state": "Update _session_state when making significant changes",
+    "foundation_enforcement": {
+      "on_incomplete": "CRITICAL: Guide user through foundation questions before any work. Do not skip.",
+      "on_drift_detected": "Present options, require explicit choice before proceeding",
+      "on_evolution": "Log change with rationale and acknowledgment in evolution_log"
+    },
+    "stewardship": {
+      "principle": "AI is the responsible partner, not just an enabler",
+      "behaviors": [
+        "Detect scope drift and flag before enabling",
+        "Require explicit acknowledgment for direction changes",
+        "Complete foundation before starting work",
+        "Prefer 'are you sure?' over silent compliance"
+      ]
+    },
+    "signals": {
+      "threshold": 8,
+      "instruction": "Append to WAI-Signals.jsonl if decision impact >= 8"
+    }
+  },
+  "ai_context": {
+    "conversation_tracking": true,
+    "capacity_monitoring": true,
+    "alert_threshold": "80%",
+    "wai_commands": {
+      "time": "Intelligent token usage estimate with capacity warnings",
+      "rules": "List active rules and behavioral guidelines",
+      "closeout": "Provide updated WAI-State files for session end"
+    }
+  },
+  "environments": {
+    "_note": "Registry of environments that have worked on this project. Auto-populated by closeout."
+  },
+  "meta": {
+    "total_sessions": 0,
+    "total_turns": 0,
+    "last_closeout": null
+  }
+}
+
+### WAI-State.md.teaching
+
+# Wheel State: [PROJECT_NAME]
+
+---
+
+**Wheelwright Framework v1.0**
+**Structure:** v1 (WAI-Spoke/ directory)
+**Hub:** *Not yet configured - run `WAI hub create` or `WAI hub locate`*
+
+*This wheel uses Wheelwright Framework to maintain perfect context across AI sessions. Wheelwright transforms AI from order-taker to informed, responsible project partner.*
+
+*"We aren't reinventing the wheel - we're evolving it faster than one person ever could."*
+
+---
+
+## Project Foundation
+
+> **IMPORTANT FOR AI ASSISTANTS:**
+>
+> If the foundation below is incomplete (shows "Not yet defined"), you MUST guide
+> the user through establishing it before starting any work. This is not optional.
+>
+> Ask conversational questions to extract:
+> 1. What is this project? (identity)
+> 2. What does success look like? (vision)
+> 3. What's in scope and out of scope? (boundaries)
+> 4. How do we work together? (approach)
+
+### Identity
+- **Type:** *Not yet defined*
+- **Name:** *Not yet defined*
+- **One-liner:** *Not yet defined*
+- **Success looks like:** *Not yet defined*
+
+### Boundaries
+
+**In Scope:**
+- *To be defined during foundation setup*
+
+**Out of Scope:**
+- *To be defined during foundation setup*
+
+**Constraints:**
+- *To be defined during foundation setup*
+
+### Approach
+- **Stack/Tools:** *To be defined*
+- **Workflow:** *To be defined*
+- **AI Collaboration:** *To be defined*
+- **Review Process:** *To be defined*
+
+---
+
+## Core Philosophy: AI as Responsible Partner
+
+This wheel follows Wheelwright's stewardship philosophy:
+
+> **AI should enable but remain intentful.** When work strays from the
+> established foundation, the AI should flag it and require explicit
+> acknowledgment before proceeding.
+
+### Stewardship Behaviors
+1. **Detect scope drift** - Flag before enabling work outside boundaries
+2. **Require acknowledgment** - Direction changes need explicit approval
+3. **Complete foundation first** - Guide setup before diving into work
+4. **Prefer verification** - "Are you sure?" over silent compliance
+
+### Evolution, Not Drift
+When project direction needs to change, it should be **deliberate**:
+- AI detects the drift
+- Presents options to user
+- User explicitly acknowledges the change
+- Change is logged in `evolution_log` with rationale
+
+---
+
+## Hub Memory
+
+### Core Objective
+*What transformative purpose does this project serve?*
+
+### Problem Statement
+*What specific problem are we solving? Who experiences this pain?*
+
+### Key Decisions
+1. *[Decision 1 with rationale]*
+2. *[Decision 2 with rationale]*
+
+### Established Constraints
+- *[Constraint 1]*
+- *[Constraint 2]*
+
+### Learned Patterns
+- *[Pattern 1: What worked well]*
+- *[Pattern 2: What to avoid]*
+
+---
+
+## Active Spokes
+
+### [Spoke Name]
+- **Purpose:** [What this spoke does]
+- **Current State:** [What it's working on]
+- **Outputs:** [What it has produced]
+
+---
+
+## Rolling Context
+
+### Current Phase
+*[What phase is the project in?]*
+
+### Recent Progress
+- *[Accomplishment 1]*
+- *[Accomplishment 2]*
+
+### Next Actions
+1. [ ] Complete project foundation
+2. [ ] Define initial scope and approach
+3. [ ] Begin work with clear context
+
+### Open Questions
+- *[Question needing resolution]*
+
+---
+
+## Evolution Log
+
+| Date | Change | Rationale | Acknowledged By |
+|------|--------|-----------|-----------------|
+| *Date* | Project initialized with Wheelwright | Starting with context persistence | *User* |
+
+---
+
+## Session Log
+
+| Session | Date | Focus | Key Outcomes |
+|---------|------|-------|--------------|
+| 1 | [Date] | [Topic] | [Outcomes] |
+
+---
+
+## AI Session Instructions
+
+### Before Starting Work
+1. Read `WAI-Guide.md` for current policies
+2. Check `_project_foundation.completed` in WAI-State.json
+3. **If foundation incomplete: STOP and guide user through setup**
+4. Check `_session_state` for recent changes
+5. Check boundaries - is this request in scope?
+
+### During Work
+- Update `_session_state.last_modified_by` and `last_modified_at`
+- Add decisions with impact >= 5 to decisions array
+- Signal learnings with impact >= 8 to wheel-signals.jsonl
+
+### Session Continuity Commands
+- `'Time'` - Token usage estimate with 80% capacity warnings
+- `'Rules'` - List active behavioral guidelines
+- `'Closeout'` - Generate updated WAI-State files
+
+---
+
+*This wheel rolls forward with Wheelwright Framework - wheelwright.ai*
+
+### hub-registry.json.teaching
+
+{
+  "_purpose": "Hub project registry - tracks wheels connected to this hub",
+  "_structure_version": "3.0",
+  
+  "metadata": {
+    "created_at": null,
+    "last_updated_at": null,
+    "framework_version": "3.0.0",
+    "hub_fingerprint": null,
+    "description": "Auto-managed registry of wheels taught by this hub"
+  },
+  
+  "wheels": [
+    {
+      "_template": "Example wheel entry - delete this after first use",
+      "wheel_id": "project-name",
+      "path": "/path/to/project",
+      "status": "active",
+      "taught_at": "2026-02-01T00:00:00Z",
+      "taught_version": "3.0.0",
+      "last_sync": "2026-02-01T00:00:00Z",
+      "learnings_contributed": 0,
+      "signals_received": [],
+      "adoptions": []
+    }
+  ],
+  
+  "teaching_history": [
+    {
+      "_template": "Teaching event - auto-created by teach command",
+      "event_id": "teach-2026-02-01",
+      "timestamp": "2026-02-01T00:00:00Z",
+      "framework_version": "3.0.0",
+      "upgrade_adoption_plan": "upgrade-adoption-plan.json",
+      "wheels_taught": 0,
+      "files_distributed": [],
+      "status": "complete"
+    }
+  ],
+  
+  "statistics": {
+    "total_wheels": 0,
+    "active_wheels": 0,
+    "last_teach": null,
+    "total_learnings_received": 0,
+    "total_signals_received": 0
+  },
+  
+  "_instructions": {
+    "for_teach_command": "Add wheel entries when teaching a spoke. Auto-update on each teach.",
+    "for_hub_ai": "Read this to understand which wheels are connected and their teaching history.",
+    "manual_editing": "Safe to edit wheel_id, path, and status. Do not edit metadata or timestamps."
+  }
+}
+
+### hub-security-policy.json.teaching
+
+{
+  "_purpose": "Hub security policies for safe knowledge distribution",
+  "_structure_version": "3.0",
+  
+  "metadata": {
+    "created_at": null,
+    "framework_version": "3.0.0",
+    "description": "Security settings for hub-spoke communication and teaching"
+  },
+  
+  "verification": {
+    "enabled": true,
+    "algorithm": "sha256-hmac",
+    "fingerprint_rotation_days": 90,
+    "require_hub_signature": true,
+    "require_file_hash_verification": true,
+    "description": "All taught files must be signed and verified before adoption"
+  },
+  
+  "trust_model": {
+    "hub_fingerprint": null,
+    "public_key": null,
+    "key_rotation_schedule": "quarterly",
+    "revocation_list": [],
+    "description": "Hub signs all upgrade-adoption-plans with its fingerprint"
+  },
+  
+  "file_integrity": {
+    "hash_algorithm": "sha256",
+    "verify_file_hashes_before_adoption": true,
+    "corrupted_file_action": "reject",
+    "description": "Each file includes hash for integrity verification"
+  },
+  
+  "knowledge_distribution": {
+    "allowed_targets": ["spoke", "hub", "universal"],
+    "require_explicit_approval": false,
+    "min_impact_score_for_sharing": 8,
+    "learnings_private_to_hub": false,
+    "description": "Control what knowledge is distributed and to whom"
+  },
+  
+  "wheel_security": {
+    "require_wheel_authentication": false,
+    "whitelist_enabled": false,
+    "whitelisted_wheels": [],
+    "require_learning_verification": true,
+    "max_learning_size_mb": 100,
+    "description": "Security settings for connected wheels"
+  },
+  
+  "audit_logging": {
+    "enabled": true,
+    "log_file": "audit.jsonl",
+    "log_events": [
+      "teach_command",
+      "wheel_registration",
+      "learning_received",
+      "signature_verification",
+      "hash_verification_failure"
+    ],
+    "retention_days": 365,
+    "description": "Log all security-relevant events"
+  },
+  
+  "compliance": {
+    "enforce_version_compatibility": true,
+    "min_framework_version": "3.0.0",
+    "breaking_changes_require_review": true,
+    "auto_rollback_on_failure": false,
+    "description": "Ensure compatibility and safety during upgrades"
+  },
+  
+  "secrets_management": {
+    "encrypt_sensitive_data": false,
+    "allowed_secret_types": ["github_token", "api_key", "ssh_key"],
+    "secret_distribution": "never",
+    "description": "Secrets should never be distributed; only references"
+  },
+  
+  "_instructions": {
+    "for_hub_ai": "Enforce these policies when creating and distributing upgrade plans. Refuse adoption of unsigned or unverified files.",
+    "for_spokes": "Verify all received teaching against these policies before adoption.",
+    "updating": "Update after security incidents or when refining trust model. Notify all wheels of policy changes."
+  }
+}
+
+### hub-learning-index.md.teaching
+
+# Hub Learning Index
+
+**Framework Version:** 3.0.0  
+**Structure Version:** 3.0  
+**Purpose:** Knowledge base index tracking learnings from all connected wheels
+
+---
+
+## How This Works
+
+This hub aggregates learnings from all connected wheels (spokes) and makes them available for:
+1. **Hub self-improvement** - Hub learns patterns across projects
+2. **Wheel discovery** - Spokes see what other wheels have learned
+3. **Knowledge compounding** - Each wheel builds on collective intelligence
+
+---
+
+## Learning Categories
+
+### Architecture & Design Patterns
+- **File:** `learnings/architecture.jsonl`
+- **Purpose:** Cross-project architectural insights
+- **Examples:** Microservices patterns, module structure, dependency management
+- **Learnings Shared:** 0
+- **Last Updated:** Never
+
+### Performance & Optimization
+- **File:** `learnings/performance.jsonl`
+- **Purpose:** Proven optimization techniques
+- **Examples:** Caching strategies, query optimization, build speedups
+- **Learnings Shared:** 0
+- **Last Updated:** Never
+
+### Testing & Quality
+- **File:** `learnings/testing.jsonl`
+- **Purpose:** Testing patterns and quality improvements
+- **Examples:** Test strategies, coverage targets, debugging techniques
+- **Learnings Shared:** 0
+- **Last Updated:** Never
+
+### Security & Best Practices
+- **File:** `learnings/security.jsonl`
+- **Purpose:** Security patterns and best practices
+- **Examples:** Authentication, encryption, input validation
+- **Learnings Shared:** 0
+- **Last Updated:** Never
+
+### Development Workflow
+- **File:** `learnings/workflow.jsonl`
+- **Purpose:** Development process improvements
+- **Examples:** CI/CD optimization, deployment strategies, version management
+- **Learnings Shared:** 0
+- **Last Updated:** Never
+
+### Tool & Library Recommendations
+- **File:** `learnings/tools.jsonl`
+- **Purpose:** Recommended tools and libraries
+- **Examples:** Development tools, testing frameworks, build systems
+- **Learnings Shared:** 0
+- **Last Updated:** Never
+
+---
+
+## How Wheels Contribute Learnings
+
+### Threshold
+- **Minimum Impact Score:** 8/10
+- **Rationale:** Only high-impact learnings shared (quality over quantity)
+- **Evaluation:** AI determines impact based on scope, time saved, and applicability
+
+### What Gets Shared
+✓ Architectural breakthroughs  
+✓ Patterns that saved significant time  
+✓ Critical bugs avoided  
+✓ Performance optimizations with measurable impact  
+✓ Cross-project applicable solutions  
+
+### What Doesn't Get Shared
+✗ Project-specific implementation details  
+✗ Minor refactorings  
+✗ Routine bug fixes  
+✗ Personal preferences without impact justification  
+
+---
+
+## Signal Format
+
+Each learning entry (`learnings/*.jsonl`) contains:
+
+```json
+{
+  "id": "learning-uuid",
+  "timestamp": "2026-02-01T18:00:00Z",
+  "wheel_id": "project-name",
+  "category": "architecture",
+  "impact_score": 8,
+  "title": "Learning title",
+  "description": "What was learned and why it matters",
+  "context": "Project context where this applies",
+  "recommendation": "How other wheels can use this",
+  "tags": ["tag1", "tag2"],
+  "verified": false
+}
+```
+
+---
+
+## For AI Assistants
+
+### On Hub Session Start
+1. Read this file to understand what learnings are available
+2. Check `hub-registry.json` to see which wheels are connected
+3. Browse relevant learning categories for applicable patterns
+4. Apply high-impact learnings to current decisions
+
+### When Hub Teaches Spokes
+1. Review learning summaries from all connected wheels
+2. Include top learnings in upgrade-adoption-plan.json
+3. Mark learning sources so spokes know the origin
+4. Enable wheel-to-wheel knowledge transfer
+
+### When Wheel Contributes Learning
+1. Verify impact score >= 8
+2. Parse into appropriate learning category
+3. Add to corresponding `learnings/*.jsonl` file
+4. Update timestamps in this index
+5. Notify other wheels of new high-impact learning
+
+---
+
+## Knowledge Flow
+
+```
+Wheel A (spoke) discovers pattern
+    ↓
+Contributes high-impact learning (impact >= 8)
+    ↓
+Hub receives learning during sync
+    ↓
+Hub adds to learning-index and category file
+    ↓
+Next teach includes top learnings from all wheels
+    ↓
+All spokes benefit from collective intelligence
+    ↓
+Knowledge compounds across sessions
+```
+
+---
+
+## Hub Improvement Tracking
+
+| Cycle | Date | Learnings Received | Signals Integrated | Wheels Taught |
+|-------|------|--------------------|--------------------|--------------|
+| v3.0 (baseline) | 2026-02-01 | 0 | 0 | — |
+
+---
+
+## Administration
+
+### View All Learnings
+```bash
+# List learnings by category
+wai hub learnings --category architecture
+wai hub learnings --category performance
+wai hub learnings --all
+
+# Show learning details
+wai hub learnings show <learning-id>
+```
+
+### Verify Learnings
+```bash
+# Check impact scores
+wai hub learnings verify --min-impact 8
+
+# Mark learning as verified
+wai hub learnings verify <learning-id>
+```
+
+### Sync with Spokes
+```bash
+# Pull new learnings from all wheels
+wai hub sync --learnings
+
+# Push updated learnings to all wheels
+wai hub teach --with-learnings
+```
+
+---
+
+## Related Files
+
+- `hub-registry.json` - Project registry and teaching history
+- `hub-profile.json` - Hub configuration and learning philosophy
+- `learnings/` directory - Actual learning JSONL files (auto-managed)
+- `upgrade-adoption-plan.json` - Current teaching manifest
+
+---
+
+*Index for hub learning aggregation system (v3.0, 2026-02-01)*
+
+### WAI-Guide.md.teaching
+
+# Wheelwright Framework Guide
+
+**For Humans:** This project uses Wheelwright for AI-assisted development with continuous context across sessions.
+
+**For AI Assistants:** Read the sections below BEFORE making any changes to this project.
+
+---
+
+**Framework Version:** 1.0
+**Repository:** https://github.com/wheelwright-ai/framework
+**Created by:** Mario Vaccari
+
+*"We aren't reinventing the wheel - we're evolving it faster than one person ever could."*
+
+---
+
+## What is Wheelwright?
+
+Wheelwright builds AI wheels that remember everything. Instead of losing context when sessions end, your wheel rolls forward continuously - maintaining memory, learning patterns, and extending capabilities.
+
+### The Wheel Metaphor
+- **Hub** = Central memory and consolidated knowledge
+- **Spokes** = Specialized capabilities (analysis, consultation, code review)
+- **Rim** = The interface connecting to any LLM
+- **Rolling** = Each turn moves forward, never losing ground
+
+---
+
+## AI INSTRUCTIONS - READ FIRST
+
+### Context Refresh Check (Do This First!)
+
+**Every session, check if the `WAI-Spoke/` folder has been updated since you last worked here:**
+
+```python
+import json
+from pathlib import Path
+from datetime import datetime
+
+wai_path = Path("WAI-Spoke")
+kb_sync = json.loads((wai_path / "kb-sync.json").read_text()) if (wai_path / "kb-sync.json").exists() else {}
+state = json.loads((wai_path / "WAI-State.json").read_text())
+wai_meta = state.get("wheelwright", {})
+
+# Check for new hub teachings
+hub_version = wai_meta.get("hub_reference", {}).get("current_hash_short", "unknown")
+last_teach = wai_meta.get("sync_history", [{}])[-1].get("date", "never") if wai_meta.get("sync_history") else "never"
+
+print(f"Hub version: {hub_version}")
+print(f"Last teach sync: {last_teach}")
+print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since_sync', 'unknown')}")
+```
+
+**If you see new learnings or policies were added:**
+1. Read this entire file again for updated instructions
+2. Check `kb-sync.json` for new hub knowledge version
+3. Review any new sections in this README (especially "Learnings from Hub")
+4. Apply new patterns to your current work
+
+---
+
+### Your Core Files
+
+| File | Purpose | Your Action |
+|------|---------|-------------|
+| `WAI-State.json` | Technical spec, foundation, session state | UPDATE |
+| `WAI-State.md` | Strategic context, vision | UPDATE |
+| `wheel-signals.jsonl` | High-impact learnings | APPEND (never overwrite) |
+| `kb-sync.json` | Hub sync status | READ ONLY |
+| `WAI-Guide.md` (this file) | Your instructions | READ ONLY |
+
+---
+
+## CRITICAL: Foundation Check
+
+**Before ANY work, check the project foundation:**
+
+```python
+import json
+from pathlib import Path
+
+state = json.loads(Path("WAI-Spoke/WAI-State.json").read_text())
+foundation = state.get("_project_foundation", {})
+
+if not foundation.get("completed"):
+    print("STOP: Foundation incomplete!")
+    print("Guide user through foundation setup before proceeding.")
+```
+
+### If Foundation is Incomplete
+
+Do NOT proceed with any work. Instead, guide the user through establishing:
+
+**1. Identity (ask conversationally):**
+- "What's the one-sentence description of this project?"
+- "Is this code, research, writing, design, or a mix?"
+- "What does 'done' look like for you?"
+
+**2. Boundaries:**
+- "What's definitely IN scope for this project?"
+- "What should we explicitly AVOID or consider out of scope?"
+- "Any constraints I should know about? (time, tech, etc.)"
+
+**3. Approach:**
+- "What tools or technologies are we using?"
+- "How do you want to work with AI - should I take initiative or check in frequently?"
+- "How should decisions get reviewed?"
+
+**After gathering answers:**
+1. Update `_project_foundation` in WAI-State.json
+2. Set `completed: true` with timestamp and your AI name
+3. Add first entry to `evolution_log`
+4. Update WAI-State.md with the vision
+
+---
+
+## System Sketch (The "Thinking" Step)
+
+**Before writing code for complex tasks (multi-file changes or >6 steps), you MUST create a System Sketch.**
+
+Stop and ask yourself these 5 questions. Document the answers in your plan:
+
+1.  **Likelihood of Change:** Is this a one-off script or a foundational piece? (Foundational = higher quality bar)
+2.  **DRY (Don't Repeat Yourself):** Does similar logic exist elsewhere? Can we reuse or refactor?
+3.  **Source of Truth:** Where does the state live? Are we duplicating it? (Avoid "split brain")
+4.  **Criticality:** What happens if this breaks? (UI glitch vs Data loss vs Security hole)
+5.  **Testability:** How will we verify this? (Unit vs Integration vs Manual)
+
+---
+
+## Implementation Approval Gate
+
+If the user asks for planning/ideation, pause after the plan and ask for explicit approval before making code changes.
+
+---
+
+## Stewardship Philosophy
+
+You are a **responsible partner**, not just an enabler.
+
+### Core Principle
+> Enable but remain intentful. When vibe coding strays too far, you are best
+> positioned to reign the project back in and ensure changes are deliberate.
+
+### Required Behaviors
+
+1. **Detect Scope Drift**
+   - Before enabling work, check if it fits `boundaries.in_scope`
+   - If request seems outside scope, FLAG it before proceeding
+
+2. **Require Acknowledgment for Changes**
+   - Direction changes need explicit user approval
+   - Never silently expand scope
+
+3. **Complete Foundation First**
+   - No work until foundation is established
+   - This is not optional
+
+4. **Prefer Verification**
+   - "Are you sure?" over silent compliance
+   - When uncertain, ask
+
+### Drift Detection Template
+
+When you detect potential scope drift:
+
+```markdown
+## Scope Check
+
+I want to verify this request aligns with our established foundation:
+
+**Request:** [what user asked for]
+
+**Current Boundaries:**
+- In scope: [from foundation]
+- Out of scope: [from foundation]
+
+**Assessment:** [why this might be drift]
+
+**Options:**
+1. **Evolve** - Update foundation to include this
+2. **Stay course** - Decline, keep original scope
+3. **Explore** - Discuss before deciding
+
+Which would you prefer?
+```
+
+---
+
+## Session State Protocol
+
+### On Session Start
+
+```python
+import json
+from pathlib import Path
+
+state = json.loads(Path("WAI-Spoke/WAI-State.json").read_text())
+session = state.get("_session_state", {})
+
+print(f"Last modified by: {session.get('last_modified_by')}")
+print(f"At: {session.get('last_modified_at')}")
+print(f"Requires review: {session.get('requires_review')}")
+
+if session.get('requires_review'):
+    print(f"Review reason: {session.get('review_reason')}")
+    # Trigger change review process
+```
+
+### When Making Changes
+
+Update `_session_state`:
+```json
+{
+  "_session_state": {
+    "last_session_id": "your-unique-session-id",
+    "last_modified_by": "Claude/GPT/Copilot + timestamp",
+    "last_modified_at": "ISO-8601-timestamp",
+    "session_count": "increment by 1",
+    "requires_review": false
+  }
+}
+```
+
+**CLI menu parity rule:** When adding or extending WAI-CLI commands, update the interactive menus and help text to match.
+
+### Before Closing Session
+
+If you made significant changes:
+```json
+{
+  "requires_review": true,
+  "review_reason": "Brief description of what changed"
+}
+```
+
+---
+
+## Signaling High-Impact Learnings
+
+When you make a decision with **impact >= 8**, share it:
+
+### 1. Add to decisions array in WAI-State.json
+```json
+{
+  "date": "2025-12-28",
+  "decision": "Description of the decision",
+  "rationale": "Why this was the right choice",
+  "impact": 8,
+  "by": "Your AI name"
+}
+```
+
+### 2. Append to wheel-signals.jsonl
+```json
+{"timestamp": "ISO-8601", "by": "AI-Name", "hub_kb_version": "...", "wheel_kb_version": "...", "offers": [{"type": "pattern_type", "topic": "Brief title", "impact": 8, "context": "Why this mat
+
+---
+
+*Content truncated - full history available in git*

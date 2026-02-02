@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from wai_cli.closeout import CloseoutProcessor
-from wai_cli.init import init_spoke
+from wai.closeout import CloseoutProcessor
+from wai.init import init_spoke
 
 
 def test_closeout_processes_seed_cleanup(tmp_path: Path) -> None:

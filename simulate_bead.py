@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
-from wai_cli.closeout import CloseoutProcessor
-from wai_cli.lugs import LugManager
+from wai.closeout import CloseoutProcessor
+from wai.lugs import LugManager
 
 # Setup mock data using real classes
 spoke_dir = Path(".").resolve()

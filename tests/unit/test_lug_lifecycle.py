@@ -15,10 +15,10 @@ from unittest.mock import patch, MagicMock
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from wai_cli.lugs import LugManager, Lug
-from wai_cli.point import PointManager
-from wai_cli.closeout import CloseoutProcessor
-from wai_cli.core import WheelwrightCLI
+from wai.lugs import LugManager, Lug
+from wai.point import PointManager
+from wai.closeout import CloseoutProcessor
+from wai.core import WheelwrightCLI
 
 @pytest.fixture
 def temp_spoke():
@@ -182,7 +182,7 @@ def test_hub_upgrade_simulation(temp_spoke):
 
 def test_cli_command_formats(temp_spoke):
     """Verify CLI command output formats (mocked)."""
-    from wai_cli.commands.lug import lug_command_group
+    from wai.commands.lug import lug_command_group
     
     manager = LugManager(temp_spoke / 'WAI-Spoke')
     manager.create_lug(title="CLI Test Lug", lug_type="bug", priority="high")

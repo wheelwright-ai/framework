@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from wai_cli.hub import HubManager
+from wai.hub import HubManager
 
 
 def _write_hub(hub_path: Path, project_path: Path, include_registry: bool) -> None:

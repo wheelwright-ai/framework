@@ -22,7 +22,7 @@ import shutil
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from wai_cli.lugs import LugManager, Lug, Session, MINIFIED_KEYS, EXPANDED_KEYS
+from wai.lugs import LugManager, Lug, Session, MINIFIED_KEYS, EXPANDED_KEYS
 
 
 @pytest.fixture

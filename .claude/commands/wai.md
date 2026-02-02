@@ -1,35 +1,27 @@
 # WAI Wakeup
 
-Load Wheelwright context and brief the user.
+Show unified "WAI Point" briefing - where are we, what's the status, what should I work on?
 
 ## Instructions
 
-1. Read these files to load context:
-   - `WAI-Spoke/WAI-Guide.md` (behavioral guidelines)
-   - `WAI-Spoke/WAI-State.json` (project state, decisions)
+**IMPORTANT:** Use the unified briefing script instead of custom formatting.
 
-2. Run integration verification:
-   - Check if hub is connected (`wheelwright.hub_path` in WAI-State.json)
-   - Check days since last sync (`wheelwright.development_health.days_since_sync`)
-   - Check for uncommitted changes (`git status`)
-   - Check if foundation is complete (`_project_foundation.completed`)
-
-3. Check multi-environment sessions:
-   - Scan `WAI-Spoke/sessions/` for other environment logs
-   - Note if other environments have recent activity
-   - Auto-detect current environment (tool + machine)
-   - Start session for current environment if not already tracking
-
-4. Brief the user with this format:
-   ```
-   **Wheelwright Ready** - [Project Name]
-   Last session: [date] by [AI name]
-   Environment: [tool] on [machine] ([os])
-
-   [Any warnings: sync stale, uncommitted changes, foundation incomplete]
-   [If other environments active: "Also active: cursor on desktop (2 days ago)"]
-
-   **Commands:** Status | Time | Rules | Closeout | Shipit
+1. Run the briefing script:
+   ```bash
+   bash WAI-Spoke/_framework/wai-briefing.sh
    ```
 
-5. If issues detected, prompt user with fix options.
+2. Display the output to the user exactly as generated.
+
+3. This unified briefing shows:
+   - Project identity and phase
+   - Current environment
+   - Active work (prioritized backlog)
+   - Context health (tokens, hub, git)
+   - Recent high-impact changes
+   - Next actions
+   - Quick command reference
+
+4. The briefing is identical to what hooks show and what "wai point" questions trigger.
+
+5. After showing the briefing, ask if the user wants recommendations on what to work on next.

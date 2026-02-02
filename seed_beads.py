@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from wai_cli.lugs import LugManager
+from wai.lugs import LugManager
 
 # Setup correct path for test
 wai_spoke = Path("WAI-Spoke").resolve()

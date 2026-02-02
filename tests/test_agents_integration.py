@@ -17,7 +17,7 @@ import sys
 # Add wai_cli to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from wai_cli.agents_integration import AgentsIntegration
+from wai.agents_integration import AgentsIntegration
 
 
 def test_agents_template_exists():

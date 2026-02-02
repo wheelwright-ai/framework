@@ -13,10 +13,10 @@ from datetime import datetime
 # Add parent to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from wai_cli.lugs import LugManager
-from wai_cli.closeout import CloseoutProcessor
-from wai_cli.point import PointManager
-from wai_cli.core import check_spoke_initialized
+from wai.lugs import LugManager
+from wai.closeout import CloseoutProcessor
+from wai.point import PointManager
+from wai.core import check_spoke_initialized
 
 @pytest.fixture
 def temp_spoke_dir():

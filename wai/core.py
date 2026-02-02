@@ -376,6 +376,11 @@ Examples:
         hub_create.add_argument('path', nargs='?', default=None, help='Hub location')
 
         hub_locate = hub_subparsers.add_parser('locate', help='Find hub location')
+        
+        hub_scan = hub_subparsers.add_parser('scan', help='Scan hub for spoke projects and assign spoke_ids')
+        hub_scan.add_argument('path', nargs='?', default=None, help='Hub path (auto-discover if not specified)')
+        hub_scan.add_argument('--assign-ids', action='store_true', help='Assign spoke_ids to projects missing them')
+        hub_scan.add_argument('--report', action='store_true', help='Show detailed discovery report')
 
         # Projects commands
         projects_parser = subparsers.add_parser('projects', help='Project management')
@@ -2797,8 +2802,10 @@ Examples:
             self._hub_create(args)
         elif args.hub_command == 'locate':
             self._hub_locate()
+        elif args.hub_command == 'scan':
+            self._hub_scan(args)
         else:
-            print_info("Hub commands: create, locate")
+            print_info("Hub commands: create, locate, scan")
 
     def _hub_create(self, args):
         """Create new hub."""
@@ -2831,6 +2838,40 @@ Examples:
         else:
             print_info("\nNo hub found.")
             print_info("Run 'WAI hub create' to create a new hub.")
+
+    def _hub_scan(self, args):
+        """Scan hub for spoke projects and build registry."""
+        from .discovery import SpokeDiscovery
+        
+        # Determine hub path
+        if args.path:
+            hub_path = Path(args.path).resolve()
+        else:
+            hub_manager = HubManager()
+            hub_path = hub_manager.auto_discover_hub(Path.cwd(), verbose=False)
+        
+        if not hub_path or not hub_path.exists():
+            print_error(f"Hub not found: {hub_path}")
+            return
+        
+        print_info(f"Scanning hub: {hub_path}\n")
+        
+        # Run discovery
+        discovery = SpokeDiscovery(str(hub_path), verbose=True)
+        total, assigned, registry_count = discovery.discover_and_register()
+        
+        # Print results
+        print("\n" + "="*50)
+        print("Spoke Discovery Results")
+        print("="*50)
+        print(f"Total projects found: {total}")
+        print(f"Spoke_ids assigned: {assigned}")
+        print(f"Registry entries: {registry_count}")
+        
+        if args.report:
+            print(discovery.get_report())
+        
+        print_success("\n✓ Hub scan complete")
 
     def _hub_locate_with_candidates(self):
         """Locate hub and show all candidates with selection options."""

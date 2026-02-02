@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from wai_cli.upgrader import SpokeUpgrader
+from wai.upgrader import SpokeUpgrader
 
 
 def create_dummy_v1_spoke(test_dir: Path):

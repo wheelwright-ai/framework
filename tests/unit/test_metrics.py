@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from wai_cli.metrics import MetricsTracker
+from wai.metrics import MetricsTracker
 
 
 def test_metrics_tracker_baseline_toggle(tmp_path: Path) -> None:
