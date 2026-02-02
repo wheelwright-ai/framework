@@ -506,17 +506,19 @@ class CloseoutProcessor:
     def _auto_commit_state_files(self) -> None:
         """Auto-commit all modified files from closeout process."""
         try:
-            # Stage all modified files in WAI-Spoke, .claude, templates, AGENTS.md
+            # Stage all modified AND new files in framework directories
             modified_patterns = [
                 'WAI-Spoke/',
                 '.claude/',
                 'templates/WAI-Spoke/',
+                'templates/HUB/',
                 'AGENTS.md'
             ]
             
             for pattern in modified_patterns:
+                # Use -A to stage all changes including new files
                 subprocess.run(
-                    ['git', 'add', pattern],
+                    ['git', 'add', '-A', pattern],
                     cwd=str(self.spoke_dir),
                     capture_output=True,
                     check=False
