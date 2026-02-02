@@ -173,10 +173,10 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 64,
+      "total_count": 69,
       "total_turns": 970,
       "total_duration_seconds": 124,
-      "avg_duration_seconds": 1.9375
+      "avg_duration_seconds": 1.7971014492753623
     },
     "token_efficiency": {
       "total_tokens_used": 132,
@@ -196,7 +196,7 @@
       "ended_at": "2026-01-19T16:02:17.995925"
     },
     "ai_wins": [],
-    "last_updated": "2026-02-02T11:29:19.962075"
+    "last_updated": "2026-02-02T11:34:31.566735"
   },
   "wheel": {
     "name": "Wheelwright Framework",
