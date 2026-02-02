@@ -4,7 +4,7 @@
     "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
     "project_root": "/home/mario/projects/wheelwright-ai/framework",
     "project_name": "framework",
-    "last_updated": "2026-02-02T07:31:16Z",
+    "last_updated": "2026-02-02T21:28:12Z",
     "updated_by": "WAI Update",
     "seed_ingest": [
       {
@@ -80,6 +80,40 @@
             "file": "hub-profile.json.teaching",
             "bytes": 2685,
             "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      },
+      {
+        "timestamp": "2026-02-02T21:28:12Z",
+        "files": [
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "WAI-Guide.md.teaching"
+        ],
+        "notes": [
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
             "applied_to": [
               "WAI-State.md"
             ]

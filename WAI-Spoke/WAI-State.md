@@ -1344,3 +1344,203 @@ When you make a decision with **impact >= 8**, share it:
 ---
 
 *Content truncated - full history available in git*
+
+## Seeded Context (Ingested) - 2026-02-02T21:28:12Z
+
+### WAI-State.json.teaching
+
+{
+  "wheelwright": {
+    "version": "1.0.0",
+    "structure_version": "v1",
+    "description": "Wheelwright-enabled project with context persistence",
+    "framework_path": null,
+    "hub_path": null,
+    "tagline": "We aren't reinventing the wheel - we're evolving it faster than one person ever could."
+  },
+  "_wai_bootstrap": {
+    "_purpose": "Instructions for AI assistants to find or create Wheelwright components",
+    "find_framework": {
+      "check_order": [
+        "1. Read framework_path from wheelwright above",
+        "2. Check if 'WAI' command is in PATH",
+        "3. Look for ~/projects/wheelwright",
+        "4. Look for ~/.wheelwright",
+        "5. Search for directory containing 'WAI' CLI and 'teach.py'"
+      ],
+      "if_not_found": "Ask user: 'Where is your Wheelwright framework installed? (git clone https://github.com/wheelwright-ai/framework)'"
+    },
+    "find_hub": {
+      "check_order": [
+        "1. Read hub_path from wheelwright above",
+        "2. Look for ~/wheelwright-hub",
+        "3. Look for ~/.wheelwright-hub",
+        "4. Check framework's connected_wheels for this project"
+      ],
+      "if_not_found": "Run: cd <framework_path> && ./WAI hub create"
+    },
+    "create_hub": {
+      "requires": "framework_path must be set",
+      "command": "cd <framework_path> && ./WAI hub create --guided",
+      "what_it_creates": [
+        "~/wheelwright-hub/ (or user-chosen path)",
+        "hub-profile.json (user preferences)",
+        ".WAI/ (hub's own state)",
+        ".WAI-registry/ (wheel tracking)",
+        "learnings/ (aggregated patterns)"
+      ]
+    },
+    "update_paths": {
+      "after_discovery": "Update framework_path and hub_path in wheelwright"
+    }
+  },
+  "_project_foundation": {
+    "completed": false,
+    "completed_at": null,
+    "completed_with": null,
+    "identity": {
+      "type": null,
+      "name": null,
+      "one_liner": null,
+      "success_looks_like": null
+    },
+    "boundaries": {
+      "in_scope": [],
+      "out_of_scope": [],
+      "constraints": []
+    },
+    "approach": {
+      "stack_or_tools": [],
+      "workflow": null,
+      "ai_collaboration_style": null,
+      "review_process": null
+    },
+    "philosophy": {
+      "core_principle": "AI as responsible partner, not just enabler",
+      "behaviors": [
+        "Detect scope drift and flag before enabling",
+        "Require explicit acknowledgment for direction changes",
+        "Complete foundation before starting work",
+        "Prefer 'are you sure?' over silent compliance"
+      ]
+    },
+    "evolution_log": []
+  },
+  "_session_state": {
+    "last_session_id": null,
+    "last_modified_by": null,
+    "last_modified_at": null,
+    "requires_review": false,
+    "review_reason": null,
+    "session_count": 0,
+    "current_session": null,
+    "last_closeout": null,
+    "protocol_completed": false
+  },
+  "analytics": {
+    "sessions": {
+      "total_count": 0,
+      "total_turns": 0,
+      "total_duration_seconds": 0,
+      "avg_duration_seconds": 0
+    },
+    "token_efficiency": {
+      "total_tokens_used": 0,
+      "tokens_saved_estimate": 0,
+      "baseline_tokens_estimate": 0,
+      "context_limit": 200000,
+      "avg_tokens_per_session": 0
+    },
+    "quality_metrics": {
+      "decisions_count": 0,
+      "high_impact_count": 0
+    },
+    "time_tracking": {
+      "total_time_together_seconds": 0,
+      "total_time_ai_alone_seconds": 0
+    },
+    "baseline_mode": {
+      "enabled": false,
+      "total_tokens_used": 0,
+      "total_sessions": 0,
+      "description": "Track metrics without Wheelwright optimizations for comparison"
+    },
+    "ai_wins": [],
+    "last_updated": null
+  },
+  "feature_toggles": {
+    "_description": "Toggle marketing features for baseline comparison and testing",
+    "session_continuity": true,
+    "token_efficiency": true,
+    "analytics": true,
+    "closeout_processing": true,
+    "hub_learning": true,
+    "quality_gates": true
+  },
+  "wheel": {
+    "name": null,
+    "abbrev": null,
+    "version": "0.1.0",
+    "type": null,
+    "description": null,
+    "repository": null,
+    "created": null,
+    "last_updated": null,
+    "status": "active",
+    "workspace": {
+      "ide_cmd": null,
+      "run_cmd": null,
+      "cli_cmd": null,
+      "hub_cmd": null,
+      "paths": {
+        "primary": null,
+        "windows": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        },
+        "wsl": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        }
+      }
+    }
+  },
+  "hub": {
+    "summary": null,
+    "objectives": [],
+    "decisions": [],
+    "constraints": []
+  },
+  "spokes": {
+    "active": [],
+    "available": [
+      "meta-consultation",
+      "document-analysis",
+      "code-review"
+    ]
+  },
+  "context": {
+    "current_phase": null,
+    "next_actions": [
+      "Complete project foundation with AI assistant",
+      "Define project identity, boundaries, and approach",
+      "Begin development with clear context"
+    ],
+    "blockers": [],
+    "insights": []
+  },
+  "stack": [],
+  "features": [],
+  "decisions": [],
+  "bugs": [],
+  "ai_rules": {
+    "context_loading": "Read WAI-Spoke/WAI-Guide.md first, then WAI-State.json and WAI-State.md",
+    "session_state": "Update _session_state when making significant changes",
+    "foundation_enforcement": {
+      "on_incomplete": "CRITICAL: Guide user through foundation questio
+
+---
+
+*Content truncated - full history available in git*
