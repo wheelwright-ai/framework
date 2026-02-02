@@ -1,0 +1,223 @@
+{
+  "metadata": {
+    "version": "3.1.0",
+    "framework_version": "3.1.0",
+    "spoke_structure_version": "3.0",
+    "created_at": "2026-02-02T04:52:20.395898Z",
+    "source": "framework",
+    "target_type": "universal",
+    "description": "Framework templates for universal distribution to hubs and spokes"
+  },
+  "verification": {
+    "hub_fingerprint": null,
+    "spoke_signature": null,
+    "hash_algorithm": "sha256-hmac",
+    "signed_by": "wheelwright-framework-3.1.0",
+    "verification_required": true
+  },
+  "files": [
+    {
+      "name": "WAI-Guide.md",
+      "path": "WAI-Spoke/WAI-Guide.md",
+      "size": 11172,
+      "hash": "sha256:4eae292e134afe7e3bc06a8335cca67bbc553c4083360459f45c392af8363cd1",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Spoke\\WAI-Guide.md",
+      "version": "3.1.0",
+      "changed_from": "2.1.0",
+      "why_changed": "Enhanced session start protocol, added teaching reconciliation section",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [
+        "session-start",
+        "teaching",
+        "reconciliation"
+      ],
+      "applies_to": [
+        "spoke",
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "WAI-State.json",
+      "path": "WAI-Spoke/WAI-State.json",
+      "size": 6669,
+      "hash": "sha256:00d868ecb2c8c5d5395911d05ba8eb221d345e64cbac1c567470d5af379202de",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Spoke\\WAI-State.json",
+      "version": "3.1.0",
+      "changed_from": "2.0.1",
+      "why_changed": "Structure version 3.0, added teaching-adoption-plan schema",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": false,
+      "requires_review": true,
+      "mentions": [
+        "structure",
+        "version",
+        "state-management"
+      ],
+      "applies_to": [
+        "spoke",
+        "hub"
+      ],
+      "status": "review_needed",
+      "action": "review",
+      "merge_strategy": "merge_sections",
+      "sections_to_preserve": [
+        "_session_state",
+        "_project_foundation",
+        "decisions",
+        "analytics"
+      ],
+      "sections_to_update": [
+        "wheelwright.structure_version",
+        "wheelwright.version",
+        "_file_meta"
+      ]
+    },
+    {
+      "name": "WAI-State.md",
+      "path": "WAI-Spoke/WAI-State.md",
+      "size": 4301,
+      "hash": "sha256:acfde1183d19e8ad88e933cafd3816d28baae8778434619b547a8a180af1f54f",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Spoke\\WAI-State.md",
+      "version": "3.1.0",
+      "changed_from": "2.0.0",
+      "why_changed": "Updated strategic context for version 3.0",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [
+        "strategy",
+        "context"
+      ],
+      "applies_to": [
+        "spoke"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    }
+  ],
+  "hub_files": [
+    {
+      "name": "hub-profile.json",
+      "path": "hub-profile.json",
+      "size": 2685,
+      "hash": "sha256:6bd96e93d962e820eabac3b5c629302178890de44c03731569426a740d5e815e",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Hub\\hub-profile.json",
+      "version": "3.1.0",
+      "changed_from": "2.0.0",
+      "why_changed": "Added teaching history and learning index",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [],
+      "applies_to": [
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "hub-registry.json",
+      "path": "hub-registry.json",
+      "size": 1592,
+      "hash": "sha256:a955d32f56b1429890614fb4a7da7826ed86567169b112e9d72542b94a096a2f",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Hub\\hub-registry.json",
+      "version": "3.1.0",
+      "changed_from": "1.0.0",
+      "why_changed": "New registry tracking wheels and teaching history",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [],
+      "applies_to": [
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "hub-learning-index.md",
+      "path": "hub-learning-index.md",
+      "size": 5426,
+      "hash": "sha256:49462df501894c4f08fb01f7533d8c7bcd1e3332b453d26e33626b4552232aa1",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Hub\\hub-learning-index.md",
+      "version": "3.1.0",
+      "changed_from": "1.0.0",
+      "why_changed": "Knowledge base index for learning aggregation",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [],
+      "applies_to": [
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "hub-security-policy.json",
+      "path": "hub-security-policy.json",
+      "size": 2764,
+      "hash": "sha256:3161607a3205d5c3ffc851eff519fc3ba5bdbfd60e3cf5fc912413a4c5f36f47",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Hub\\hub-security-policy.json",
+      "version": "3.1.0",
+      "changed_from": "1.0.0",
+      "why_changed": "Security settings for hub-spoke communication",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [],
+      "applies_to": [
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "AGENTS.md",
+      "path": "AGENTS.md",
+      "size": 8855,
+      "hash": "sha256:a48f910b8a1aeea633ce678f3ef4ef238973952f7ffafd8c38612baa03dbaffb",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Hub\\AGENTS.md",
+      "version": "3.1.0",
+      "changed_from": "1.0.0",
+      "why_changed": "Hub-specific AI assistant instructions",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [],
+      "applies_to": [
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    }
+  ],
+  "checksums": {
+    "all_files_hash": "sha256:61def32aae265733703f74285f90008cbcb442ec0f2e03b56ec622bfbcde6bbb",
+    "verification_required": true
+  },
+  "adoption_guidance": {
+    "for_spoke": {
+      "recommended_order": [
+        "WAI-Guide.md (adopt immediately - Enhanced session start protocol, added teaching reconciliation section)",
+        "WAI-State.md (adopt immediately - Updated strategic context for version 3.0)",
+        "WAI-State.json (review merge strategy)"
+      ],
+      "post_adoption": "Run: WAI sync to process updated structure"
+    },
+    "for_hub": {
+      "recommended_order": [
+        "hub-profile.json (adopt immediately)",
+        "hub-registry.json (adopt immediately)",
+        "hub-learning-index.md (adopt immediately)",
+        "hub-security-policy.json (adopt immediately)",
+        "AGENTS.md (adopt immediately)"
+      ],
+      "post_adoption": "Run: WAI hub status to verify"
+    }
+  }
+}

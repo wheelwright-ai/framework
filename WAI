@@ -14,7 +14,7 @@ framework_path = Path(__file__).parent.resolve()
 sys.path.insert(0, str(framework_path))
 
 # Import and run new CLI
-from wai_cli.core import main
+from wai.core import main
 
 if __name__ == '__main__':
     main()
