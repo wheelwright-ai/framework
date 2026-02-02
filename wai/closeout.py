@@ -546,106 +546,107 @@ class CloseoutProcessor:
             print_warning(f"    [WARN] Could not auto-commit state files: {e}")
 
     def print_summary(self, results: Dict[str, Any]) -> None:
-         """Print comprehensive closeout summary with next-action guidance."""
-         print_info("\n" + "=" * 70)
-         print_success("  ✓ SESSION CLOSEOUT COMPLETE")
-         print_info("=" * 70 + "\n")
+        """Print comprehensive closeout summary with next-action guidance."""
+        print_info("\n" + "=" * 70)
+        print_success("  ✓ SESSION CLOSEOUT COMPLETE")
+        print_info("=" * 70 + "\n")
 
-         # 1. Committed Changes
-         print_info("  COMMITTED TO GIT:")
-         print_success("    ✓ WAI-State.json, WAI-State.md, WAI-Lugs.jsonl")
-         print_success("    ✓ WAI-Point.json, WAI-Guide.md, AGENTS.md")
-         print_info("")
+        # 1. Committed Changes
+        print_info("  COMMITTED TO GIT:")
+        print_success("    ✓ WAI-State.json, WAI-State.md, WAI-Lugs.jsonl")
+        print_success("    ✓ WAI-Point.json, WAI-Guide.md, AGENTS.md")
+        print_info("")
 
-         # 2. Framework Updates
-         integration_status = results.get('integration_status', {})
-         if integration_status.get('statuses', {}).get('AGENTS.md') == 'updated':
-             print_success("  ✓ AGENTS.md refreshed - next session loads with fresh context")
-         print_info("")
+        # 2. Framework Updates
+        integration_status = results.get('integration_status', {})
+        if integration_status.get('statuses', {}).get('AGENTS.md') == 'updated':
+            print_success("  ✓ AGENTS.md refreshed - next session loads with fresh context")
+        print_info("")
 
-         # 3. Session Summary
-         session_summary = results['session_summary']
-         print_info("  SESSION ACTIVITY:")
-         turns = session_summary.get('turns', 0)
-         print_info(f"    • Turns: {turns}")
-         if session_summary.get('files_modified'):
-             print_info(f"    • Files touched: {len(session_summary['files_modified'])}")
-         if session_summary.get('key_topics'):
-             topics_str = ", ".join(session_summary['key_topics'][:3])
-             print_info(f"    • Topics: {topics_str}")
-         print_info("")
+        # 3. Session Summary
+        session_summary = results['session_summary']
+        print_info("  SESSION ACTIVITY:")
+        turns = session_summary.get('turns', 0)
+        print_info(f"    • Turns: {turns}")
+        if session_summary.get('files_modified'):
+            print_info(f"    • Files touched: {len(session_summary['files_modified'])}")
+        if session_summary.get('key_topics'):
+            topics_str = ", ".join(session_summary['key_topics'][:3])
+            print_info(f"    • Topics: {topics_str}")
+        print_info("")
 
-         # 4. Next Actions (from lugs)
-         print_info("  NEXT ACTIONS (from your lugs):")
-         self._print_lug_guidance()
-         print_info("")
+        # 4. Next Actions (from lugs)
+        print_info("  NEXT ACTIONS (from your lugs):")
+        self._print_lug_guidance()
+        print_info("")
 
-         # 5. Token/Context Capacity
-         print_info("  CAPACITY CHECK:")
-         self._print_capacity_guidance()
-         print_info("")
+        # 5. Token/Context Capacity
+        print_info("  CAPACITY CHECK:")
+        self._print_capacity_guidance()
+        print_info("")
 
-         print_info("=" * 70)
+        print_info("=" * 70)
 
-     def _print_lug_guidance(self) -> None:
-         """Print next actions based on active lugs."""
-         try:
-             lugs = self.lug_manager.get_active_lugs()
-             if not lugs:
-                 print_info("    • No active lugs - you're clear for new work")
-                 return
-             
-             # Show top 3 priorities
-             priority_lugs = sorted(
-                 [l for l in lugs if getattr(l, 'priority', 'normal') == 'high'],
-                 key=lambda x: getattr(x, 'created_at', ''),
-                 reverse=True
-             )[:3]
-             
-             if priority_lugs:
-                 for lug in priority_lugs:
-                     title = getattr(lug, 'title', 'Untitled')
-                     print_info(f"    • {title}")
-             else:
-                 print_info("    • Continue current work or start new initiative")
-         except Exception:
-             print_info("    • Lugs unavailable - check WAI-Lugs.jsonl for priorities")
+    def _print_lug_guidance(self) -> None:
+        """Print next actions based on active lugs."""
+        try:
+            lugs = self.lug_manager.get_active_lugs()
+            if not lugs:
+                print_info("    • No active lugs - you're clear for new work")
+                return
+            
+            # Show top 3 priorities
+            priority_lugs = sorted(
+                [l for l in lugs if getattr(l, 'priority', 'normal') == 'high'],
+                key=lambda x: getattr(x, 'created_at', ''),
+                reverse=True
+            )[:3]
+            
+            if priority_lugs:
+                for lug in priority_lugs:
+                    title = getattr(lug, 'title', 'Untitled')
+                    print_info(f"    • {title}")
+            else:
+                print_info("    • Continue current work or start new initiative")
+        except Exception:
+            print_info("    • Lugs unavailable - check WAI-Lugs.jsonl for priorities")
 
-     def _print_capacity_guidance(self) -> None:
-         """Print token capacity and context recommendations."""
-         try:
-             state_path = self.wai_spoke_dir / 'WAI-State.json'
-             if not state_path.exists():
-                 return
-             
-             with open(state_path, 'r') as f:
-                 state = json.load(f)
-             
-             capacity = state.get('context', {}).get('capacity_management', {})
-             usage = capacity.get('current_capacity_estimate', 0.0)
-             warning_threshold = capacity.get('warning_threshold', 0.8)
-             critical_threshold = capacity.get('critical_threshold', 0.9)
-             
-             if usage >= critical_threshold:
-                 print_warning(f"    ⚠ Context CRITICAL ({usage:.0%}) - START NEW THREAD")
-             elif usage >= warning_threshold:
-                 print_warning(f"    ⚠ Context HIGH ({usage:.0%}) - monitor before next epic")
-             else:
-                 print_success(f"    ✓ Context healthy ({usage:.0%}) - continue working")
-         except Exception:
-             print_info("    • Capacity check unavailable")
-    def _update_website_content(self, session_summary: Dict[str, Any]) -> bool:
-        """
-        Update website content file with session changes (if file exists).
-        
-        [REFACTORED] Added as closeout rule - updates WAI-Website-Content.md
-        with latest project state, features, and updates from session.
-        
-        Returns:
-            True if website content was updated
-        """
-        # Check for website content file
-        website_file = self.wai_spoke_dir / 'WAI-Website-Content.md'
+    def _print_capacity_guidance(self) -> None:
+        """Print token capacity and context recommendations."""
+        try:
+            state_path = self.wai_spoke_dir / 'WAI-State.json'
+            if not state_path.exists():
+                return
+            
+            with open(state_path, 'r') as f:
+                state = json.load(f)
+            
+            capacity = state.get('context', {}).get('capacity_management', {})
+            usage = capacity.get('current_capacity_estimate', 0.0)
+            warning_threshold = capacity.get('warning_threshold', 0.8)
+            critical_threshold = capacity.get('critical_threshold', 0.9)
+            
+            if usage >= critical_threshold:
+                print_warning(f"    ⚠ Context CRITICAL ({usage:.0%}) - START NEW THREAD")
+            elif usage >= warning_threshold:
+                print_warning(f"    ⚠ Context HIGH ({usage:.0%}) - monitor before next epic")
+            else:
+                print_success(f"    ✓ Context healthy ({usage:.0%}) - continue working")
+        except Exception:
+            print_info("    • Capacity check unavailable")
+
+        def _update_website_content(self, session_summary: Dict[str, Any]) -> bool:
+            """
+            Update website content file with session changes (if file exists).
+            
+            [REFACTORED] Added as closeout rule - updates WAI-Website-Content.md
+            with latest project state, features, and updates from session.
+            
+            Returns:
+                True if website content was updated
+            """
+            # Check for website content file
+            website_file = self.wai_spoke_dir / 'WAI-Website-Content.md'
         if not website_file.exists():
             return False
         
