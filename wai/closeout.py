@@ -493,6 +493,47 @@ class CloseoutProcessor:
         # Clear conversation log
         self.session.clear_log()
 
+        # Auto-commit WAI-State files
+        self._auto_commit_state_files()
+
+    def _auto_commit_state_files(self) -> None:
+        """Auto-commit WAI-State files after closeout."""
+        try:
+            # Stage WAI-State files
+            state_files = [
+                'WAI-Spoke/WAI-State.json',
+                'WAI-Spoke/WAI-State.md',
+                'WAI-Spoke/WAI-Lugs.jsonl'
+            ]
+            
+            for file_path in state_files:
+                full_path = self.spoke_dir / file_path
+                if full_path.exists():
+                    subprocess.run(
+                        ['git', 'add', str(full_path)],
+                        cwd=str(self.spoke_dir),
+                        capture_output=True,
+                        check=False
+                    )
+            
+            # Check if there are changes to commit
+            result = subprocess.run(
+                ['git', 'diff', '--cached', '--quiet'],
+                cwd=str(self.spoke_dir),
+                capture_output=True
+            )
+            
+            if result.returncode != 0:  # There are staged changes
+                subprocess.run(
+                    ['git', 'commit', '-m', 'wai: closeout - update session state'],
+                    cwd=str(self.spoke_dir),
+                    capture_output=True,
+                    check=False
+                )
+                print_success("    [OK] WAI-State files committed to git")
+        except Exception as e:
+            print_warning(f"    [WARN] Could not auto-commit state files: {e}")
+
     def print_summary(self, results: Dict[str, Any]) -> None:
         """Print closeout summary."""
         print_info("\n" + "=" * 60)

@@ -5,6 +5,7 @@ Generate session closeout instructions and handle upgrade adoption.
 """
 
 import json
+import subprocess
 from pathlib import Path
 from typing import Optional
 
@@ -21,6 +22,47 @@ def _check_pending_upgrades(spoke_path: Path) -> bool:
     """Check if there are pending upgrades to adopt."""
     plan_path = spoke_path / 'upgrade-adoption-plan.json'
     return plan_path.exists()
+
+
+def _auto_commit_state(project_path: Path, wai_dir: Path) -> None:
+    """Auto-commit WAI-State files after closeout."""
+    try:
+        # Stage WAI-State files
+        state_files = [
+            'WAI-Spoke/WAI-State.json',
+            'WAI-Spoke/WAI-State.md',
+            'WAI-Spoke/WAI-Lugs.jsonl'
+        ]
+        
+        for file in state_files:
+            file_path = project_path / file
+            if file_path.exists():
+                subprocess.run(
+                    ['git', 'add', str(file_path)],
+                    cwd=str(project_path),
+                    capture_output=True,
+                    check=False
+                )
+        
+        # Check if there are changes to commit
+        result = subprocess.run(
+            ['git', 'diff', '--cached', '--quiet'],
+            cwd=str(project_path),
+            capture_output=True
+        )
+        
+        if result.returncode != 0:  # There are staged changes
+            subprocess.run(
+                ['git', 'commit', '-m', 'wai: closeout - update session state'],
+                cwd=str(project_path),
+                capture_output=True,
+                check=False
+            )
+            print_success("  ✓ WAI-State files committed")
+        else:
+            print_info("  No changes to commit")
+    except Exception as e:
+        print_warning(f"  Could not auto-commit: {e}")
 
 
 def generate_closeout(hub_key: Optional[str] = None) -> None:
@@ -98,4 +140,8 @@ def generate_closeout(hub_key: Optional[str] = None) -> None:
     print(f"   - Last modified by: {session.get('last_modified_by', 'Unknown')}")
 
     print(f"\n   Note: Use 'wai verify-upgrade' to manually verify plan")
+    
+    # Phase 6: Auto-commit WAI-State files
+    print_info(f"\n  PHASE 6: Auto-committing WAI-State files...")
+    _auto_commit_state(project_path, wai_dir)
     print()
