@@ -497,13 +497,17 @@ class CloseoutProcessor:
         self._auto_commit_state_files()
 
     def _auto_commit_state_files(self) -> None:
-        """Auto-commit WAI-State files after closeout."""
+        """Auto-commit all modified files from closeout process."""
         try:
-            # Stage WAI-State files
+            # Stage all modified files (not just state)
             state_files = [
                 'WAI-Spoke/WAI-State.json',
                 'WAI-Spoke/WAI-State.md',
-                'WAI-Spoke/WAI-Lugs.jsonl'
+                'WAI-Spoke/WAI-Lugs.jsonl',
+                'WAI-Spoke/WAI-Point.json',
+                'WAI-Spoke/WAI-Guide.md',
+                'AGENTS.md',
+                '.claude/settings.json'
             ]
             
             for file_path in state_files:
