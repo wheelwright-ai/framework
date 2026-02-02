@@ -546,6 +546,145 @@ class CloseoutProcessor:
             print_warning(f"    [WARN] Could not auto-commit state files: {e}")
 
     def print_summary(self, results: Dict[str, Any]) -> None:
+        """Print closeout summary."""
+        print_info("\n" + "=" * 60)
+        print_success("  [OK] Session Closeout Summary")
+        print_info("=" * 60 + "\n")
+
+        session_summary = results['session_summary']
+
+        print_info(f"  Turns: {session_summary.get('turns', 0)}")
+        print_info(f"  Summary: {session_summary.get('summary', 'N/A')[:100]}...")
+
+        if session_summary.get('key_topics'):
+            print_info(f"  Key topics: {', '.join(session_summary['key_topics'])}")
+
+        if session_summary.get('files_modified'):
+            print_info(f"  Files modified: {len(session_summary['files_modified'])}")
+
+        print_info("\n  Steps completed:")
+        for step in results['steps_completed']:
+            print_success(f"    [OK] {step}")
+
+        if results['warnings']:
+            print_info("\n  Warnings:")
+            for warning in results['warnings']:
+                print_warning(f"    [WARN] {warning}")
+
+        if results['errors']:
+            print_info("\n  Errors:")
+            for error in results['errors']:
+                print_error(f"    [ERROR] {error}")
+
+        print_info("\n" + "=" * 60)
+        print_info("  WAI-Spoke/ folder ready for hub learning")
+
+        integration_status = results.get('integration_status')
+        if integration_status:
+            print_info("  Integrations verified and refreshed")
+            updated = integration_status.get('updated', 0)
+            print_info(f"  Integration files updated: {updated}")
+
+            statuses = integration_status.get('statuses', {})
+            if statuses:
+                print_info("  Integration status:")
+    def _update_website_content(self, session_summary: Dict[str, Any]) -> bool:
+        """
+        Update website content file with session changes (if file exists).
+        
+        [REFACTORED] Added as closeout rule - updates WAI-Website-Content.md
+        with latest project state, features, and updates from session.
+        
+        Returns:
+            True if website content was updated
+        """
+        # Check for website content file
+        website_file = self.wai_spoke_dir / 'WAI-Website-Content.md'
+        if not website_file.exists():
+            return False
+        
+        try:
+            content = website_file.read_text()
+            
+            # Add session summary to "Recent Updates" section
+            update_entry = f"\n### {datetime.now().strftime('%Y-%m-%d')}\n"
+            update_entry += f"{session_summary.get('summary', 'Session update')}\n"
+            
+            # Check if "Recent Updates" section exists
+            if "## Recent Updates" in content:
+                # Insert at beginning of Recent Updates section
+                parts = content.split("## Recent Updates")
+                content = parts[0] + "## Recent Updates\n" + update_entry + parts[1]
+            else:
+                # Add section at end
+                content += "\n\n## Recent Updates\n" + update_entry
+            
+            # Write updated content
+            website_file.write_text(content)
+            return True
+            
+        except Exception:
+            # Non-blocking - website update failure doesn't stop closeout
+            return False
+
+    def _refresh_integrations(self) -> Dict[str, Any]:
+        """Refresh integration files and optionally re-brief active session."""
+        manager = IDEManager(self.spoke_dir)
+        updated = 0
+        statuses = {}
+
+        for ide in manager.all_integrations:
+            config_path = ide.config_file_path
+            generated = ide.generate_config()
+            current = config_path.read_text() if config_path.exists() else None
+
+            if current != generated:
+                ide.write_config(generated)
+                updated += 1
+                statuses[ide.name] = "updated"
+            else:
+                statuses[ide.name] = "up_to_date"
+
+        # Refresh AGENTS.md with latest state (IDE context discovery)
+        agents = AgentsIntegration(self.spoke_dir)
+        agents_refreshed = agents.refresh_agents_md()
+        if agents_refreshed:
+            updated += 1
+            statuses['AGENTS.md'] = 'updated'
+            print_info("    [OK] AGENTS.md refreshed - next session will load with fresh context")
+        else:
+            if (self.spoke_dir / 'AGENTS.md').exists():
+                statuses['AGENTS.md'] = 'up_to_date'
+
+        session_refreshed = False
+        hook_output = ""
+        hook_path = self.spoke_dir / "WAI-Spoke" / "hooks" / "session-start.sh"
+        if hook_path.exists():
+            try:
+                env = os.environ.copy()
+                env["WAI_PROJECT_DIR"] = str(self.spoke_dir)
+                result = subprocess.run(
+                    [str(hook_path)],
+                    cwd=self.spoke_dir,
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                    timeout=5
+                )
+                hook_output = (result.stdout or "").strip()
+                session_refreshed = True
+            except (OSError, subprocess.TimeoutExpired) as e:
+                # On Windows or if bash not available, skip hook execution
+                print_warning(f"    Skipped hook execution (bash not available): {type(e).__name__}")
+
+        return {
+            "updated": updated,
+            "statuses": statuses,
+            "session_refreshed": session_refreshed,
+            "briefing_emitted": bool(hook_output)
+        }
+
+    def print_summary(self, results: Dict[str, Any]) -> None:
         """Print comprehensive closeout summary with next-action guidance."""
         print_info("\n" + "=" * 70)
         print_success("  ✓ SESSION CLOSEOUT COMPLETE")
@@ -634,102 +773,6 @@ class CloseoutProcessor:
                 print_success(f"    ✓ Context healthy ({usage:.0%}) - continue working")
         except Exception:
             print_info("    • Capacity check unavailable")
-
-        def _update_website_content(self, session_summary: Dict[str, Any]) -> bool:
-            """
-            Update website content file with session changes (if file exists).
-            
-            [REFACTORED] Added as closeout rule - updates WAI-Website-Content.md
-            with latest project state, features, and updates from session.
-            
-            Returns:
-                True if website content was updated
-            """
-            # Check for website content file
-            website_file = self.wai_spoke_dir / 'WAI-Website-Content.md'
-        if not website_file.exists():
-            return False
-        
-        try:
-            content = website_file.read_text()
-            
-            # Add session summary to "Recent Updates" section
-            update_entry = f"\n### {datetime.now().strftime('%Y-%m-%d')}\n"
-            update_entry += f"{session_summary.get('summary', 'Session update')}\n"
-            
-            # Check if "Recent Updates" section exists
-            if "## Recent Updates" in content:
-                # Insert at beginning of Recent Updates section
-                parts = content.split("## Recent Updates")
-                content = parts[0] + "## Recent Updates\n" + update_entry + parts[1]
-            else:
-                # Add section at end
-                content += "\n\n## Recent Updates\n" + update_entry
-            
-            # Write updated content
-            website_file.write_text(content)
-            return True
-            
-        except Exception:
-            # Non-blocking - website update failure doesn't stop closeout
-            return False
-
-    def _refresh_integrations(self) -> Dict[str, Any]:
-        """Refresh integration files and optionally re-brief active session."""
-        manager = IDEManager(self.spoke_dir)
-        updated = 0
-        statuses = {}
-
-        for ide in manager.all_integrations:
-            config_path = ide.config_file_path
-            generated = ide.generate_config()
-            current = config_path.read_text() if config_path.exists() else None
-
-            if current != generated:
-                ide.write_config(generated)
-                updated += 1
-                statuses[ide.name] = "updated"
-            else:
-                statuses[ide.name] = "up_to_date"
-
-        # Refresh AGENTS.md with latest state (IDE context discovery)
-        agents = AgentsIntegration(self.spoke_dir)
-        agents_refreshed = agents.refresh_agents_md()
-        if agents_refreshed:
-            updated += 1
-            statuses['AGENTS.md'] = 'updated'
-            print_info("    [OK] AGENTS.md refreshed - next session will load with fresh context")
-        else:
-            if (self.spoke_dir / 'AGENTS.md').exists():
-                statuses['AGENTS.md'] = 'up_to_date'
-
-        session_refreshed = False
-        hook_output = ""
-        hook_path = self.spoke_dir / "WAI-Spoke" / "hooks" / "session-start.sh"
-        if hook_path.exists():
-            try:
-                env = os.environ.copy()
-                env["WAI_PROJECT_DIR"] = str(self.spoke_dir)
-                result = subprocess.run(
-                    [str(hook_path)],
-                    cwd=self.spoke_dir,
-                    env=env,
-                    capture_output=True,
-                    text=True,
-                    timeout=5
-                )
-                hook_output = (result.stdout or "").strip()
-                session_refreshed = True
-            except (OSError, subprocess.TimeoutExpired) as e:
-                # On Windows or if bash not available, skip hook execution
-                print_warning(f"    Skipped hook execution (bash not available): {type(e).__name__}")
-
-        return {
-            "updated": updated,
-            "statuses": statuses,
-            "session_refreshed": session_refreshed,
-            "briefing_emitted": bool(hook_output)
-        }
 
 
 def generate_closeout() -> None:
