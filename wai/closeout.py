@@ -287,6 +287,7 @@ class CloseoutProcessor:
         print_info("-" * 30)
         self._finalize_closeout(session_summary)
         results['steps_completed'].append("Finalized: state updated, log cleared")
+        # NOTE: Auto-commit moved to step 13 (after all modifications)
 
         # Step 10: Reconcile multi-environment sessions
         print_info("")
@@ -331,6 +332,14 @@ class CloseoutProcessor:
             results['steps_completed'].append("Updated website content")
         else:
             results['steps_completed'].append("No website content to update")
+
+        # Step 14: Auto-commit all modified files (after all updates complete)
+        print_info("")
+        print_info("-" * 30)
+        print_info("[PROCESS] [14/14] Auto-Commit Changes")
+        print_info("-" * 30)
+        self._auto_commit_state_files()
+        results['steps_completed'].append("Committed changes to git")
 
         print_success("\n[OK] Closeout Complete!\n")
 
@@ -492,9 +501,7 @@ class CloseoutProcessor:
 
         # Clear conversation log
         self.session.clear_log()
-
-        # Auto-commit WAI-State files
-        self._auto_commit_state_files()
+        # NOTE: Auto-commit moved to end of process_closeout (step 13)
 
     def _auto_commit_state_files(self) -> None:
         """Auto-commit all modified files from closeout process."""
