@@ -506,26 +506,21 @@ class CloseoutProcessor:
     def _auto_commit_state_files(self) -> None:
         """Auto-commit all modified files from closeout process."""
         try:
-            # Stage all modified files (not just state)
-            state_files = [
-                'WAI-Spoke/WAI-State.json',
-                'WAI-Spoke/WAI-State.md',
-                'WAI-Spoke/WAI-Lugs.jsonl',
-                'WAI-Spoke/WAI-Point.json',
-                'WAI-Spoke/WAI-Guide.md',
-                'AGENTS.md',
-                '.claude/settings.json'
+            # Stage all modified files in WAI-Spoke, .claude, templates, AGENTS.md
+            modified_patterns = [
+                'WAI-Spoke/',
+                '.claude/',
+                'templates/WAI-Spoke/',
+                'AGENTS.md'
             ]
             
-            for file_path in state_files:
-                full_path = self.spoke_dir / file_path
-                if full_path.exists():
-                    subprocess.run(
-                        ['git', 'add', str(full_path)],
-                        cwd=str(self.spoke_dir),
-                        capture_output=True,
-                        check=False
-                    )
+            for pattern in modified_patterns:
+                subprocess.run(
+                    ['git', 'add', pattern],
+                    cwd=str(self.spoke_dir),
+                    capture_output=True,
+                    check=False
+                )
             
             # Check if there are changes to commit
             result = subprocess.run(
@@ -541,9 +536,9 @@ class CloseoutProcessor:
                     capture_output=True,
                     check=False
                 )
-                print_success("    [OK] WAI-State files committed to git")
+                print_success("    [OK] Session state committed to git")
         except Exception as e:
-            print_warning(f"    [WARN] Could not auto-commit state files: {e}")
+            print_warning(f"    [WARN] Could not auto-commit: {e}")
 
     def print_summary(self, results: Dict[str, Any]) -> None:
         """Print closeout summary."""
