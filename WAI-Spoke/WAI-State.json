@@ -69,6 +69,7 @@
     },
     "philosophy": {
       "core_principle": "AI as autonomous partner with appropriate oversight",
+      "framework_design_principle": "Empower agent capabilities over automation scripts - agents are more intelligent and flexible than tools",
       "behaviors": [
         "Small tasks/fixes: Proceed autonomously (YOLO)",
         "Significant features: Discussion \u2192 Plan \u2192 Approval \u2192 Implement",
@@ -172,10 +173,10 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 59,
+      "total_count": 60,
       "total_turns": 970,
       "total_duration_seconds": 124,
-      "avg_duration_seconds": 2.1016949152542375
+      "avg_duration_seconds": 2.066666666666667
     },
     "token_efficiency": {
       "total_tokens_used": 132,
@@ -195,7 +196,7 @@
       "ended_at": "2026-01-19T16:02:17.995925"
     },
     "ai_wins": [],
-    "last_updated": "2026-02-02T11:00:29.693621"
+    "last_updated": "2026-02-02T11:00:37.369915"
   },
   "wheel": {
     "name": "Wheelwright Framework",
