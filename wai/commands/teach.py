@@ -249,15 +249,48 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
             except Exception as e:
                 print_warning(f"    Failed to distribute {file_config['name']}: {e}")
     
+    # Distribute any waiting lugs from hub/outbound/[spoke-id]/
+    lugs_distributed = 0
+    if hub_path:
+        try:
+            # Get spoke_id from WAI-State.json if available
+            spoke_state_path = spoke_path / 'WAI-Spoke' / 'WAI-State.json'
+            spoke_id = spoke_path.name  # fallback
+            if spoke_state_path.exists():
+                try:
+                    state = json.loads(spoke_state_path.read_text(encoding='utf-8'))
+                    spoke_id = state.get('_spoke_id', spoke_path.name)
+                except Exception:
+                    pass
+            
+            outbound_spoke_dir = hub_path / 'WAI-Hub' / 'outbound' / spoke_id
+            if outbound_spoke_dir.exists() and outbound_spoke_dir.is_dir():
+                ingest_dir = teach_manager.ingest_dir
+                lug_files = list(outbound_spoke_dir.glob('*.jsonl'))
+                
+                if lug_files:
+                    print_info("\n  Distributing Lugs from Hub...")
+                    for lug_file in lug_files:
+                        try:
+                            dst = ingest_dir / lug_file.name
+                            shutil.copy2(lug_file, dst)
+                            print_success(f"    [OK] {lug_file.name} (lug) → /seed/ingest/")
+                            lugs_distributed += 1
+                            # Remove from outbound after successful distribution
+                            lug_file.unlink()
+                        except Exception as e:
+                            print_warning(f"    Failed to distribute lug {lug_file.name}: {e}")
+        except Exception as e:
+            print_warning(f"  Warning: Could not process hub lugs: {e}")
+    
     # Save upgrade adoption plan to spoke
     try:
         plan_path = spoke_path / 'upgrade-adoption-plan.json'
         if save_upgrade_plan(plan, plan_path):
             print_success(f"\n  [OK] Generated upgrade-adoption-plan.json for spoke")
-            print_info(f"    Spoke files: {spoke_count}")
-            if hub_count > 0:
-                print_info(f"    Hub files: {hub_count}")
-            print_info(f"    Files distributed: {files_distributed}")
+            print_info(f"    Template files: {files_distributed}")
+            if lugs_distributed > 0:
+                print_info(f"    Lugs distributed: {lugs_distributed}")
             if hub_fingerprint:
                 print_info(f"    [SECURE] Signed with hub fingerprint")
             print_info(f"    [NEXT] Spoke will verify and adopt on next session")
