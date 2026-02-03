@@ -92,18 +92,29 @@ class TestJSONLStorage:
     """Test JSONL storage operations."""
     
     def test_lug_persisted_to_file(self, lug_manager, temp_spoke_dir):
-        """Test that Lugs are written to lugs.jsonl."""
+        """Test that Lugs are written to sharded file."""
         lug = lug_manager.create_lug(title="Persist Test")
         
-        lugs_file = temp_spoke_dir / 'lugs.jsonl'
-        assert lugs_file.exists()
+        # Should be in lugs/ directory
+        lugs_dir = temp_spoke_dir / 'lugs'
+        assert lugs_dir.exists()
         
-        with open(lugs_file, 'r') as f:
+        files = list(lugs_dir.glob('*.jsonl'))
+        assert len(files) >= 1
+        
+        # Check content of the first file found
+        with open(files[0], 'r', encoding='utf-8') as f:
             lines = f.readlines()
         
-        assert len(lines) == 1
-        stored_lug = json.loads(lines[0])
-        assert stored_lug.get('i') == lug.id or stored_lug.get('id') == lug.id
+        assert len(lines) >= 1
+        # Find our lug in the file
+        found = False
+        for line in lines:
+            data = json.loads(line)
+            if data.get('i') == lug.id or data.get('id') == lug.id:
+                found = True
+                break
+        assert found
     
     def test_multiple_lugs_append(self, lug_manager, temp_spoke_dir):
         """Test appending multiple Lugs to JSONL."""
@@ -111,11 +122,13 @@ class TestJSONLStorage:
         lug2 = lug_manager.create_lug(title="Second")
         lug3 = lug_manager.create_lug(title="Third")
         
-        lugs_file = temp_spoke_dir / 'lugs.jsonl'
-        with open(lugs_file, 'r') as f:
-            lines = f.readlines()
+        ls_files = list((temp_spoke_dir / 'lugs').glob('*.jsonl'))
+        total_lines = 0
+        for fpath in ls_files:
+            with open(fpath, 'r', encoding='utf-8') as f:
+                total_lines += len(f.readlines())
         
-        assert len(lines) == 3
+        assert total_lines == 3
     
     def test_reload_from_storage(self, temp_spoke_dir):
         """Test reloading Lugs from storage."""
@@ -135,22 +148,27 @@ class TestJSONLStorage:
         """Verify delta updates modify in-place (same line count, updated value)."""
         lug = lug_manager.create_lug(title="Delta Test", value=5)
         
-        lugs_file = temp_spoke_dir / 'lugs.jsonl'
-        with open(lugs_file, 'r') as f:
-            lines_before = f.readlines()
+        lugs_dir = temp_spoke_dir / 'lugs'
+        # Get count before
+        lines_before = 0
+        for f in lugs_dir.glob('*.jsonl'):
+            lines_before += len(f.read_text(encoding='utf-8').splitlines())
         
         # Make an update
         lug_manager.update_lug(lug.id, value=10)
         
-        with open(lugs_file, 'r') as f:
-            lines_after = f.readlines()
-       
-        # In-place update: same line count
-        assert len(lines_after) == len(lines_before)
+        lines_after = 0
+        found_updated = False
         
-        # The line should contain the updated value
-        updated_line = json.loads(lines_after[0])
-        assert updated_line.get('v') == 10 or updated_line.get('value') == 10
+        for f in lugs_dir.glob('*.jsonl'):
+             content = f.read_text(encoding='utf-8')
+             lines_after += len(content.splitlines())
+             if '"v": 10' in content or '"value": 10' in content:
+                 found_updated = True
+                 
+        # In-place update: same line count
+        assert lines_after == lines_before
+        assert found_updated
     
     def test_jsonl_line_ordering(self, lug_manager, temp_spoke_dir):
         """Verify order preservation with in-place updates."""
@@ -160,13 +178,24 @@ class TestJSONLStorage:
         # Update first lug (in-place, not appended)
         lug_manager.update_lug(lug1.id, status="in_progress")
         
-        lugs_file = temp_spoke_dir / 'lugs.jsonl'
-        with open(lugs_file, 'r') as f:
-            lines = f.readlines()
+        # Check total lines across all shards
+        lugs_dir = temp_spoke_dir / 'lugs'
+        total_lines = 0
+        for fpath in lugs_dir.glob('*.jsonl'):
+            with open(fpath, 'r', encoding='utf-8') as f:
+                total_lines += len(f.readlines())
         
         # In-place updates: still 2 lines (one per lug)
-        assert len(lines) == 2
+        assert total_lines == 2
         
+        # Verify content
+        # Both should be in the same global-date file since no session_id provided
+        files = list(lugs_dir.glob('*.jsonl'))
+        assert len(files) == 1
+        
+        with open(files[0], 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            
         line1 = json.loads(lines[0])
         line2 = json.loads(lines[1])
         
@@ -177,7 +206,6 @@ class TestJSONLStorage:
         assert line2.get('t') == "Second Lug" or line2.get('title') == "Second Lug"
 
 
-
 class TestMinification:
     """Test minification and key mapping."""
     
@@ -185,9 +213,22 @@ class TestMinification:
         """Test that Lugs are stored with minified keys."""
         lug = lug_manager.create_lug(title="Minify Test")
         
-        lugs_file = temp_spoke_dir / 'lugs.jsonl'
-        with open(lugs_file, 'r') as f:
-            stored = json.loads(f.readline())
+        lug = lug_manager.create_lug(title="Minify Test")
+        
+        lugs_dir = temp_spoke_dir / 'lugs'
+        found = False
+        stored = {}
+        
+        for fpath in lugs_dir.glob('*.jsonl'):
+            with open(fpath, 'r', encoding='utf-8') as f:
+                for line in f:
+                    stored = json.loads(line)
+                    if stored.get('i') == lug.id or stored.get('id') == lug.id:
+                        found = True
+                        break
+            if found: break
+            
+        assert found
         
         # Should have minified keys in storage
         assert 'i' in stored or 'id' in stored  # id
@@ -702,4 +743,45 @@ class TestBeadChain:
         assert len(validation['errors']) == 1
         assert "Broken link" in validation['errors'][0]
 if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
+        assert validation['valid'] is False
+        assert len(validation['errors']) == 1
+        assert "Broken link" in validation['errors'][0]
+
+class TestHierarchicalIDs:
+    """Test Hierarchical ID generation."""
+    
+    def test_create_child_lug(self, lug_manager):
+        """Test creating a child Lug (hierarchical ID)."""
+        parent = lug_manager.create_lug(title="Parent Task")
+        child = lug_manager.create_lug(title="Child Task", parent_id=parent.id)
+        
+        assert child.id.startswith(parent.id + ".")
+        assert child.id == f"{parent.id}.1"
+    
+    def test_create_multiple_children(self, lug_manager):
+        """Test creating multiple children (incrementing index)."""
+        parent = lug_manager.create_lug(title="Parent Task")
+        child1 = lug_manager.create_lug(title="Child 1", parent_id=parent.id)
+        child2 = lug_manager.create_lug(title="Child 2", parent_id=parent.id)
+        
+        assert child1.id == f"{parent.id}.1"
+        assert child2.id == f"{parent.id}.2"
+    
+    def test_create_grandchild(self, lug_manager):
+        """Test creating nested children."""
+        parent = lug_manager.create_lug(title="Epic")
+        child = lug_manager.create_lug(title="Story", parent_id=parent.id)
+        grandchild = lug_manager.create_lug(title="Task", parent_id=child.id)
+        
+        assert grandchild.id == f"{parent.id}.1.1"
+
+    def test_create_with_sharding_session(self, lug_manager, temp_spoke_dir):
+        """Test that lugs with specific session_id go to that file."""
+        session_id = "test-shard-001"
+        lug = lug_manager.create_lug(title="Sharded", session_id=session_id)
+        
+        expected_file = temp_spoke_dir / 'lugs' / f"{session_id}.jsonl"
+        assert expected_file.exists()
+        
+        content = expected_file.read_text(encoding='utf-8')
+        assert lug.id in content

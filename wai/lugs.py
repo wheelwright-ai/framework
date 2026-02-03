@@ -21,6 +21,8 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Set
+from glob import glob
+import os
 
 
 # Minification key mappings (storage → API)
@@ -155,7 +157,11 @@ class LugManager:
     def __init__(self, spoke_dir: Path):
         """Initialize LugManager with spoke directory."""
         self.spoke_dir = spoke_dir
-        self.lugs_file = spoke_dir / 'lugs.jsonl'
+        self.lugs_dir = spoke_dir / 'lugs'
+        
+        # Legacy file support
+        self.legacy_lugs_file = spoke_dir / 'lugs.jsonl'
+        
         self.closed_file = spoke_dir / 'lugs-closed.jsonl'
         self.sessions_file = spoke_dir / 'sessions.jsonl'
         
@@ -164,20 +170,37 @@ class LugManager:
         self.closed_lugs: Dict[str, Lug] = {}
         self.sessions: Dict[str, Session] = {}
         
+        # File mapping (Lug ID -> File Path)
+        self.lug_file_map: Dict[str, Path] = {}
+        
         # Load existing data
         self._load_lugs()
         self._load_sessions()
     
     def _load_lugs(self):
-        """Load active Lugs from JSONL."""
-        if self.lugs_file.exists():
-            with open(self.lugs_file, 'r') as f:
+        """Load active Lugs from JSONL (sharded and legacy)."""
+        files_to_load = []
+        
+        # 1. Legacy file
+        if self.legacy_lugs_file.exists():
+            files_to_load.append(self.legacy_lugs_file)
+            
+        # 2. Sharded files
+        if self.lugs_dir.exists():
+            files_to_load.extend(sorted(self.lugs_dir.glob('*.jsonl')))
+            
+        for file_path in files_to_load:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 for line in f:
                     if line.strip():
-                        minified = json.loads(line)
-                        expanded = self._expand_keys(minified)
-                        lug = Lug(expanded)
-                        self.lugs[lug.id] = lug
+                        try:
+                            minified = json.loads(line)
+                            expanded = self._expand_keys(minified)
+                            lug = Lug(expanded)
+                            self.lugs[lug.id] = lug
+                            self.lug_file_map[lug.id] = file_path
+                        except (json.JSONDecodeError, KeyError):
+                            continue
     
     def _load_sessions(self):
         """Load sessions from JSONL."""
@@ -202,8 +225,38 @@ class LugManager:
             expanded[MINIFIED_KEYS.get(key, key)] = value
         return expanded
     
-    def _generate_id(self, title: str, created_at: str) -> str:
-        """Generate SHA-256 ID from title, timestamp, and random salt."""
+    def _generate_id(self, title: str, created_at: str, parent_id: Optional[str] = None) -> str:
+        """
+        Generate ID.
+        If parent_id provided, generate hierarchical ID (parent_id.N).
+        Otherwise generate SHA-256 hash.
+        """
+        if parent_id:
+            # Find existing children count
+            siblings = [l for l in self.lugs.values() if l.id.startswith(f"{parent_id}.")]
+            # Simplified next-index logic: count + 1
+            # In a real collaborative world, we might need random suffixes even here, 
+            # but standard hierarchical IDs are usually deterministic.
+            # To be safe against race conditions without locking, we can append a tiny hash.
+            # But let's stick to simple indices for readability as per requirements: "bd-a1b2.1"
+            
+            # Find max suffix
+            max_suffix = 0
+            prefix_len = len(parent_id) + 1
+            for l in siblings:
+                try:
+                    suffix = l.id[prefix_len:]
+                    # Handle multi-level like .1.2
+                    first_segment = suffix.split('.')[0]
+                    val = int(first_segment)
+                    if val > max_suffix:
+                        max_suffix = val
+                except ValueError:
+                    pass
+            
+            return f"{parent_id}.{max_suffix + 1}"
+            
+        # Standard Hash ID
         salt = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
         content = f"{title}{created_at}{salt}"
         return hashlib.sha256(content.encode()).hexdigest()
@@ -211,7 +264,7 @@ class LugManager:
     def _atomic_append(self, file_path: Path, data: Dict[str, Any]):
         """Atomically append JSON line to file."""
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, 'a') as f:
+        with open(file_path, 'a', encoding='utf-8') as f:
             f.write(json.dumps(data) + '\n')
 
     def _get_active_session_id(self) -> Optional[str]:
@@ -239,7 +292,8 @@ class LugManager:
         justification: Optional[str] = None,
         origin: Optional[str] = None,
         from_file: Optional[str] = None,
-        extras: Optional[Dict[str, Any]] = None
+        extras: Optional[Dict[str, Any]] = None,
+        parent_id: Optional[str] = None
     ) -> Lug:
         """
         Create a new Lug.
@@ -259,7 +313,7 @@ class LugManager:
             Created Lug instance
         """
         created_at = datetime.now().isoformat()
-        lug_id = self._generate_id(title, created_at)
+        lug_id = self._generate_id(title, created_at, parent_id)
 
         # Auto-detect session if not provided
         if not session_id:
@@ -288,8 +342,20 @@ class LugManager:
         lug = Lug(lug_data)
         self.lugs[lug_id] = lug
         
-        # Append to JSONL
-        self._atomic_append(self.lugs_file, lug.to_minified())
+        # Determine strict file path
+        # If session_id present, use lugs/{session_id}.jsonl
+        # Else use lugs/{date}.jsonl
+        self.lugs_dir.mkdir(parents=True, exist_ok=True)
+        if session_id:
+             # Sanitize session_id for filename
+            safe_session = "".join([c for c in session_id if c.isalpha() or c.isdigit() or c in ('-','_')])
+            target_file = self.lugs_dir / f"{safe_session}.jsonl"
+        else:
+            today = datetime.now().strftime("%Y-%m-%d")
+            target_file = self.lugs_dir / f"global-{today}.jsonl"
+
+        self.lug_file_map[lug_id] = target_file
+        self._atomic_append(target_file, lug.to_minified())
         
         return lug
     
@@ -684,19 +750,19 @@ class LugManager:
     def _update_lug_in_file(self, lug_id: str):
         """
         Update a single lug in-place using a temp file for atomicity.
-        O(n) read but only for the specific update, not full rewrite.
         """
-        if not self.lugs_file.exists():
+        target_file = self.lug_file_map.get(lug_id)
+        if not target_file or not target_file.exists():
             return
         
         lug = self.lugs.get(lug_id)
         if not lug:
             return
         
-        temp_file = self.lugs_file.with_suffix('.jsonl.tmp')
+        temp_file = target_file.with_suffix('.jsonl.tmp')
         found = False
         
-        with open(self.lugs_file, 'r') as src, open(temp_file, 'w') as dst:
+        with open(target_file, 'r', encoding='utf-8') as src, open(temp_file, 'w', encoding='utf-8') as dst:
             for line in src:
                 if not line.strip():
                     continue
@@ -712,21 +778,24 @@ class LugManager:
                     dst.write(line)
         
         if found:
-            temp_file.replace(self.lugs_file)
+            temp_file.replace(target_file)
         else:
             temp_file.unlink()
-            self._atomic_append(self.lugs_file, lug.to_minified())
+            # If we expected to update but didn't find it in the file (drift?), append it?
+            # Safe fallback: append to this file
+            self._atomic_append(target_file, lug.to_minified())
     
     def _remove_lug_from_file(self, lug_id: str):
         """
         Remove a single lug from file using a temp file for atomicity.
         """
-        if not self.lugs_file.exists():
+        target_file = self.lug_file_map.get(lug_id)
+        if not target_file or not target_file.exists():
             return
         
-        temp_file = self.lugs_file.with_suffix('.jsonl.tmp')
+        temp_file = target_file.with_suffix('.jsonl.tmp')
         
-        with open(self.lugs_file, 'r') as src, open(temp_file, 'w') as dst:
+        with open(target_file, 'r', encoding='utf-8') as src, open(temp_file, 'w', encoding='utf-8') as dst:
             for line in src:
                 if not line.strip():
                     continue
@@ -738,15 +807,34 @@ class LugManager:
                 except json.JSONDecodeError:
                     dst.write(line)
         
-        temp_file.replace(self.lugs_file)
+        temp_file.replace(target_file)
+        # Remove from map
+        if lug_id in self.lug_file_map:
+            del self.lug_file_map[lug_id]
     
     def _compact_lugs_file(self):
-        """Rewrite entire lugs.jsonl with current state (compaction/fallback)."""
-        if self.lugs_file.exists():
-            self.lugs_file.unlink()
+        """
+        Rewrite all known shard files with current state.
+        This effectively garbage collects any drift but is expensive.
+        """
+        # Identify all unique files we know about
+        unique_files = set(self.lug_file_map.values())
         
-        for lug in self.lugs.values():
-            self._atomic_append(self.lugs_file, lug.to_minified())
+        for file_path in unique_files:
+            if not file_path.exists():
+                continue
+                
+            temp_file = file_path.with_suffix('.jsonl.tmp')
+            
+            # Reconstruct file content from current memory state
+            # This assumes self.lugs is the source of truth
+            file_lugs = [l for l in self.lugs.values() if self.lug_file_map.get(l.id) == file_path]
+            
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                for lug in file_lugs:
+                    f.write(json.dumps(lug.to_minified()) + '\n')
+            
+            temp_file.replace(file_path)
     
     def create_session(
         self,

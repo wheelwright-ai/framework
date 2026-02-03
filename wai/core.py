@@ -4267,6 +4267,7 @@ Examples:
     def _cmd_shipit(self, args):
         """Handle shipit command - closeout + git commit."""
         from .closeout import CloseoutProcessor
+        from .quality_gates import QualityGates
         from .bootstrap import refresh_bootstrap
         from .utils.input import safe_confirm
         import subprocess
@@ -4288,14 +4289,53 @@ Examples:
                 print_info("Initialize git first: git init")
                 return
 
+            # Step 0: Explicit Quality Gates
+            skip_qg = getattr(args, 'skip_quality_gates', False)
+            if not skip_qg:
+                print_info("\n[SHIPIT] Running Quality Gates...\n")
+                gates = QualityGates(spoke_path)
+                qg_results = gates.run_all_gates(skip_minor=True) # Skip for docs-only etc.
+                
+                if not qg_results['passed']:
+                    print_error("\n❌ Quality Gates Failed:")
+                    found_blockers = False
+                    
+                    if qg_results.get('blockers'):
+                        print_info("\n  Blockers:")
+                        for b in qg_results['blockers']:
+                            print_error(f"   • {b}")
+                        found_blockers = True
+                        
+                    if qg_results.get('warnings'):
+                        print_info("\n  Warnings:")
+                        for w in qg_results['warnings']:
+                            print_warning(f"   • {w}")
+
+                    # Ask to proceed only if no strict blockers (or strict mode is off by default)
+                    # For now, blockers imply abort unless forced (which isn't a flag yet, so we abort)
+                    if found_blockers:
+                        print_error("\nAborting shipit due to quality gate failures.")
+                        print_info("Fix issues or run with --skip-quality-gates (use caution).")
+                        return
+                    else:
+                        if not args.non_interactive:
+                            if not safe_confirm("  Quality gates have warnings. Proceed anyway?", default=False):
+                                print_info("Aborted.")
+                                return
+                else:
+                    msg = qg_results.get('skip_reason', "All gates passed.")
+                    print_success(f"✓ {msg}")
+
             # Step 1: Run full closeout
-            print_info("\n[SHIPIT] Closeout + Git Commit\n")
+            print_info("\n[SHIPIT] Session Closeout\n")
             print_info("=" * 60)
 
             processor = CloseoutProcessor(spoke_path)
+            # We already ran gates, so we can tell closeout to skip them to avoid double-run
+            # effectively passing the baton.
             results = processor.process_closeout(
                 interactive=not args.non_interactive,
-                skip_quality_gates=args.skip_quality_gates
+                skip_quality_gates=True 
             )
 
             # Check if closeout was aborted
@@ -4309,24 +4349,17 @@ Examples:
                 print_info("\n  Refreshing bootstrap folder...")
                 refresh_bootstrap(framework_root, verbose=True)
 
-            # Step 2: Git workflow using GitPython
+            # Step 2: Git Workflow
             print_info("\n" + "=" * 60)
             print_info("  Git Commit Workflow")
             print_info("=" * 60 + "\n")
 
+            # Check status again to include closeout changes
             if not repo.is_dirty(untracked_files=True):
                 print_info("  Working tree clean - nothing to commit.\n")
                 return
 
-            # Show what changed
-            print_info("  Changed files:")
-            for item in repo.index.diff(None) + repo.index.diff("HEAD"):
-                print_info(f"    M {item.a_path}")
-            for f in repo.untracked_files:
-                print_info(f"    ?? {f}")
-            print_info("")
-
-            # Stage WAI state files and Lugs
+            # Auto-stage WAI files (always safe)
             wai_files = [
                 'WAI-Spoke/WAI-State.json',
                 'WAI-Spoke/WAI-State.md',
@@ -4335,45 +4368,75 @@ Examples:
                 'WAI-Spoke/lugs.jsonl',
                 'WAI-Spoke/lugs-closed.jsonl',
                 'WAI-Spoke/lug-sessions.jsonl',
+                'WAI-Spoke/WAI-Backlog.md', 
+                'WAI-Spoke/WAI-Implementation-Summary.md',
                 'WAI-Spoke/WAI-Point.json'
             ]
-
-            files_to_commit = []
-            for wai_file in wai_files:
-                if (spoke_path / wai_file).exists():
-                    # Check if file is modified or untracked
-                    is_modified = any(item.a_path == wai_file for item in repo.index.diff(None))
-                    is_untracked = wai_file in repo.untracked_files
-                    if is_modified or is_untracked:
-                        files_to_commit.append(wai_file)
-
-            if files_to_commit:
-                print_info("  Auto-staging WAI files:")
-                for f in files_to_commit:
-                    print_info(f"    + {f}")
-                    repo.index.add([f])
-                print_info("")
-
-            # Ask about other files
-            unstaged_files = [item.a_path for item in repo.index.diff(None)] + repo.untracked_files
-            unstaged_files = [f for f in unstaged_files if not f.startswith('WAI-Spoke/')]
             
-            if unstaged_files and not args.non_interactive:
-                print_info("  Other modified files:")
-                for f in unstaged_files:
+            # Smart Staging: Also identify project code files that are modified
+            # We want to catch "the work" tracked by git
+            modified_tracked = [item.a_path for item in repo.index.diff(None)]
+            staged_files = [item.a_path for item in repo.index.diff("HEAD")]
+            
+            files_to_auto_stage = set()
+            for f in modified_tracked + staged_files:
+                if f.startswith('WAI-Spoke/'): # Already effectively handled, but ensure coverage
+                    continue
+                # If it's already tracked, we generally want to ship it if we're shipping
+                files_to_auto_stage.add(f)
+            
+            # Add WAI files to tracked list if modified
+            for wf in wai_files:
+                if (spoke_path / wf).exists():
+                     files_to_auto_stage.add(wf)
+
+            # Also check untracked WAI files (newly created)
+            for f in repo.untracked_files:
+                if f.startswith('WAI-Spoke/'):
+                    files_to_auto_stage.add(f)
+
+            # Display plan
+            print_info(f"  Files to ship ({len(files_to_auto_stage)}):")
+            sorted_files = sorted(list(files_to_auto_stage))
+            if len(sorted_files) > 15:
+                for f in sorted_files[:10]:
                     print_info(f"    {f}")
-                print_info("")
-                
-                print_info("  The following files are modified or untracked but were not automatically staged by the Framework.")
-                print_info("  You can choose to include them in this commit.")
+                print_info(f"    ... and {len(sorted_files)-10} more")
+            else:
+                for f in sorted_files:
+                    print_info(f"    {f}")
+            print_info("")
 
-                if safe_confirm("  Stage these files too?", default=True):
-                    for f in unstaged_files:
-                        repo.index.add([f])
-                        print_info(f"    + {f}")
-                    print_info("")
+            # Prompt
+            if not args.non_interactive:
+                if not safe_confirm("  Stage and commit these files?", default=True):
+                    print_info("\n  Commit cancelled.")
+                    return
 
-            # Get Lugs for this session to close
+            # Execute Stage
+            # We add everything tracked (modified) + untracked WAI files
+            # For strict correctness, we add specifically the list we built
+            if files_to_auto_stage:
+                try:
+                    repo.index.add(list(files_to_auto_stage))
+                except Exception as e:
+                    print_warning(f"  Warning during staging: {e}")
+
+            # Note: We purposely don't auto-add ALL untracked files to avoid committing garbage.
+            # Only modified tracked files + WAI files.
+            
+            # Update Changelog (Stage it if it changes)
+            try:
+                from .changelog import ChangelogGenerator
+                generator = ChangelogGenerator(Path(spoke_path))
+                generator.update_changelog_file()
+                if (Path(spoke_path) / "CHANGELOG.md").exists():
+                    repo.index.add(["CHANGELOG.md"])
+                    print_info("    [shipit] CHANGELOG.md updated.")
+            except Exception as e:
+                print_warning(f"    [shipit] Failed to update changelog: {e}")
+
+            # Get Lugs to close (for commit message)
             session_state = processor.session.get_state()
             session_id = session_state.get('session_id')
             closed_lugs_info = []
@@ -4382,28 +4445,22 @@ Examples:
                 from .lugs import LugManager
                 lug_manager = LugManager(spoke_path)
                 session_lugs = lug_manager.get_session_lugs(session_id)
-                
                 if session_lugs:
-                    print_info(f"  Found {len(session_lugs)} Lugs associated with this session.")
                     for lug in session_lugs:
                         if lug.status == 'open':
-                            if args.non_interactive or safe_confirm(f"  Close Lug {lug.id} ({lug.title})?", default=True):
-                                lug_manager.close_lug(lug.id, summary=results.get('session_summary', {}).get('summary', 'Closed via shipit'))
-                                closed_lugs_info.append(f"{lug.id} ({lug.title})")
-                    
-                    # Ensure lug files are staged after closing
-                    repo.index.add(['WAI-Spoke/lugs.jsonl', 'WAI-Spoke/lugs-closed.jsonl'])
-            
-            # Update Changelog
-            try:
-                from .changelog import ChangelogGenerator
-                generator = ChangelogGenerator(Path(spoke_path))
-                generator.update_changelog_file()
-                if (Path(spoke_path) / "CHANGELOG.md").exists():
-                    repo.index.add(["CHANGELOG.md"])
-                print_info("    [shipit] CHANGELOG.md updated.")
-            except Exception as e:
-                print_warning(f"    [shipit] Failed to update changelog: {e}")
+                            # In non-interactive shipit, we assume approval to close if they are associated with session
+                            # But technically closeout processor already asked or closed them possibly. 
+                            # If they are still open here, close them.
+                            lug_manager.close_lug(lug.id, summary=results.get('session_summary', {}).get('summary', 'Closed via shipit'))
+                            closed_lugs_info.append(f"{lug.id} ({lug.title})")
+                    # Re-stage lugs files
+                    repo.index.add(['WAI-Spoke/lugs-closed.jsonl'])
+                    # Check shards
+                    for shard in lug_manager.lug_file_map.values():
+                         try:
+                             rel = shard.relative_to(spoke_path)
+                             repo.index.add([str(rel)])
+                         except: pass
 
             # Generate commit message
             session_summary = results.get('session_summary', {})
@@ -4416,7 +4473,7 @@ Examples:
             if closed_lugs_info:
                 lugs_msg = "\nClosed Lugs:\n" + "\n".join([f"- {info}" for info in closed_lugs_info])
 
-            commit_msg = f"""Session closeout: {summary_text[:60]}
+            commit_msg = f"""wai: {summary_text[:60]}
 
 {summary_text}
 
@@ -4429,23 +4486,36 @@ Session turns: {turns}
 Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
 
             # Create commit
-            commit = repo.index.commit(commit_msg)
-            print_success(f"\n  ✓ Commit {commit.hexsha[:7]} created successfully!\n")
+            try:
+                commit = repo.index.commit(commit_msg)
+                print_success(f"\n  ✓ Commit {commit.hexsha[:7]} created successfully!\n")
+                print_info(repo.git.log("-1", "--stat"))
+            except Exception as e:
+                print_error(f"  Commit failed: {e}")
+                return
 
-            # Show commit details
-            print_info(repo.git.log("-1", "--stat"))
-
-            # Push to remote by default (unless --no-push)
-            if not args.no_push:
+            # Push
+            if not hasattr(args, 'no_push') or not args.no_push:
                 print_info("  Pushing to remote...")
                 try:
                     origin = repo.remote(name='origin')
-                    origin.push()
-                    print_success("  ✓ Pushed to remote successfully!\n")
+                    push_info = origin.push()
+                    
+                    # Check push results for errors
+                    push_errors = []
+                    for pi in push_info:
+                        if pi.flags & (pi.ERROR | pi.REJECTED):
+                            push_errors.append(pi.summary)
+                    
+                    if push_errors:
+                         print_error(f"  Push failed: {', '.join(push_errors)}")
+                         print_info("  Try running 'git push' manually to debug.")
+                    else:
+                        print_success("  ✓ Pushed to remote successfully!\n")
                 except Exception as e:
-                    print_error(f"  Push failed: {e}")
+                     print_error(f"  Push failed: {e}")
             else:
-                print_info("  To push to remote, run: git push\n")
+                 print_info("  Skipped push (--no-push).\n")
 
             print_info("=" * 60)
             print_success("  Shipit Complete!")

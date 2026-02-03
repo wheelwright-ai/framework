@@ -216,6 +216,34 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
     files_distributed = 0
     
     print_info("\n  Distributing Template Files...")
+
+    # Distribute Framework Upgrade Lug (Lugs v2)
+    try:
+        from ..lugs import Lug
+        
+        upgrade_lug_data = {
+            'id': 'lug-framework-upgrade-v2',
+            'title': 'Framework Upgrade: Lugs v2 Specification',
+            'type': 'epic',
+            'status': 'open',
+            'created_at': datetime.now().isoformat(),
+            'priority': 'high',
+            'impact': 'large',
+            'value': 10,
+            'summary': "The Lugs system has been upgraded to v2 to support Conflict Immunity (file sharding) and Hierarchical IDs. All objects must adopt the new specification. Existing 'lugs.jsonl' should be migrated to 'lugs/' directory shards.",
+            'policy_tags': ['framework_upgrade'],
+            'origin': 'framework:teach'
+        }
+        
+        dst = teach_manager.ingest_dir / 'lug-framework-upgrade-v2.jsonl'
+        # Write minified
+        with open(dst, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(Lug(upgrade_lug_data).to_minified()) + '\n')
+            
+        print_success(f"    [OK] Lugs v2 Upgrade Notification → /seed/ingest/")
+        
+    except Exception as e:
+        print_warning(f"    Failed to distribute framework upgrade lug: {e}")
     
     # Distribute spoke files
     for file_config in spoke_files:
@@ -238,7 +266,8 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
         src_path = wai_hub_templates_dir / file_config['name']
         if src_path.exists():
             try:
-                dst = teach_manager.ingest_dir / f"{file_config['name']}.teaching"
+                # Hub files distributed WITHOUT .teaching extension for immediate adoption
+                dst = teach_manager.ingest_dir / file_config['name']
                 # Check if file already exists (for replacement message)
                 file_exists = dst.exists()
                 content = src_path.read_text(encoding='utf-8')
