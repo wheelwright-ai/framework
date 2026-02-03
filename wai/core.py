@@ -4354,87 +4354,28 @@ Examples:
             print_info("  Git Commit Workflow")
             print_info("=" * 60 + "\n")
 
-            # Check status again to include closeout changes
+            # Check status
             if not repo.is_dirty(untracked_files=True):
                 print_info("  Working tree clean - nothing to commit.\n")
                 return
 
-            # Auto-stage WAI files (always safe)
-            wai_files = [
-                'WAI-Spoke/WAI-State.json',
-                'WAI-Spoke/WAI-State.md',
-                'WAI-Spoke/WAI-Guide.md',
-                'WAI-Spoke/WAI-Signals.jsonl',
-                'WAI-Spoke/lugs.jsonl',
-                'WAI-Spoke/lugs-closed.jsonl',
-                'WAI-Spoke/lug-sessions.jsonl',
-                'WAI-Spoke/WAI-Backlog.md', 
-                'WAI-Spoke/WAI-Implementation-Summary.md',
-                'WAI-Spoke/WAI-Point.json'
-            ]
-            
-            # Smart Staging: Also identify project code files that are modified
-            # We want to catch "the work" tracked by git
-            modified_tracked = [item.a_path for item in repo.index.diff(None)]
-            staged_files = [item.a_path for item in repo.index.diff("HEAD")]
-            
-            files_to_auto_stage = set()
-            for f in modified_tracked + staged_files:
-                if f.startswith('WAI-Spoke/'): # Already effectively handled, but ensure coverage
-                    continue
-                # If it's already tracked, we generally want to ship it if we're shipping
-                files_to_auto_stage.add(f)
-            
-            # Add WAI files to tracked list if modified
-            for wf in wai_files:
-                if (spoke_path / wf).exists():
-                     files_to_auto_stage.add(wf)
-
-            # Also check untracked WAI files (newly created)
+            # Show what changed
+            print_info("  Changed files:")
+            for item in repo.index.diff(None) + repo.index.diff("HEAD"):
+                print_info(f"    M {item.a_path}")
             for f in repo.untracked_files:
-                if f.startswith('WAI-Spoke/'):
-                    files_to_auto_stage.add(f)
-
-            # Display plan
-            print_info(f"  Files to ship ({len(files_to_auto_stage)}):")
-            sorted_files = sorted(list(files_to_auto_stage))
-            if len(sorted_files) > 15:
-                for f in sorted_files[:10]:
-                    print_info(f"    {f}")
-                print_info(f"    ... and {len(sorted_files)-10} more")
-            else:
-                for f in sorted_files:
-                    print_info(f"    {f}")
+                print_info(f"    ?? {f}")
             print_info("")
 
-            # Prompt
-            if not args.non_interactive:
-                if not safe_confirm("  Stage and commit these files?", default=True):
-                    print_info("\n  Commit cancelled.")
-                    return
-
-            # Execute Stage
-            # We add everything tracked (modified) + untracked WAI files
-            # For strict correctness, we add specifically the list we built
-            if files_to_auto_stage:
-                try:
-                    repo.index.add(list(files_to_auto_stage))
-                except Exception as e:
-                    print_warning(f"  Warning during staging: {e}")
-
-            # Note: We purposely don't auto-add ALL untracked files to avoid committing garbage.
-            # Only modified tracked files + WAI files.
-            
-            # Update Changelog (Stage it if it changes)
+            # STAGE ALL CHANGES
+            # User requirement: "ALL changes in 'git status' are in scope and will be committed."
+            # We use git add -A to handle modified, new, and deleted files.
+            print_info("  Staging ALL changes (tracked + untracked)...")
             try:
-                from .changelog import ChangelogGenerator
-                generator = ChangelogGenerator(Path(spoke_path))
-                generator.update_changelog_file()
-                if (Path(spoke_path) / "CHANGELOG.md").exists():
-                    repo.index.add(["CHANGELOG.md"])
-                    print_info("    [shipit] CHANGELOG.md updated.")
+                repo.git.add(A=True)
             except Exception as e:
-                print_warning(f"    [shipit] Failed to update changelog: {e}")
+                print_error(f"  Staging failed: {e}")
+                return
 
             # Get Lugs to close (for commit message)
             session_state = processor.session.get_state()
@@ -4453,14 +4394,17 @@ Examples:
                             # If they are still open here, close them.
                             lug_manager.close_lug(lug.id, summary=results.get('session_summary', {}).get('summary', 'Closed via shipit'))
                             closed_lugs_info.append(f"{lug.id} ({lug.title})")
-                    # Re-stage lugs files
-                    repo.index.add(['WAI-Spoke/lugs-closed.jsonl'])
-                    # Check shards
-                    for shard in lug_manager.lug_file_map.values():
-                         try:
-                             rel = shard.relative_to(spoke_path)
-                             repo.index.add([str(rel)])
-                         except: pass
+                    # Re-stage lugs files (in case they weren't caught by add -A due to timing/location, though they should be)
+                    try:
+                        repo.index.add(['WAI-Spoke/lugs-closed.jsonl'])
+                        # Check shards
+                        if hasattr(lug_manager, 'lug_file_map'):
+                            for shard in lug_manager.lug_file_map.values():
+                                 try:
+                                     rel = shard.relative_to(spoke_path)
+                                     repo.index.add([str(rel)])
+                                 except: pass
+                    except: pass
 
             # Generate commit message
             session_summary = results.get('session_summary', {})
