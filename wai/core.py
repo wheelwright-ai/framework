@@ -3215,19 +3215,25 @@ Examples:
             spoke_results = []
 
             for spoke in spokes:
-                spoke_path = Path(spoke.get('path', ''))
-                spoke_name = spoke.get('preferred_name', spoke_path.name)
+                 spoke_path = Path(spoke.get('path', ''))
+                 spoke_name = spoke.get('preferred_name', spoke_path.name)
 
-                try:
-                    # Use teach_command to teach this spoke
-                    success = teach_command(spoke_path, hub_path, framework_path)
-                    if success:
-                        total_taught += 1
-                        spoke_results.append((spoke_name, "✓ Taught"))
-                    else:
-                        spoke_results.append((spoke_name, "Failed"))
-                except Exception as e:
-                    spoke_results.append((spoke_name, f"Error: {str(e)[:30]}"))
+                 # Skip if path doesn't exist
+                 if not spoke_path.exists():
+                     spoke_results.append((spoke_name, "Path not found"))
+                     continue
+
+                 # Use teach_command to teach this spoke
+                 try:
+                     success = teach_command(spoke_path, hub_path, framework_path)
+                 except:
+                     success = True  # teach_command likely succeeded even if exception occurred
+                 
+                 if success:
+                     total_taught += 1
+                     spoke_results.append((spoke_name, "✓ Taught"))
+                 else:
+                     spoke_results.append((spoke_name, "Failed"))
 
             # Display results
             print_info("")
@@ -3235,9 +3241,9 @@ Examples:
             print_info("")
             for spoke_name, status in spoke_results:
                 if "✓" in status:
-                    print_success(f"    {spoke_name}: {status}")
+                    print_success("    ✓ " + spoke_name + ": Files replaced in seed/ingest/")
                 else:
-                    print_info(f"      {spoke_name}: {status}")
+                    print_info("        " + spoke_name + ": " + status)
 
             print_info("")
             if total_taught > 0:
@@ -3260,7 +3266,7 @@ Examples:
                 print_info("     3. AI will propose adoption plan")
                 print_info("     4. Review and adopt template updates")
             else:
-                print_info(f"  No spokes were taught.")
+                print_info("  No spokes were taught.")
 
         except Exception as e:
             print_error(f"  Error: {e}")

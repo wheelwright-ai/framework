@@ -223,9 +223,12 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
         if src_path.exists():
             try:
                 dst = teach_manager.ingest_dir / f"{file_config['name']}.teaching"
+                # Check if file already exists (for replacement message)
+                file_exists = dst.exists()
                 content = src_path.read_text(encoding='utf-8')
                 dst.write_text(content, encoding='utf-8', errors='replace')
-                print_success(f"    [OK] {file_config['name']} → /seed/ingest/")
+                action = "replaced" if file_exists else "created"
+                print_success(f"    [OK] {file_config['name']} {action} → /seed/ingest/")
                 files_distributed += 1
             except Exception as e:
                 print_warning(f"    Failed to distribute {file_config['name']}: {e}")
@@ -236,9 +239,12 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
         if src_path.exists():
             try:
                 dst = teach_manager.ingest_dir / f"{file_config['name']}.teaching"
+                # Check if file already exists (for replacement message)
+                file_exists = dst.exists()
                 content = src_path.read_text(encoding='utf-8')
                 dst.write_text(content, encoding='utf-8', errors='replace')
-                print_success(f"    [OK] {file_config['name']} → /seed/ingest/")
+                action = "replaced" if file_exists else "created"
+                print_success(f"    [OK] {file_config['name']} {action} → /seed/ingest/")
                 files_distributed += 1
             except Exception as e:
                 print_warning(f"    Failed to distribute {file_config['name']}: {e}")

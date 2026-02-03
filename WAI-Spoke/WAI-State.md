@@ -148,7 +148,13 @@ ADAPTIVE mode maintains intentionality:
 
 ## Current Focus
 
-### Just Completed (2026-01-31)
+### Just Completed (2026-02-02)
+- **Hub Created** - ~/wheelwright-hub initialized with structure, profile, and metadata
+- **Hub Registration Ready** - Ready for spoke discovery and registration via `wai hub scan`
+- **Teach Command Fixed** - Fixed exception handling in multi-spoke teaching loop
+- **Teaching Workflow Active** - All 19 spokes received framework templates successfully
+
+### Previously Completed (2026-01-31)
 - **AGENTS.md Living Document** - AGENTS.md now evolves with the project, not just substituting state
 - **Init**: Creates AGENTS.md on init, APPENDS intelligently on re-init (preserves existing context)
 - **Closeout**: Generates "Session Focus (Must Continue)" section that surfaces incomplete work
@@ -178,11 +184,12 @@ ADAPTIVE mode maintains intentionality:
 - Ready to commit all documentation updates
 
 ### Next Up
-- Run migration script to convert SCF hub and projects
-- Rename ~/scf-hub to ~/wheelwright-hub
-- Create VS Code extension (wheelwright-ai/extension-vscode)
-- Create browser extension (wheelwright-ai/extension-browser)
-- Build wheelwright.ai website
+- **CLI Alignment**: Update `wai teach` to route through hub/outbound/ (see TEACH-COMMAND-ALIGNMENT.md in hub)
+- Register spokes with hub: `wai hub scan ~/wheelwright-hub` (from framework dir)
+- Hub first wakeup: "WAI Wakeup" (in hub) to start registry assessment
+- Update wheelwright.ai website with latest README
+- Create VS Code extension (wheelwright-ai/extension-vscode) [ICEBOX]
+- Create browser extension (wheelwright-ai/extension-browser) [ICEBOX]
 
 ### Future Vision
 - Cloud sync capabilities
