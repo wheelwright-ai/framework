@@ -501,7 +501,19 @@ Examples:
         context_parser.add_argument('path', nargs='?', default='.', help='Project path')
 
         subparsers.add_parser('changelog', help='Generate CHANGELOG.md from closed Lugs')
-    
+
+        # Modules command
+        modules_parser = subparsers.add_parser('modules', help='Module version management')
+        modules_subparsers = modules_parser.add_subparsers(dest='modules_command')
+
+        modules_subparsers.add_parser('status', help='Show module adoption status')
+        modules_subparsers.add_parser('list', help='List all available modules')
+
+        modules_show = modules_subparsers.add_parser('show', help='Show detailed module information')
+        modules_show.add_argument('module_name', help='Module name to show')
+
+        modules_subparsers.add_parser('pending', help='Show pending changes awaiting hub submission')
+
         # Configure IDE command
         config_ide_parser = subparsers.add_parser('configure-ide', help='Configure IDE integration')
         config_ide_subparsers = config_ide_parser.add_subparsers(dest='config_ide_command')
@@ -2745,6 +2757,8 @@ Examples:
             self._cmd_template(args)
         elif args.command == 'lug':
             self._cmd_lug(args)
+        elif args.command == 'modules':
+            self._cmd_modules(args)
         elif args.command == 'changelog':
             self._cmd_changelog(args)
         elif args.command == 'configure-ide':
@@ -4617,6 +4631,33 @@ Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
                 print_success("CHANGELOG.md updated.")
         else:
             print_info("No closed Lugs found to generate changelog from.")
+
+    def _cmd_modules(self, args):
+        """Handle modules command."""
+        from .commands import modules
+        spoke_dir = Path(os.getcwd()) / "WAI-Spoke"
+        framework_dir = Path(__file__).parent.parent  # Go up to framework root
+
+        if args.modules_command == 'status':
+            modules.cmd_modules_status(spoke_dir, framework_dir)
+        elif args.modules_command == 'list':
+            modules.cmd_modules_list(spoke_dir, framework_dir)
+        elif args.modules_command == 'show':
+            if not hasattr(args, 'module_name') or not args.module_name:
+                print("Error: Module name required")
+                print("Usage: wai modules show <module_name>")
+                return
+            modules.cmd_modules_show(args.module_name, spoke_dir, framework_dir)
+        elif args.modules_command == 'pending':
+            modules.cmd_modules_pending(spoke_dir)
+        else:
+            print("Usage: wai modules <command>")
+            print()
+            print("Commands:")
+            print("  status              Show module adoption status")
+            print("  list                List all available modules")
+            print("  show <module>       Show detailed module information")
+            print("  pending             Show pending changes awaiting hub submission")
 
     def _cmd_configure_ide(self, args):
         """Handle configure-ide command."""
