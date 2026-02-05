@@ -225,6 +225,143 @@ class LugManager:
             expanded[MINIFIED_KEYS.get(key, key)] = value
         return expanded
     
+    def _load_valid_options(self) -> Dict[str, Any]:
+        """Load controlled vocabulary from wai/valid_options.json"""
+        options_path = Path(__file__).parent / "valid_options.json"
+        if not options_path.exists():
+            return {}
+        try:
+            with open(options_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {}
+    
+    def _load_module_versions(self) -> Dict[str, Any]:
+        """Load module version definitions from wai/module_versions.json"""
+        versions_path = Path(__file__).parent / "module_versions.json"
+        if not versions_path.exists():
+            return {}
+        try:
+            with open(versions_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {}
+    
+    def _load_spoke_module_versions(self) -> Dict[str, Any]:
+        """Load spoke's module adoption state from WAI-Module-Versions.json"""
+        versions_path = self.spoke_dir / "WAI-Module-Versions.json"
+        if not versions_path.exists():
+            return {}
+        try:
+            with open(versions_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {}
+    
+    def _save_spoke_module_versions(self, data: Dict[str, Any]):
+        """Save spoke's module adoption state"""
+        versions_path = self.spoke_dir / "WAI-Module-Versions.json"
+        with open(versions_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2)
+    
+    def validate_lug(self, lug_data: Dict[str, Any]) -> tuple[Dict[str, Any], List[str]]:
+        """
+        Validate lug fields against controlled vocabulary.
+        Returns (validated_data, warnings)
+        """
+        valid_options = self._load_valid_options()
+        if not valid_options:
+            return lug_data, []  # No validation if file missing
+        
+        warnings = []
+        
+        # Validate category
+        category = lug_data.get("category")
+        if category:
+            valid_categories = valid_options.get("categories", {}).get("values", [])
+            if category not in valid_categories:
+                # Check deprecated mappings
+                deprecated = valid_options.get("categories", {}).get("deprecated", {})
+                if category in deprecated:
+                    canonical = deprecated[category]
+                    warnings.append(f"Replaced deprecated '{category}' with '{canonical}'")
+                    lug_data["category"] = canonical
+                else:
+                    warnings.append(f"Warning: '{category}' not in valid categories: {valid_categories}")
+        
+        # Validate modules_affected
+        modules = lug_data.get("modules_affected", [])
+        if modules:
+            valid_modules = valid_options.get("modules", {}).get("values", [])
+            aliases = valid_options.get("modules", {}).get("aliases", {})
+            fixed_modules = []
+            for module in modules:
+                if module in aliases:
+                    canonical = aliases[module]
+                    warnings.append(f"Replaced alias '{module}' with '{canonical}'")
+                    fixed_modules.append(canonical)
+                elif module in valid_modules:
+                    fixed_modules.append(module)
+                else:
+                    warnings.append(f"Warning: '{module}' not in valid modules: {valid_modules}")
+                    fixed_modules.append(module)  # Keep it anyway
+            lug_data["modules_affected"] = fixed_modules
+        
+        # Validate subcategory matches category
+        subcategory = lug_data.get("subcategory")
+        if subcategory and category:
+            valid_subs = valid_options.get("subcategories", {}).get(category, [])
+            if valid_subs and subcategory not in valid_subs:
+                warnings.append(f"Warning: '{subcategory}' not valid for category '{category}'. Valid: {valid_subs}")
+        
+        # Validate scope
+        scope = lug_data.get("scope")
+        if scope:
+            valid_scopes = valid_options.get("scopes", {}).get("values", [])
+            if scope not in valid_scopes:
+                warnings.append(f"Warning: '{scope}' not in valid scopes: {valid_scopes}")
+        
+        return lug_data, warnings
+    
+    def increment_module_version(self, module: str, lug_id: str) -> Optional[str]:
+        """
+        Increment module sub-version when lug affects a module.
+        Returns new version string (e.g., "2.0-1" or "2.0-2")
+        """
+        spoke_versions = self._load_spoke_module_versions()
+        if not spoke_versions or "adopted_modules" not in spoke_versions:
+            return None  # File doesn't exist yet
+        
+        adopted = spoke_versions.get("adopted_modules", {})
+        if module not in adopted:
+            return None  # Module not tracked
+        
+        module_info = adopted[module]
+        current_version = module_info.get("version", "1.0")
+        
+        # Parse version: "2.0" or "2.0-3"
+        if "-" in current_version:
+            base, count_str = current_version.rsplit("-", 1)
+            count = int(count_str) + 1
+        else:
+            base = current_version
+            count = 1
+        
+        new_version = f"{base}-{count}"
+        
+        # Update module info
+        module_info["version"] = new_version
+        module_info["local_changes"] = count
+        module_info["status"] = "dirty"
+        if "pending_lugs" not in module_info:
+            module_info["pending_lugs"] = []
+        module_info["pending_lugs"].append(lug_id)
+        
+        # Save updated versions
+        self._save_spoke_module_versions(spoke_versions)
+        
+        return new_version
+
     def _generate_id(self, title: str, created_at: str, parent_id: Optional[str] = None) -> str:
         """
         Generate ID.
@@ -293,11 +430,15 @@ class LugManager:
         origin: Optional[str] = None,
         from_file: Optional[str] = None,
         extras: Optional[Dict[str, Any]] = None,
-        parent_id: Optional[str] = None
-    ) -> Lug:
+        parent_id: Optional[str] = None,
+        category: Optional[str] = None,
+        subcategory: Optional[str] = None,
+        modules_affected: Optional[List[str]] = None,
+        scope: Optional[str] = None
+    ) -> tuple[Lug, List[str]]:
         """
-        Create a new Lug.
-        
+        Create a new Lug with validation.
+
         Args:
             title: Short description
             lug_type: Type (epic, issue, bug, work, ask, or custom)
@@ -308,9 +449,13 @@ class LugManager:
             origin: Source (e.g., "lint_test:flake8", "user_report:chat")
             from_file: Optional file path this relates to
             extras: Custom data
-        
+            category: Primary classification (enhancement, bug, performance, etc.)
+            subcategory: Fine-grained classification
+            modules_affected: List of modules this lug affects
+            scope: Where this applies (only_this_spoke, all_spokes, framework)
+
         Returns:
-            Created Lug instance
+            (Created Lug instance, List of validation warnings)
         """
         created_at = datetime.now().isoformat()
         lug_id = self._generate_id(title, created_at, parent_id)
@@ -318,7 +463,7 @@ class LugManager:
         # Auto-detect session if not provided
         if not session_id:
             session_id = self._get_active_session_id()
-        
+
         lug_data = {
             'id': lug_id,
             'title': title,
@@ -338,8 +483,31 @@ class LugManager:
             'from_file': from_file,
             'extras': extras or {}
         }
-        
-        lug = Lug(lug_data)
+
+        # Add new fields if provided
+        if category:
+            lug_data['category'] = category
+        if subcategory:
+            lug_data['subcategory'] = subcategory
+        if modules_affected:
+            lug_data['modules_affected'] = modules_affected
+        if scope:
+            lug_data['scope'] = scope
+
+        # Validate lug data
+        validated_data, warnings = self.validate_lug(lug_data)
+
+        # Increment module versions if modules affected
+        if validated_data.get('modules_affected'):
+            module_versions = {}
+            for module in validated_data['modules_affected']:
+                new_version = self.increment_module_version(module, lug_id)
+                if new_version:
+                    module_versions[module] = new_version
+            if module_versions:
+                validated_data['module_versions'] = module_versions
+
+        lug = Lug(validated_data)
         self.lugs[lug_id] = lug
         
         # Determine strict file path
@@ -356,8 +524,8 @@ class LugManager:
 
         self.lug_file_map[lug_id] = target_file
         self._atomic_append(target_file, lug.to_minified())
-        
-        return lug
+
+        return lug, warnings
     
     def get_lug(self, lug_id_prefix: str, include_closed: bool = False) -> Optional[Lug]:
         """

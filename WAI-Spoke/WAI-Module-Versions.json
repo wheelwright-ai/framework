@@ -2,29 +2,32 @@
   "_description": "Module adoption state for Wheelwright Framework spoke",
   "_structure_version": "1.0",
   "_purpose": "Track which module versions this spoke has adopted and local changes pending hub submission",
-
   "spoke_id": "7a1d9c5b3e2f",
   "spoke_name": "Wheelwright Framework",
   "framework_version": "3.1.0",
-
   "adopted_modules": {
     "lugs": {
-      "version": "2.0",
+      "version": "2.0-2",
       "clean_version": "2.0",
-      "local_changes": 0,
+      "local_changes": 2,
       "adopted_at": "2026-01-28T00:00:00Z",
       "source": "framework_dogfood",
-      "status": "clean",
-      "pending_lugs": []
+      "status": "dirty",
+      "pending_lugs": [
+        "8cd682b3dff04eac71296fdd4bb64ae74db4d73deccbc5742c827964d2ddc370",
+        "90a876bb89b3eeafc1b4dd5d254e59494cda5da9c5fa360795c9a7f9500d5e39"
+      ]
     },
     "registry": {
-      "version": "3.0",
+      "version": "3.0-1",
       "clean_version": "3.0",
-      "local_changes": 0,
+      "local_changes": 1,
       "adopted_at": "2026-02-02T00:00:00Z",
       "source": "framework_dogfood",
-      "status": "clean",
-      "pending_lugs": []
+      "status": "dirty",
+      "pending_lugs": [
+        "03bfcc322cb3617cdd914c01f05dc53eac1da7e3fef24926d89c5863032afb08"
+      ]
     },
     "teach": {
       "version": "1.0",
@@ -135,11 +138,8 @@
       "pending_lugs": []
     }
   },
-
   "pending_upgrades": [],
-
   "last_checked": "2026-02-05T01:30:00Z",
   "last_teach_cycle": null,
-
   "_notes": "Framework dogfoods its own module system. All modules at current version (clean state)."
 }
