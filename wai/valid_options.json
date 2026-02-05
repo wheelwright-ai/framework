@@ -1,0 +1,277 @@
+{
+  "_description": "Controlled vocabulary for Lug metadata - prevents ambiguous field sprawl",
+  "_version": "1.0",
+  "_last_updated": "2026-02-05",
+  "_purpose": "Framework maintains canonical field values to ensure zero-ambiguity metadata",
+
+  "modules": {
+    "_description": "Valid module names - must match module_versions.json",
+    "values": [
+      "lugs",
+      "registry",
+      "teach",
+      "discovery",
+      "templates",
+      "analytics",
+      "quality_gates",
+      "session",
+      "closeout",
+      "hub",
+      "spoke",
+      "cli",
+      "metrics",
+      "rebalancer",
+      "bootstrap",
+      "changelog"
+    ],
+    "aliases": {
+      "lug": "lugs",
+      "lug_system": "lugs",
+      "hub_registry": "registry",
+      "qg": "quality_gates",
+      "stats": "analytics"
+    }
+  },
+
+  "categories": {
+    "_description": "Primary classification of change type",
+    "values": [
+      "enhancement",
+      "bug",
+      "policy",
+      "feature",
+      "refactor",
+      "documentation",
+      "test",
+      "performance",
+      "security",
+      "maintenance"
+    ],
+    "deprecated": {
+      "improve": "enhancement",
+      "improvement": "enhancement",
+      "enhance": "enhancement",
+      "fix": "bug",
+      "bugfix": "bug",
+      "docs": "documentation",
+      "doc": "documentation",
+      "perf": "performance",
+      "optimize": "performance",
+      "optimization": "performance",
+      "sec": "security"
+    }
+  },
+
+  "subcategories": {
+    "_description": "Fine-grained classification",
+    "performance": [
+      "memory_optimization",
+      "speed_improvement",
+      "io_optimization",
+      "caching",
+      "lazy_loading",
+      "indexing",
+      "query_optimization"
+    ],
+    "bug": [
+      "crash",
+      "data_corruption",
+      "logic_error",
+      "ui_bug",
+      "integration_issue",
+      "race_condition",
+      "memory_leak",
+      "infinite_loop"
+    ],
+    "enhancement": [
+      "usability",
+      "api_improvement",
+      "error_handling",
+      "logging",
+      "validation",
+      "user_feedback",
+      "workflow_improvement"
+    ],
+    "security": [
+      "authentication",
+      "authorization",
+      "encryption",
+      "input_validation",
+      "vulnerability_fix",
+      "code_injection",
+      "xss_prevention",
+      "sql_injection"
+    ],
+    "feature": [
+      "new_capability",
+      "integration",
+      "export",
+      "import",
+      "automation",
+      "reporting"
+    ],
+    "refactor": [
+      "code_cleanup",
+      "architecture_improvement",
+      "modularity",
+      "naming_clarity",
+      "dependency_reduction"
+    ],
+    "documentation": [
+      "api_docs",
+      "user_guide",
+      "tutorial",
+      "example",
+      "inline_comments",
+      "architecture_docs"
+    ],
+    "test": [
+      "unit_test",
+      "integration_test",
+      "smoke_test",
+      "regression_test",
+      "performance_test",
+      "security_test"
+    ],
+    "maintenance": [
+      "dependency_update",
+      "cleanup",
+      "deprecation",
+      "migration",
+      "version_bump"
+    ]
+  },
+
+  "statuses": {
+    "_description": "Lug lifecycle states",
+    "values": [
+      "open",
+      "in_progress",
+      "blocked",
+      "complete",
+      "closed",
+      "deferred"
+    ],
+    "short_codes": {
+      "o": "open",
+      "p": "in_progress",
+      "b": "blocked",
+      "c": "complete",
+      "x": "closed",
+      "d": "deferred"
+    }
+  },
+
+  "priorities": {
+    "_description": "Priority levels for task ordering",
+    "values": [
+      "critical",
+      "high",
+      "medium",
+      "low",
+      "session_focus",
+      "before_next_epic"
+    ]
+  },
+
+  "scopes": {
+    "_description": "Where this learning applies",
+    "values": [
+      "only_this_spoke",
+      "all_spokes",
+      "wheel",
+      "hub",
+      "framework"
+    ],
+    "default": "only_this_spoke"
+  },
+
+  "target_audiences": {
+    "_description": "Who should receive this learning",
+    "values": [
+      "all_spokes",
+      "python_projects",
+      "nodejs_projects",
+      "rust_projects",
+      "go_projects",
+      "web_projects",
+      "cli_projects",
+      "hub_only",
+      "framework_only"
+    ]
+  },
+
+  "hub_submission_statuses": {
+    "_description": "Hub integration lifecycle",
+    "values": [
+      "pending",
+      "submitted",
+      "under_review",
+      "integrated",
+      "rejected",
+      "deferred"
+    ]
+  },
+
+  "types": {
+    "_description": "Lug types for organizational structure",
+    "values": [
+      "task",
+      "bug",
+      "epic",
+      "policy",
+      "learning",
+      "decision",
+      "question"
+    ]
+  },
+
+  "validation": {
+    "_description": "Validation rules for field enforcement",
+    "rules": {
+      "modules_affected": {
+        "type": "array",
+        "items_from": "modules.values",
+        "required": false,
+        "allow_aliases": true,
+        "auto_fix_aliases": true
+      },
+      "category": {
+        "type": "string",
+        "from": "categories.values",
+        "required": true,
+        "allow_deprecated": true,
+        "auto_fix_deprecated": true
+      },
+      "subcategory": {
+        "type": "string",
+        "from": "subcategories[category]",
+        "required": false,
+        "validate_against_category": true
+      },
+      "scope": {
+        "type": "string",
+        "from": "scopes.values",
+        "required": false,
+        "default": "only_this_spoke"
+      },
+      "priority": {
+        "type": "string",
+        "from": "priorities.values",
+        "required": false
+      },
+      "status": {
+        "type": "string",
+        "from": "statuses.values",
+        "required": true,
+        "allow_short_codes": true,
+        "auto_expand_short_codes": true
+      },
+      "target_audiences": {
+        "type": "array",
+        "items_from": "target_audiences.values",
+        "required": false
+      }
+    }
+  }
+}

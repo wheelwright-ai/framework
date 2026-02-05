@@ -1,0 +1,145 @@
+{
+  "_description": "Module adoption state for Wheelwright Framework spoke",
+  "_structure_version": "1.0",
+  "_purpose": "Track which module versions this spoke has adopted and local changes pending hub submission",
+
+  "spoke_id": "7a1d9c5b3e2f",
+  "spoke_name": "Wheelwright Framework",
+  "framework_version": "3.1.0",
+
+  "adopted_modules": {
+    "lugs": {
+      "version": "2.0",
+      "clean_version": "2.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-28T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "registry": {
+      "version": "3.0",
+      "clean_version": "3.0",
+      "local_changes": 0,
+      "adopted_at": "2026-02-02T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "teach": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-02-02T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "discovery": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-02-02T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "templates": {
+      "version": "1.5",
+      "clean_version": "1.5",
+      "local_changes": 0,
+      "adopted_at": "2026-01-20T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "analytics": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-15T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "quality_gates": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-18T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "session": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-15T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "closeout": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-15T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "hub": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-02-02T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "cli": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-15T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "rebalancer": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-15T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "bootstrap": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-28T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    },
+    "changelog": {
+      "version": "1.0",
+      "clean_version": "1.0",
+      "local_changes": 0,
+      "adopted_at": "2026-01-28T00:00:00Z",
+      "source": "framework_dogfood",
+      "status": "clean",
+      "pending_lugs": []
+    }
+  },
+
+  "pending_upgrades": [],
+
+  "last_checked": "2026-02-05T01:30:00Z",
+  "last_teach_cycle": null,
+
+  "_notes": "Framework dogfoods its own module system. All modules at current version (clean state)."
+}

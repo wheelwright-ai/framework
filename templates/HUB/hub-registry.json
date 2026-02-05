@@ -14,6 +14,7 @@
     {
       "_template": "Example wheel entry - delete this after first use",
       "wheel_id": "project-name",
+      "spoke_id": "abc123def456",
       "path": "/path/to/project",
       "status": "active",
       "taught_at": "2026-02-01T00:00:00Z",
@@ -21,7 +22,22 @@
       "last_sync": "2026-02-01T00:00:00Z",
       "learnings_contributed": 0,
       "signals_received": [],
-      "adoptions": []
+      "adoptions": [],
+      "module_adoption": {
+        "lugs": "2.0",
+        "registry": "3.0",
+        "teach": "1.0",
+        "discovery": "1.0",
+        "templates": "1.5",
+        "analytics": "1.0",
+        "quality_gates": "1.0",
+        "session": "1.0"
+      },
+      "pending_contributions": {},
+      "adoption_lag": {
+        "behind_modules": [],
+        "missing_modules": []
+      }
     }
   ],
 
@@ -44,6 +60,11 @@
     "last_teach": null,
     "total_learnings_received": 0,
     "total_signals_received": 0
+  },
+
+  "attention_needed": {
+    "_description": "Spokes requiring attention (pending contributions, version lag, etc.)",
+    "spokes": []
   },
 
   "_instructions": {

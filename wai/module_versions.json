@@ -1,0 +1,200 @@
+{
+  "_description": "Module-level version tracking for Wheelwright subsystems",
+  "_structure_version": "1.0",
+  "_last_updated": "2026-02-05",
+  "_purpose": "Track independent module evolution for granular upgrade adoption",
+
+  "framework": {
+    "version": "3.1.0",
+    "released": "2026-02-02",
+    "description": "Overall framework version - bumped when major integrations complete"
+  },
+
+  "modules": {
+    "lugs": {
+      "version": "2.0",
+      "released": "2026-01-28",
+      "description": "Lug system with minification and 12-char hex IDs",
+      "breaking_changes": [
+        "ID format changed from 64-char to 12-char",
+        "JSONL schema minified (short keys)"
+      ],
+      "files": [
+        "wai/lugs.py",
+        "wai/commands/lug.py",
+        "wai/utils/jsonl.py"
+      ],
+      "git_commits": ["bfa12ec", "70e1319", "ad470f9"]
+    },
+
+    "registry": {
+      "version": "3.0",
+      "released": "2026-02-02",
+      "description": "Hub registry with spoke_id cross-project integrity",
+      "breaking_changes": [
+        "Added spoke_id requirement",
+        "hub-registry.json schema updated"
+      ],
+      "files": [
+        "wai/spoke_id.py",
+        "wai/discovery.py",
+        "wai/file_validator.py"
+      ],
+      "git_commits": ["ac358af"]
+    },
+
+    "teach": {
+      "version": "1.0",
+      "released": "2026-02-02",
+      "description": "Teach/learn protocol with upgrade-adoption-plan distribution",
+      "breaking_changes": [],
+      "files": [
+        "wai/commands/teach.py",
+        "wai/upgrade_adoption.py",
+        "wai/reference_manager.py"
+      ],
+      "git_commits": ["7753d57", "14cec66"]
+    },
+
+    "discovery": {
+      "version": "1.0",
+      "released": "2026-02-02",
+      "description": "Auto-discovery scanner for WAI-Spoke directories",
+      "breaking_changes": [],
+      "files": [
+        "wai/discovery.py"
+      ],
+      "git_commits": ["ac358af"]
+    },
+
+    "templates": {
+      "version": "1.5",
+      "released": "2026-01-20",
+      "description": "Template wheels system for project initialization",
+      "breaking_changes": [],
+      "files": [
+        "wai/templates.py"
+      ],
+      "git_commits": ["d91e127"]
+    },
+
+    "analytics": {
+      "version": "1.0",
+      "released": "2026-01-15",
+      "description": "Metrics and token efficiency tracking",
+      "breaking_changes": [],
+      "files": [
+        "wai/metrics.py"
+      ],
+      "git_commits": ["8b1925c"]
+    },
+
+    "quality_gates": {
+      "version": "1.0",
+      "released": "2026-01-18",
+      "description": "Validation checks before closeout",
+      "breaking_changes": [],
+      "files": [
+        "wai/quality_gates.py"
+      ],
+      "git_commits": ["0b253b5"]
+    },
+
+    "session": {
+      "version": "1.0",
+      "released": "2026-01-15",
+      "description": "Session lifecycle and management",
+      "breaking_changes": [],
+      "files": [
+        "wai/session.py",
+        "wai/sessions.py"
+      ],
+      "git_commits": ["8b1925c"]
+    },
+
+    "closeout": {
+      "version": "1.0",
+      "released": "2026-01-15",
+      "description": "Session closeout processing and signal extraction",
+      "breaking_changes": [],
+      "files": [
+        "wai/closeout.py",
+        "wai/commands/closeout.py"
+      ],
+      "git_commits": ["8b1925c"]
+    },
+
+    "hub": {
+      "version": "1.0",
+      "released": "2026-02-02",
+      "description": "Hub management and coordination",
+      "breaking_changes": [],
+      "files": [
+        "wai/hub.py",
+        "wai/hub_indexer.py"
+      ],
+      "git_commits": ["0e6acc8"]
+    },
+
+    "cli": {
+      "version": "1.0",
+      "released": "2026-01-15",
+      "description": "Command-line interface and routing",
+      "breaking_changes": [],
+      "files": [
+        "wai/core.py"
+      ],
+      "git_commits": ["8b1925c"]
+    },
+
+    "rebalancer": {
+      "version": "1.0",
+      "released": "2026-01-15",
+      "description": "File rebalancer for token limits",
+      "breaking_changes": [],
+      "files": [
+        "wai/rebalancer.py"
+      ],
+      "git_commits": ["8b1925c"]
+    },
+
+    "bootstrap": {
+      "version": "1.0",
+      "released": "2026-01-28",
+      "description": "WAI-Point.json bootstrap file generation",
+      "breaking_changes": [],
+      "files": [
+        "wai/point.py",
+        "wai/bootstrap.py"
+      ],
+      "git_commits": ["bfa12ec"]
+    },
+
+    "changelog": {
+      "version": "1.0",
+      "released": "2026-01-28",
+      "description": "Git diff analysis and changelog generation",
+      "breaking_changes": [],
+      "files": [
+        "wai/changelog.py"
+      ],
+      "git_commits": ["70e1319"]
+    }
+  },
+
+  "version_policy": {
+    "_description": "How module versions are managed",
+    "major_bump": "Breaking changes that require user action or migration",
+    "minor_bump": "New features, non-breaking enhancements, integrated hub learnings",
+    "patch_bump": "Bug fixes, documentation, minor tweaks (not tracked separately)",
+    "sub_version": "Local changes pending hub submission (e.g., 2.0-3 = 3 uncommitted improvements)"
+  },
+
+  "sub_version_lifecycle": {
+    "_description": "Local change tracking workflow",
+    "increment": "When lug implements change to module, append -N (e.g., 2.0 → 2.0-1)",
+    "accumulate": "Each change increments N (2.0-1 → 2.0-2 → 2.0-3)",
+    "submit": "During closeout, lugs flagged for hub submission",
+    "reset": "After teach/reconciliation, hub bumps version and clears suffix (2.0-3 → 2.1)"
+  }
+}
