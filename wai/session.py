@@ -203,58 +203,96 @@ class SessionManager:
             List of signal entries to append to WAI-Signals.jsonl
         """
         signals = []
-        if not self.log_file.exists():
-            return signals
 
-        # Scan log for high-impact items
-        import re
-        
-        # Pattern for explicit decisions: "DECISION: <decision> (Impact: <N>)"
-        decision_pattern = re.compile(r'DECISION:\s*(.+?)\s*\(Impact:\s*(\d+)\)', re.IGNORECASE)
+        # Scan log for high-impact items (if log exists)
+        if self.log_file.exists():
+            import re
 
-        with open(self.log_file, 'r') as f:
-            for line in f:
-                try:
-                    turn = json.loads(line)
-                    content = turn.get('content', '')
-                    
-                    # check for explicit pattern
-                    match = decision_pattern.search(content)
-                    if match:
-                        decision_text = match.group(1)
-                        impact = int(match.group(2))
-                        
-                        if impact >= 8:
+            # Pattern for explicit decisions: "DECISION: <decision> (Impact: <N>)"
+            decision_pattern = re.compile(r'DECISION:\s*(.+?)\s*\(Impact:\s*(\d+)\)', re.IGNORECASE)
+
+            with open(self.log_file, 'r') as f:
+                for line in f:
+                    try:
+                        turn = json.loads(line)
+                        content = turn.get('content', '')
+
+                        # check for explicit pattern
+                        match = decision_pattern.search(content)
+                        if match:
+                            decision_text = match.group(1)
+                            impact = int(match.group(2))
+
+                            if impact >= 8:
+                                signals.append({
+                                    "timestamp": turn.get('timestamp', datetime.now().isoformat()),
+                                    "by": turn.get('type', 'assistant'),
+                                    "offers": [{
+                                        "type": "decision",
+                                        "topic": decision_text[:50],  # Brief topic
+                                        "impact": impact,
+                                        "context": content[:200]
+                                    }],
+                                    "flags": {"extracted_from_log": True}
+                                })
+
+                        # Check for metadata impact if present (structured logging)
+                        meta = turn.get('metadata', {})
+                        if meta.get('impact', 0) >= 8:
                             signals.append({
                                 "timestamp": turn.get('timestamp', datetime.now().isoformat()),
                                 "by": turn.get('type', 'assistant'),
                                 "offers": [{
-                                    "type": "decision",
-                                    "topic": decision_text[:50],  # Brief topic
-                                    "impact": impact,
+                                    "type": meta.get('type', 'insight'),
+                                    "topic": meta.get('topic', 'High Impact Item'),
+                                    "impact": meta.get('impact'),
                                     "context": content[:200]
                                 }],
-                                "flags": {"extracted_from_log": True}
+                                 "flags": {"extracted_from_metadata": True}
                             })
-                            
-                    # Check for metadata impact if present (structured logging)
-                    meta = turn.get('metadata', {})
-                    if meta.get('impact', 0) >= 8:
-                        signals.append({
-                            "timestamp": turn.get('timestamp', datetime.now().isoformat()),
-                            "by": turn.get('type', 'assistant'),
-                            "offers": [{
-                                "type": meta.get('type', 'insight'),
-                                "topic": meta.get('topic', 'High Impact Item'),
-                                "impact": meta.get('impact'),
-                                "context": content[:200]
-                            }],
-                             "flags": {"extracted_from_metadata": True}
-                        })
-                        
-                except json.JSONDecodeError:
-                    continue
-                    
+
+                    except json.JSONDecodeError:
+                        continue
+
+        # ALSO extract from high-impact closed Lugs
+        lugs_file = self.wai_spoke_dir / 'WAI-Lugs.jsonl'
+        if lugs_file.exists():
+            with open(lugs_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if line.strip():
+                        try:
+                            lug_data = json.loads(line)
+
+                            # Check if lug is closed
+                            status = lug_data.get('s', lug_data.get('status', ''))
+                            is_closed = status in ('c', 'closed')
+
+                            if not is_closed:
+                                continue
+
+                            # Get impact
+                            impact = lug_data.get('impact', lug_data.get('impact_score', 0))
+
+                            if impact >= 8:
+                                signals.append({
+                                    "timestamp": lug_data.get('closed_at', lug_data.get('updated_at', datetime.now().isoformat())),
+                                    "by": "lug_system",
+                                    "offers": [{
+                                        "type": "lug_decision",
+                                        "lug_type": lug_data.get('ty', lug_data.get('type', 'unknown')),
+                                        "topic": lug_data.get('title', 'Untitled')[:100],
+                                        "impact": impact,
+                                        "context": lug_data.get('description', '')[:300],
+                                        "scope": lug_data.get('scope', 'unknown'),
+                                        "modules": lug_data.get('modules_affected', []),
+                                        "category": lug_data.get('category', ''),
+                                        "lug_id": lug_data.get('i', lug_data.get('id', 'unknown'))
+                                    }],
+                                    "flags": {"extracted_from_lug": True, "lug_promoted": True}
+                                })
+                        except json.JSONDecodeError:
+                            continue
+
         return signals
 
     def clear_log(self) -> None:

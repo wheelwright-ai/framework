@@ -3,7 +3,7 @@
     "version": "3.1.0",
     "framework_version": "3.1.0",
     "spoke_structure_version": "3.0",
-    "created_at": "2026-02-05T09:40:29.451893Z",
+    "created_at": "2026-02-05T19:37:30.275437Z",
     "source": "framework",
     "target_type": "universal",
     "description": "Framework templates for universal distribution to hubs and spokes"

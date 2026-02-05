@@ -3073,32 +3073,51 @@ Examples:
                                             new_signals.append(signal)
                                     except: pass
                     
-                    # 2. Promote significant Lugs
-                    closed_lugs_file = spoke_path / 'WAI-Spoke' / 'lugs-closed.jsonl'
-                    if closed_lugs_file.exists():
-                        with open(closed_lugs_file, 'r', encoding='utf-8') as f:
+                    # 2. Promote significant Lugs from WAI-Lugs.jsonl
+                    lugs_file = spoke_path / 'WAI-Spoke' / 'WAI-Lugs.jsonl'
+                    if lugs_file.exists():
+                        with open(lugs_file, 'r', encoding='utf-8') as f:
                             for line in f:
                                 if line.strip():
                                     try:
-                                        # Use a simplified parser or LugManager if available, 
-                                        # but direct JSON for speed during hub sync
                                         lug_data = json.loads(line)
-                                        # Map minified keys if necessary, but here we assume impact/priority
-                                        # are stored in lugs.jsonl logic
-                                        impact = lug_data.get('i', 0) if 'i' in lug_data else lug_data.get('impact_score', 0)
-                                        priority = lug_data.get('p', '') if 'p' in lug_data else lug_data.get('priority', '')
-                                        
-                                        if (impact >= 8 or priority == 'high'):
+
+                                        # Check if lug is closed (s='c' or status='closed')
+                                        status = lug_data.get('s', lug_data.get('status', ''))
+                                        is_closed = status in ('c', 'closed')
+
+                                        if not is_closed:
+                                            continue  # Skip open lugs
+
+                                        # Get impact (minified 'impact' or full 'impact')
+                                        impact = lug_data.get('impact', lug_data.get('impact_score', 0))
+
+                                        # Get priority (could be minified or full)
+                                        priority = lug_data.get('priority', '')
+
+                                        # Get lug type for context
+                                        lug_type = lug_data.get('ty', lug_data.get('type', 'unknown'))
+
+                                        # Only promote high-impact closed lugs
+                                        if impact >= 8:
                                             new_signals.append({
                                                 'type': 'lug_promotion',
-                                                'id': lug_data.get('id', 'unknown'),
+                                                'lug_type': lug_type,
+                                                'id': lug_data.get('i', lug_data.get('id', 'unknown')),
                                                 'title': lug_data.get('title', 'Untitled Lug'),
-                                                'summary': lug_data.get('summary', ''),
+                                                'description': lug_data.get('description', '')[:500],  # Truncate long descriptions
                                                 'impact': impact,
-                                                'timestamp': lug_data.get('closed_at', datetime.now().isoformat()),
+                                                'value': lug_data.get('value', impact),
+                                                'scope': lug_data.get('scope', 'unknown'),
+                                                'modules_affected': lug_data.get('modules_affected', []),
+                                                'category': lug_data.get('category', ''),
+                                                'tags': lug_data.get('tags', []),
+                                                'timestamp': lug_data.get('closed_at', lug_data.get('updated_at', datetime.now().isoformat())),
                                                 'origin_spoke': spoke_name
                                             })
-                                    except: pass
+                                    except Exception as e:
+                                        # Skip malformed lugs but continue processing
+                                        pass
 
                     if new_signals:
                         # Append to hub knowledge
