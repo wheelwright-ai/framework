@@ -53,12 +53,12 @@ INJECTED_MESSAGE="CRITICAL: This is your first turn in this session.
 
 BEFORE responding to the user's message below, you MUST:
 
-1. Load WAI Context files (use Read tool):
-   - WAI-Spoke/_framework/WAI-Guide.md
-   - WAI-Spoke/WAI-State.json
-   - WAI-Spoke/WAI-Lugs.jsonl (filter: load_always=true or s='o'/'p')
+1. Review the Session Focus briefing below (pre-computed from WAI files):
+   - Core files (Guide, State, State.md, Lugs) already summarized
+   - All other WAI-Spoke files available on-demand
+   - Only load files when you need details beyond the briefing
 
-2. Provide this Session Focus briefing as part of your response:
+2. Present this Session Focus briefing as part of your response:
 
 $(generate_session_focus)
 

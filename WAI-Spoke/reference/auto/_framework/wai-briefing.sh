@@ -79,7 +79,73 @@ generate_wai_briefing() {
 
   # Context Health
   echo "### Context Health"
-  echo "- Token usage: ${token_pct}% of 200K"
+
+  # Only show token usage if we have real data (not default/unknown)
+  if [[ $token_pct -gt 0 ]]; then
+    echo "- Token usage: ${token_pct}% of 200K budget"
+  fi
+
+  # File loading stats with byte/token metrics
+  # Core files that get loaded into context
+  local CORE_FILES=(
+    "$PROJECT_DIR/WAI-Spoke/WAI-Guide.md"
+    "$PROJECT_DIR/WAI-Spoke/WAI-State.json"
+    "$PROJECT_DIR/WAI-Spoke/WAI-State.md"
+    "$PROJECT_DIR/WAI-Spoke/WAI-Lugs.jsonl"
+  )
+
+  # Calculate sizes of loaded files
+  local loaded_bytes=0
+  local loaded_count=0
+  for f in "${CORE_FILES[@]}"; do
+    if [[ -f "$f" ]]; then
+      local fsize=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo 0)
+      loaded_bytes=$((loaded_bytes + fsize))
+      loaded_count=$((loaded_count + 1))
+    fi
+  done
+
+  # Calculate total size of all WAI-Spoke files
+  local total_bytes=0
+  while IFS= read -r f; do
+    local fsize=$(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null || echo 0)
+    total_bytes=$((total_bytes + fsize))
+  done < <(find "$PROJECT_DIR/WAI-Spoke" -type f 2>/dev/null)
+
+  local total_files=$(find "$PROJECT_DIR/WAI-Spoke" -type f 2>/dev/null | wc -l)
+
+  # Prevent division by zero
+  if [[ $total_bytes -eq 0 ]]; then
+    echo "- Files: No WAI-Spoke files found"
+  else
+    local saved_bytes=$((total_bytes - loaded_bytes))
+    local saved_files=$((total_files - loaded_count))
+
+    # Convert bytes to human-readable and estimate tokens (1 token ≈ 4 bytes)
+    local loaded_kb=$((loaded_bytes / 1024))
+    local total_kb=$((total_bytes / 1024))
+    local saved_kb=$((saved_bytes / 1024))
+
+    local loaded_tokens_raw=$((loaded_bytes / 4))
+    local saved_tokens_raw=$((saved_bytes / 4))
+
+    # Format tokens with K suffix
+    local loaded_tokens="${loaded_tokens_raw}"
+    local saved_tokens="${saved_tokens_raw}"
+    if [[ $loaded_tokens_raw -ge 1000 ]]; then
+      loaded_tokens="$((loaded_tokens_raw / 1000))K"
+    fi
+    if [[ $saved_tokens_raw -ge 1000 ]]; then
+      saved_tokens="$((saved_tokens_raw / 1000))K"
+    fi
+
+    # Calculate percentages
+    local pct_files=$((loaded_count * 100 / total_files))
+    local pct_bytes=$((loaded_bytes * 100 / total_bytes))
+
+    echo "- File loading: $loaded_count loaded / $total_files total (${pct_files}%) → ${loaded_kb}KB / ${total_kb}KB (${pct_bytes}%) ≈ ${loaded_tokens} tokens [Saved: ${saved_kb}KB ≈ ${saved_tokens} tokens]"
+  fi
+
   echo "- Hub: $hub_status"
   echo "- Last teach: $last_teach"
   echo "- Git: $git_status"

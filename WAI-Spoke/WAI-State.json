@@ -140,7 +140,7 @@
     "context_usage_at_closeout": 0.67,
     "next_session_recommendation": "Phase H: Testing and lifecycle verification - test full create\u2192closeout\u2192teach\u2192reconcile cycle, verify sub-version reset works correctly",
     "protocol_completed": false,
-    "protocol_last_run": "2026-02-05T11:24:37Z",
+    "protocol_last_run": "2026-02-05T20:21:57Z",
     "briefing_provided": true,
     "current_session": null,
     "last_closeout": {
@@ -175,10 +175,10 @@
   },
   "analytics": {
     "sessions": {
-      "total_count": 79,
+      "total_count": 80,
       "total_turns": 970,
       "total_duration_seconds": 124,
-      "avg_duration_seconds": 1.5696202531645569
+      "avg_duration_seconds": 1.55
     },
     "token_efficiency": {
       "total_tokens_used": 132,
@@ -198,7 +198,7 @@
       "ended_at": "2026-01-19T16:02:17.995925"
     },
     "ai_wins": [],
-    "last_updated": "2026-02-05T03:24:50.789600"
+    "last_updated": "2026-02-05T12:54:28.139982"
   },
   "wheel": {
     "name": "Wheelwright Framework",
