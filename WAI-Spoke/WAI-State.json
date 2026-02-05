@@ -131,43 +131,45 @@
     ]
   },
   "_session_state": {
-    "last_session_id": "amp-rush-2026-02-02-phase4-spoke-id",
-    "last_modified_by": "Claude (Rush Mode)",
-    "last_modified_at": "2026-02-02T03:15:00Z",
+    "last_session_id": "module-version-tracking-2026-02-05",
+    "last_modified_by": "Claude Sonnet 4.5",
+    "last_modified_at": "2026-02-05T10:15:00Z",
     "requires_review": false,
     "review_reason": null,
-    "session_count": 22,
-    "context_usage_at_closeout": 0.35,
-    "next_session_recommendation": "Phase 4 continued: file operations middleware, run migration script, integration testing",
+    "session_count": 23,
+    "context_usage_at_closeout": 0.67,
+    "next_session_recommendation": "Phase H: Testing and lifecycle verification - test full create→closeout→teach→reconcile cycle, verify sub-version reset works correctly",
     "protocol_completed": true,
-    "protocol_last_run": "2026-02-05T09:49:46Z",
+    "protocol_last_run": "2026-02-05T10:14:23Z",
     "briefing_provided": true,
     "current_session": null,
     "last_closeout": {
-      "session_id": "amp-rush-2026-02-02-phase4-spoke-id",
-      "started_at": "2026-02-02T02:45:00Z",
-      "turn_count": 1,
+      "session_id": "module-version-tracking-2026-02-05",
+      "started_at": "2026-02-05T01:00:00Z",
+      "turn_count": 45,
       "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl",
-      "closed_at": "2026-02-02T03:15:00Z",
-      "summary": "Phase 4: Spoke ID System Implementation - COMPLETE. Implemented 12-char hex spoke_id system for cross-project integrity. Created wai/spoke_id.py (17 tests), wai/file_validator.py, migrate_scf_to_wheelwright.py, wai/discovery.py (9 tests). Integrated 'WAI hub scan' command. All epics m8n3p7q2r6s4 + n9o4p8q3r7s5 complete.",
+      "closed_at": "2026-02-05T10:15:00Z",
+      "summary": "Module-Level Version Tracking System - Phases A-G COMPLETE. Implemented granular module version tracking with sub-versioning (2.0-N), controlled vocabulary validation, CLI visibility commands, and automated changelog generation. Created 4 major commits with ~4,000 lines of structured metadata infrastructure. Features: zero-ambiguity metadata, auto-fixing deprecated terms, module dirty/clean state tracking, pending lug visibility, automated markdown changelogs grouped by module and category.",
       "key_topics": [
-        "spoke_id",
-        "cross-project integrity",
-        "auto-discovery",
-        "migration",
-        "hub registry"
+        "module-version-tracking",
+        "sub-versioning",
+        "controlled-vocabulary",
+        "validation",
+        "CLI-visibility",
+        "changelog-generation",
+        "metadata-infrastructure"
       ],
       "files_modified": [
-        "wai/spoke_id.py (new)",
-        "wai/file_validator.py (new)",
-        "wai/discovery.py (new)",
-        "wai/init.py (modified)",
-        "wai/core.py (modified)",
-        "migrate_scf_to_wheelwright.py (new)",
-        "tests/unit/test_spoke_id.py (new)",
-        "tests/unit/test_discovery.py (new)",
-        "WAI-Spoke/WAI-State.json (modified)",
-        "WAI-Spoke/WAI-Lugs.jsonl (modified)"
+        "wai/valid_options.json (new)",
+        "wai/module_versions.json (new)",
+        "wai/hub_changelog.py (new)",
+        "wai/commands/modules.py (new)",
+        "wai/lugs.py (enhanced)",
+        "wai/core.py (enhanced)",
+        "WAI-Spoke/WAI-Module-Versions.json (new)",
+        "WAI-Spoke/CHANGELOG-PENDING.md (generated)",
+        "templates/WAI-Spoke/WAI-Module-Versions.json (new)",
+        "templates/HUB/hub-registry.json (enhanced)"
       ]
     }
   },
@@ -440,6 +442,27 @@
       "rationale": "64-char IDs too long for human reference, hard to copy-paste, waste tokens. 12-char hex (first 12 of SHA256) provides 16 trillion combinations (2^48) - collision-resistant across all projects globally. Human-readable (4f1e687a652f), token-efficient (saves 52 chars/ID), reference-friendly.",
       "impact": 8,
       "by": "Mario Vaccari + Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-05",
+      "decision": "Module-Level Version Tracking with Sub-versioning - Granular module state visibility",
+      "rationale": "Implemented sub-versioning system to track local changes pending hub submission. Clean state (2.0) vs dirty state (2.0-3) enables immediate visibility into which modules have uncommitted improvements. Controlled vocabulary prevents metadata sprawl. Auto-fixes deprecated terms and aliases. CLI commands provide dashboard visibility. Automated changelog generation from lug metadata grouped by module and category. Foundation for teach/learn cycle reconciliation.",
+      "impact": 10,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-05",
+      "decision": "Controlled Vocabulary System - Zero-ambiguity metadata enforcement",
+      "rationale": "Created wai/valid_options.json with canonical field values for categories, modules, scopes, subcategories. Prevents field sprawl (no more 'improve' vs 'enhancement' vs 'optimization'). Auto-fixes deprecated terms and aliases during lug creation. Validates subcategories match parent categories. Framework maintains vocabulary, ensuring consistency across all lugs and spokes.",
+      "impact": 9,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-05",
+      "decision": "Automated Hub Changelog Generation - Structured release notes from lugs",
+      "rationale": "Hub automatically generates changelogs from pending lugs, grouped by module, category, and contributor. Calculates version bumps (2.0 → 2.1) based on pending changes. Formats as markdown with breaking changes highlighted. Tracks impact levels and subcategories. Enables automated documentation during teach cycles. Hub can communicate what changed and why.",
+      "impact": 9,
+      "by": "Claude Sonnet 4.5"
     }
   ],
   "next_steps": [
