@@ -103,6 +103,21 @@ class QualityGates:
         if not smell_result['passed']:
             results['warnings'].append(smell_result['message'])
 
+        # Gate 5: Benchmark Regression Testing (if benchmarks exist)
+        benchmark_result = self._check_benchmarks()
+        results['gates']['benchmarks'] = benchmark_result
+        if not benchmark_result['passed']:
+            if benchmark_result.get('blocking'):
+                results['blockers'].append(benchmark_result['message'])
+            else:
+                results['warnings'].append(benchmark_result['message'])
+
+        # Gate 6: README.md Accuracy (if README exists)
+        readme_result = self._check_readme_sync()
+        results['gates']['readme_sync'] = readme_result
+        if not readme_result['passed']:
+            results['warnings'].append(readme_result['message'])
+
         return results
 
     def _check_recent_test_run(self) -> Optional[str]:
@@ -544,3 +559,130 @@ class QualityGates:
 - Date: ___________
 - Status: [ ] PASS [ ] FAIL
         """
+
+    def _check_benchmarks(self) -> Dict[str, Any]:
+        """
+        Check if benchmarks pass (no performance regressions).
+
+        Returns:
+            Dict with validation results
+        """
+        benchmark_script = self.spoke_dir / 'scripts' / 'benchmarks' / 'benchmark.py'
+
+        if not benchmark_script.exists():
+            # No benchmarks defined - skip this gate
+            return {'passed': True, 'message': 'No benchmarks defined (skipped)'}
+
+        print_info("  Running benchmarks...")
+
+        try:
+            # Run benchmark with regression detection
+            result = subprocess.run(
+                ['python3', str(benchmark_script), '--regression'],
+                cwd=self.spoke_dir,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout
+            )
+
+            # Check if benchmarks detected regressions
+            if result.returncode != 0:
+                # Parse output for regression details
+                if 'REGRESSIONS DETECTED' in result.stdout or 'regression' in result.stdout.lower():
+                    return {
+                        'passed': False,
+                        'blocking': False,  # Warn but don't block
+                        'message': 'Performance regressions detected in benchmarks (review output above)'
+                    }
+                else:
+                    # Benchmark failed for other reasons
+                    return {
+                        'passed': False,
+                        'blocking': False,
+                        'message': f'Benchmark execution failed: {result.stderr[:200]}'
+                    }
+
+            return {'passed': True, 'message': 'Benchmarks passed - no performance regressions'}
+
+        except subprocess.TimeoutExpired:
+            return {
+                'passed': False,
+                'blocking': False,
+                'message': 'Benchmark timeout (>5min) - consider optimizing benchmark suite'
+            }
+        except Exception as e:
+            return {
+                'passed': False,
+                'blocking': False,
+                'message': f'Benchmark error: {str(e)[:100]}'
+            }
+
+    def _check_readme_sync(self) -> Dict[str, Any]:
+        """
+        Check if README.md is in sync with current state.
+
+        Returns:
+            Dict with validation results
+        """
+        readme_path = self.spoke_dir / 'README.md'
+
+        if not readme_path.exists():
+            # No README - skip this gate
+            return {'passed': True, 'message': 'No README.md found (skipped)'}
+
+        # Check if README was recently updated
+        repo = self._get_repo()
+        if not repo:
+            return {'passed': True, 'message': 'Not a git repo (README check skipped)'}
+
+        try:
+            # Get list of modified Python files
+            modified_py_files = []
+            for item in repo.index.diff(None):
+                if item.a_path.endswith('.py'):
+                    modified_py_files.append(item.a_path)
+            for item in repo.index.diff("HEAD"):
+                if item.a_path.endswith('.py'):
+                    modified_py_files.append(item.a_path)
+
+            # If code was modified but README wasn't, warn
+            if modified_py_files:
+                readme_modified = False
+                for item in repo.index.diff(None) + repo.index.diff("HEAD"):
+                    if 'README.md' in item.a_path:
+                        readme_modified = True
+                        break
+
+                if not readme_modified:
+                    return {
+                        'passed': False,
+                        'message': f'README.md not updated (code modified: {len(modified_py_files)} files)'
+                    }
+
+            # Check if version number in README matches WAI-State.json
+            if self.state_file.exists():
+                try:
+                    state_data = json.loads(self.state_file.read_text())
+                    version = state_data.get('wheelwright', {}).get('version', '0.0.0')
+
+                    readme_content = readme_path.read_text()
+                    # Look for version patterns in README
+                    version_pattern = re.compile(r'[Vv]ersion[:\s]+(\d+\.\d+\.\d+)')
+                    matches = version_pattern.findall(readme_content)
+
+                    if matches and version not in matches:
+                        return {
+                            'passed': False,
+                            'message': f'README version mismatch (found {matches[0]}, expected {version})'
+                        }
+
+                except Exception:
+                    pass  # Skip version check if parsing fails
+
+            return {'passed': True, 'message': 'README.md is up to date'}
+
+        except Exception as e:
+            return {
+                'passed': False,
+                'message': f'README check error: {str(e)[:100]}'
+            }

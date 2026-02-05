@@ -3,13 +3,13 @@
     "version": "3.1.0",
     "framework_version": "3.1.0",
     "spoke_structure_version": "3.0",
-    "created_at": "2026-02-03T23:25:57.851198Z",
+    "created_at": "2026-02-05T09:40:29.451893Z",
     "source": "framework",
     "target_type": "universal",
     "description": "Framework templates for universal distribution to hubs and spokes"
   },
   "verification": {
-    "hub_fingerprint": "93a9f3cb589d8a4eb8c368711cd14e9384dd6903cbedfb7af8c97e5a3519f27b",
+    "hub_fingerprint": "e882ac9363a25b49047d8f742aa82fe8c041169c819697a6b961f984edcd6632",
     "spoke_signature": null,
     "hash_algorithm": "sha256-hmac",
     "signed_by": "wheelwright-framework-3.1.0",
@@ -160,8 +160,8 @@
     {
       "name": "hub-registry.json",
       "path": "hub-registry.json",
-      "size": 1582,
-      "hash": "sha256:208cee31788ca89f250b2282cdf4ad7112c2d9fbe3afc465c344825c5a1988b6",
+      "size": 2135,
+      "hash": "sha256:6ee1c3839a3b2ce942da9bd0db6b9ec53373bf71c55ecd5e3ff54095451a30e7",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/hub-registry.json",
       "version": "3.1.0",
       "changed_from": "2.0.0",
@@ -235,7 +235,7 @@
     }
   ],
   "checksums": {
-    "all_files_hash": "sha256:9a97e3299b90bb6268eeb903020ac843a6aae81929651e30c4f0398b43cd6227",
+    "all_files_hash": "sha256:c7badb7932a17f5145a499ffd4637ae8692ac526876f2adbc3de7ec3fe23c803",
     "verification_required": true
   },
   "adoption_guidance": {

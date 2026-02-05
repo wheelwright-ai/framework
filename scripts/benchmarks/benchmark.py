@@ -853,13 +853,16 @@ def run_benchmark(save: bool = True, tag: bool = False, mode: str = MODE_WAI) ->
     print(color(f"  Running {mode_label} Benchmarks...", "bold"))
     print()
     
-    # By default, only run 'fast' profile to stay under 2min
-    profiles_to_run = {DEFAULT_PROFILE: PROFILES[DEFAULT_PROFILE]}
-    
-    # Allow running all profiles via command line (for comprehensive benchmarks)
-    if '--profile=all' in sys.argv:
+    # Determine which profiles to run based on command line arg
+    profile_arg = getattr(sys, '_benchmark_profile', DEFAULT_PROFILE)  # Set by main()
+
+    if profile_arg == "all":
         profiles_to_run = PROFILES
         print(color("  [Running ALL profiles - may take >2min]", "yellow"))
+    elif profile_arg in PROFILES:
+        profiles_to_run = {profile_arg: PROFILES[profile_arg]}
+    else:
+        profiles_to_run = {DEFAULT_PROFILE: PROFILES[DEFAULT_PROFILE]}
     
     for profile_name, profile_config in profiles_to_run.items():
         print(f"  ⏳ Running {profile_name} profile...", end=" ", flush=True)
@@ -1101,9 +1104,13 @@ Examples:
     parser.add_argument("--tag", action="store_true", help="Create git tag for this run")
     parser.add_argument("--history", action="store_true", help="Show benchmark history")
     parser.add_argument("--no-save", action="store_true", help="Don't save results")
+    parser.add_argument("--profile", choices=["fast", "small", "medium", "all"], default="fast", help="Benchmark profile to run (default: fast)")
     
     args = parser.parse_args()
-    
+
+    # Set profile for run_benchmark to access
+    sys._benchmark_profile = args.profile
+
     if args.verbose:
         show_verbose()
     elif args.history:
