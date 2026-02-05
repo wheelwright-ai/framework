@@ -500,7 +500,10 @@ Examples:
         context_parser = subparsers.add_parser('context', help='Output context for LLM paste')
         context_parser.add_argument('path', nargs='?', default='.', help='Project path')
 
-        subparsers.add_parser('changelog', help='Generate CHANGELOG.md from closed Lugs')
+        # Changelog command
+        changelog_parser = subparsers.add_parser('changelog', help='Generate CHANGELOG.md from closed Lugs')
+        changelog_subparsers = changelog_parser.add_subparsers(dest='changelog_command')
+        changelog_subparsers.add_parser('pending', help='Generate changelog from pending lugs (for hub submission)')
 
         # Modules command
         modules_parser = subparsers.add_parser('modules', help='Module version management')
@@ -4616,13 +4619,21 @@ Co-Authored-By: Wheelwright AI <noreply@wheelwright.ai>"""
 
     def _cmd_changelog(self, args):
         """Handle changelog command."""
+        # Check if subcommand is 'pending'
+        if hasattr(args, 'changelog_command') and args.changelog_command == 'pending':
+            from .hub_changelog import cmd_generate_changelog
+            spoke_dir = Path(os.getcwd()) / "WAI-Spoke"
+            cmd_generate_changelog(spoke_dir)
+            return
+
+        # Default: generate from closed lugs
         from .changelog import ChangelogGenerator
         from .utils.input import print_success, print_info, print_markdown
-        
+
         print_info("Generating changelog from closed Lugs...")
         generator = ChangelogGenerator(Path(os.getcwd()))
         content = generator.generate_changelog_content()
-        
+
         if content:
             print_success("\nGenerated Content Preview:\n")
             print_markdown(content)

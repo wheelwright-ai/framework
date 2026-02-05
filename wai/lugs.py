@@ -81,6 +81,14 @@ class Lug:
         self.justification: Optional[str] = data.get('justification')
         self.from_file: Optional[str] = data.get('from_file')
         self.extras: Dict[str, Any] = data.get('extras') or {}
+
+        # Module tracking fields (new)
+        self.category: Optional[str] = data.get('category')
+        self.subcategory: Optional[str] = data.get('subcategory')
+        self.modules_affected: List[str] = data.get('modules_affected') or []
+        self.scope: Optional[str] = data.get('scope')
+        self.module_versions: Dict[str, str] = data.get('module_versions') or {}
+        self.hub_submission: Optional[Dict[str, Any]] = data.get('hub_submission')
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to full dict with all fields."""
@@ -104,7 +112,13 @@ class Lug:
             'summary': self.summary,
             'justification': self.justification,
             'from_file': self.from_file,
-            'extras': self.extras
+            'extras': self.extras,
+            'category': self.category,
+            'subcategory': self.subcategory,
+            'modules_affected': self.modules_affected,
+            'scope': self.scope,
+            'module_versions': self.module_versions,
+            'hub_submission': self.hub_submission
         }
     
     def to_minified(self) -> Dict[str, Any]:

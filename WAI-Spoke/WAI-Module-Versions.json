@@ -7,26 +7,31 @@
   "framework_version": "3.1.0",
   "adopted_modules": {
     "lugs": {
-      "version": "2.0-2",
+      "version": "2.0-5",
       "clean_version": "2.0",
-      "local_changes": 2,
+      "local_changes": 5,
       "adopted_at": "2026-01-28T00:00:00Z",
       "source": "framework_dogfood",
       "status": "dirty",
       "pending_lugs": [
         "8cd682b3dff04eac71296fdd4bb64ae74db4d73deccbc5742c827964d2ddc370",
-        "90a876bb89b3eeafc1b4dd5d254e59494cda5da9c5fa360795c9a7f9500d5e39"
+        "90a876bb89b3eeafc1b4dd5d254e59494cda5da9c5fa360795c9a7f9500d5e39",
+        "55e9e190fadc4fb680818b5e8a3d253f3908dfbceeaedaff6d07a77eb70f0a60",
+        "d4c6a80c1261bbbfa7db9611eacf0ba4f00d29ce83f4babfcf058a74652dd836",
+        "2d0d4e70ed079edce1235d4fb1103017ee33302b4b85668ff42a7ad2500d0447"
       ]
     },
     "registry": {
-      "version": "3.0-1",
+      "version": "3.0-3",
       "clean_version": "3.0",
-      "local_changes": 1,
+      "local_changes": 3,
       "adopted_at": "2026-02-02T00:00:00Z",
       "source": "framework_dogfood",
       "status": "dirty",
       "pending_lugs": [
-        "03bfcc322cb3617cdd914c01f05dc53eac1da7e3fef24926d89c5863032afb08"
+        "03bfcc322cb3617cdd914c01f05dc53eac1da7e3fef24926d89c5863032afb08",
+        "7a3ce4680da8f3b3f89c55c5ccda64cea5a8f029833c5d18ddc084e8a973cc20",
+        "8e58b0268ceaf2a23a2cbfaceaccce687465196c3a36ab676d267396f2773ad6"
       ]
     },
     "teach": {
@@ -93,13 +98,15 @@
       "pending_lugs": []
     },
     "hub": {
-      "version": "1.0",
+      "version": "1.0-1",
       "clean_version": "1.0",
-      "local_changes": 0,
+      "local_changes": 1,
       "adopted_at": "2026-02-02T00:00:00Z",
       "source": "framework_dogfood",
-      "status": "clean",
-      "pending_lugs": []
+      "status": "dirty",
+      "pending_lugs": [
+        "8e58b0268ceaf2a23a2cbfaceaccce687465196c3a36ab676d267396f2773ad6"
+      ]
     },
     "cli": {
       "version": "1.0",
