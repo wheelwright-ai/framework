@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if [ -f .gitignore ])",
+      "Bash(then grep -q _custom .gitignore)",
+      "Bash(else echo _custom/)",
+      "Bash(fi)",
+      "Bash(if [ -d sessions ])",
+      "Bash(then mv sessions/* _sessions/)",
+      "Bash(if:*)",
+      "Bash(then mv hooks/* _hooks/)",
+      "Bash(else echo \"Smoke tests not found at expected location\")",
+      "Bash(./.claude/hooks/user-prompt-submit.sh)",
+      "Bash(__NEW_LINE_d1b150e8a10e76de__ echo \"=== This Session''s Global Lugs \\(load_always=true\\) ===\")",
+      "Bash(__NEW_LINE_d1b150e8a10e76de__ echo \"\")",
+      "Bash(git remote set-url:*)",
+      "Bash(ssh:*)",
+      "Bash(WAI-Spoke/_hooks/session-start.sh)",
+      "Bash(./WAI-Spoke/_hooks/session-start.sh)",
+      "Bash(.claude/hooks/user-prompt-submit.sh)",
+      "Bash(ln:*)",
+      "Bash(git log:*)",
+      "Bash(else echo \"No benchmarks directory\")",
+      "Bash(tree:*)",
+      "Bash(then)",
+      "Bash(else)",
+      "Bash(git -C . ls-files WAI-Spoke/)",
+      "Bash(__NEW_LINE_1b0cc56bc328d1e6__ echo \"=== PROJECT STRUCTURE ===\")",
+      "Bash(wc -l echo \"Routes:\" ls -1 /home/mario/projects/wheelwright-ai/framework/benchmarks/projects/medium/src/routes/*.py)",
+      "Bash(wc -l echo \"Utils:\" ls -1 /home/mario/projects/wheelwright-ai/framework/benchmarks/projects/medium/src/utils/*.py)",
+      "Bash(wc -l echo \"Tests:\" ls -1 /home/mario/projects/wheelwright-ai/framework/benchmarks/projects/medium/tests/test_*.py)",
+      "Bash(wc -l echo \"Reference Docs:\" ls -1 /home/mario/projects/wheelwright-ai/framework/benchmarks/projects/medium/reference/*.md)",
+      "Bash(__NEW_LINE_8391924d3bd1c859__ echo \"\")",
+      "Bash(python -m pytest:*)"
+    ]
+  }
+}
