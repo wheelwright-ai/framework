@@ -10,15 +10,21 @@ if "%RESOURCES_DIR:~-1%"=="\" set "RESOURCES_DIR=%RESOURCES_DIR:~0,-1%"
 
 REM If running from UNC, convert to Windows path (Z: drive)
 if /i "%RESOURCES_DIR:~0,15%"=="\\wsl.localhost" (
+  REM Map Z: drive
   net use Z: \\wsl$\Ubuntu >nul 2>&1
-  if exist "Z:\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helpers\resources" (
-    set "RESOURCES_DIR=Z:\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helpers\resources"
+  REM Convert UNC to Z: path: \\wsl.localhost\Ubuntu\home\... -> Z:\home\...
+  set "RESOURCES_DIR=Z:!RESOURCES_DIR:*\Ubuntu=!"
+  REM Verify Z: drive works
+  if not exist "!RESOURCES_DIR!" (
+    echo ERROR: Could not map to Z: drive. Run from Windows path instead.
+    pause
+    exit /b 1
   )
 )
 
-set "HELPERS_DIR=%RESOURCES_DIR:~0,-10%"
-set "SPOKE_DIR=%HELPERS_DIR:~0,-8%"
-set "PROJECT_DIR=%SPOKE_DIR:~0,-10%"
+set "HELPERS_DIR=!RESOURCES_DIR:~0,-10!"
+set "SPOKE_DIR=!HELPERS_DIR:~0,-8!"
+set "PROJECT_DIR=!SPOKE_DIR:~0,-10!"
 
 set "LOG_FILE=%HELPERS_DIR%\output\open_workspace.log"
 echo [%DATE% %TIME%] open_workspace start >> "!LOG_FILE!"
