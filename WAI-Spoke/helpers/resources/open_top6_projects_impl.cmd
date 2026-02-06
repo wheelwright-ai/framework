@@ -23,17 +23,18 @@ if exist "!STATE_FILE!" (
   )
 )
 
-REM Hub registry path - convert WSL to Windows
-if defined HUB_PATH (
-  for /f "usebackq tokens=* delims=" %%A in (`powershell -NoProfile -Command "wsl wslpath -w '!HUB_PATH!' 2>$null"`) do (
-    set "HUB_PATH_WIN=%%A"
+REM Hub registry path - derive from PROJECT_DIR
+REM PROJECT_DIR is C:\Users\User\projects\wheelwright-ai\framework (Windows path)
+REM Hub should be at C:\Users\User\projects\wheelwright-ai\hub
+for %%A in ("!PROJECT_DIR!") do (
+  for %%B in ("%%~dpA.") do (
+    set "HUB_BASE=%%~fB"
   )
-  if defined HUB_PATH_WIN (
-    set "HUB_REGISTRY=!HUB_PATH_WIN!\hub\hub-registry.json"
-  ) else (
-    set "HUB_REGISTRY=%USERPROFILE%\wheelwright-hub\hub\hub-registry.json"
-  )
-) else (
+)
+set "HUB_REGISTRY=!HUB_BASE!\hub\hub\hub-registry.json"
+
+REM Fallback to standard location if not found
+if not exist "!HUB_REGISTRY!" (
   set "HUB_REGISTRY=%USERPROFILE%\wheelwright-hub\hub\hub-registry.json"
 )
 
