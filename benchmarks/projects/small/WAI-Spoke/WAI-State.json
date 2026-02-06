@@ -1,0 +1,28 @@
+{
+  "project_name": "small-benchmark",
+  "version": "1.0.0",
+  "description": "Small benchmark project for testing Wheelwright efficiency",
+  "file_manifest": {
+    "core_files": [
+      "src/formatters/data.py",
+      "src/utils/logger.py"
+    ],
+    "supporting_files": [
+      "src/formatters/__init__.py",
+      "src/utils/__init__.py",
+      "src/__init__.py"
+    ],
+    "test_files": [
+      "tests/test_formatter.py"
+    ],
+    "reference_files": [
+      "reference/*.md"
+    ]
+  },
+  "file_load_policy": {
+    "load_always": ["src/formatters/data.py"],
+    "load_on_demand": ["src/utils/logger.py", "tests/test_formatter.py"],
+    "never_load": ["reference/*"]
+  },
+  "notes": "Reference files are large documentation - never needed for development tasks"
+}

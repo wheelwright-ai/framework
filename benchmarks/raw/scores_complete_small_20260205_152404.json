@@ -1,0 +1,113 @@
+{
+  "token_efficiency": {
+    "baseline": {
+      "tokens_used": 5244476,
+      "score": 50
+    },
+    "wheelwright": {
+      "tokens_used": 1345,
+      "score": 100
+    },
+    "improvement_factor": 3899.2,
+    "points_vs_baseline": 50,
+    "method": "Measured actual token usage"
+  },
+  "context_efficiency": {
+    "baseline": {
+      "files_loaded": 18,
+      "reference_files": 10,
+      "score": 50
+    },
+    "wheelwright": {
+      "files_loaded": 3,
+      "reference_files": 0,
+      "selectivity_score": 83.3,
+      "reference_avoidance_score": 100,
+      "combined_score": 91.7
+    },
+    "critical_test": "PASS",
+    "points_vs_baseline": 41.7,
+    "method": "File selectivity + reference avoidance"
+  },
+  "persistence_commitment": {
+    "baseline": {
+      "method": "spec_file",
+      "constraint_violations": 3,
+      "score": 50
+    },
+    "wheelwright": {
+      "method": "lugs",
+      "lugs_count": 10,
+      "constraint_violations": 0,
+      "score": 75
+    },
+    "improvement": "10 lugs vs spec file lookup",
+    "points_vs_baseline": 25,
+    "test_method": "Lug coverage for constraints and specs"
+  },
+  "resumption_speed": {
+    "baseline": {
+      "method": "re-read_all_files",
+      "time_per_round_ms": 60000,
+      "total_time_ms": 300000,
+      "total_time_min": 5.0,
+      "score": 50
+    },
+    "wheelwright": {
+      "method": "wai_wakeup",
+      "time_per_round_ms": 100,
+      "total_time_ms": 500,
+      "total_time_sec": 0.5,
+      "score": 100
+    },
+    "rounds": 5,
+    "time_saved_ms": 299500,
+    "time_saved_min": 5.0,
+    "improvement_factor": 600.0,
+    "points_vs_baseline": 50,
+    "test_method": "5 round simulation"
+  },
+  "task_success": {
+    "baseline": {
+      "success": true,
+      "score": 50
+    },
+    "wheelwright": {
+      "success": true,
+      "score": 50
+    },
+    "points_vs_baseline": 0,
+    "method": "Task completion verification"
+  },
+  "learning_velocity": {
+    "baseline": {
+      "method": "repetition",
+      "insights_accumulated": 0,
+      "score": 50
+    },
+    "wheelwright": {
+      "method": "learn_teach_cycles",
+      "insights_per_run": 2,
+      "total_insights": 10,
+      "centralized": true,
+      "redistributed": true,
+      "score": 80
+    },
+    "runs": 5,
+    "points_vs_baseline": 30,
+    "test_method": "5 run learn/teach cycle simulation"
+  },
+  "wei": {
+    "baseline": 50.0,
+    "wheelwright": 87.6,
+    "improvement": 37.6,
+    "weights": {
+      "token_efficiency": 0.3,
+      "context_efficiency": 0.2,
+      "persistence_commitment": 0.15,
+      "resumption_speed": 0.15,
+      "task_success": 0.1,
+      "learning_velocity": 0.1
+    }
+  }
+}

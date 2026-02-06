@@ -1,0 +1,84 @@
+{
+  "token_efficiency": {
+    "baseline": {
+      "tokens_used": 26245347,
+      "score": 50
+    },
+    "wheelwright": {
+      "tokens_used": 12586,
+      "score": 100
+    },
+    "improvement_factor": 2085.3,
+    "points_vs_baseline": 50
+  },
+  "context_efficiency": {
+    "baseline": {
+      "files_loaded": 53,
+      "reference_files": 10,
+      "score": 50
+    },
+    "wheelwright": {
+      "files_loaded": 14,
+      "reference_files": 0,
+      "selectivity_score": 73.6,
+      "reference_avoidance_score": 100,
+      "combined_score": 86.8
+    },
+    "critical_test": "PASS",
+    "points_vs_baseline": 36.8
+  },
+  "persistence_commitment": {
+    "baseline": {
+      "score": 50
+    },
+    "wheelwright": {
+      "score": 50
+    },
+    "note": "Not tested in small tier (no multi-phase constraints)",
+    "points_vs_baseline": 0
+  },
+  "resumption_speed": {
+    "baseline": {
+      "score": 50
+    },
+    "wheelwright": {
+      "score": 50
+    },
+    "note": "Not tested in small tier (no forced interruption)",
+    "points_vs_baseline": 0
+  },
+  "task_success": {
+    "baseline": {
+      "success": true,
+      "score": 50
+    },
+    "wheelwright": {
+      "success": true,
+      "score": 50
+    },
+    "points_vs_baseline": 0
+  },
+  "learning_velocity": {
+    "baseline": {
+      "score": 50
+    },
+    "wheelwright": {
+      "score": 50
+    },
+    "note": "Not tested in single run (need 5 consecutive runs)",
+    "points_vs_baseline": 0
+  },
+  "wei": {
+    "baseline": 50.0,
+    "wheelwright": 72.4,
+    "improvement": 22.4,
+    "weights": {
+      "token_efficiency": 0.3,
+      "context_efficiency": 0.2,
+      "persistence_commitment": 0.15,
+      "resumption_speed": 0.15,
+      "task_success": 0.1,
+      "learning_velocity": 0.1
+    }
+  }
+}

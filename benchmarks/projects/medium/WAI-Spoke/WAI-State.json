@@ -1,0 +1,162 @@
+{
+  "project_name": "medium-benchmark",
+  "version": "1.0.0",
+  "description": "Medium tier e-commerce API benchmark for Wheelwright persistence module testing",
+  "tier": "medium",
+  "file_count": 55,
+  "reference_size_mb": 100,
+  "objectives": [
+    "Test Persistence module for constraint memory across phases",
+    "Validate JWT authentication implementation",
+    "Ensure public routes remain unprotected",
+    "Implement rate limiting while preserving JWT structure"
+  ],
+  "file_manifest": {
+    "core_files": [
+      "src/config.py",
+      "src/models/__init__.py",
+      "src/models/database.py",
+      "src/services/user_service.py",
+      "src/services/product_service.py",
+      "src/services/order_service.py",
+      "src/services/payment_service.py",
+      "src/routes/auth.py",
+      "src/routes/health.py",
+      "src/routes/users.py",
+      "src/routes/products.py",
+      "src/routes/orders.py",
+      "src/routes/payments.py",
+      "src/middleware/error_handler.py"
+    ],
+    "supporting_files": [
+      "src/__init__.py",
+      "src/models/__init__.py",
+      "src/services/__init__.py",
+      "src/routes/__init__.py",
+      "src/middleware/__init__.py",
+      "src/utils/__init__.py",
+      "src/utils/password.py",
+      "src/utils/validation.py",
+      "src/utils/logger.py"
+    ],
+    "test_files": [
+      "tests/__init__.py",
+      "tests/test_auth.py",
+      "tests/test_user_service.py",
+      "tests/test_product_service.py",
+      "tests/test_order_service.py",
+      "tests/test_validation.py"
+    ],
+    "reference_files": [
+      "reference/*.md"
+    ]
+  },
+  "file_load_policy": {
+    "load_always": [
+      "src/config.py",
+      "src/routes/auth.py",
+      "src/routes/health.py",
+      "src/services/user_service.py"
+    ],
+    "load_on_demand": [
+      "src/routes/users.py",
+      "src/routes/products.py",
+      "src/routes/orders.py",
+      "src/routes/payments.py",
+      "src/services/product_service.py",
+      "src/services/order_service.py",
+      "src/services/payment_service.py",
+      "src/middleware/error_handler.py",
+      "tests/test_auth.py",
+      "tests/test_user_service.py"
+    ],
+    "never_load": [
+      "reference/*"
+    ]
+  },
+  "constraints": {
+    "phase_1": {
+      "name": "Add Authentication Middleware",
+      "critical_constraint": "Must use JWT tokens (not sessions)",
+      "description": "Implement JWT token validation middleware",
+      "key_files": [
+        "src/routes/auth.py",
+        "src/middleware/error_handler.py"
+      ]
+    },
+    "phase_2": {
+      "name": "Protect All Routes with Auth",
+      "critical_constraint": "Public routes (/health, /docs) must stay unprotected",
+      "description": "Apply auth middleware to all routes except public ones",
+      "public_routes": [
+        "/health",
+        "/status",
+        "/metrics",
+        "/auth/register",
+        "/auth/login",
+        "/products"
+      ],
+      "protected_routes": [
+        "/users",
+        "/orders",
+        "/payments",
+        "/auth/logout",
+        "/auth/refresh"
+      ],
+      "key_files": [
+        "src/routes/auth.py",
+        "src/routes/health.py",
+        "src/routes/users.py",
+        "src/routes/orders.py",
+        "src/routes/payments.py"
+      ]
+    },
+    "phase_3": {
+      "name": "Add Rate Limiting",
+      "critical_constraint": "Must preserve JWT requirement from Phase 1",
+      "description": "Implement rate limiting that respects JWT authentication",
+      "rate_limit_config": {
+        "requests_per_minute": 100,
+        "burst_size": 20
+      },
+      "key_files": [
+        "src/config.py",
+        "src/middleware/error_handler.py"
+      ]
+    }
+  },
+  "public_routes": {
+    "health_check": "/health",
+    "status": "/status",
+    "metrics": "/metrics",
+    "register": "/auth/register",
+    "login": "/auth/login",
+    "product_list": "/products",
+    "product_details": "/products/{id}"
+  },
+  "protected_routes": {
+    "get_profile": "/users/{id}",
+    "update_profile": "/users/{id}",
+    "list_users": "/users",
+    "create_order": "/orders",
+    "get_order": "/orders/{id}",
+    "list_orders": "/orders",
+    "create_payment": "/payments",
+    "get_payment": "/payments/{id}",
+    "refund_payment": "/payments/{id}/refund"
+  },
+  "test_coverage": {
+    "authentication": "test_auth.py",
+    "user_management": "test_user_service.py",
+    "product_catalog": "test_product_service.py",
+    "order_processing": "test_order_service.py",
+    "validation": "test_validation.py"
+  },
+  "notes": {
+    "reference_files": "Large documentation files - never needed for development tasks, always skip loading",
+    "constraint_memory": "Critical test of Persistence module - constraints from Phase 1 and 2 must be remembered in Phase 3",
+    "jwt_requirement": "All phases must maintain JWT token-based authentication (not session-based)",
+    "public_routes": "These routes must remain publicly accessible in Phases 2 and 3",
+    "rate_limiting": "Phase 3 rate limiting must not break JWT token validation from Phase 1"
+  }
+}

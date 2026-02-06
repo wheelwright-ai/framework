@@ -1,0 +1,129 @@
+[
+  {
+    "timestamp": "2026-02-05T23:24:04.768357",
+    "run_id": "ceab03b6",
+    "tier": "small",
+    "agent_type": "baseline",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "README.md",
+          "size_bytes": 375,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-State.json",
+          "size_bytes": 766,
+          "is_reference_file": false
+        },
+        {
+          "path": "reference/api_reference_v6.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v8.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v4.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v2.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v3.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v1.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v10.md",
+          "size_bytes": 2096919,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v5.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v9.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v7.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "src/__init__.py",
+          "size_bytes": 53,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_formatter.py",
+          "size_bytes": 671,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/formatters/__init__.py",
+          "size_bytes": 87,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/formatters/data.py",
+          "size_bytes": 1668,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__init__.py",
+          "size_bytes": 94,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/logger.py",
+          "size_bytes": 1044,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 18,
+      "total_bytes": 20973939,
+      "tokens": 5243476
+    }
+  },
+  {
+    "timestamp": "2026-02-05T23:24:04.768401",
+    "run_id": "ceab03b6",
+    "tier": "small",
+    "agent_type": "baseline",
+    "event": "token_used",
+    "data": {
+      "count": 1000,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-02-05T23:24:04.768407",
+    "run_id": "ceab03b6",
+    "tier": "small",
+    "agent_type": "baseline",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 5000,
+      "tokens_used": 5244476
+    }
+  }
+]

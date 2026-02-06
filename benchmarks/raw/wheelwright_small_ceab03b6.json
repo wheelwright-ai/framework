@@ -1,0 +1,54 @@
+[
+  {
+    "timestamp": "2026-02-05T23:24:04.769371",
+    "run_id": "ceab03b6",
+    "tier": "small",
+    "agent_type": "wheelwright",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "src/formatters/data.py",
+          "size_bytes": 1668,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/logger.py",
+          "size_bytes": 1044,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_formatter.py",
+          "size_bytes": 671,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 3,
+      "total_bytes": 3383,
+      "tokens": 845
+    }
+  },
+  {
+    "timestamp": "2026-02-05T23:24:04.769386",
+    "run_id": "ceab03b6",
+    "tier": "small",
+    "agent_type": "wheelwright",
+    "event": "token_used",
+    "data": {
+      "count": 500,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-02-05T23:24:04.769391",
+    "run_id": "ceab03b6",
+    "tier": "small",
+    "agent_type": "wheelwright",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 2000,
+      "tokens_used": 1345
+    }
+  }
+]

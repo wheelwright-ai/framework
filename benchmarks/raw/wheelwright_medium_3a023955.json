@@ -1,0 +1,109 @@
+[
+  {
+    "timestamp": "2026-02-06T04:52:59.819902",
+    "run_id": "3a023955",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "src/config.py",
+          "size_bytes": 1927,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/auth.py",
+          "size_bytes": 4011,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/health.py",
+          "size_bytes": 1121,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/user_service.py",
+          "size_bytes": 4746,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/users.py",
+          "size_bytes": 2562,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/products.py",
+          "size_bytes": 4520,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/orders.py",
+          "size_bytes": 4996,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/payments.py",
+          "size_bytes": 2592,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/product_service.py",
+          "size_bytes": 5240,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/order_service.py",
+          "size_bytes": 4404,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/payment_service.py",
+          "size_bytes": 3397,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/middleware/error_handler.py",
+          "size_bytes": 2162,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_auth.py",
+          "size_bytes": 3185,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_user_service.py",
+          "size_bytes": 3497,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 14,
+      "total_bytes": 48360,
+      "tokens": 12086
+    }
+  },
+  {
+    "timestamp": "2026-02-06T04:52:59.819956",
+    "run_id": "3a023955",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "token_used",
+    "data": {
+      "count": 500,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-02-06T04:52:59.819967",
+    "run_id": "3a023955",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 2000,
+      "tokens_used": 12586
+    }
+  }
+]

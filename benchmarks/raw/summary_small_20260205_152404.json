@@ -1,0 +1,16 @@
+{
+  "baseline": {
+    "files_loaded": 18,
+    "bytes_loaded": 20973939,
+    "reference_files_loaded": 10,
+    "tokens_used": 5244476,
+    "success": true
+  },
+  "wheelwright": {
+    "files_loaded": 3,
+    "bytes_loaded": 3383,
+    "reference_files_loaded": 0,
+    "tokens_used": 1345,
+    "success": true
+  }
+}
