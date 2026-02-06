@@ -568,6 +568,8 @@ Examples:
         1. If in hub folder → hub menu
         2. If in spoke folder → analysis then spoke menu
         3. Otherwise → initialization intro
+        
+        All menus loop until user chooses to quit.
         """
         from .utils.input import safe_confirm
 
@@ -575,28 +577,52 @@ Examples:
         context, ctx_path = self._detect_start_context(cwd)
 
         if context == "hub":
+            # Hub menu has its own loop
             self._show_hub_actions_menu()
             return
 
         if context == "spoke":
+            # Show initial analysis once
             self._show_spoke_analysis(ctx_path)
-            if self._is_framework_directory(ctx_path):
-                self._show_framework_menu(ctx_path)
+            
+            # Determine if this is the framework directory
+            is_framework = self._is_framework_directory(ctx_path)
+            
+            if is_framework:
+                # Framework: go directly to main menu
+                while True:
+                    result = self._show_framework_menu(ctx_path)
+                    if result == "quit":
+                        print_info("\n  👋 Goodbye!")
+                        sys.exit(0)
+                    # 'back' in main menu just redisplays (no parent to go back to)
+                    # Loop continues
             else:
-                self._show_spoke_actions_menu(ctx_path)
+                # Regular spoke: show spoke menu
+                while True:
+                    result = self._show_spoke_actions_menu(ctx_path)
+                    if result == "quit":
+                        print_info("\n  👋 Goodbye!")
+                        sys.exit(0)
+                    # 'back' in main menu just redisplays (no parent to go back to)
+                    # Loop continues
             return
 
+        # Uninitialized folder
         self._show_uninitialized_intro(cwd)
         if safe_confirm("Initialize WAI-Spoke here?", default=False):
             try:
                 init_spoke(cwd, is_framework=False, verbose=True)
                 self._show_spoke_analysis(cwd)
-                self._show_spoke_actions_menu(cwd)
+                # Loop until user quits
+                while True:
+                    result = self._show_spoke_actions_menu(cwd)
+                    if result == "quit":
+                        print_info("\n  👋 Goodbye!")
+                        sys.exit(0)
             except Exception as exc:
                 print_error(f"Init failed: {exc}")
-        
-        # Fallback to main menu instead of exit
-        self._show_framework_menu(cwd)
+                return
         return
 
     def _show_uninitialized_intro(self, project_path: Path) -> None:
@@ -608,6 +634,8 @@ Examples:
         print_info("")
         print_info("  This folder is not initialized with WAI yet.")
         print_info("  Wheelwright (WAI) keeps project context stable for AI work.\n")
+        print_info(f"  Current path: {project_path}")
+        print_info("")
         print_info("  Quick start:")
         print_info("   • Initialize this project: WAI init")
         print_info("   • Keep project state in WAI-Spoke/")
@@ -767,7 +795,7 @@ Examples:
                 print_info("  6/w - 🛞 About             Framework info & testing")
                 print_info("  7/? - ❓ Help              Commands & guides")
                 print_info("")
-                print_info("  b   - ⬅️  Back to system")
+                print_info("  b   - ⬅️  Back")
                 print_info("  q   - 👋 Quit")
                 print_info("")
 
@@ -786,7 +814,7 @@ Examples:
                 choice = safe_menu_choice("Select", options, default='1')
 
                 if choice == "hub":
-                    self._show_hub_actions_menu()
+                    self._show_hub_actions_menu(return_on_back=True)
                 elif choice == "spokes":
                     self._show_spokes_menu(framework_path)
                 elif choice == "lugs":
@@ -804,12 +832,12 @@ Examples:
                 elif choice == "help":
                     self._show_help_menu()
                 elif choice == "back" or choice is None:
-                    return
+                    return "back"
                 elif choice == "quit":
                     if self._confirm_exit():
-                        import sys
-                        print_info("\n  👋 Goodbye!")
-                        sys.exit(0)
+                        return "quit"
+                    # User cancelled quit, continue loop
+                    continue
 
     def _show_spoke_menu(self, spoke_path: Path):
         """Show interactive menu for spoke directory."""
@@ -1735,12 +1763,12 @@ Examples:
             elif choice == "hub":
                 self._show_hub_actions_menu(return_on_back=True)
             elif choice == "back":
-                return
+                return "back"
             elif choice == "quit" or choice is None:
                 if self._confirm_exit():
-                    import sys
-                    print_info("\n  👋 Goodbye!")
-                    sys.exit(0)
+                    return "quit"
+                # User cancelled quit, continue loop
+                continue
 
     def _show_spoke_status_and_review(self, spoke_path: Path) -> None:
         """Combined status and review display."""

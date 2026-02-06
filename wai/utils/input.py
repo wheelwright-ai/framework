@@ -10,6 +10,15 @@ from typing import Optional, Callable, List
 
 from .exceptions import ValidationError
 
+# Enable readline for better input editing (arrow keys, history, etc.)
+try:
+    import readline
+    # Enable tab completion and history
+    readline.parse_and_bind('tab: complete')
+except ImportError:
+    # readline not available on Windows (uses pyreadline as alternative)
+    pass
+
 
 def getch():
     """
