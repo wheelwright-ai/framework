@@ -4,25 +4,31 @@ REM Version: 3.1.0
 REM Purpose: Launch workspace tabs and exit
 REM
 REM Location: WAI-Spoke/helpers/WAI-Workspace.cmd
-REM (Also available at WAI-Spoke/ root for backward compatibility)
 
 setlocal EnableDelayedExpansion
 
-REM Get the script directory (handles both root and helpers/ locations)
+REM Get the script directory - resolve from either root or helpers/
 set "SCRIPT_DIR=%~dp0"
 if /i "!SCRIPT_DIR:~-9!"=="helpers\" (
+  REM Called from helpers/ - go up one level to WAI-Spoke
   set "SCRIPT_DIR=!SCRIPT_DIR:~0,-9!"
 )
+if /i "!SCRIPT_DIR:~-10!"=="WAI-Spoke\" (
+  REM Go up one more level to project root
+  set "SCRIPT_DIR=!SCRIPT_DIR:~0,-10!"
+)
+
 set "PROJECT_DIR=!SCRIPT_DIR!"
-set "HELPERS_DIR=!PROJECT_DIR!helpers\"
+if not "!PROJECT_DIR:~-1!"=="\" set "PROJECT_DIR=!PROJECT_DIR!\"
+set "HELPERS_DIR=!PROJECT_DIR!WAI-Spoke\helpers\"
 
 REM Create log
 set "LOG_FILE=!PROJECT_DIR!WAI-Workspace.log"
-echo [%DATE% %TIME%] WAI-Workspace start from !SCRIPT_DIR! > "!LOG_FILE!"
+echo [%DATE% %TIME%] WAI-Workspace start. SCRIPT_DIR=!SCRIPT_DIR! PROJECT_DIR=!PROJECT_DIR! > "!LOG_FILE!"
 
 REM Extract project abbreviation from WAI-State.json
 set "ABBR="
-set "STATE_FILE=!PROJECT_DIR!WAI-State.json"
+set "STATE_FILE=!PROJECT_DIR!WAI-Spoke\WAI-State.json"
 if exist "!STATE_FILE!" (
   for /f "usebackq delims=" %%A in (`findstr /i "\"abbrev\"" "!STATE_FILE!"`) do (
     for /f "tokens=1,2 delims=:" %%K in ("%%A") do (
@@ -34,7 +40,7 @@ if exist "!STATE_FILE!" (
   set "ABBR=!ABBR:,=!"
 )
 if "!ABBR!"=="" (
-  for %%A in ("!PROJECT_DIR!") do set "ABBR=%%~nA"
+  for %%A in ("!PROJECT_DIR:~0,-1!") do set "ABBR=%%~nA"
 )
 
 echo [%DATE% %TIME%] ABBR=!ABBR! >> "!LOG_FILE!"
