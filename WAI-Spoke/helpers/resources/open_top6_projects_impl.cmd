@@ -4,9 +4,19 @@ REM Location: WAI-Spoke/helpers/resources/
 
 setlocal EnableDelayedExpansion
 
-REM Resolve paths
+REM Resolve paths - handle both Windows and UNC paths
 set "RESOURCES_DIR=%~dp0"
 if "%RESOURCES_DIR:~-1%"=="\" set "RESOURCES_DIR=%RESOURCES_DIR:~0,-1%"
+
+REM If running from UNC, convert to Windows path (Z: drive)
+if /i "%RESOURCES_DIR:~0,15%"=="\\wsl.localhost" (
+  REM Extract path and map Z: if needed
+  net use Z: \\wsl$\Ubuntu >nul 2>&1
+  if exist "Z:\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helpers\resources" (
+    set "RESOURCES_DIR=Z:\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helpers\resources"
+  )
+)
+
 set "HELPERS_DIR=%RESOURCES_DIR:~0,-10%"
 set "SPOKE_DIR=%HELPERS_DIR:~0,-8%"
 set "PROJECT_DIR=%SPOKE_DIR:~0,-10%"
@@ -24,14 +34,8 @@ if exist "!STATE_FILE!" (
 )
 
 REM Hub registry path - derive from PROJECT_DIR
-REM PROJECT_DIR is C:\Users\User\projects\wheelwright-ai\framework (Windows path)
-REM Hub should be at C:\Users\User\projects\wheelwright-ai\hub
-for %%A in ("!PROJECT_DIR!") do (
-  for %%B in ("%%~dpA.") do (
-    set "HUB_BASE=%%~fB"
-  )
-)
-set "HUB_REGISTRY=!HUB_BASE!\hub\hub\hub-registry.json"
+REM From Z:\home\mario\projects\wheelwright-ai\framework -> Z:\home\mario\projects\wheelwright-ai\hub
+set "HUB_REGISTRY=!PROJECT_DIR:framework=hub!\hub\hub-registry.json"
 
 REM Fallback to standard location if not found
 if not exist "!HUB_REGISTRY!" (

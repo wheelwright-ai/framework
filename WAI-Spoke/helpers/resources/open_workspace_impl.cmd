@@ -4,9 +4,18 @@ REM Location: WAI-Spoke/helpers/resources/
 
 setlocal EnableDelayedExpansion
 
-REM Resolve paths
+REM Resolve paths - handle both Windows and UNC paths
 set "RESOURCES_DIR=%~dp0"
 if "%RESOURCES_DIR:~-1%"=="\" set "RESOURCES_DIR=%RESOURCES_DIR:~0,-1%"
+
+REM If running from UNC, convert to Windows path (Z: drive)
+if /i "%RESOURCES_DIR:~0,15%"=="\\wsl.localhost" (
+  net use Z: \\wsl$\Ubuntu >nul 2>&1
+  if exist "Z:\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helpers\resources" (
+    set "RESOURCES_DIR=Z:\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helpers\resources"
+  )
+)
+
 set "HELPERS_DIR=%RESOURCES_DIR:~0,-10%"
 set "SPOKE_DIR=%HELPERS_DIR:~0,-8%"
 set "PROJECT_DIR=%SPOKE_DIR:~0,-10%"
