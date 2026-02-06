@@ -151,6 +151,30 @@ generate_wai_briefing() {
   echo "- Git: $git_status"
   echo ""
 
+  # Hub Just-In-Time Context (quota warnings, notifications)
+  if [[ -n "$hub_connected" ]] && [[ -d "$hub_connected" ]]; then
+    # Try to get hub context via Python
+    local hub_context=$(python3 -c "
+import sys
+sys.path.insert(0, '$PROJECT_DIR')
+try:
+    from wai.hub_state import format_hub_context_for_agent
+    from pathlib import Path
+    result = format_hub_context_for_agent(Path('$hub_connected'))
+    if result:
+        print(result)
+except Exception as e:
+    pass
+" 2>/dev/null)
+
+    if [[ -n "$hub_context" ]]; then
+      echo "### 🌐 Hub Context"
+      echo ""
+      echo "$hub_context"
+      echo ""
+    fi
+  fi
+
   # Teaching Files Detection
   local MANIFEST_FILE="$PROJECT_DIR/WAI-Spoke/seed/ingest/manifest.json"
 

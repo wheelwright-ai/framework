@@ -382,6 +382,16 @@ Examples:
         hub_scan.add_argument('--assign-ids', action='store_true', help='Assign spoke_ids to projects missing them')
         hub_scan.add_argument('--report', action='store_true', help='Show detailed discovery report')
 
+        hub_quota = hub_subparsers.add_parser('quota', help='Update tool quota/rate limits')
+        hub_quota.add_argument('tool', help='Tool name (e.g., amp, claude_code, antigravity)')
+        hub_quota.add_argument('--used', type=int, help='Current usage count')
+        hub_quota.add_argument('--limit', type=int, help='Maximum allowed usage')
+        hub_quota.add_argument('--unit', default='requests', help='Unit of measurement (requests, tokens, credits, etc.)')
+        hub_quota.add_argument('--expires', help='ISO timestamp when quota resets (e.g., 2026-02-06T11:00:00Z)')
+        hub_quota.add_argument('--message', help='Message to display (e.g., "Add credits or wait until next hour")')
+        hub_quota.add_argument('--notify', action='store_true', default=True, help='Notify all spokes of critical quotas')
+        hub_quota.add_argument('--path', help='Hub path (auto-discover if not specified)')
+
         # Projects commands
         projects_parser = subparsers.add_parser('projects', help='Project management')
         projects_subparsers = projects_parser.add_subparsers(dest='projects_command')
@@ -2821,8 +2831,10 @@ Examples:
             self._hub_locate()
         elif args.hub_command == 'scan':
             self._hub_scan(args)
+        elif args.hub_command == 'quota':
+            self._hub_quota(args)
         else:
-            print_info("Hub commands: create, locate, scan")
+            print_info("Hub commands: create, locate, scan, quota")
 
     def _hub_create(self, args):
         """Create new hub."""
@@ -2889,6 +2901,42 @@ Examples:
             print(discovery.get_report())
         
         print_success("\n✓ Hub scan complete")
+
+    def _hub_quota(self, args):
+        """Update hub tool quota/rate limits."""
+        from .hub_state import update_tool_quota
+
+        # Determine hub path
+        if hasattr(args, 'path') and args.path:
+            hub_path = Path(args.path).resolve()
+        else:
+            hub_manager = HubManager()
+            hub_path = hub_manager.auto_discover_hub(Path.cwd(), verbose=False)
+
+        if not hub_path or not hub_path.exists():
+            print_error("Hub not found. Use --path to specify hub location.")
+            return
+
+        # Update quota
+        success = update_tool_quota(
+            tool_name=args.tool,
+            used=args.used,
+            limit=args.limit,
+            unit=args.unit,
+            expires_at=args.expires,
+            message=args.message,
+            hub_path=hub_path,
+            notify_spokes=args.notify
+        )
+
+        if success:
+            print_success(f"\n✓ Updated {args.tool} quota in hub-state.json")
+            if args.notify and args.used is not None and args.limit is not None:
+                pct = (args.used / args.limit * 100) if args.limit > 0 else 0
+                if pct >= 70:
+                    print_info(f"  📢 Notification pushed to all spokes ({int(pct)}% usage)")
+        else:
+            print_error("Failed to update quota")
 
     def _hub_locate_with_candidates(self):
         """Locate hub and show all candidates with selection options."""
