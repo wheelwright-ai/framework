@@ -10,12 +10,35 @@ if "%HELPERS_DIR:~-1%"=="\" set "HELPERS_DIR=%HELPERS_DIR:~0,-1%"
 set "SPOKE_ROOT=%HELPERS_DIR:~0,-8%"
 set "PROJECT_ROOT=%SPOKE_ROOT:~0,-10%"
 
-REM Logs in helpers/
-set "LOG_FILE=%HELPERS_DIR%\wai-multi-project-tabs.log"
+REM Load hub path from WAI-State.json
+set "STATE_FILE=%SPOKE_ROOT%\WAI-State.json"
+set "HUB_PATH="
+if exist "!STATE_FILE!" (
+  for /f "usebackq tokens=* delims=" %%A in (`powershell -NoProfile -Command "$j = Get-Content -Raw '!STATE_FILE!' | ConvertFrom-Json; $j.wheelwright.hub_path"`) do (
+    set "HUB_PATH=%%A"
+  )
+)
+
+REM Logs in helpers/output/
+set "LOG_FILE=%HELPERS_DIR%\output\wai-multi-project-tabs.log"
 echo [%DATE% %TIME%] Starting multi-project launcher >> "!LOG_FILE!"
 
-REM Hub registry
-set "HUB_REGISTRY=%USERPROFILE%\wheelwright-hub\hub\hub-registry.json"
+REM Hub registry - use configured path or default
+if defined HUB_PATH (
+  REM Convert WSL path to Windows path
+  for /f "usebackq tokens=* delims=" %%A in (`powershell -NoProfile -Command "wsl wslpath -w '!HUB_PATH!' 2>$null"`) do (
+    set "HUB_PATH_WIN=%%A"
+  )
+  if defined HUB_PATH_WIN (
+    set "HUB_REGISTRY=!HUB_PATH_WIN!\hub\hub-registry.json"
+  ) else (
+    set "HUB_REGISTRY=%USERPROFILE%\wheelwright-hub\hub\hub-registry.json"
+  )
+) else (
+  set "HUB_REGISTRY=%USERPROFILE%\wheelwright-hub\hub\hub-registry.json"
+)
+
+echo [%DATE% %TIME%] HUB_PATH=!HUB_PATH! HUB_REGISTRY=!HUB_REGISTRY! >> "!LOG_FILE!"
 
 if not exist "!HUB_REGISTRY!" (
   echo Hub registry not found at !HUB_REGISTRY! >> "!LOG_FILE!"
@@ -28,8 +51,8 @@ if not exist "!HUB_REGISTRY!" (
 echo [%DATE% %TIME%] Hub registry found >> "!LOG_FILE!"
 
 REM PowerShell discovery
-set "PS_OUT=%HELPERS_DIR%\wai_projects.txt"
-set "PS_ERR=%HELPERS_DIR%\wai_projects_err.txt"
+set "PS_OUT=%HELPERS_DIR%\output\wai_projects.txt"
+set "PS_ERR=%HELPERS_DIR%\output\wai_projects_err.txt"
 del /q "!PS_OUT!" 2>nul
 del /q "!PS_ERR!" 2>nul
 

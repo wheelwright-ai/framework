@@ -11,7 +11,7 @@ if "%HELPERS_DIR:~-1%"=="\" set "HELPERS_DIR=%HELPERS_DIR:~0,-1%"
 set "SPOKE_DIR=%HELPERS_DIR:~0,-8%"
 set "PROJECT_DIR=%SPOKE_DIR:~0,-10%"
 
-set "LOG_FILE=%HELPERS_DIR%\WAI-Workspace.log"
+set "LOG_FILE=%HELPERS_DIR%\output\WAI-Workspace.log"
 echo [%DATE% %TIME%] WAI-Workspace start from helpers >> "!LOG_FILE!"
 echo HELPERS_DIR=!HELPERS_DIR! >> "!LOG_FILE!"
 echo SPOKE_DIR=!SPOKE_DIR! >> "!LOG_FILE!"
