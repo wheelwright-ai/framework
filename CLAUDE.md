@@ -6,19 +6,31 @@
 
 Execute this on first message:
 
-1. **Load WAI Context**:
+1. **Display Session Briefing** (NEW - Observation System):
+   ```python
+   from wai.session_hook import display_session_briefing
+   display_session_briefing()
+   ```
+   Shows:
+   - Recent work summary
+   - Failed observations requiring remediation
+   - Next actions
+   - Session statistics
+
+2. **Load WAI Context**:
    - Read WAI-Spoke/WAI-State.json (project state, decisions)
    - Read WAI-Spoke/WAI-State.md (strategic vision)
    - Invoke skills (behavioral rules live in skill files)
 
-2. **Check Uncommitted Work**:
+3. **Check Uncommitted Work**:
    - Run git status
    - If uncommitted changes, ask: Resume or start fresh?
 
-3. **Brief the User**:
+4. **Brief the User**:
    - Project name and purpose
    - Last session info from WAI-State.json
    - Current environment (tool + machine)
+   - Failed observations from briefing (if any)
 
 ## Priority 1: Behavioral Guidelines
 

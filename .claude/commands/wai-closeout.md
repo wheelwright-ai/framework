@@ -4,7 +4,9 @@
 
 End session with comprehensive reconciliation, state updates, and safe git commit/push.
 
-See `.claude/commands/wai-closeout-enhanced.md` for full specification.
+**WITH OBSERVATION LOGGING** - Every action logged for session playback and audit trail.
+
+Implements the enhanced CloseoutWorkflow from `wai/closeout.py` with 4-phase execution and observation logging.
 
 ## Quick Reference
 
