@@ -1,0 +1,149 @@
+{
+  "run_id": "ef6b872d-6ec3-4694-b61d-903c13e74ae4",
+  "started_at": "2026-02-06T15:20:04.772506",
+  "completed_at": "2026-02-06T16:13:55.203477",
+  "projects": {
+    "/home/mario/projects/condoshield-crm": {
+      "status": "needs_attention",
+      "time_seconds": 0.0014233589172363281,
+      "lugs_created": 0,
+      "spoke_name": "condoshield-crm",
+      "spoke_path": "/home/mario/projects/condoshield-crm"
+    },
+    "/home/mario/projects/condoshield-website": {
+      "status": "needs_attention",
+      "time_seconds": 0.0009188652038574219,
+      "lugs_created": 0,
+      "spoke_name": "condoshield-website",
+      "spoke_path": "/home/mario/projects/condoshield-website"
+    },
+    "/home/mario/projects/archive/condoshield-gatsby": {
+      "status": "needs_attention",
+      "time_seconds": 0.0003540515899658203,
+      "lugs_created": 0,
+      "spoke_name": "condoshield-gatsby",
+      "spoke_path": "/home/mario/projects/archive/condoshield-gatsby"
+    },
+    "/home/mario/projects/owners-share": {
+      "status": "needs_attention",
+      "time_seconds": 0.0005340576171875,
+      "lugs_created": 0,
+      "spoke_name": "owners-share",
+      "spoke_path": "/home/mario/projects/owners-share"
+    },
+    "/home/mario/projects/archive/notionpilot": {
+      "status": "needs_attention",
+      "time_seconds": 0.0016775131225585938,
+      "lugs_created": 0,
+      "spoke_name": "notionpilot",
+      "spoke_path": "/home/mario/projects/archive/notionpilot"
+    },
+    "/home/mario/projects/session-continuity-framework": {
+      "status": "needs_attention",
+      "time_seconds": 0.001218557357788086,
+      "lugs_created": 0,
+      "spoke_name": "session-continuity-framework",
+      "spoke_path": "/home/mario/projects/session-continuity-framework"
+    },
+    "/home/mario/projects/scf-vscode-extension": {
+      "status": "needs_attention",
+      "time_seconds": 0.0010533332824707031,
+      "lugs_created": 0,
+      "spoke_name": "scf-vscode-extension",
+      "spoke_path": "/home/mario/projects/scf-vscode-extension"
+    },
+    "/home/mario/projects/xn-insights": {
+      "status": "needs_attention",
+      "time_seconds": 0.0012660026550292969,
+      "lugs_created": 0,
+      "spoke_name": "xn-insights",
+      "spoke_path": "/home/mario/projects/xn-insights"
+    },
+    "/home/mario/projects/VoiceFlow": {
+      "status": "needs_attention",
+      "time_seconds": 0.0005097389221191406,
+      "lugs_created": 0,
+      "spoke_name": "VoiceFlow",
+      "spoke_path": "/home/mario/projects/VoiceFlow"
+    },
+    "/mnt/c/code/scribe": {
+      "status": "needs_attention",
+      "time_seconds": 0.0049495697021484375,
+      "lugs_created": 0,
+      "spoke_name": "scribe",
+      "spoke_path": "/mnt/c/code/scribe"
+    },
+    "/mnt/c/code/whisper-writer": {
+      "status": "needs_attention",
+      "time_seconds": 0.004766225814819336,
+      "lugs_created": 0,
+      "spoke_name": "whisper-writer",
+      "spoke_path": "/mnt/c/code/whisper-writer"
+    },
+    "/home/mario/projects/wheelwright-ai/website": {
+      "status": "needs_attention",
+      "time_seconds": 0.0006194114685058594,
+      "lugs_created": 0,
+      "spoke_name": "website",
+      "spoke_path": "/home/mario/projects/wheelwright-ai/website"
+    },
+    "/mnt/c/code/NFC/JordanDashboardCreator": {
+      "status": "needs_attention",
+      "time_seconds": 0.007598876953125,
+      "lugs_created": 0,
+      "spoke_name": "JordanDashboardCreator",
+      "spoke_path": "/mnt/c/code/NFC/JordanDashboardCreator"
+    },
+    "/home/mario/projects/sound-association-management-website": {
+      "status": "needs_attention",
+      "time_seconds": 0.0002760887145996094,
+      "lugs_created": 0,
+      "spoke_name": "sound-association-management-website",
+      "spoke_path": "/home/mario/projects/sound-association-management-website"
+    },
+    "/home/mario/projects/ezorg-email": {
+      "status": "needs_attention",
+      "time_seconds": 0.0006973743438720703,
+      "lugs_created": 0,
+      "spoke_name": "ezorg-email",
+      "spoke_path": "/home/mario/projects/ezorg-email"
+    },
+    "/home/mario/projects/emailinator": {
+      "status": "needs_attention",
+      "time_seconds": 0.0003330707550048828,
+      "lugs_created": 0,
+      "spoke_name": "emailinator",
+      "spoke_path": "/home/mario/projects/emailinator"
+    },
+    "/mnt/c/code/napkin-hero": {
+      "status": "needs_attention",
+      "time_seconds": 0.004633665084838867,
+      "lugs_created": 0,
+      "spoke_name": "napkin-hero",
+      "spoke_path": "/mnt/c/code/napkin-hero"
+    },
+    "/mnt/c/code/why-go-bye": {
+      "status": "needs_attention",
+      "time_seconds": 0.004738569259643555,
+      "lugs_created": 0,
+      "spoke_name": "why-go-bye",
+      "spoke_path": "/mnt/c/code/why-go-bye"
+    },
+    "/home/mario/projects/wheelwright-ai/framework": {
+      "status": "needs_attention",
+      "time_seconds": 300.0203185081482,
+      "lugs_created": 22,
+      "spoke_name": "framework",
+      "spoke_path": "/home/mario/projects/wheelwright-ai/framework"
+    }
+  },
+  "performance": {
+    "total_spokes": 19,
+    "completed": 0,
+    "needs_attention": 43,
+    "failed": 1,
+    "total_time_seconds": 300.7754521369934,
+    "parallel_agents": 4
+  },
+  "teach_completed": true
+}

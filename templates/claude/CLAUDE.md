@@ -66,6 +66,8 @@ Commands work with or without `WAI` prefix. Use `/wai-*` slash commands or just 
 | Shipit | `/wai-shipit` | Run closeout then commit WAI files with session summary |
 | Teach | `/wai-teach` | Pull new learnings from hub into this spoke |
 | Learn | `/wai-learn` | Push high-impact signals from this session to hub |
+| Red Light | `/wai-red-light` | Inspect autosave checkpoints, assess crash recovery |
+| Green Light | `/wai-green-light` | Resume from last autosave checkpoint |
 
 If unsure whether a command like "Status" refers to WAI, ask: *"Did you mean WAI Status?"*
 

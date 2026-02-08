@@ -1,0 +1,23 @@
+
+============================================================
+CLINE UPGRADE INSTRUCTIONS
+============================================================
+
+Total projects: 19
+
+Traceback (most recent call last):
+  File "\\wsl.localhost\Ubuntu\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helper\wai-orchestrate", line 242, in <module>
+    main()
+    ~~~~^^
+  File "\\wsl.localhost\Ubuntu\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helper\wai-orchestrate", line 234, in main
+    instructions = orchestrator.generate_cline_instructions(projects)
+  File "\\wsl.localhost\Ubuntu\home\mario\projects\wheelwright-ai\framework\WAI-Spoke\helper\wai-orchestrate", line 134, in generate_cline_instructions
+    if not full_path.exists():
+           ~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\pathlib\_abc.py", line 450, in exists
+    self.stat(follow_symlinks=follow_symlinks)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\pathlib\_local.py", line 515, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [WinError 5] Access is denied: '\\\\wsl.localhost\\Ubuntu\\mnt\\c\\code\\NFC\\JordanDashboardCreator'

@@ -31,7 +31,10 @@
       "Bash(wc -l echo \"Tests:\" ls -1 /home/mario/projects/wheelwright-ai/framework/benchmarks/projects/medium/tests/test_*.py)",
       "Bash(wc -l echo \"Reference Docs:\" ls -1 /home/mario/projects/wheelwright-ai/framework/benchmarks/projects/medium/reference/*.md)",
       "Bash(__NEW_LINE_8391924d3bd1c859__ echo \"\")",
-      "Bash(python -m pytest:*)"
+      "Bash(python -m pytest:*)",
+      "Bash(python ./wai-orchestrate upgrade:*)",
+      "Bash(git -C /home/mario/projects/wheelwright-ai/framework ls-files:*)",
+      "Bash(truncate:*)"
     ]
   }
 }

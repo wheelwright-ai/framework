@@ -75,6 +75,33 @@ generate_wai_briefing() {
       echo "**Top Priority:** $top_priority"
       echo ""
     fi
+
+    # Autosave checkpoint detection (unreconciled = previous session work)
+    if command -v python3 &>/dev/null; then
+      unreconciled=$(python3 -c "
+import json
+count = 0
+last = {}
+with open('$LUGS_FILE') as f:
+    for line in f:
+        try:
+            l = json.loads(line.strip())
+            if l.get('autosave') and not l.get('reconciled'):
+                count += 1
+                last = l
+        except: pass
+if count:
+    print(f'{count}|{last.get(\"task_context\",\"unknown\")}|{last.get(\"completion_estimate\",\"?\")}')
+" 2>/dev/null)
+      if [[ -n "$unreconciled" ]]; then
+        IFS='|' read -r cnt task est <<< "$unreconciled"
+        echo "### ⚠️ Incomplete Work ($cnt autosave checkpoints)"
+        echo "- Task: $task"
+        echo "- Progress: $est"
+        echo "- **Resume:** \`Green Light\` | **Inspect:** \`Red Light\` | **Discard:** reconciled on next Closeout"
+        echo ""
+      fi
+    fi
   fi
 
   # Context Health

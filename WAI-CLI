@@ -1,0 +1,19 @@
+#!/usr/bin/env python3
+"""
+Wheelwright CLI executable wrapper.
+
+Usage: ./WAI-CLI <command> [options]
+       python WAI-CLI <command> [options]
+"""
+
+import sys
+from pathlib import Path
+
+# Add framework to path
+framework_root = Path(__file__).parent
+sys.path.insert(0, str(framework_root))
+
+from wai.cli.main import main
+
+if __name__ == '__main__':
+    sys.exit(main())

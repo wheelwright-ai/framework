@@ -62,7 +62,13 @@ BEFORE responding to the user's message below, you MUST:
 
 $(generate_session_focus)
 
-3. Detect Pending Teachings:
+3. Detect Incomplete Work (Autosave Checkpoints):
+   If briefing shows "Incomplete Work" section:
+   - Previous session work was auto-saved but not reconciled via closeout
+   - Ask user: Resume [task]? (Green Light to resume / Red Light to inspect / skip)
+   - If resuming: execute Green Light immediately
+
+4. Detect Pending Teachings:
    If teaching files shown in briefing (Pending Teachings section):
    - Review manifest at WAI-Spoke/seed/ingest/manifest.json
    - Examine .teaching files in seed/ingest/
@@ -73,7 +79,7 @@ $(generate_session_focus)
    - Create implementation checklist
    - Prioritize teaching adoption before other work
 
-4. Offer Session Goal Setting (Policy: Session Goal Setting - Define Work Cycle Focus):
+5. Offer Session Goal Setting (Policy: Session Goal Setting - Define Work Cycle Focus):
    After showing recommendations, ask:
 
    \"What specific goal(s) would you like to focus on for this work cycle?\"
@@ -85,7 +91,7 @@ $(generate_session_focus)
    - Work within epic scope - say what we do, do what we say
    - When complete: recommend closeout + new thread
 
-5. Then respond to the user's message.
+6. Then respond to the user's message.
 
 This protocol is MANDATORY and enforces the automatic briefing specified in AGENTS.md.
 

@@ -1,778 +1,330 @@
 """
-Smart closeout processor for Wheelwright sessions.
+Enhanced Closeout Workflow - 4-phase execution with observation logging
 
-Handles end-of-session processing including:
-- File scanning and reconciliation
-- Content rebalancing
-- Signal extraction
-- Analytics recording
-- Log cleanup
+Phases:
+1. Reconciliation - Consolidate lugs, detect changes
+2. State Updates - Update WAI-State.json, WAI-State.md
+3. Git Operations - Add, commit, push with mandatory git
+4. Verification - Verify all changes remote, final state
 """
 
 import json
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List, Optional
-import subprocess
+from typing import Dict, Any, Optional, List
+from datetime import datetime, timezone
+import uuid
 
-from .session import SessionManager
-from .sessions import MultiEnvSessionManager
-from .rebalancer import FileRebalancer
-from .metrics import MetricsTracker
-from .quality_gates import QualityGates
-from .utils.input import print_success, print_error, print_info, print_warning, safe_confirm, safe_menu_choice
-from .integrations.manager import IDEManager
-from .lugs import LugManager
-from .point import PointManager
-from .agents_integration import AgentsIntegration
-import os
-from git import Repo, exc as git_exc
+from wai.observation import get_logger
+from wai.config import get_config
+from wai.utils.git import create_git_ops
 
 
-class CloseoutProcessor:
-    """Processes session closeout comprehensively."""
+class CloseoutWorkflow:
+    """Execute 4-phase closeout with observations."""
 
-    def __init__(self, spoke_dir: Path):
-        """Initialize closeout processor."""
-        self.spoke_dir = spoke_dir
-        self.wai_spoke_dir = spoke_dir / 'WAI-Spoke'
-
-        # Initialize components
-        self.session = SessionManager(spoke_dir)
-        self.multi_session = MultiEnvSessionManager(spoke_dir)
-        self.rebalancer = FileRebalancer(self.wai_spoke_dir)
-        self.metrics = MetricsTracker(self.wai_spoke_dir)
-        self.quality_gates = QualityGates(spoke_dir)
-        self.quality_gates = QualityGates(spoke_dir)
-        self.lug_manager = LugManager(self.wai_spoke_dir)
-        self.point_manager = PointManager(spoke_dir)
-        self.point_manager = PointManager(spoke_dir)
-
-    def process_closeout(self, interactive: bool = True, skip_quality_gates: bool = False) -> Dict[str, Any]:
+    def __init__(self, repo_path: str = ".", dry_run: bool = False):
         """
-        Execute complete closeout workflow.
-
+        Initialize closeout workflow.
+        
         Args:
-            interactive: If True, prompts user for confirmations
-            skip_quality_gates: If True, skip quality gate execution
-
-        Returns:
-            Dict with closeout summary
+            repo_path: Repository root path
+            dry_run: If True, preview only (no actual changes)
         """
-        print_info("\n[PROCESS] Processing Session Closeout...\n")
+        self.repo_path = repo_path
+        self.dry_run = dry_run
+        self.session_id = self._generate_session_id()
+        self.logger = get_logger()
+        self.config = get_config()
+        self.git = create_git_ops(repo_path)
+        self.observations = []
 
-        results = {
-            'steps_completed': [],
-            'warnings': [],
-            'errors': [],
-            'session_summary': {},
-            'quality_gates': {}
-        }
+    def _generate_session_id(self) -> str:
+        """Generate session ID: closeout-YYYYMMDD-HHMMSS."""
+        now = datetime.now(timezone.utc)
+        return f"closeout-{now.strftime('%Y%m%d-%H%M%S')}"
 
-        # Step 0: Run Quality Gates (unless truly minor changes)
-        if skip_quality_gates:
-            print_info("  Step 0/10: Skipping quality gates (remote upgrade)")
-            results['steps_completed'].append("Quality gates: Skipped (remote upgrade)")
-            results['quality_gates'] = {"skipped": True, "skip_reason": "remote upgrade"}
-        else:
-            print_info("")
-            print_info("-" * 30)
-            print_info("[PROCESS] [1/13] Quality Gates")
-            print_info("-" * 30)
-            gate_results = self.quality_gates.run_all_gates(skip_minor=True)
-            results['quality_gates'] = gate_results
+    def _find_spoke_path(self) -> Path:
+        """Find WAI-Spoke directory."""
+        current = Path(self.repo_path).resolve()
+        while current != current.parent:
+            if (current / "WAI-Spoke").exists():
+                return current / "WAI-Spoke"
+            current = current.parent
+        raise RuntimeError("WAI-Spoke not found")
 
-            if gate_results.get('skip_reason'):
-                print_info(f"    {gate_results['skip_reason']}")
-                results['steps_completed'].append(f"Quality gates: Skipped (recent pass)")
-            elif not gate_results['passed']:
-                # Quality gates failed
-                print_warning("    [WARN] Quality gates failed!")
-
-                for blocker in gate_results.get('blockers', []):
-                    print_error(f"      [ERROR] BLOCKER: {blocker}")
-
-                for warning in gate_results.get('warnings', []):
-                    print_warning(f"      [WARN] {warning}")
-
-                if interactive and gate_results.get('blockers'):
-                    print_info("\n  Quality gate blockers detected. Continue anyway?")
-                    if not safe_confirm("Proceed with closeout despite blockers?", default=False):
-                        results['errors'].append("Closeout aborted due to quality gate failures")
-                        return results
-
-                results['steps_completed'].append(f"Quality gates: Failed with {len(gate_results.get('blockers', []))} blockers")
-            else:
-                print_success("    [OK] All quality gates passed")
-                results['steps_completed'].append("Quality gates: Passed")
-
-        # Step 2: Lug Policy Validation (Blocker check)
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [2/13] Lug Policy Validation")
-        print_info("-" * 30)
-        session_state = self.session.get_state()
-        session_id = session_state.get('session_id')
-        
-        if session_id:
-            # Pass 1: Interactive Resolution Loop
-            while True:
-                session_lugs = self.lug_manager.get_session_lugs(session_id)
-                if not session_lugs:
-                    break
-                    
-                violations_found = False
-                unresolved = False
-                
-                for lug in session_lugs:
-                    violations = self.lug_manager.validate_policies(lug)
-                    if violations:
-                        violations_found = True
-                        print_warning(f"    [WARN] Policy violations for Lug {lug.id} ({lug.title}):")
-                        for v in violations:
-                            print_error(f"      [ERROR] {v}")
-                            
-                        if not interactive:
-                            unresolved = True
-                            continue
-                            
-                        # Interactive menu
-                        print_info("")
-                        print_info(f"    Actions for '{lug.title}':")
-                        print_info("      [f] Force Close (archive despite violation)")
-                        print_info("      [u] Unlink from Session (keep open, remove from scope)")
-                        print_info("      [d] Delete Lug (permanently remove)")
-                        print_info("      [i] Ignore for now")
-                        
-                        choice = safe_menu_choice(
-                            "    Select action",
-                            [
-                                ('f', 'f', 'Force Close', 'force'),
-                                ('u', 'u', 'Unlink', 'unlink'),
-                                ('d', 'd', 'Delete Lug', 'delete'),
-                                ('i', 'i', 'Ignore', 'ignore')
-                            ],
-                            default='i'
-                        )
-                        
-                        if choice == 'force':
-                            self.lug_manager.close_lug(lug.id, summary="Force closed during shipit", skip_policy_check=True)
-                            print_success(f"      [OK] Force closed {lug.id}")
-                        elif choice == 'unlink':
-                            self.lug_manager.update_lug(lug.id, extras={'session_id': None})
-                            print_success(f"      [OK] Unlinked {lug.id} from session")
-                        elif choice == 'delete':
-                            self.lug_manager.delete_lug(lug.id)
-                            print_success(f"      [OK] Deleted {lug.id}")
-                        else:
-                            unresolved = True
-                
-                if not violations_found:
-                    break
-                    
-                # If we have violations but solved them all? No, logical flow:
-                # Iterate all. If we solve one, loop continues to next lug.
-                # After loop, if 'unresolved' is False, we are good.
-                # If 'unresolved' is True, we check if user wants to proceed anyway or abort.
-                
-                if unresolved:
-                    if interactive and safe_confirm("\nUnresolved violations remain. Review again?", default=True):
-                        continue # Loop again
-                    break # Break loop, handle unresolved below
-                else:
-                    break # All resolved
-            
-            # Final check (post-resolution)
-            session_lugs = self.lug_manager.get_session_lugs(session_id)
-            final_violations = False
-            for lug in session_lugs:
-                if self.lug_manager.validate_policies(lug):
-                    final_violations = True
-                    break
-            
-            if final_violations:
-                if interactive:
-                    if not safe_confirm("\nProceed despite remaining Lug policy violations?", default=False):
-                        results['errors'].append("Closeout aborted due to Lug policy violations")
-                        return results
-                else:
-                    # Non-interactive: fail on violations
-                    results['errors'].append("Closeout aborted due to Lug policy violations") 
-                    return results
-
-            results['steps_completed'].append(f"Lug policies: Validated {len(session_lugs)} Lugs")
-            
-            if not session_lugs:
-                 # Suggest inferring Lugs if none found/remaining for session
-                try:
-                    repo = Repo(self.spoke_dir, search_parent_directories=True)
-                    suggestions = self.lug_manager.infer_lugs_from_git(repo)
-                    if suggestions:
-                        print_info(f"    [NOTE] Found {len(suggestions)} possible Lugs in your changes.")
-                        if interactive and safe_confirm("Create suggested Lugs?", default=False):
-                            for sug in suggestions:
-                                self.lug_manager.create_lug(
-                                    title=sug['title'],
-                                    lug_type=sug['type'],
-                                    priority=sug['priority'],
-                                    from_file=sug['from_file'],
-                                    extras={'session_id': session_id, 'inferred_reason': sug['reason']}
-                                )
-                            results['steps_completed'].append(f"Lugs: Inferred and created {len(suggestions)} Lugs")
-                except Exception:
-                    pass
-
-
-        # Step 3: Process seed folders and clean up sprawl
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [3/13] Seed Folders & Cleanup")
-        print_info("-" * 30)
-        seed_result = self._process_seed_and_cleanup(interactive)
-        results['steps_completed'].append(seed_result['summary'])
-        results['warnings'].extend(seed_result.get('warnings', []))
-
-        # Step 4: Reconcile WAI-Hub-Learnings.md if exists
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [4/13] Hub Learnings Reconciliation")
-        print_info("-" * 30)
-        learnings_reconciled = self._reconcile_hub_learnings()
-        if learnings_reconciled:
-            results['steps_completed'].append("Reconciled hub learnings into WAI-Guide.md")
-
-        # Step 5: Run file rebalancer
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [5/13] File Content Rebalancing")
-        print_info("-" * 30)
-        rebalance_result = self.rebalancer.rebalance()
-        if rebalance_result['rebalanced']:
-            results['steps_completed'].append(f"Rebalanced files: {len(rebalance_result['actions'])} actions")
-        else:
-            results['steps_completed'].append("Files balanced: no action needed")
-
-        # Step 6: Extract session summary
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [6/13] Session Summary Extraction")
-        print_info("-" * 30)
-        session_summary = self.session.extract_session_summary()
-        results['session_summary'] = session_summary
-        results['steps_completed'].append(f"Extracted summary: {session_summary['turns']} turns")
-
-        # Step 7: Extract high-impact signals
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [7/13] Signal Extraction")
-        print_info("-" * 30)
-        signals_extracted = self._extract_signals()
-        if signals_extracted > 0:
-            results['steps_completed'].append(f"Extracted {signals_extracted} high-impact signals")
-        else:
-            results['steps_completed'].append("No new signals to extract")
-
-        # Step 8: Record analytics
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [8/13] Recording Analytics")
-        print_info("-" * 30)
-        self._record_analytics(session_summary)
-        results['steps_completed'].append("Recorded session analytics")
-
-        # Step 9: Update session state and clear log
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [9/13] Finalizing Closeout")
-        print_info("-" * 30)
-        self._finalize_closeout(session_summary)
-        results['steps_completed'].append("Finalized: state updated, log cleared")
-        # NOTE: Auto-commit moved to step 13 (after all modifications)
-
-        # Step 10: Reconcile multi-environment sessions
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [10/13] Multi-Environment Reconciliation")
-        print_info("-" * 30)
-        reconcile_result = self.multi_session.reconcile_sessions()
-        results['session_reconciliation'] = reconcile_result
-        if reconcile_result['sessions_processed'] > 0:
-            results['steps_completed'].append(
-                f"Sessions reconciled: {reconcile_result['entries_reconciled']} entries, "
-                f"{reconcile_result['decisions_extracted']} decisions"
-            )
-        else:
-            results['steps_completed'].append("No environment sessions to reconcile")
-
-        # Step 11: Refresh integrations and optionally re-brief active session
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [11/13] Refreshing Integrations")
-        print_info("-" * 30)
-        integration_status = self._refresh_integrations()
-        results['integration_status'] = integration_status
-        results['steps_completed'].append(f"Integrations refreshed: {integration_status['updated']} updated")
-
-        # Step 12: Update WAI-Point bootstrap
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [12/13] WAI-Point Bootstrap")
-        print_info("-" * 30)
-        self.point_manager.update_from_state()
-        results['steps_completed'].append("Updated WAI-Point bootstrap")
-
-        # Step 13: Update Website Content (if exists)
-        # [REFACTORED] Added as rule - update website content on each closeout
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [13/13] Website Content Update")
-        print_info("-" * 30)
-        website_updated = self._update_website_content(session_summary)
-        if website_updated:
-            results['steps_completed'].append("Updated website content")
-        else:
-            results['steps_completed'].append("No website content to update")
-
-        # Step 14: Auto-commit all modified files (after all updates complete)
-        print_info("")
-        print_info("-" * 30)
-        print_info("[PROCESS] [14/14] Auto-Commit Changes")
-        print_info("-" * 30)
-        self._auto_commit_state_files()
-        results['steps_completed'].append("Committed changes to git")
-
-        print_success("\n[OK] Closeout Complete!\n")
-
-        return results
-
-    def _process_seed_and_cleanup(self, interactive: bool) -> Dict[str, Any]:
-        """Process seed folders and auto-archive unknown items."""
-        from .spoke_update import SpokeUpdateProcessor
-
-        updater = SpokeUpdateProcessor(self.spoke_dir)
-        plan = updater.plan_update()
-
-        ingest_count = len(plan.get("ingest_files", []))
-        ref_count = len(plan.get("reference_files", []))
-        unknown_count = len(plan.get("unknown_items", []))
-
-        if interactive and (ingest_count or ref_count or unknown_count):
-            print_info(f"    Seed ingest: {ingest_count} file(s)")
-            print_info(f"    Seed reference: {ref_count} file(s)")
-            print_info(f"    Unknown items: {unknown_count}")
-            print_info("    Running update to ingest and archive.")
-
-        results = updater.run_update()
-        summary_parts = []
-        if results["ingested"]:
-            summary_parts.append(f"ingested {len(results['ingested'])}")
-            if interactive and results.get("ingest_notes"):
-                print_info("    Ingested files:")
-                for note in results["ingest_notes"]:
-                    targets = ", ".join(note.get("applied_to", []))
-                    preview = note.get("preview", "")
-                    print_info(f"      - {note.get('file')} [DEFER] {targets}")
-                    if preview:
-                        print_info(f"        preview: {preview}")
-        if results["archived_reference"]:
-            summary_parts.append(f"archived {len(results['archived_reference'])} reference")
-        if results["archived_unknown"]:
-            summary_parts.append(f"archived {len(results['archived_unknown'])} unknown")
-
-        summary = "Seed/update: " + (", ".join(summary_parts) if summary_parts else "no changes")
-        return {
-            "summary": summary,
-            "warnings": results.get("warnings", [])
-        }
-
-    def _reconcile_hub_learnings(self) -> bool:
+    def phase_1_reconciliation(self) -> Dict[str, Any]:
         """
-        Reconcile WAI-Hub-Learnings.md into WAI-Guide.md.
-
-        Returns:
-            True if learnings were reconciled
-        """
-        learnings_file = self.wai_spoke_dir / 'WAI-Hub-Learnings.md'
-        guide_file = self.wai_spoke_dir / 'WAI-Guide.md'
-
-        if not learnings_file.exists():
-            return False
-
-        # Read learnings content
-        learnings_content = learnings_file.read_text()
-
-        # Read existing guide
-        guide_content = guide_file.read_text()
-
-        # Add hub learnings section if not exists
-        hub_section_header = "\n## Hub Learnings\n\n"
-        if hub_section_header not in guide_content:
-            guide_content += hub_section_header
-
-        # Extract just the patterns (skip header and instructions)
-        import re
-        pattern_sections = re.findall(r'## (Pattern|Decision|Insight|Warning).*?(?=##|$)', learnings_content, re.DOTALL)
-
-        # Append new patterns to guide
-        for section in pattern_sections:
-            guide_content += f"\n## {section}\n"
-
-        # Write updated guide
-        guide_file.write_text(guide_content)
-
-        # Delete learnings file (reconciled)
-        learnings_file.unlink()
-
-        return True
-
-    def _extract_signals(self) -> int:
-        """Extract high-impact signals from session log."""
-        signals = self.session.extract_high_impact_signals()
-
-        if not signals:
-            return 0
-
-        # Append signals to WAI-Signals.jsonl
-        signals_file = self.wai_spoke_dir / 'WAI-Signals.jsonl'
-        with open(signals_file, 'a') as f:
-            for signal in signals:
-                f.write(json.dumps(signal) + '\n')
-
-        return len(signals)
-
-    def _record_analytics(self, session_summary: Dict[str, Any]) -> None:
-        """Record session analytics."""
-        session_data = {
-            'turns': session_summary.get('turns', 0),
-            'tokens_estimate': 0,  # Will be calculated from log
-            'duration_seconds': 0,  # Will be real duration
-            'time_together_seconds': 0,  # Placeholder
-            'time_ai_alone_seconds': 0,  # Placeholder
-        }
-
-        self.metrics.record_session_end(session_data)
-
-    def _finalize_closeout(self, session_summary: Dict[str, Any]) -> None:
-        """Finalize closeout by updating state and clearing log."""
-        state_file = self.wai_spoke_dir / 'WAI-State.json'
-
-        with open(state_file, 'r') as f:
-            state = json.load(f)
-
-        # Move current_session to last_closeout
-        current_session = state.get('_session_state', {}).get('current_session')
-
-        if current_session:
-            state['_session_state']['last_closeout'] = {
-                **current_session,
-                'closed_at': datetime.now().isoformat(),
-                'summary': session_summary.get('summary', 'Session complete'),
-                'key_topics': session_summary.get('key_topics', []),
-                'files_modified': session_summary.get('files_modified', [])
-            }
-
-        # Clear current session
-        state['_session_state']['current_session'] = None
-        state['_session_state']['protocol_completed'] = False
-        state['_session_state']['requires_review'] = False
-
-        # Save state
-        with open(state_file, 'w') as f:
-            json.dump(state, f, indent=2)
-
-        # Record session bead (Phase 0)
-        try:
-            parent_bead_id = None
-            # Ideally we'd track the actual bead hash, but for now we link to the previous session_id
-            # In a full implementation, state would track 'last_bead_id'
-            if state.get('_session_state', {}).get('last_closeout'):
-                 # Use the session_id as a proxy for the bead chain parent if real bead tracking isn't in state yet
-                 parent_bead_id = state['_session_state']['last_closeout'].get('session_id')
-
-            self.lug_manager.record_session_bead(
-                session_id=current_session.get('session_id', 'unknown'),
-                summary=session_summary.get('summary', 'Session complete'),
-                parent_id=parent_bead_id,
-                files_modified=session_summary.get('files_modified', [])
-            )
-            print_info("    recorded session bead")
-        except Exception as e:
-            print_warning(f"Failed to record session bead: {e}")
-
-        # Clear conversation log
-        self.session.clear_log()
-        # NOTE: Auto-commit moved to end of process_closeout (step 13)
-
-    def _auto_commit_state_files(self) -> None:
-        """Auto-commit all modified files from closeout process."""
-        try:
-            # Stage all modified AND new files in framework directories
-            modified_patterns = [
-                'WAI-Spoke/',
-                '.claude/',
-                'templates/WAI-Spoke/',
-                'templates/HUB/',
-                'AGENTS.md'
-            ]
-            
-            for pattern in modified_patterns:
-                # Use -A to stage all changes including new files
-                subprocess.run(
-                    ['git', 'add', '-A', pattern],
-                    cwd=str(self.spoke_dir),
-                    capture_output=True,
-                    check=False
-                )
-            
-            # Check if there are changes to commit
-            result = subprocess.run(
-                ['git', 'diff', '--cached', '--quiet'],
-                cwd=str(self.spoke_dir),
-                capture_output=True
-            )
-            
-            if result.returncode != 0:  # There are staged changes
-                subprocess.run(
-                    ['git', 'commit', '-m', 'wai: closeout - update session state'],
-                    cwd=str(self.spoke_dir),
-                    capture_output=True,
-                    check=False
-                )
-                print_success("    [OK] Session state committed to git")
-        except Exception as e:
-            print_warning(f"    [WARN] Could not auto-commit: {e}")
-
-    def print_summary(self, results: Dict[str, Any]) -> None:
-        """Print closeout summary."""
-        print_info("\n" + "=" * 60)
-        print_success("  [OK] Session Closeout Summary")
-        print_info("=" * 60 + "\n")
-
-        session_summary = results['session_summary']
-
-        print_info(f"  Turns: {session_summary.get('turns', 0)}")
-        print_info(f"  Summary: {session_summary.get('summary', 'N/A')[:100]}...")
-
-        if session_summary.get('key_topics'):
-            print_info(f"  Key topics: {', '.join(session_summary['key_topics'])}")
-
-        if session_summary.get('files_modified'):
-            print_info(f"  Files modified: {len(session_summary['files_modified'])}")
-
-        print_info("\n  Steps completed:")
-        for step in results['steps_completed']:
-            print_success(f"    [OK] {step}")
-
-        if results['warnings']:
-            print_info("\n  Warnings:")
-            for warning in results['warnings']:
-                print_warning(f"    [WARN] {warning}")
-
-        if results['errors']:
-            print_info("\n  Errors:")
-            for error in results['errors']:
-                print_error(f"    [ERROR] {error}")
-
-        print_info("\n" + "=" * 60)
-        print_info("  WAI-Spoke/ folder ready for hub learning")
-
-        integration_status = results.get('integration_status')
-        if integration_status:
-            print_info("  Integrations verified and refreshed")
-            updated = integration_status.get('updated', 0)
-            print_info(f"  Integration files updated: {updated}")
-
-            statuses = integration_status.get('statuses', {})
-            if statuses:
-                print_info("  Integration status:")
-    def _update_website_content(self, session_summary: Dict[str, Any]) -> bool:
-        """
-        Update website content file with session changes (if file exists).
-        
-        [REFACTORED] Added as closeout rule - updates WAI-Website-Content.md
-        with latest project state, features, and updates from session.
+        Phase 1: Reconciliation - Consolidate lugs, detect changes.
         
         Returns:
-            True if website content was updated
+            Summary of changes detected
         """
-        # Check for website content file
-        website_file = self.wai_spoke_dir / 'WAI-Website-Content.md'
-        if not website_file.exists():
-            return False
+        print("\n[Phase 1] Reconciliation...")
         
-        try:
-            content = website_file.read_text()
-            
-            # Add session summary to "Recent Updates" section
-            update_entry = f"\n### {datetime.now().strftime('%Y-%m-%d')}\n"
-            update_entry += f"{session_summary.get('summary', 'Session update')}\n"
-            
-            # Check if "Recent Updates" section exists
-            if "## Recent Updates" in content:
-                # Insert at beginning of Recent Updates section
-                parts = content.split("## Recent Updates")
-                content = parts[0] + "## Recent Updates\n" + update_entry + parts[1]
-            else:
-                # Add section at end
-                content += "\n\n## Recent Updates\n" + update_entry
-            
-            # Write updated content
-            website_file.write_text(content)
-            return True
-            
-        except Exception:
-            # Non-blocking - website update failure doesn't stop closeout
-            return False
-
-    def _refresh_integrations(self) -> Dict[str, Any]:
-        """Refresh integration files and optionally re-brief active session."""
-        manager = IDEManager(self.spoke_dir)
-        updated = 0
-        statuses = {}
-
-        for ide in manager.all_integrations:
-            config_path = ide.config_file_path
-            generated = ide.generate_config()
-            current = config_path.read_text() if config_path.exists() else None
-
-            if current != generated:
-                ide.write_config(generated)
-                updated += 1
-                statuses[ide.name] = "updated"
-            else:
-                statuses[ide.name] = "up_to_date"
-
-        # Refresh AGENTS.md with latest state (IDE context discovery)
-        agents = AgentsIntegration(self.spoke_dir)
-        agents_refreshed = agents.refresh_agents_md()
-        if agents_refreshed:
-            updated += 1
-            statuses['AGENTS.md'] = 'updated'
-            print_info("    [OK] AGENTS.md refreshed - next session will load with fresh context")
-        else:
-            if (self.spoke_dir / 'AGENTS.md').exists():
-                statuses['AGENTS.md'] = 'up_to_date'
-
-        session_refreshed = False
-        hook_output = ""
-        hook_path = self.spoke_dir / "WAI-Spoke" / "hooks" / "session-start.sh"
-        if hook_path.exists():
-            try:
-                env = os.environ.copy()
-                env["WAI_PROJECT_DIR"] = str(self.spoke_dir)
-                result = subprocess.run(
-                    [str(hook_path)],
-                    cwd=self.spoke_dir,
-                    env=env,
-                    capture_output=True,
-                    text=True,
-                    timeout=5
-                )
-                hook_output = (result.stdout or "").strip()
-                session_refreshed = True
-            except (OSError, subprocess.TimeoutExpired) as e:
-                # On Windows or if bash not available, skip hook execution
-                print_warning(f"    Skipped hook execution (bash not available): {type(e).__name__}")
-
-        return {
-            "updated": updated,
-            "statuses": statuses,
-            "session_refreshed": session_refreshed,
-            "briefing_emitted": bool(hook_output)
+        spoke_path = self._find_spoke_path()
+        lugs_file = spoke_path / "WAI-Lugs.jsonl"
+        
+        changes = {
+            "lugs_reconciled": 0,
+            "new_lugs": 0,
+            "updated_lugs": 0,
+            "files_modified": [],
         }
+        
+        if not lugs_file.exists():
+            print("  ✓ No lugs file - initializing")
+            return changes
+        
+        # Read lugs
+        with open(lugs_file, 'r') as f:
+            lugs = [json.loads(line) for line in f if line.strip()]
+        
+        changes["lugs_reconciled"] = len(lugs)
+        print(f"  ✓ Reconciled {len(lugs)} lugs")
+        
+        # Check for file modifications
+        status = self.git.get_status()
+        changes["files_modified"] = status["modified_files"]
+        print(f"  ✓ {len(changes['files_modified'])} files modified")
+        
+        return changes
 
-    def print_summary(self, results: Dict[str, Any]) -> None:
-        """Print comprehensive closeout summary with next-action guidance."""
-        print_info("\n" + "=" * 70)
-        print_success("  ✓ SESSION CLOSEOUT COMPLETE")
-        print_info("=" * 70 + "\n")
-
-        # 1. Committed Changes
-        print_info("  COMMITTED TO GIT:")
-        print_success("    ✓ WAI-State.json, WAI-State.md, WAI-Lugs.jsonl")
-        print_success("    ✓ WAI-Point.json, WAI-Guide.md, AGENTS.md")
-        print_info("")
-
-        # 2. Framework Updates
-        integration_status = results.get('integration_status', {})
-        if integration_status.get('statuses', {}).get('AGENTS.md') == 'updated':
-            print_success("  ✓ AGENTS.md refreshed - next session loads with fresh context")
-        print_info("")
-
-        # 3. Session Summary
-        session_summary = results['session_summary']
-        print_info("  SESSION ACTIVITY:")
-        turns = session_summary.get('turns', 0)
-        print_info(f"    • Turns: {turns}")
-        if session_summary.get('files_modified'):
-            print_info(f"    • Files touched: {len(session_summary['files_modified'])}")
-        if session_summary.get('key_topics'):
-            topics_str = ", ".join(session_summary['key_topics'][:3])
-            print_info(f"    • Topics: {topics_str}")
-        print_info("")
-
-        # 4. Next Actions (from lugs)
-        print_info("  NEXT ACTIONS (from your lugs):")
-        self._print_lug_guidance()
-        print_info("")
-
-        # 5. Token/Context Capacity
-        print_info("  CAPACITY CHECK:")
-        self._print_capacity_guidance()
-        print_info("")
-
-        print_info("=" * 70)
-
-    def _print_lug_guidance(self) -> None:
-        """Print next actions based on active lugs."""
-        try:
-            lugs = self.lug_manager.get_active_lugs()
-            if not lugs:
-                print_info("    • No active lugs - you're clear for new work")
-                return
-            
-            # Show top 3 priorities
-            priority_lugs = sorted(
-                [l for l in lugs if getattr(l, 'priority', 'normal') == 'high'],
-                key=lambda x: getattr(x, 'created_at', ''),
-                reverse=True
-            )[:3]
-            
-            if priority_lugs:
-                for lug in priority_lugs:
-                    title = getattr(lug, 'title', 'Untitled')
-                    print_info(f"    • {title}")
-            else:
-                print_info("    • Continue current work or start new initiative")
-        except Exception:
-            print_info("    • Lugs unavailable - check WAI-Lugs.jsonl for priorities")
-
-    def _print_capacity_guidance(self) -> None:
-        """Print token capacity and context recommendations."""
-        try:
-            state_path = self.wai_spoke_dir / 'WAI-State.json'
-            if not state_path.exists():
-                return
-            
-            with open(state_path, 'r') as f:
+    def phase_2_state_updates(self, changes: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Phase 2: State Updates - Update WAI-State.json and WAI-State.md.
+        
+        Args:
+            changes: Changes from phase 1
+        
+        Returns:
+            Summary of state updates
+        """
+        print("\n[Phase 2] State Updates...")
+        
+        spoke_path = self._find_spoke_path()
+        state_json_file = spoke_path / "WAI-State.json"
+        state_md_file = spoke_path / "WAI-State.md"
+        
+        updates = {
+            "state_json_updated": False,
+            "state_md_updated": False,
+            "session_count_incremented": False,
+            "last_modified_at": datetime.now(timezone.utc).isoformat(),
+        }
+        
+        # Update WAI-State.json
+        if state_json_file.exists():
+            with open(state_json_file, 'r') as f:
                 state = json.load(f)
             
-            capacity = state.get('context', {}).get('capacity_management', {})
-            usage = capacity.get('current_capacity_estimate', 0.0)
-            warning_threshold = capacity.get('warning_threshold', 0.8)
-            critical_threshold = capacity.get('critical_threshold', 0.9)
+            # Update session state
+            if "_session_state" in state:
+                state["_session_state"]["last_session_id"] = self.session_id
+                state["_session_state"]["last_modified_at"] = updates["last_modified_at"]
+                state["_session_state"]["session_count"] = state["_session_state"].get("session_count", 0) + 1
+                updates["session_count_incremented"] = True
             
-            if usage >= critical_threshold:
-                print_warning(f"    ⚠ Context CRITICAL ({usage:.0%}) - START NEW THREAD")
-            elif usage >= warning_threshold:
-                print_warning(f"    ⚠ Context HIGH ({usage:.0%}) - monitor before next epic")
+            if not self.dry_run:
+                with open(state_json_file, 'w') as f:
+                    json.dump(state, f, indent=2)
+                updates["state_json_updated"] = True
+                print("  ✓ Updated WAI-State.json")
             else:
-                print_success(f"    ✓ Context healthy ({usage:.0%}) - continue working")
-        except Exception:
-            print_info("    • Capacity check unavailable")
+                print("  ~ (dry-run) Would update WAI-State.json")
+        
+        return updates
+
+    def phase_3_git_operations(self, message: str = None) -> List[Dict[str, Any]]:
+        """
+        Phase 3: Git Operations - Add, commit, push.
+        
+        Args:
+            message: Commit message (auto-generated if None)
+        
+        Returns:
+            List of observations from each git operation
+        """
+        print("\n[Phase 3] Git Operations...")
+        
+        if message is None:
+            message = f"Closeout: {self.session_id}"
+        
+        observations = []
+        
+        # Step 1: git add -A
+        print("  [3.1] git add -A")
+        obs_add = self.git.add_all(self.session_id, agent="CloseoutWorkflow")
+        observations.append(obs_add)
+        
+        if obs_add["verification"]["passed"]:
+            print("    ✓ Files staged")
+        else:
+            print(f"    ✗ Failed: {obs_add['actual_result'].get('stderr', 'Unknown error')}")
+            return observations
+        
+        # Step 2: git commit
+        print(f"  [3.2] git commit -m '{message}'")
+        obs_commit = self.git.commit(message, self.session_id, agent="CloseoutWorkflow")
+        observations.append(obs_commit)
+        
+        if obs_commit["verification"]["passed"]:
+            print(f"    ✓ Committed {obs_commit['verification'].get('commit_hash', 'unknown')}")
+        else:
+            print(f"    ✗ Failed: {obs_commit['actual_result'].get('stderr', 'Unknown error')}")
+            if obs_commit.get("remediation"):
+                print(f"    → {obs_commit['remediation'].get('suggested_next_step', '')}")
+            return observations
+        
+        # Step 3: git push
+        print("  [3.3] git push")
+        obs_push = self.git.push(
+            session_id=self.session_id,
+            agent="CloseoutWorkflow"
+        )
+        observations.append(obs_push)
+        
+        if obs_push["verification"]["passed"]:
+            print("    ✓ Pushed to remote")
+        else:
+            print(f"    ✗ Failed: {obs_push['actual_result'].get('stderr', 'Unknown error')}")
+            if obs_push.get("remediation"):
+                print(f"    → Remediation: {json.dumps(obs_push['remediation'], indent=6)}")
+            return observations
+        
+        self.observations.extend(observations)
+        return observations
+
+    def phase_4_verification(self, git_obs: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Phase 4: Verification - Verify all changes persisted.
+        
+        Args:
+            git_obs: Observations from phase 3
+        
+        Returns:
+            Verification summary
+        """
+        print("\n[Phase 4] Verification...")
+        
+        results = {
+            "git_operations_verified": False,
+            "all_observations_logged": False,
+            "state_consistent": False,
+            "alerts": [],
+        }
+        
+        # Verify all git operations succeeded
+        git_success = all(obs["verification"]["passed"] for obs in git_obs)
+        results["git_operations_verified"] = git_success
+        
+        if git_success:
+            print("  ✓ All git operations verified")
+        else:
+            failed = [obs for obs in git_obs if not obs["verification"]["passed"]]
+            for obs in failed:
+                print(f"  ✗ {obs['action']['id']} failed")
+                results["alerts"].append(f"{obs['action']['id']} failed")
+        
+        # Verify observations logged
+        results["all_observations_logged"] = len(self.logger._read_all()) > 0
+        if results["all_observations_logged"]:
+            print("  ✓ All observations logged")
+        
+        # Check git status
+        status = self.git.get_status()
+        results["state_consistent"] = status["clean"]
+        if status["clean"]:
+            print("  ✓ Working directory clean")
+        else:
+            print(f"  ⚠ {len(status['modified_files'])} files still modified")
+            results["alerts"].append(f"{len(status['modified_files'])} files still modified")
+        
+        return results
+
+    def execute(self, message: str = None) -> Dict[str, Any]:
+        """
+        Execute complete 4-phase closeout workflow.
+        
+        Args:
+            message: Custom commit message
+        
+        Returns:
+            Complete execution summary
+        """
+        print(f"\n{'='*60}")
+        print(f"Enhanced Closeout Workflow")
+        print(f"Session: {self.session_id}")
+        print(f"Mode: {'DRY RUN' if self.dry_run else 'NORMAL'}")
+        print(f"{'='*60}")
+        
+        summary = {
+            "session_id": self.session_id,
+            "started_at": datetime.now(timezone.utc).isoformat(),
+            "dry_run": self.dry_run,
+            "phase_1_reconciliation": None,
+            "phase_2_state_updates": None,
+            "phase_3_git_operations": None,
+            "phase_4_verification": None,
+            "status": "pending",
+            "observations_count": 0,
+        }
+        
+        try:
+            # Phase 1
+            summary["phase_1_reconciliation"] = self.phase_1_reconciliation()
+            
+            # Phase 2
+            summary["phase_2_state_updates"] = self.phase_2_state_updates(
+                summary["phase_1_reconciliation"]
+            )
+            
+            # Phase 3
+            git_obs = self.phase_3_git_operations(message)
+            summary["phase_3_git_operations"] = {
+                "observations": len(git_obs),
+                "all_passed": all(obs["verification"]["passed"] for obs in git_obs),
+            }
+            
+            # If git failed, stop here
+            if not summary["phase_3_git_operations"]["all_passed"]:
+                summary["status"] = "failed"
+                print("\n[!] Closeout incomplete - git operations failed")
+                print("[!] Please fix the error and retry")
+                return summary
+            
+            # Phase 4
+            summary["phase_4_verification"] = self.phase_4_verification(git_obs)
+            
+            # Final status
+            if summary["phase_4_verification"]["git_operations_verified"]:
+                summary["status"] = "complete"
+                print(f"\n✅ Closeout complete!")
+            else:
+                summary["status"] = "failed"
+                print(f"\n❌ Closeout incomplete - verification failed")
+            
+            summary["observations_count"] = len(self.observations)
+            summary["completed_at"] = datetime.now(timezone.utc).isoformat()
+            
+        except Exception as e:
+            summary["status"] = "error"
+            summary["error"] = str(e)
+            print(f"\n❌ Closeout error: {e}")
+        
+        return summary
 
 
-def generate_closeout() -> None:
-     """Generate session closeout (legacy function for backward compatibility)."""
-     print_warning("\n[WARN] Using legacy closeout stub.")
-     print_info("Use CloseoutProcessor for full functionality.\n")
+def run_closeout(repo_path: str = ".", dry_run: bool = False, message: str = None) -> Dict[str, Any]:
+    """
+    Convenience function to run closeout workflow.
+    
+    Args:
+        repo_path: Repository root
+        dry_run: Preview only
+        message: Custom commit message
+    
+    Returns:
+        Execution summary
+    """
+    workflow = CloseoutWorkflow(repo_path, dry_run)
+    return workflow.execute(message)

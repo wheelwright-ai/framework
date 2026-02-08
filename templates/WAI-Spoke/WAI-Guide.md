@@ -283,6 +283,68 @@ Built-in commands for any AI session using Wheelwright:
 | `'Time'` | Token usage estimate with 80% capacity warnings |
 | `'Rules'` | List active guidelines and project protocols |
 | `'Closeout'` | Generate updated WAI-State files for session end |
+| `'Red Light'` | Inspect autosave checkpoints, assess crash recovery readiness |
+| `'Green Light'` | Resume from last autosave checkpoint |
+
+---
+
+## Autosave Protocol (Red Light / Green Light)
+
+### When to Write Autosave Lugs
+
+After each significant action, append an autosave lug to WAI-Lugs.jsonl:
+- Editing or creating a file
+- Making an architectural/design decision
+- Completing a sub-task
+- Before asking user a clarifying question
+- Switching context
+
+### Autosave Lug Schema
+
+```json
+{
+  "i": "as-{12-char-hex}",
+  "ty": "autosave",
+  "s": "o",
+  "autosave": true,
+  "reconciled": false,
+  "session_id": "...",
+  "seq": 1,
+  "title": "Brief: what was just done",
+  "task_context": "Parent task being worked on",
+  "action_taken": "What AI did in this turn",
+  "current_state": "Where we are in the task",
+  "what_remains": "What's left to complete",
+  "files_touched": ["list", "of", "files"],
+  "completion_estimate": "25%",
+  "next_step": "Exactly what to do next",
+  "created_at": "ISO-8601",
+  "impact": 0
+}
+```
+
+### Red Light Command
+
+Quality gate: pause work, inspect last 10 autosave checkpoints, assess crash recovery readiness.
+
+Assessment criteria:
+- **ADEQUATE**: task_context + current_state + next_step all have meaningful specific content in last 3 lugs
+- **MARGINAL**: fields present but generic/vague, or some entries missing
+- **INSUFFICIENT**: fewer than 3 entries, fields empty/missing, or no autosave lugs at all
+
+### Green Light Command
+
+Resume execution from last autosave checkpoint. Reads the most recent unreconciled autosave lug and continues from `next_step`.
+
+### Closeout Reconciliation
+
+During closeout, all unreconciled autosave lugs (autosave=true, reconciled=false) are:
+1. Summarized into ONE permanent session-summary lug
+2. Marked reconciled=true, s="c"
+
+### Wakeup Detection
+
+On session start, if unreconciled autosave lugs exist, the briefing shows an "Incomplete Work" section with count, task context, and progress estimate. AI presents options: Resume (Green Light) / Inspect (Red Light) / Continue without.
 
 ---
 

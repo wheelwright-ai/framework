@@ -1,27 +1,58 @@
 # WAI Wakeup
 
-Show unified "WAI Point" briefing - where are we, what's the status, what should I work on?
+Unified briefing: where are we, what''s the status, what to work on.
 
-## Instructions
+## What It Does
 
-**IMPORTANT:** Use the unified briefing script instead of custom formatting.
+When you first join this project (or resume a session), /wai:
+1. Loads perfect context from WAI-State.json and WAI-State.md
+2. Shows you what changed since last session
+3. Checks for uncommitted git work
+4. Briefs you on project scope and collaboration style
 
-1. Run the briefing script:
-   ```bash
-   bash WAI-Spoke/_framework/wai-briefing.sh
-   ```
+This is the entry point to Wheelwright continuity.
 
-2. Display the output to the user exactly as generated.
+## When to Use
 
-3. This unified briefing shows:
-   - Project identity and phase
-   - Current environment
-   - Active work (prioritized backlog)
-   - Context health (tokens, hub, git)
-   - Recent high-impact changes
-   - Next actions
-   - Quick command reference
+- **Session start:** Always run /wai first
+- **Orientation needed:** Lost context? Run /wai
+- **After long break:** Get reoriented before work
 
-4. The briefing is identical to what hooks show and what "wai point" questions trigger.
+## How It Works
 
-5. After showing the briefing, ask if the user wants recommendations on what to work on next.
+1. Read WAI-Spoke/WAI-State.json
+   - Last session info
+   - Project foundation (identity, scope, boundaries)
+   - Analytics (sessions completed, token efficiency)
+
+2. Read WAI-Spoke/WAI-State.md
+   - Strategic vision and evolution log
+   - Key decisions and their rationale
+   - Active work and next steps
+
+3. Check git status
+   - List uncommitted changes
+   - Ask if resuming or starting fresh
+
+4. Brief the user
+   - Project name and purpose
+   - Last session date/time and summary
+   - Current environment (tool + machine)
+   - Any scope drift or foundation gaps
+
+## Example
+
+User: /wai
+
+AI Output:
+
+
+## Usage Pattern
+
+
+
+## Related Skills
+
+- /wai-status — Quick health check
+- /wai-closeout — End session ceremony
+- /wai-rules — Show boundaries

@@ -131,39 +131,42 @@
     ]
   },
   "_session_state": {
-    "last_session_id": "benchmarking-system-2026-02-06",
+    "last_session_id": "e3-e7-complete-2026-02-08",
     "last_modified_by": "Claude Sonnet 4.5",
-    "last_modified_at": "2026-02-06T08:11:16.566869+00:00",
+    "last_modified_at": "2026-02-08T09:52:12.898858+00:00",
     "requires_review": false,
     "review_reason": null,
-    "session_count": 25,
-    "context_usage_at_closeout": 0.32,
-    "next_session_recommendation": "Benchmarking system complete. Ready to ship or continue with large tier if desired.",
+    "session_count": 28,
+    "context_usage_at_closeout": 0.94,
+    "next_session_recommendation": "E3-E7 architecture complete. Skill system authoritative, teach/learn hub-only, no intermediary guides. Ready for E8-E9 validation.",
     "protocol_completed": false,
-    "protocol_last_run": "2026-02-06T08:09:32Z",
+    "protocol_last_run": "2026-02-08T07:14:41Z",
     "briefing_provided": true,
     "current_session": null,
     "last_closeout": {
-      "session_id": "lazy-loading-optimization-2026-02-05",
-      "started_at": "2026-02-05T23:08:00Z",
-      "turn_count": 8,
-      "conversation_log_path": null,
-      "closed_at": "2026-02-05T23:10:57.269425+00:00",
-      "summary": "Context Efficiency Optimization - Eliminated session start redundancy (2-4K tokens), added file loading transparency (bytes/tokens), conditional token display. Created epic for comprehensive lazy-loading (100K+ savings potential). Files modified: hooks, briefing scripts, templates.",
+      "session_id": "skill-system-migration-2026-02-08",
+      "closed_at": "2026-02-08T09:52:12.898858+00:00",
+      "summary": "WAI Skill System: E1+E2 complete, E3 partial. Created WAI-Skills.jsonl (16 skills), 5 advisory command files, lug-advisor. Context blocks added to wai.md, closeout, red-light, green-light.",
       "key_topics": [
-        "lazy-loading",
-        "context-efficiency",
-        "token-optimization",
-        "session-hook",
-        "file-transparency",
-        "briefing-enhancement"
+        "skill-system",
+        "kb-migration",
+        "advisory-skills",
+        "skill-registry"
       ],
       "files_modified": [
-        ".claude/hooks/user-prompt-submit.sh",
-        "WAI-Spoke/_framework/wai-briefing.sh",
-        "templates/WAI-Spoke/.claude/hooks/user-prompt-submit.sh",
-        "templates/WAI-Spoke/WAI-Spoke/_framework/wai-briefing.sh",
-        "WAI-Spoke/WAI-Lugs.jsonl (epic d4ad5a0f86ac)"
+        "WAI-Spoke/WAI-Skills.jsonl",
+        "templates/WAI-Spoke/WAI-Skills.jsonl",
+        "templates/commands/manifest.json",
+        "templates/commands/wai-complexity-advisor.md",
+        "templates/commands/wai-stewardship-advisor.md",
+        "templates/commands/wai-context-advisor.md",
+        "templates/commands/wai-foundation-advisor.md",
+        "templates/commands/wai-signal-advisor.md",
+        "templates/commands/wai-lug-advisor.md",
+        "templates/commands/wai.md",
+        "templates/commands/wai-closeout.md",
+        "templates/commands/wai-red-light.md",
+        "templates/commands/wai-green-light.md"
       ]
     }
   },
@@ -470,6 +473,52 @@
       "decision": "Wheelwright Benchmarking System - Complete dual-purpose validation system",
       "rationale": "Implemented production-grade benchmarking proving 2,000-4,000x token efficiency and WEI scores of 87-90. All 6 modules tested: Token Efficiency (2,085-3,899x), Context Efficiency (100% reference avoidance), Persistence (lugs vs spec files, 75-100 score), Resumption Speed (600-1,767x faster via WAI wakeup), Task Success (both pass), Learning Velocity (10 insights via learn/teach cycles). Graduated reference sizes (20MB/100MB/400MB). Linear scaling proven. Results consolidated in root README for website generation. Eliminates 'not tested' issues by implementing proper tests for all modules.",
       "impact": 10,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-08",
+      "decision": "Implemented Red Light / Green Light + Autosave Protocol using existing WAI-Lugs.jsonl (ty=autosave) - no new files needed",
+      "rationale": "Reusing the existing persistence layer is less invasive and naturally propagates via teach. Autosave lugs are reconciled on closeout into a permanent session-summary.",
+      "impact": 8,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-08",
+      "decision": "WAI Skill System \u2014 KB/SOP Migration: prose-knowledge \u2192 skill-based governance",
+      "rationale": "WAI-Skills.jsonl as skill registry (mirrors Lugs pattern). Advisory skills replace inline prose rules. complexity_advisor exempts utility commands from planning gate. Skills are self-contained with lifecycle, scope, safety, watchers, prerequisites.",
+      "impact": 10,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-08",
+      "decision": "Skill System Distribution via Teach Command - E3-E7 Complete",
+      "rationale": "Migrated behavioral rules from inline documentation to skills-based architecture. Implemented teach cycle skill distribution (16 skill files in templates/WAI-Spoke/commands/) enabling all wheels to receive latest skill definitions on teach. Reduced context overhead: WAI-Guide.md 77 lines, CLAUDE.md 56 lines. Comprehensive E2E test suite (9 tests) validates teach cycle integrity. Hub maintains authoritative skills; spokes receive updates via teach. Backward compatible.",
+      "impact": 10,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-08",
+      "decision": "Skill System Architecture Restructure - Remove Redundancy",
+      "rationale": "Eliminated WAI-Guide.md as redundant intermediary layer. Skills are authoritative behavioral source; WAI-Guide.md was just pointing to skills. Replaced with WAI-Spoke/README.md (human documentation only, not executable). Clarified teach/learn are hub-only (framework maintenance), not spoke user commands. Clean separation: WAI-State.json/md + skills for AI, README.md for humans. No intermediary files.",
+      "impact": 8,
+      "by": "Architecture review"
+    },
+    {
+      "date": "2026-02-08",
+      "decision": "Skill System Architecture Restructure",
+      "impact": 8,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-08",
+      "decision": "Benchmark System Codification - 6 Modules",
+      "impact": 9,
+      "by": "Claude Sonnet 4.5"
+    },
+    {
+      "date": "2026-02-08",
+      "decision": "Operational Agreement Codified as Skill",
+      "impact": 8,
       "by": "Claude Sonnet 4.5"
     }
   ],

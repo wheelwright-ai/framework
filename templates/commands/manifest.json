@@ -1,6 +1,8 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "WAI session commands - consistent across all AI integrations",
+  "skill_registry": "WAI-Spoke/WAI-Skills.jsonl",
+  "_note": "Commands are the instructions layer. WAI-Skills.jsonl is the skill registry with full metadata.",
   "commands": [
     {
       "name": "wai",
@@ -49,6 +51,18 @@
       "file": "wai-learn.md",
       "description": "Push signals to hub",
       "aliases": ["Learn", "learn"]
+    },
+    {
+      "name": "wai-red-light",
+      "file": "wai-red-light.md",
+      "description": "Inspect autosave checkpoints, assess crash recovery readiness",
+      "aliases": ["Red Light", "red light", "redlight"]
+    },
+    {
+      "name": "wai-green-light",
+      "file": "wai-green-light.md",
+      "description": "Resume from last autosave checkpoint",
+      "aliases": ["Green Light", "green light", "greenlight"]
     }
   ],
   "integration_notes": {

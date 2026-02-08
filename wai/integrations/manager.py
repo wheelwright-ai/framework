@@ -14,6 +14,7 @@ from .codex import CodexIntegration
 from .vscode import VSCodeIntegration
 from .cursor import CursorIntegration
 from .web_llm import WebLLMIntegration
+from .gemini import GeminiIntegration
 
 
 class IDEManager:
@@ -25,7 +26,8 @@ class IDEManager:
         CodexIntegration,
         VSCodeIntegration,
         CursorIntegration,
-        WebLLMIntegration
+        WebLLMIntegration,
+        GeminiIntegration
     ]
 
     def __init__(self, spoke_dir: Path):
