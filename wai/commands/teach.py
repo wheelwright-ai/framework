@@ -113,6 +113,34 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
             spoke_count += 1
             print_success(f"    [OK] {file_config['name']}")
     
+    # Hub-specific files at root (defined outside if block to avoid UnboundLocalError)
+    hub_files = [
+        {
+            'name': 'hub-registry.json',
+            'path': 'hub-registry.json',
+            'changed_from': '2.0.0',
+            'why_changed': 'Updated registry tracking wheels and teaching history',
+        },
+        {
+            'name': 'hub-learning-index.md',
+            'path': 'hub-learning-index.md',
+            'changed_from': '2.0.0',
+            'why_changed': 'Knowledge base index for learning aggregation',
+        },
+        {
+            'name': 'hub-security-policy.json',
+            'path': 'hub-security-policy.json',
+            'changed_from': '2.0.0',
+            'why_changed': 'Security settings for hub-spoke communication',
+        },
+        {
+            'name': 'AGENTS.md',
+            'path': 'AGENTS.md',
+            'changed_from': '2.0.0',
+            'why_changed': 'Hub-specific AI assistant instructions (legacy)',
+        },
+    ]
+    
     # Add hub files if teaching hub
     hub_count = 0
     if is_hub_target and wai_hub_templates_dir.exists():
@@ -153,34 +181,6 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
                         safe_to_auto_adopt=True
                     )
                     hub_count += 1
-        
-        # Hub-specific files at root
-        hub_files = [
-            {
-                'name': 'hub-registry.json',
-                'path': 'hub-registry.json',
-                'changed_from': '2.0.0',
-                'why_changed': 'Updated registry tracking wheels and teaching history',
-            },
-            {
-                'name': 'hub-learning-index.md',
-                'path': 'hub-learning-index.md',
-                'changed_from': '2.0.0',
-                'why_changed': 'Knowledge base index for learning aggregation',
-            },
-            {
-                'name': 'hub-security-policy.json',
-                'path': 'hub-security-policy.json',
-                'changed_from': '2.0.0',
-                'why_changed': 'Security settings for hub-spoke communication',
-            },
-            {
-                'name': 'AGENTS.md',
-                'path': 'AGENTS.md',
-                'changed_from': '2.0.0',
-                'why_changed': 'Hub-specific AI assistant instructions (legacy)',
-            },
-        ]
         
         for file_config in hub_files:
             src_path = wai_hub_templates_dir / file_config['name']

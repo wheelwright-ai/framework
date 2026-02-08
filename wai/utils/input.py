@@ -10,6 +10,18 @@ from typing import Optional, Callable, List
 
 from .exceptions import ValidationError
 
+# Ensure UTF-8 output on Windows
+if sys.stdout.encoding and sys.stdout.encoding.lower() in ('cp1252', 'ascii'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except (AttributeError, ValueError):
+        pass
+if sys.stderr.encoding and sys.stderr.encoding.lower() in ('cp1252', 'ascii'):
+    try:
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except (AttributeError, ValueError):
+        pass
+
 # Enable readline for better input editing (arrow keys, history, etc.)
 try:
     import readline
@@ -25,20 +37,32 @@ def getch():
     Read a single character without waiting for Enter.
 
     Works on Unix/Linux/WSL using termios.
+    Falls back to input() on Windows.
     """
     import sys
-    import tty
-    import termios
-
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
+    import platform
+    
+    # Windows fallback - use input() which requires Enter
+    if platform.system() == 'Windows' or sys.platform.startswith('win'):
+        line = input('')
+        return line[0] if line else ''
+    
     try:
-        tty.setraw(fd)
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        import tty
+        import termios
 
-    return ch
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(fd)
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+        return ch
+    except (ImportError, AttributeError, OSError):
+        # Fallback for environments where termios isn't available
+        return input('')[0] if input() else ''
 
 
 def single_key_input(prompt: str, valid_keys: List[str]) -> Optional[str]:
@@ -54,44 +78,71 @@ def single_key_input(prompt: str, valid_keys: List[str]) -> Optional[str]:
     """
     import time
     import sys
-    import tty
-    import termios
+    import platform
 
     sys.stdout.write(f"{prompt} ")
     sys.stdout.flush()
 
     valid_keys_lower = [k.lower() for k in valid_keys]
 
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
+    # Windows fallback - use input() which requires Enter
+    if platform.system() == 'Windows' or sys.platform.startswith('win'):
+        while True:
+            try:
+                response = input().lower()
+                if not response:
+                    continue
+                ch = response[0]
+                if ch in valid_keys_lower:
+                    return ch
+                else:
+                    sys.stdout.write('\a')  # Bell sound for invalid input
+                    sys.stdout.flush()
+                    continue
+            except EOFError:
+                return None
+            except KeyboardInterrupt:
+                raise
 
     try:
-        tty.setraw(fd)  # Set terminal to raw mode
-        while True:
-            ch = sys.stdin.read(1)  # Read a single character
+        import tty
+        import termios
 
-            if ch == '\x03':  # Ctrl+C
-                raise KeyboardInterrupt
-            elif ch == '\x04':  # Ctrl+D
-                return None
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
 
-            response = ch.lower()
+        try:
+            tty.setraw(fd)  # Set terminal to raw mode
+            while True:
+                ch = sys.stdin.read(1)  # Read a single character
 
-            if response in valid_keys_lower:
-                sys.stdout.write(ch + '\n') # Echo valid character and newline
-                sys.stdout.flush()
-                return response
-            else:
-                # Invalid key, ignore but don't echo
-                sys.stdout.write('\a') # Bell sound for invalid input
-                sys.stdout.flush()
-                continue
-    except KeyboardInterrupt:
-        print("\nOperation cancelled.")
+                if ch == '\x03':  # Ctrl+C
+                    raise KeyboardInterrupt
+                elif ch == '\x04':  # Ctrl+D
+                    return None
+
+                response = ch.lower()
+
+                if response in valid_keys_lower:
+                    sys.stdout.write(ch + '\n') # Echo valid character and newline
+                    sys.stdout.flush()
+                    return response
+                else:
+                    # Invalid key, ignore but don't echo
+                    sys.stdout.write('\a') # Bell sound for invalid input
+                    sys.stdout.flush()
+                    continue
+        except KeyboardInterrupt:
+            print("\nOperation cancelled.")
+            return None
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings) # Restore terminal settings
+            time.sleep(0.05) # Small delay to prevent flickering in some terminals
+    except (ImportError, AttributeError, OSError):
+        # Fallback if termios not available - this shouldn't happen after Windows check above
+        # but keeps the function robust
+        print("\nTerminal input not available.")
         return None
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings) # Restore terminal settings
-        time.sleep(0.05) # Small delay to prevent flickering in some terminals
 
 
 def safe_input(

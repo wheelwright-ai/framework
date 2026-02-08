@@ -3,13 +3,13 @@
     "version": "3.1.0",
     "framework_version": "3.1.0",
     "spoke_structure_version": "3.0",
-    "created_at": "2026-02-07T03:22:02.360594Z",
+    "created_at": "2026-02-08T21:40:21.217597Z",
     "source": "framework",
     "target_type": "universal",
     "description": "Framework templates for universal distribution to hubs and spokes"
   },
   "verification": {
-    "hub_fingerprint": "e882ac9363a25b49047d8f742aa82fe8c041169c819697a6b961f984edcd6632",
+    "hub_fingerprint": "694fc8b65df3352eb61519cca61cef179103bdafc67631f9060add49c01c9a71",
     "spoke_signature": null,
     "hash_algorithm": "sha256-hmac",
     "signed_by": "wheelwright-framework-3.1.0",
@@ -19,8 +19,8 @@
     {
       "name": "WAI-Guide.md",
       "path": "WAI-Spoke/WAI-Guide.md",
-      "size": 11172,
-      "hash": "sha256:4eae292e134afe7e3bc06a8335cca67bbc553c4083360459f45c392af8363cd1",
+      "size": 13230,
+      "hash": "sha256:f5a1b755e8df2ed50d1241aa3c0fcf1a9ed024ac4deba91d117970ae57597b6c",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-Guide.md",
       "version": "3.1.0",
       "changed_from": "2.1.0",
@@ -235,7 +235,7 @@
     }
   ],
   "checksums": {
-    "all_files_hash": "sha256:c7badb7932a17f5145a499ffd4637ae8692ac526876f2adbc3de7ec3fe23c803",
+    "all_files_hash": "sha256:1cd3d1d304e571f677f18fbda39996780f17ff21824033c8d2e2bf58d97a2e46",
     "verification_required": true
   },
   "adoption_guidance": {

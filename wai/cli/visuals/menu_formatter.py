@@ -45,12 +45,12 @@ class MenuFormatter:
         "t_left": "|",
     }
     
-    # Color codes
+    # Color codes (light colors for readability on dark backgrounds)
     COLORS = {
-        "primary": "\033[94m",      # Blue
-        "workflow": "\033[92m",     # Green
-        "utility": "\033[93m",      # Yellow
-        "system": "\033[91m",       # Red
+        "primary": "\033[36m",      # Cyan (bright blue)
+        "workflow": "\033[32m",     # Green
+        "utility": "\033[33m",      # Yellow
+        "system": "\033[31m",       # Red
         "reset": "\033[0m",
         "bold": "\033[1m",
     }

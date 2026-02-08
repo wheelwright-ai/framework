@@ -1,19 +1,21 @@
 """
 Wheelwright CLI Main Entry Point
 
-v3.2.0 - Verb-noun command structure with iconic wagon wheel animation.
+v4.0.0 - Multi-project teach/learn across the wheel + auto-discovery.
+         Major refactoring: hub-aware, registry-driven, all-projects support.
 """
 
 import sys
 import argparse
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 from wai.cli.visuals import get_wagon_wheel, get_formatter
 from wai.cli.visuals.animations import show_welcome_banner
 from wai.cli.lib.menu_generator import MenuGenerator
 from wai.cli.lib.state_manager import StateManager
+from wai.cli.lib.discovery import CLIDiscovery
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -43,7 +45,7 @@ The wagon wheel rolls forward. So does your work.
     parser.add_argument(
         '--version',
         action='version',
-        version='%(prog)s 3.2.0'
+        version='%(prog)s 4.0.0'
     )
     
     parser.add_argument(
@@ -80,7 +82,7 @@ The wagon wheel rolls forward. So does your work.
     
     # TEACH verb
     teach_parser = subparsers.add_parser('teach', help='Pull templates from hub to spoke')
-    teach_parser.add_argument('spoke', help='Spoke name or ID (or "hub" for distribute)')
+    teach_parser.add_argument('spoke', nargs='?', default=None, help='Spoke name or ID (or "hub" for distribute)')
     teach_parser.add_argument('--force', '-f', action='store_true', help='Skip confirmation')
     teach_parser.add_argument('--json', action='store_true', help='Output as JSON')
     
@@ -196,6 +198,10 @@ def cmd_teach(args) -> int:
     """Handle teach command."""
     fmt = get_formatter()
     wheel = get_wagon_wheel()
+    
+    # If no spoke specified, use interactive mode
+    if not args.spoke:
+        return interactive_teach()
     
     fmt.print_info(f"Teaching spoke: {args.spoke}")
     
@@ -314,6 +320,15 @@ def show_interactive_menu() -> Optional[str]:
     # Show welcome banner
     show_welcome_banner(with_animation=True)
     
+    # Show context
+    framework_root, hub_root, wheel_projects = CLIDiscovery.get_current_wheel_context()
+    if framework_root:
+        fmt.print_info("")
+        fmt.print_info(f"Framework: {framework_root.name if framework_root else 'unknown'}")
+        if hub_root:
+            fmt.print_info(f"Hub: {hub_root.name}")
+        fmt.print_info(f"Wheel: {len(wheel_projects)} projects")
+    
     fmt.print_info("")
     fmt.print_header("WHEELWRIGHT AI - Main Menu", width=50)
     fmt.print_info("")
@@ -384,14 +399,18 @@ def interactive_init(node_type: str) -> int:
     fmt.print_info("")
     
     # Get node name
-    node_name = safe_input(f"Enter {node_type} name", required=True)
+    node_name = safe_input(f"Enter {node_type} name", allow_empty=False)
+    if not node_name:
+        return 1
     
     # Get optional description
-    description = safe_input(f"Enter description (optional)", required=False)
+    description = safe_input(f"Enter description (optional)", allow_empty=True)
     
     if node_type == 'spoke':
         # Get hub reference
-        hub = safe_input("Enter hub name or ID", required=True)
+        hub = safe_input("Enter hub name or ID", allow_empty=False)
+        if not hub:
+            return 1
         fmt.print_info(f"Creating spoke: {node_name}")
         fmt.print_info(f"  Hub: {hub}")
         if description:
@@ -423,20 +442,23 @@ def interactive_init(node_type: str) -> int:
 def interactive_learn() -> int:
     """Interactive learn command with prompts.
     
+    Learns signals from selected projects in the wheel to the hub.
+    
     Returns:
         Exit code
     """
-    from wai.utils.input import safe_input, safe_menu_choice
+    from wai.utils.input import safe_menu_choice
     
     fmt = get_formatter()
     wheel = get_wagon_wheel()
     
     fmt.print_info("")
-    fmt.print_header("Learn - Push Signals", width=50)
-    fmt.print_info("")
+    fmt.print_header("Learn - Collect Signals", width=50)
     
-    # Get spoke name
-    spoke = safe_input("Enter spoke name", required=True)
+    # Select projects from wheel
+    projects = select_projects_from_wheel(action="learn")
+    if not projects:
+        return 1
     
     # Get priority
     fmt.print_info("")
@@ -452,9 +474,6 @@ def interactive_learn() -> int:
     fmt.print_info("")
     priority = safe_menu_choice("Select priority", options, default='2')
     
-    fmt.print_info(f"Learning from spoke: {spoke}")
-    fmt.print_info(f"  Priority: {priority}")
-    
     manager = StateManager()
     signals = manager.discover_signals()
     
@@ -465,7 +484,9 @@ def interactive_learn() -> int:
     patterns = max(1, signal_count // 8)
     others = signal_count - high_impact - patterns
     
-    fmt.print_success(f"✅ Learned: {signal_count} signals from {spoke}")
+    fmt.print_info("")
+    fmt.print_info(f"Learning from {len(projects)} project(s)...")
+    fmt.print_success(f"✓ Collected: {signal_count} signals")
     if high_impact > 0:
         fmt.print_info(f"  • {high_impact} high-impact decision(s)")
     if patterns > 0:
@@ -473,54 +494,159 @@ def interactive_learn() -> int:
     if others > 0:
         fmt.print_info(f"  • {others} additional signal(s)")
     
-    manager.add_signal({
-        "source": spoke,
-        "type": "learn_operation",
-        "priority": priority,
-        "signal_count": signal_count
-    })
+    for project in projects:
+        manager.add_signal({
+            "source": project,
+            "type": "learn_operation",
+            "priority": priority,
+            "signal_count": signal_count
+        })
     
     return 0
+
+
+def select_projects_from_wheel(action: str = "teach") -> Optional[List[str]]:
+    """Show menu to select projects from the wheel for teaching/learning.
+    
+    Args:
+        action: "teach" or "learn" (for display purposes)
+    
+    Returns:
+        List of project names selected, or None if cancelled
+    """
+    from wai.utils.input import safe_menu_choice
+    
+    fmt = get_formatter()
+    
+    # Get wheel context
+    framework_root, hub_root, wheel_projects = CLIDiscovery.get_current_wheel_context()
+    
+    if not wheel_projects:
+        fmt.print_warning("No projects found in the wheel")
+        fmt.print_info("The wheel registry at ../hub/registry/wheel-projects.json is empty")
+        return None
+    
+    # Show available projects
+    fmt.print_info("")
+    fmt.print_info(f"Available projects in wheel ({len(wheel_projects)}):")
+    
+    # Build menu options
+    options = []
+    for i, project in enumerate(wheel_projects, 1):
+        name = project.get('name', f'project-{i}')
+        short = name[0].lower() if name else ''
+        options.append((str(i), short, name, name))
+    
+    # Add "all" option
+    options.append(('a', 'a', 'All projects', '__all__'))
+    
+    # Add cancel option
+    options.append(('0', 'c', 'Cancel', None))
+    
+    # Show first 10
+    fmt.print_info("")
+    for i, (num, letter, display, _) in enumerate(options[:10]):
+        fmt.print_info(f"  {num}/{letter} - {display}")
+    
+    if len(options) > 12:
+        fmt.print_info(f"  ... and {len(options) - 12} more")
+        fmt.print_info(f"  0/c - Cancel")
+    
+    fmt.print_info("")
+    
+    choice = safe_menu_choice(f"Select projects for {action}", options, default='a')
+    
+    if not choice:
+        return None
+    
+    if choice == '__all__':
+        # Return all project names
+        return [p.get('name', f'project-{i}') for i, p in enumerate(wheel_projects, 1)]
+    
+    return [choice]  # Single selection
+
+
+def select_spoke_interactive() -> Optional[str]:
+    """LEGACY: Show menu to select a spoke from discovered projects.
+    
+    This maintains backward compatibility with v3.x CLI.
+    For new code, use select_projects_from_wheel() instead.
+    
+    Returns:
+        Spoke name or None if cancelled
+    """
+    from wai.utils.input import safe_menu_choice
+    
+    fmt = get_formatter()
+    
+    # Discover available spokes
+    framework_root, hub_root, spokes = CLIDiscovery.get_current_context()
+    
+    if not spokes:
+        fmt.print_warning("No projects found")
+        fmt.print_info("Run: wai init spoke --name <project-name> --hub <hub>")
+        return None
+    
+    # Build menu options
+    options = []
+    for i, spoke in enumerate(spokes, 1):
+        short_name = spoke.get('short_name', spoke['name'])
+        options.append((str(i), short_name[0].lower() if short_name else '', spoke['name'], spoke['name']))
+    
+    # Add cancel option
+    options.append(('0', 'c', 'Cancel', None))
+    
+    fmt.print_info("")
+    fmt.print_info("Available projects:")
+    for i, (num, letter, display, _) in enumerate(options):
+        fmt.print_info(f"  {num}/{letter} - {display}")
+    fmt.print_info("")
+    
+    choice = safe_menu_choice("Select project", options, default='1')
+    return choice
 
 
 def interactive_teach() -> int:
     """Interactive teach command with prompts.
     
+    Teaches templates from the hub to selected projects in the wheel.
+    
     Returns:
         Exit code
     """
-    from wai.utils.input import safe_input
-    
     fmt = get_formatter()
     wheel = get_wagon_wheel()
     
     fmt.print_info("")
-    fmt.print_header("Teach - Pull Templates", width=50)
-    fmt.print_info("")
+    fmt.print_header("Teach - Distribute Templates", width=50)
     
-    # Get spoke name
-    spoke = safe_input("Enter spoke name", required=True)
-    
-    fmt.print_info(f"Teaching spoke: {spoke}")
+    # Select projects from wheel
+    projects = select_projects_from_wheel(action="teach")
+    if not projects:
+        return 1
     
     manager = StateManager()
-    state = manager.load_state()
+    templates = ["session-start.md", "reference-guide.md", "patterns.md"]
+    
+    # Teach each selected project
+    fmt.print_info("")
+    fmt.print_info(f"Teaching {len(projects)} project(s)...")
     
     wheel.roll(duration_ms=2000)
     
-    templates = ["session-start.md", "reference-guide.md", "patterns.md"]
+    for project in projects:
+        fmt.print_success(f"✓ Taught: {project}")
+        manager.add_signal({
+            "source": "teach_operation",
+            "target": project,
+            "type": "template_update",
+            "templates_count": len(templates)
+        })
     
-    fmt.print_success(f"✅ Taught: {spoke}")
-    fmt.print_info(f"  Updated {len(templates)} template(s):")
+    fmt.print_info("")
+    fmt.print_info(f"Updated {len(templates)} template(s) in {len(projects)} project(s):")
     for template in templates:
         fmt.print_info(f"  • {template}")
-    
-    manager.add_signal({
-        "source": "teach_operation",
-        "target": spoke,
-        "type": "template_update",
-        "templates_count": len(templates)
-    })
     
     return 0
 
@@ -531,16 +657,17 @@ def interactive_stats() -> int:
     Returns:
         Exit code
     """
-    from wai.utils.input import safe_input, safe_menu_choice
+    from wai.utils.input import safe_menu_choice
     
     fmt = get_formatter()
     
     fmt.print_info("")
     fmt.print_header("Stats - View Statistics", width=50)
-    fmt.print_info("")
     
-    # Get spoke name
-    spoke = safe_input("Enter spoke name", required=True)
+    # Select spoke from list
+    spoke = select_spoke_interactive()
+    if not spoke:
+        return 1
     
     # Get format
     fmt.print_info("")
@@ -595,16 +722,15 @@ def interactive_review() -> int:
     Returns:
         Exit code
     """
-    from wai.utils.input import safe_input
-    
     fmt = get_formatter()
     
     fmt.print_info("")
     fmt.print_header("Review - Inspect Project", width=50)
-    fmt.print_info("")
     
-    # Get spoke name
-    spoke = safe_input("Enter spoke name", required=True)
+    # Select spoke from list
+    spoke = select_spoke_interactive()
+    if not spoke:
+        return 1
     
     fmt.print_header(f"{spoke} Review", width=50)
     fmt.print_info("✅ WAI-Spoke initialized")
@@ -629,11 +755,6 @@ def main(argv: Optional[list] = None) -> int:
     Returns:
         Exit code (0 = success, 1 = error)
     """
-    # Show welcome banner on startup
-    if not argv or (argv and '--help' not in argv and '--version' not in argv):
-        if len(argv or sys.argv) == 1:  # No arguments provided
-            show_welcome_banner(with_animation=True)
-    
     # Parse arguments
     parser = create_parser()
     args = parser.parse_args(argv)

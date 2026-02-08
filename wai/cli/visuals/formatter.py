@@ -4,8 +4,19 @@ Rich formatting utilities for CLI output.
 Handles tables, colors, and formatted output for all CLI commands.
 """
 
+import sys
+import os
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
+
+
+# Force UTF-8 on Windows
+if sys.platform == 'win32':
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8')
 
 
 @dataclass
@@ -34,7 +45,7 @@ class CLIFormatter:
         try:
             from rich.console import Console
             from rich.table import Table
-            self.console = Console()
+            self.console = Console(force_terminal=True, legacy_windows=False)
             self.has_rich = True
         except ImportError:
             self.console = None
@@ -48,7 +59,7 @@ class CLIFormatter:
             width: Header width
         """
         if self.has_rich and self.use_rich:
-            self.console.rule(title)
+            self.console.rule(title, style="bold cyan")
         else:
             # Fallback: simple ASCII header
             print(f"\n{'=' * width}")
@@ -62,9 +73,9 @@ class CLIFormatter:
             message: Success message
         """
         if self.has_rich and self.use_rich:
-            self.console.print(f"[green]✅ {message}[/green]")
+            self.console.print(f"[green bold]✓ {message}[/green bold]")
         else:
-            print(f"✅ {message}")
+            print(f"[OK] {message}")
     
     def print_error(self, message: str):
         """Print error message.
@@ -73,9 +84,9 @@ class CLIFormatter:
             message: Error message
         """
         if self.has_rich and self.use_rich:
-            self.console.print(f"[red]❌ {message}[/red]")
+            self.console.print(f"[red bold]✗ {message}[/red bold]")
         else:
-            print(f"❌ {message}")
+            print(f"[ERROR] {message}")
     
     def print_warning(self, message: str):
         """Print warning message.
@@ -84,9 +95,9 @@ class CLIFormatter:
             message: Warning message
         """
         if self.has_rich and self.use_rich:
-            self.console.print(f"[yellow]⚠️  {message}[/yellow]")
+            self.console.print(f"[yellow bold]! {message}[/yellow bold]")
         else:
-            print(f"⚠️  {message}")
+            print(f"[WARN] {message}")
     
     def print_info(self, message: str):
         """Print info message.
@@ -95,9 +106,9 @@ class CLIFormatter:
             message: Info message
         """
         if self.has_rich and self.use_rich:
-            self.console.print(f"[blue]ℹ️  {message}[/blue]")
+            self.console.print(f"[cyan]→ {message}[/cyan]")
         else:
-            print(f"ℹ️  {message}")
+            print(f"[INFO] {message}")
     
     def print_table(
         self,
@@ -131,7 +142,7 @@ class CLIFormatter:
         try:
             from rich.table import Table
             
-            table = Table(title=title)
+            table = Table(title=title, style="cyan", show_header=True, header_style="bold cyan")
             
             # Determine columns
             if columns:
@@ -141,7 +152,7 @@ class CLIFormatter:
                 col_keys = list(data[0].keys()) if data else []
                 col_names = col_keys
             
-            # Add columns
+            # Add columns with light color style
             for name in col_names:
                 table.add_column(name, style="cyan")
             

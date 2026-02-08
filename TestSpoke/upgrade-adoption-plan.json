@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "version": "3.1.0",
+    "framework_version": "3.1.0",
+    "spoke_structure_version": "3.0",
+    "created_at": "2026-02-08T21:26:29.666041Z",
+    "source": "framework",
+    "target_type": "universal",
+    "description": "Framework templates for universal distribution to hubs and spokes"
+  },
+  "verification": {
+    "hub_fingerprint": null,
+    "spoke_signature": null,
+    "hash_algorithm": "sha256-hmac",
+    "signed_by": "wheelwright-framework-3.1.0",
+    "verification_required": true
+  },
+  "files": [
+    {
+      "name": "WAI-Guide.md",
+      "path": "WAI-Spoke/WAI-Guide.md",
+      "size": 13230,
+      "hash": "sha256:f5a1b755e8df2ed50d1241aa3c0fcf1a9ed024ac4deba91d117970ae57597b6c",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Spoke\\WAI-Guide.md",
+      "version": "3.1.0",
+      "changed_from": "2.1.0",
+      "why_changed": "Enhanced session start protocol, added teaching reconciliation section",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [
+        "session-start",
+        "teaching",
+        "reconciliation"
+      ],
+      "applies_to": [
+        "spoke",
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "WAI-State.json",
+      "path": "WAI-Spoke/WAI-State.json",
+      "size": 6669,
+      "hash": "sha256:00d868ecb2c8c5d5395911d05ba8eb221d345e64cbac1c567470d5af379202de",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Spoke\\WAI-State.json",
+      "version": "3.1.0",
+      "changed_from": "2.0.1",
+      "why_changed": "Structure version 3.0, added teaching-adoption-plan schema",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": false,
+      "requires_review": true,
+      "mentions": [
+        "structure",
+        "version",
+        "state-management"
+      ],
+      "applies_to": [
+        "spoke",
+        "hub"
+      ],
+      "status": "review_needed",
+      "action": "review",
+      "merge_strategy": "merge_sections",
+      "sections_to_preserve": [
+        "_session_state",
+        "_project_foundation",
+        "decisions",
+        "analytics"
+      ],
+      "sections_to_update": [
+        "wheelwright.structure_version",
+        "wheelwright.version",
+        "_file_meta"
+      ]
+    },
+    {
+      "name": "WAI-State.md",
+      "path": "WAI-Spoke/WAI-State.md",
+      "size": 4301,
+      "hash": "sha256:acfde1183d19e8ad88e933cafd3816d28baae8778434619b547a8a180af1f54f",
+      "source_path": "\\\\wsl.localhost\\Ubuntu\\home\\mario\\projects\\wheelwright-ai\\framework\\templates\\WAI-Spoke\\WAI-State.md",
+      "version": "3.1.0",
+      "changed_from": "2.0.0",
+      "why_changed": "Updated strategic context for version 3.0",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [
+        "strategy",
+        "context"
+      ],
+      "applies_to": [
+        "spoke"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    }
+  ],
+  "hub_files": [],
+  "checksums": {
+    "all_files_hash": "sha256:7dc969ca064a040b9ada7c7823b4123a6b663489ec8839432b3c37c61be427e5",
+    "verification_required": true
+  },
+  "adoption_guidance": {
+    "for_spoke": {
+      "recommended_order": [
+        "WAI-Guide.md (adopt immediately - Enhanced session start protocol, added teaching reconciliation section)",
+        "WAI-State.md (adopt immediately - Updated strategic context for version 3.0)",
+        "WAI-State.json (review merge strategy)"
+      ],
+      "post_adoption": "Run: WAI sync to process updated structure"
+    }
+  }
+}

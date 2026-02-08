@@ -2,6 +2,7 @@
 Animation utilities for CLI.
 """
 
+import sys
 from .wheel import WagonWheel, get_wagon_wheel
 
 
@@ -11,7 +12,22 @@ def show_welcome_banner(with_animation: bool = True):
     Args:
         with_animation: Whether to show wagon wheel animation
     """
-    banner = """
+    # ASCII-compatible banner (Windows-safe)
+    if sys.platform == 'win32':
+        banner = """
+    +===============================================+
+    |                                               |
+    |         WHEELWRIGHT AI                        |
+    |                                               |
+    |             v3.2.0                            |
+    |                                               |
+    |   Build AI wheels that roll                   |
+    |   forward forever                             |
+    |                                               |
+    +===============================================+
+    """
+    else:
+        banner = """
     ╔═══════════════════════════════════════╗
     ║                                       ║
     ║       WHEELWRIGHT AI                  ║
@@ -21,6 +37,7 @@ def show_welcome_banner(with_animation: bool = True):
     ║   Build AI wheels that roll           ║
     ║   forward forever                     ║
     ║                                       ║
+    ╚═══════════════════════════════════════╝
     """
     
     print(banner)
@@ -28,6 +45,3 @@ def show_welcome_banner(with_animation: bool = True):
     if with_animation:
         wheel = get_wagon_wheel()
         wheel.roll(duration_ms=3000)
-    
-    print("    ║                                       ║")
-    print("    ╚═══════════════════════════════════════╝\n")
