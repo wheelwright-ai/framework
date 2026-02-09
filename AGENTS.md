@@ -4,11 +4,18 @@ Build AI wheels that roll forward forever - universal context persistence for an
 
 ## Session Focus (Must Continue)
 
-**CLI v4 RELEASE + OBSERVATION SYSTEM - COMPLETE ✅**
+**CLI v4 RELEASE + OBSERVATION SYSTEM - Phase 1 COMPLETE ✅**
 
-**Status:** v4.0.0 released with wheel-based teach/learn + observation system complete
+**Status:** v4.0.0 CLI with v1 parity complete. Observation system ready. Next: observation logging integration with teach/learn
 
-**Completed in Previous Session:**
+**Completed This Session (Feb 08 2026):**
+- ✅ CLI v1 feature parity 100% - teach/learn accept spoke arguments + flags
+- ✅ Bash context wrapper pattern established for all git operations
+- ✅ Python module caching workaround documented
+- ✅ Wheelwright artifact governance directive implemented
+- ✅ 4 architectural learnings submitted as signals
+
+**Completed in Previous Sessions:**
 - ✅ Phase 1-5: Core observation system (8 modules, 70 KB)
 - ✅ Phase 6: Skill integration framework (3 integration modules)
 - ✅ Phase 7: Briefing integration (session_hook.py + CLAUDE.md)
@@ -17,19 +24,13 @@ Build AI wheels that roll forward forever - universal context persistence for an
 - ✅ Step 2: Manual integration (CLAUDE.md updated)
 - ✅ Step 3: CLI rebuild (MenuFormatter created)
 
-**Fixed & Enhanced This Session (Feb 08 2026):**
-- ✅ Unicode encoding errors on Windows (teach command)
-- ✅ Dark font on dark background (bright colors)
-- ✅ Cross-platform banner support
-- ✅ Rich console UTF-8 configuration
-- ✅ New color scheme module (colors.py)
-- ✅ Interactive mode TypeError (safe_input parameters)
-- ✅ Windows termios compatibility (getch fallback)
-- ✅ Interactive input handling on Windows
-- ✅ CLI auto-discovery of framework & hub
-- ✅ Hub registry integration (../hub/registry/wheel-projects.json)
-- ✅ Multi-project teach/learn across the wheel
-- ✅ Version bumped to v4.0.0 (major refactoring)
+**CLI v1 Parity Completion (Feb 08 2026):**
+- ✅ teach <spoke> [--force] [--json] - Full implementation
+- ✅ learn <spoke> [--priority high|normal|low] [--force] [--json]
+- ✅ All commands parse arguments correctly
+- ✅ MenuGenerator dependency injection support
+- ✅ Infrastructure: discovery.py, state_manager.py, input.py
+- ✅ WAI wrapper scripts created
 
 **Deliverables:**
 - 12 production modules (70+ KB code)
