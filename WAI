@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 """
-WAI - Wheelwright Framework
-Unified Command Line Interface
+Wheelwright CLI executable wrapper.
 
-Build AI wheels that roll forward forever.
+Usage: WAI <command> [options]
+       python WAI <command> [options]
 """
 
 import sys
 from pathlib import Path
 
-# Add framework to Python path
-framework_path = Path(__file__).parent.resolve()
-sys.path.insert(0, str(framework_path))
+# Add framework to path
+framework_root = Path(__file__).parent
+sys.path.insert(0, str(framework_root))
 
-# Import and run new CLI
-from wai.core import main
+from wai.cli.main import main
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

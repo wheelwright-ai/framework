@@ -1,14 +1,7 @@
-# Wheelwright CLI PowerShell Wrapper
-# Usage: .\wai.ps1 <command> [options]
-#        wai <command> [options]  (if added to profile)
+#!/usr/bin/env pwsh
+# Wheelwright CLI - PowerShell wrapper
 
-param(
-    [Parameter(ValueFromRemainingArguments=$true)]
-    [string[]]$Arguments
-)
+$FrameworkRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$PythonExe = 'C:\Python313\python.exe'
 
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$CliScript = Join-Path $ScriptDir "WAI-CLI"
-
-# Call Python with the WAI-CLI wrapper
-& python3 $CliScript @Arguments
+& $PythonExe -m wai.cli.main @args
