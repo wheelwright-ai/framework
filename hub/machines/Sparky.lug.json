@@ -1,0 +1,56 @@
+{
+  "lug_type": "machine-profile",
+  "lug_version": "1.0.0",
+  "created_at": "2026-02-09T10:59:52.273063+00:00",
+  "machine": {
+    "id": "Sparky",
+    "nickname": "Sparky",
+    "classification": "low-power",
+    "specs": {
+      "machine_id": "Sparky",
+      "timestamp": "2026-02-09T10:59:52.243826+00:00",
+      "platform": {
+        "os": "Linux",
+        "os_version": "#1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025",
+        "architecture": "x86_64"
+      },
+      "cpu": {
+        "model": "Intel(R) Core(TM) i7-10850H CPU @ 2.70GHz",
+        "cores": 6,
+        "threads": 12,
+        "architecture": "x86_64"
+      },
+      "memory": {
+        "total_gb": 15.5,
+        "available_gb": 14.8,
+        "unit": "GB"
+      },
+      "storage": {
+        "total_gb": 1007,
+        "available_gb": 0,
+        "filesystem": "/dev/sdd"
+      },
+      "gpu": {
+        "model": "Unknown",
+        "vram_gb": 0,
+        "available": false
+      }
+    }
+  },
+  "recommended_settings": {
+    "vscode": {
+      "python.analysis.typeCheckingMode": "off",
+      "python.analysis.diagnosticMode": "openFilesOnly",
+      "python.analysis.memory.keepLibraryAst": false,
+      "python.analysis.userFileIndexingLimit": 2000,
+      "editor.bracketPairColorization.enabled": false,
+      "editor.minimap.enabled": false,
+      "git.autorefresh": false
+    },
+    "python": {
+      "max_workers": 2,
+      "cache_size_mb": 512,
+      "parallel_builds": false
+    }
+  }
+}
