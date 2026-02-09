@@ -6,31 +6,43 @@
 
 Execute this on first message:
 
-1. **Display Session Briefing** (NEW - Observation System):
+1. **Display Session Briefing** (Observation System Auto-Load):
    ```python
-   from wai.session_hook import display_session_briefing
-   display_session_briefing()
+   from wai.session_hook import get_session_start_briefing
+   briefing = get_session_start_briefing()
+   print(briefing)  # Display to user immediately
    ```
-   Shows:
+   Auto-shows:
    - Recent work summary
    - Failed observations requiring remediation
-   - Next actions
+   - Incomplete items to continue
    - Session statistics
+   
+   **This is AUTOMATIC** - briefing displays first thing, before any other action.
 
-2. **Load WAI Context**:
+2. **Validate Session State** (Closeout Verification):
+   ```bash
+   python -m wai.closeout_validator --check
+   ```
+   Confirms:
+   - ✅ Git status clean (or explains uncommitted files)
+   - ✅ Observations logged (or empty if fresh session)
+   - ✅ Framework detectable (or warns if misconfigured)
+
+3. **Load WAI Context**:
    - Read WAI-Spoke/WAI-State.json (project state, decisions)
    - Read WAI-Spoke/WAI-State.md (strategic vision)
    - Invoke skills (behavioral rules live in skill files)
 
-3. **Check Uncommitted Work**:
-   - Run git status
+4. **Check Uncommitted Work**:
+   - Run git status (validator already did this)
    - If uncommitted changes, ask: Resume or start fresh?
 
-4. **Brief the User**:
-   - Project name and purpose
+5. **Summary for User**:
+   - Project name and purpose from WAI-State.md
    - Last session info from WAI-State.json
    - Current environment (tool + machine)
-   - Failed observations from briefing (if any)
+   - Any failed observations needing remediation (from briefing)
 
 ## Priority 1: Behavioral Guidelines
 

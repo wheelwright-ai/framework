@@ -6,6 +6,86 @@ import platform
 from typing import Optional, List, Tuple, Any
 
 
+# Import formatter functions for compatibility
+def _get_formatter():
+    """Lazy import formatter to avoid circular dependencies."""
+    from ..cli.visuals.formatter import get_formatter
+    return get_formatter()
+
+
+def print_info(message: str):
+    """Print info message."""
+    formatter = _get_formatter()
+    return formatter.print_info(message)
+
+
+def print_success(message: str):
+    """Print success message."""
+    formatter = _get_formatter()
+    return formatter.print_success(message)
+
+
+def print_error(message: str):
+    """Print error message."""
+    formatter = _get_formatter()
+    return formatter.print_error(message)
+
+
+def print_warning(message: str):
+    """Print warning message."""
+    formatter = _get_formatter()
+    return formatter.print_warning(message)
+
+
+def safe_confirm(prompt: str = "Proceed?", default: bool = False) -> bool:
+    """Get yes/no confirmation from user.
+    
+    Args:
+        prompt: Confirmation prompt
+        default: Default value if empty
+    
+    Returns:
+        True for yes, False for no
+    """
+    try:
+        default_str = "y" if default else "n"
+        response = safe_input(f"{prompt} ({default_str}): ", default_str)
+        return response.lower().startswith('y')
+    except (KeyboardInterrupt, EOFError):
+        return False
+    except Exception:
+        return default
+
+
+def safe_choice(prompt: str, choices: List[str], default: int = 0) -> Optional[str]:
+    """Get choice from list.
+    
+    Args:
+        prompt: Choice prompt
+        choices: List of options
+        default: Default index
+    
+    Returns:
+        Selected choice or None
+    """
+    try:
+        print_info(f"\n{prompt}")
+        for i, choice in enumerate(choices, 1):
+            print_info(f"  {i}. {choice}")
+        response = safe_input(f"Select [1-{len(choices)}]: ", str(default + 1))
+        idx = int(response) - 1
+        return choices[idx] if 0 <= idx < len(choices) else choices[default]
+    except (ValueError, IndexError, KeyboardInterrupt):
+        return choices[default]
+    except Exception:
+        return None
+
+
+def single_key_input() -> Optional[str]:
+    """Get single key input."""
+    return safe_getch()
+
+
 def safe_input(prompt: str = "", default: str = "") -> str:
     """Get user input safely with encoding handling.
     

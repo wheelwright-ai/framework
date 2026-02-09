@@ -18,6 +18,7 @@ from ..reference_manager import TeachingManager
 from ..upgrade_adoption import UpgradeAdoptionPlanBuilder, sign_upgrade_plan, save_upgrade_plan
 from ..utils.input import print_info, print_success, print_error, print_warning
 from ..core import FRAMEWORK_VERSION
+from ..observation import get_logger, log_observation
 
 
 def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Path) -> bool:
@@ -32,6 +33,21 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
     Returns:
         True if teaching completed
     """
+    # Initialize observation logging
+    session_id = f"teach-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    logger = get_logger()
+    
+    # Log plan generation start
+    log_observation(
+        logger=logger,
+        action_id="teach.plan",
+        action_category="framework",
+        description="Generate upgrade adoption plan",
+        session_id=session_id,
+        agent="TeachCommand",
+        tags=["teaching"]
+    )
+    
     wai_spoke_templates_dir = framework_path / 'templates' / 'WAI-Spoke'
     wai_hub_templates_dir = framework_path / 'templates' / 'HUB'
     
@@ -211,6 +227,17 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
         except Exception as e:
             print_warning(f"    Could not sign with hub key: {e}")
     
+    # Log distribution start
+    log_observation(
+        logger=logger,
+        action_id="teach.distribute",
+        action_category="framework",
+        description="Distribute files to spoke/hub",
+        session_id=session_id,
+        agent="TeachCommand",
+        tags=["teaching"]
+    )
+    
     # Distribute actual template files to spoke
     teach_manager = TeachingManager(spoke_path)
     files_distributed = 0
@@ -382,5 +409,18 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
         except Exception as e:
             print_warning(f"  Could not distribute to hub: {e}")
     
+    # Log completion
+    log_observation(
+        logger=logger,
+        action_id="teach.complete",
+        action_category="framework",
+        description="Teaching complete",
+        status="✓ COMPLETE",
+        session_id=session_id,
+        agent="TeachCommand",
+        tags=["teaching"]
+    )
+    
+    print_success(f"\n  [OK] Observations logged for session: {session_id}")
     return True
 
