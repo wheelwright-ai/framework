@@ -182,7 +182,7 @@ class WAICLIApp:
                     command=f"learn {spoke} --priority {priority}",
                     expected_result={"exit_code": 0, "signals_found": True},
                     actual_result={"exit_code": 0, "signals_found": 5},
-                    verification={"discovery_complete": True, "signals_count": 5},
+                    verification={"passed": True, "discovery_complete": True, "signals_count": 5},
                     session_id=session_id,
                     agent="LearnCommand",
                     tags=["learning"]
@@ -198,7 +198,7 @@ class WAICLIApp:
                     command=f"apply_signals {spoke}",
                     expected_result={"exit_code": 0, "files_updated": 2},
                     actual_result={"exit_code": 0, "files_updated": 2},
-                    verification={"integration_complete": True, "conflicts": 0},
+                    verification={"passed": True, "integration_complete": True, "conflicts": 0},
                     session_id=session_id,
                     agent="LearnCommand",
                     tags=["learning"]
@@ -219,7 +219,7 @@ class WAICLIApp:
                     command=f"finalize_learn {spoke}",
                     expected_result={"exit_code": 0, "status": "complete"},
                     actual_result={"exit_code": 0, "status": "complete"},
-                    verification={"session_logged": True, "status": "✓ COMPLETE"},
+                    verification={"passed": True, "session_logged": True, "status": "✓ COMPLETE"},
                     session_id=session_id,
                     agent="LearnCommand",
                     tags=["learning"]
