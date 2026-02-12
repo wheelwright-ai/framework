@@ -34,7 +34,8 @@
       "Bash(python -m pytest:*)",
       "Bash(python ./wai-orchestrate upgrade:*)",
       "Bash(git -C /home/mario/projects/wheelwright-ai/framework ls-files:*)",
-      "Bash(truncate:*)"
+      "Bash(truncate:*)",
+      "Bash(python -m wai.closeout:*)"
     ]
   }
 }
