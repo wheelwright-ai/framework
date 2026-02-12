@@ -22,17 +22,17 @@
   },
   "_phase_tracking": {
     "current_phase": {
-      "id": "phase-5",
-      "name": "Shipit Skill + Compact Action Integration",
-      "status": "in_progress",
-      "started": "2026-02-12T11:30:00Z",
+      "id": "phase-7",
+      "name": "Integration Testing + User Guide",
+      "status": "pending",
+      "started": null,
       "compact_action": [
-        "Implement /wai-shipit Skill",
-        "Add compact_action field to Lug schema",
-        "Update session_hook to display compact action",
-        "Enhance qc-check with pre-commit warnings",
-        "Add phase tracking to WAI-State.json",
-        "Closeout with learnings Lug"
+        "Test signal creation workflow",
+        "Test signal discovery via hub-watcher",
+        "Implement /wai-learn command handler",
+        "Test full signal lifecycle",
+        "Document signal best practices",
+        "Create Wheelwright v2 user guide"
       ]
     },
     "completed_phases": [
@@ -59,6 +59,18 @@
         "name": "BRIEF Cascade + Command Orchestration",
         "completed": "2026-02-12T10:55:00Z",
         "commit": "07be9f5"
+      },
+      {
+        "id": "phase-5",
+        "name": "Shipit Skill + Compact Action Integration",
+        "completed": "2026-02-12T12:00:00Z",
+        "commit": "56d9806"
+      },
+      {
+        "id": "phase-6",
+        "name": "Cross-Node Signal Propagation",
+        "completed": "2026-02-12T13:00:00Z",
+        "commit": "pending"
       }
     ]
   }
