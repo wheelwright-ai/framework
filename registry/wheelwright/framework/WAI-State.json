@@ -1,0 +1,23 @@
+{
+  "wheel": {
+    "version": "2.0.0",
+    "node_type": "spoke",
+    "name": "Wheelwright",
+    "hub_id": "TestHub",
+    "description": "",
+    "created": "2026-02-08T13:28:21.240569",
+    "last_modified": "2026-02-10T21:59:54Z",
+    "hub_path": "/home/mario/projects/wheelwright-ai/hub"
+  },
+  "_project_foundation": {
+    "completed": false
+  },
+  "_session_state": {
+    "last_session_id": "2026-02-12T06:37:29Z",
+    "last_modified_by": "Antigravity",
+    "last_modified_at": "2026-02-12T06:37:29+00:00",
+    "last_closeout": "2026-02-12T06:37:29+00:00",
+    "session_count": 3,
+    "current_session": "Closed"
+  }
+}

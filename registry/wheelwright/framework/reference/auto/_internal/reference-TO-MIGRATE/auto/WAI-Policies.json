@@ -1,0 +1,25 @@
+{
+    "lug_policies": {
+        "bug": {
+            "close_requires": [
+                "test_verified",
+                "regression_check"
+            ]
+        },
+        "feature": {
+            "close_requires": [
+                "impl_complete",
+                "docs_updated"
+            ]
+        },
+        "epic": {
+            "close_requires": [
+                "all_children_closed"
+            ]
+        }
+    },
+    "global_policies": [
+        "no_open_blockers",
+        "no_blocked_by"
+    ]
+}

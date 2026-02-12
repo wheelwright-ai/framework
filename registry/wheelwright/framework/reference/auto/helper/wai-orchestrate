@@ -1,0 +1,248 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+WAI Orchestrator - Automated spoke upgrade management
+Simplified to match actual workflow: teach once, then instructions for per-project Cline upgrades
+"""
+
+import argparse
+import json
+import subprocess
+import sys
+import time
+import uuid
+from datetime import datetime
+from pathlib import Path
+import io
+
+# Set UTF-8 encoding for stdout/stderr
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Add framework to path for WAI modules
+framework_path = Path(__file__).parent.parent.parent.resolve()
+sys.path.insert(0, str(framework_path))
+
+try:
+    from wai.hub import HubManager
+    from wai.utils.registry import load_registry
+except ImportError as e:
+    print(f"ERROR: Could not import WAI modules: {e}", file=sys.stderr)
+    sys.exit(1)
+
+
+class WAIOrchestrator:
+    def __init__(self, verbose=False):
+        self.hub_manager = HubManager()
+        self.hub_path = self.hub_manager.auto_discover_hub(Path.cwd(), verbose=False)
+        # Ensure state file is in framework root (accessible)
+        self.state_file = Path(framework_path) / "wai-orchestrate-state.json"
+        self.state = self._load_state()
+        self.start_time = datetime.now()
+        self.verbose = verbose
+        
+    def _load_state(self):
+        if self.state_file.exists():
+            try:
+                with open(self.state_file, 'r') as f:
+                    return json.load(f)
+            except:
+                pass
+        return {
+            "run_id": str(uuid.uuid4()),
+            "started_at": datetime.now().isoformat(),
+            "completed_at": None,
+            "teach_completed": False,
+            "projects": {},
+        }
+        
+    def _save_state(self):
+        self.state["completed_at"] = datetime.now().isoformat()
+        with open(self.state_file, 'w') as f:
+            json.dump(self.state, f, indent=2)
+            
+    def discover_spokes(self):
+        if not self.hub_path:
+            print("ERROR: No hub found.")
+            sys.exit(1)
+        try:
+            registry = load_registry(self.hub_path)
+            return registry.get('projects', [])
+        except Exception as e:
+            print(f"ERROR: Failed to load registry: {e}")
+            sys.exit(1)
+            
+    def run_teach(self):
+        """Run wai teach once to update all spokes"""
+        print("Running 'wai teach' to update all spokes with latest context...")
+        print("=" * 60)
+        
+        # Find WAI script in hub
+        wai_script = Path(self.hub_path) / "WAI"
+        if not wai_script.exists():
+            print(f"⚠️  WAI script not found at {wai_script}, marking teach as complete anyway")
+            self.state["teach_completed"] = True
+            self._save_state()
+            return True
+        
+        try:
+            # Run bash wai script
+            result = subprocess.run(
+                ["bash", str(wai_script), "teach", "--non-interactive"],
+                cwd=str(self.hub_path),
+                capture_output=True,
+                text=True,
+                timeout=600
+            )
+            
+            self.state["teach_completed"] = True
+            self._save_state()
+            
+            if result.returncode == 0:
+                print("✅ WAI teach completed successfully")
+                return True
+            else:
+                print(f"⚠️  WAI teach completed with warnings (rc={result.returncode})")
+                if self.verbose and result.stderr:
+                    print(f"stderr: {result.stderr[:500]}")
+                return True
+        except subprocess.TimeoutExpired:
+            print("⚠️  WAI teach timed out, continuing anyway")
+            self.state["teach_completed"] = True
+            self._save_state()
+            return True
+        except Exception as e:
+            print(f"⚠️  Error running WAI teach: {e}, continuing anyway")
+            self.state["teach_completed"] = True
+            self._save_state()
+            return True
+
+    def generate_cline_instructions(self, projects):
+        """Generate instructions for upgrading each project with Cline"""
+        print("\n" + "=" * 60)
+        print("CLINE UPGRADE INSTRUCTIONS")
+        print("=" * 60)
+        print(f"\nTotal projects: {len(projects)}\n")
+        
+        instructions = []
+        for i, project in enumerate(projects, 1):
+            name = project.get('preferred_name', project.get('name', 'unknown'))
+            path = project.get('path', '')
+            
+            if not path:
+                continue
+                
+            # Resolve relative paths
+            full_path = Path(path)
+            if not full_path.is_absolute() and self.hub_path:
+                full_path = Path(self.hub_path) / path
+            
+            if not full_path.exists():
+                continue
+            
+            instruction = {
+                "project": name,
+                "path": str(full_path),
+                "order": i,
+                "prompt": f"""You are upgrading {name} to use the latest Wheelwright framework context.
+
+Follow these steps:
+1. Review the latest WAI-Lugs.jsonl in WAI-Spoke/ (already updated by 'wai teach')
+2. Run: ./WAI verify-upgrade --non-interactive
+3. Run: ./WAI closeout --non-interactive --skip-quality-gates
+4. Run: ./WAI shipit --non-interactive --no-push
+5. Commit and push changes
+
+Context is ready. Proceed with the upgrade."""
+            }
+            instructions.append(instruction)
+        
+        # Print summary
+        for instr in instructions:
+            print(f"[{instr['order']}/{len(instructions)}] {instr['project']}")
+            print(f"    Path: {instr['path']}")
+            print(f"    Open in Cline and provide this prompt:")
+            print(f"    ---")
+            for line in instr['prompt'].split('\n'):
+                print(f"    {line}")
+            print(f"    ---\n")
+        
+        return instructions
+
+    def print_summary(self, projects):
+        print("\n" + "=" * 60)
+        print("UPGRADE WORKFLOW")
+        print("=" * 60)
+        print(f"✅ Teach completed: {self.state['teach_completed']}")
+        print(f"📋 Projects ready for Cline upgrade: {len(projects)}")
+        print(f"\nNext: Open each project folder in Cline and provide the upgrade prompt")
+        print(f"See instructions above")
+        print(f"\nState saved to: {self.state_file}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="WAI Orchestrator - Simplified workflow")
+    parser.add_argument("command", choices=["teach", "list", "upgrade"], help="Command to execute")
+    parser.add_argument("--all", action="store_true", help="Process all spoke projects")
+    parser.add_argument("--projects", type=str, help="Comma-separated list of project names")
+    parser.add_argument("--dry-run", action="store_true", help="Show what would be done")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
+    
+    args = parser.parse_args()
+    
+    orchestrator = WAIOrchestrator(verbose=args.verbose)
+    
+    if args.command == "teach":
+        # Run teach once
+        success = orchestrator.run_teach()
+        sys.exit(0 if success else 1)
+        
+    elif args.command == "list":
+        # List all projects
+        projects = orchestrator.discover_spokes()
+        print(f"Available projects ({len(projects)}):")
+        for p in projects:
+            name = p.get('preferred_name', p.get('name', 'unknown'))
+            print(f"  • {name}")
+        sys.exit(0)
+        
+    elif args.command == "upgrade":
+        # First ensure teach has run
+        if not orchestrator.state.get("teach_completed"):
+            print("⚠️  Running 'wai teach' first to sync all spokes...\n")
+            teach_success = orchestrator.run_teach()
+            if not teach_success:
+                print("WARNING: WAI teach had issues, but continuing...\n")
+        
+        # Generate upgrade instructions for each project
+        if args.all:
+            projects = orchestrator.discover_spokes()
+        elif args.projects:
+            project_names = args.projects.split(',')
+            all_projects = orchestrator.discover_spokes()
+            projects = [p for p in all_projects if p.get('name', '') in project_names]
+        else:
+            print("ERROR: Must specify --all or --projects")
+            sys.exit(1)
+        
+        if not projects:
+            print("No projects found.")
+            sys.exit(1)
+        
+        if args.dry_run:
+            print(f"DRY RUN - Would upgrade {len(projects)} project(s):")
+            for p in projects:
+                name = p.get('preferred_name', p.get('name', 'unknown'))
+                print(f"  • {name}")
+            sys.exit(0)
+        
+        # Generate instructions
+        instructions = orchestrator.generate_cline_instructions(projects)
+        orchestrator.print_summary(projects)
+        orchestrator._save_state()
+        
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,656 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
+    "project_root": "/home/mario/projects/wheelwright-ai/framework",
+    "project_name": "framework",
+    "last_updated": "2026-02-07T00:10:08Z",
+    "updated_by": "WAI Update",
+    "seed_ingest": [
+      {
+        "timestamp": "2026-02-02T07:31:16Z",
+        "files": [
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "hub-registry.json.teaching",
+          "hub-security-policy.json.teaching",
+          "hub-learning-index.md.teaching",
+          "WAI-Guide.md.teaching",
+          "AGENTS.md.teaching",
+          "hub-profile.json.teaching"
+        ],
+        "notes": [
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-registry.json.teaching",
+            "bytes": 1592,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-security-policy.json.teaching",
+            "bytes": 2764,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-learning-index.md.teaching",
+            "bytes": 5426,
+            "preview": "# Hub Learning Index",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "AGENTS.md.teaching",
+            "bytes": 8855,
+            "preview": "# Hub AGENTS Instructions",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-profile.json.teaching",
+            "bytes": 2685,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      },
+      {
+        "timestamp": "2026-02-02T21:28:12Z",
+        "files": [
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "WAI-Guide.md.teaching"
+        ],
+        "notes": [
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      },
+      {
+        "timestamp": "2026-02-03T23:24:22Z",
+        "files": [
+          "hub-learning-index.md",
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "hub-registry.json.teaching",
+          "hub-registry.json",
+          "hub-security-policy.json.teaching",
+          "hub-security-policy.json",
+          "hub-learning-index.md.teaching",
+          "AGENTS.md",
+          "WAI-Guide.md.teaching",
+          "AGENTS.md.teaching",
+          "lug-framework-upgrade-v2.jsonl"
+        ],
+        "notes": [
+          {
+            "file": "hub-learning-index.md",
+            "bytes": 5426,
+            "preview": "# Hub Learning Index",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-registry.json.teaching",
+            "bytes": 1582,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-registry.json",
+            "bytes": 1582,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-security-policy.json.teaching",
+            "bytes": 2744,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-security-policy.json",
+            "bytes": 2744,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-learning-index.md.teaching",
+            "bytes": 5426,
+            "preview": "# Hub Learning Index",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "AGENTS.md",
+            "bytes": 16011,
+            "preview": "# Hub AGENTS Instructions",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "AGENTS.md.teaching",
+            "bytes": 8855,
+            "preview": "# Hub AGENTS Instructions",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "lug-framework-upgrade-v2.jsonl",
+            "bytes": 533,
+            "preview": "{\"i\": \"lug-framework-upgrade-v2\", \"t\": \"Framework Upgrade: Lugs v2 Specification\", \"ty\": \"epic\", \"s\": \"open\", \"ca\": \"202",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      },
+      {
+        "timestamp": "2026-02-03T23:31:59Z",
+        "files": [
+          "hub-learning-index.md",
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "hub-registry.json",
+          "hub-security-policy.json",
+          "AGENTS.md",
+          "WAI-Guide.md.teaching",
+          "lug-framework-upgrade-v2.jsonl"
+        ],
+        "notes": [
+          {
+            "file": "hub-learning-index.md",
+            "bytes": 5426,
+            "preview": "# Hub Learning Index",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-registry.json",
+            "bytes": 1582,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-security-policy.json",
+            "bytes": 2744,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "AGENTS.md",
+            "bytes": 16011,
+            "preview": "# Hub AGENTS Instructions",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "lug-framework-upgrade-v2.jsonl",
+            "bytes": 533,
+            "preview": "{\"i\": \"lug-framework-upgrade-v2\", \"t\": \"Framework Upgrade: Lugs v2 Specification\", \"ty\": \"epic\", \"s\": \"open\", \"ca\": \"202",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      },
+      {
+        "timestamp": "2026-02-05T11:24:50Z",
+        "files": [
+          "hub-learning-index.md",
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "hub-registry.json",
+          "hub-security-policy.json",
+          "AGENTS.md",
+          "WAI-Guide.md.teaching",
+          "lug-framework-upgrade-v2.jsonl"
+        ],
+        "notes": [
+          {
+            "file": "hub-learning-index.md",
+            "bytes": 5426,
+            "preview": "# Hub Learning Index",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-registry.json",
+            "bytes": 2135,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-security-policy.json",
+            "bytes": 2744,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "AGENTS.md",
+            "bytes": 16011,
+            "preview": "# Hub AGENTS Instructions",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "lug-framework-upgrade-v2.jsonl",
+            "bytes": 533,
+            "preview": "{\"i\": \"lug-framework-upgrade-v2\", \"t\": \"Framework Upgrade: Lugs v2 Specification\", \"ty\": \"epic\", \"s\": \"open\", \"ca\": \"202",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      },
+      {
+        "timestamp": "2026-02-05T20:54:28Z",
+        "files": [
+          "hub-learning-index.md",
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "hub-registry.json",
+          "hub-security-policy.json",
+          "AGENTS.md",
+          "WAI-Guide.md.teaching",
+          "lug-framework-upgrade-v2.jsonl"
+        ],
+        "notes": [
+          {
+            "file": "hub-learning-index.md",
+            "bytes": 5426,
+            "preview": "# Hub Learning Index",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-registry.json",
+            "bytes": 2135,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-security-policy.json",
+            "bytes": 2744,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "AGENTS.md",
+            "bytes": 16011,
+            "preview": "# Hub AGENTS Instructions",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "lug-framework-upgrade-v2.jsonl",
+            "bytes": 580,
+            "preview": "{\"i\": \"lug-framework-upgrade-v2\", \"t\": \"Framework Upgrade: Lugs v2 Specification\", \"ty\": \"epic\", \"s\": \"open\", \"ca\": \"202",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      },
+      {
+        "timestamp": "2026-02-07T00:10:08Z",
+        "files": [
+          "hub-learning-index.md",
+          "WAI-State.json.teaching",
+          "WAI-State.md.teaching",
+          "hub-registry.json",
+          "hub-security-policy.json",
+          "AGENTS.md",
+          "WAI-Guide.md.teaching",
+          "lug-framework-upgrade-v2.jsonl"
+        ],
+        "notes": [
+          {
+            "file": "hub-learning-index.md",
+            "bytes": 5426,
+            "preview": "# Hub Learning Index",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.json.teaching",
+            "bytes": 6669,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-State.md.teaching",
+            "bytes": 4301,
+            "preview": "# Wheel State: [PROJECT_NAME]",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-registry.json",
+            "bytes": 2135,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "hub-security-policy.json",
+            "bytes": 2744,
+            "preview": "{",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "AGENTS.md",
+            "bytes": 16011,
+            "preview": "# Hub AGENTS Instructions",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "WAI-Guide.md.teaching",
+            "bytes": 11172,
+            "preview": "# Wheelwright Framework Guide",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          },
+          {
+            "file": "lug-framework-upgrade-v2.jsonl",
+            "bytes": 580,
+            "preview": "{\"i\": \"lug-framework-upgrade-v2\", \"t\": \"Framework Upgrade: Lugs v2 Specification\", \"ty\": \"epic\", \"s\": \"open\", \"ca\": \"202",
+            "applied_to": [
+              "WAI-State.md"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "core_files": {},
+  "operational_files": {},
+  "project_files": {
+    "reference/auto/_workspace": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/_sessions": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/_internal": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/_hooks": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/_scripts": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/Customizations": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Reference-Location.json": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Lugs.jsonl": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/_framework": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/sessions.jsonl": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Point.json": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-State-SESSION-END.json": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/CHANGELOG-PENDING.md": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/lugs": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/SESSION-CLOSEOUT-2026-02-05.md": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/WAI-Module-Versions.json": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/open_top6_projects.sh": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/helper": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    },
+    "reference/auto/open_workspace.sh": {
+      "purpose": "Auto-archived from WAI-Spoke root",
+      "required": false,
+      "auto_managed": true
+    }
+  },
+  "legacy_files": {}
+}

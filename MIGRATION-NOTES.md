@@ -55,6 +55,58 @@ Capture execution details, decisions, edge cases, and patterns discovered during
 
 ---
 
+## Phase 2: Registry Structure + Manifests
+
+**Status:** ✅ Complete
+**Started:** 2026-02-12T07:30Z
+**Completed:** 2026-02-12T07:35Z
+**Commit:** 7a2e23d
+
+### What Was Done
+1. Created registry structure: `registry/wheelwright/framework/`
+2. Created PROJECT.md for wheelwright project with identity and vision
+3. Copied all files from `./WAI-Spoke/` to `registry/wheelwright/framework/` (additive, original preserved)
+4. Created WAI-Manifest.yaml for hub node (in /hub/ directory)
+5. Created WAI-Manifest.yaml for framework spoke (in registry location)
+6. Created hub/registry.yaml as node index
+
+### Key Decisions
+- **Single project structure:** Only one active project (Wheelwright) with one extension (framework)
+- **Hub location:** Hub lives outside framework repo at `/home/mario/projects/wheelwright-ai/hub/`
+- **Hub files not in git:** Hub manifest and registry created but not committed to framework repo (separate node)
+- **Registry paths:** `registry/{project}/{extension}/` pattern established
+- **PROJECT.md source:** Derived from README.md rather than WAI-Guide.md (which doesn't exist in main spoke)
+- **Additive copy:** Original WAI-Spoke/ directory preserved, registry is a copy
+
+### Edge Cases Encountered
+1. **No WAI-Guide.md:** Main spoke lacks WAI-Guide.md, used README.md for PROJECT.md content instead
+2. **TestSpoke is test data:** ./TestSpoke/WAI-Spoke/ only contains seed directory, not a real spoke - skipped
+3. **Hub outside repo:** Hub files created successfully but not part of framework git tracking
+4. **Templates/examples:** Multiple template/example WAI-Spoke dirs exist - correctly ignored, not migrated
+
+### Patterns Observed
+- **79 files copied:** Complete spoke structure including reference/, seed/, lugs/, observations
+- **Manifest structure identical:** Hub and spoke manifests have same schema, differentiated by node_type and node_path
+- **Template versions:** All nodes report lugs:2, brief:1, guide:1 (v2 schema established)
+- **Cursor tracking ready:** hub_lug_cursor field present for cross-node signal flow (Phase 6)
+
+### Documentation Seeds
+- **For registry structure docs:** "Registry uses {project}/{extension} paths, PROJECT.md at project level captures shared identity"
+- **For manifest docs:** "WAI-Manifest.yaml tracks node identity, framework version, template versions, and cursor state"
+- **For hub/spoke relationship:** "Hub lives independently with its own manifest, spokes reference hub via hub_path in State"
+- **For migration:** "Copy before delete - registry is duplicated data until Phase 7 cleanup verifies completeness"
+
+### Verification Checklist
+- [x] Registry directory structure exists: registry/wheelwright/framework/
+- [x] PROJECT.md created with project identity
+- [x] All spoke files copied to registry (79 files)
+- [x] Hub manifest created: /hub/WAI-Manifest.yaml
+- [x] Framework manifest created: registry/wheelwright/framework/WAI-Manifest.yaml
+- [x] Hub registry index created: /hub/registry.yaml with 1 node listed
+- [x] Original WAI-Spoke/ still exists (not moved, copied)
+
+---
+
 ## Phase 1: Lug Schema Migration
 
 **Status:** ✅ Complete

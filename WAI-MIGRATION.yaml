@@ -1,6 +1,6 @@
 migration: v2
 status: in_progress
-current_phase: 2
+current_phase: 3
 completed_phases:
 - phase: 0
   commit: 76458a8
@@ -12,6 +12,11 @@ completed_phases:
   closed_at: '2026-02-12T07:24:35.882270+00:00'
   summary: Lug schema migrated to v2, 350 Lugs with PEV fields, 10 signals absorbed,
     backups created
+- phase: 2
+  commit: 7a2e23d
+  closed_at: '2026-02-12T07:34:07.584018+00:00'
+  summary: Registry structure created (registry/wheelwright/framework/), manifests
+    initialized, PROJECT.md, hub files created
 authoritative_format: v1
 retired_files:
 - WAI-Signals.jsonl
