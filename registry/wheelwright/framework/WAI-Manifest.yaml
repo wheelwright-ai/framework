@@ -6,6 +6,16 @@ template_versions:
   brief: 1
   guide: 1
 hub_lug_cursor: null
-skills_loaded: []
+skills_loaded:
+  framework:
+    - safe-refactor
+    - qc-check
+    - hub-watcher
+    - framework-updater
+    - brief-advisor
+    - session-observer
+    - file-audit
+    - integration-check
+  spoke: []
 last_session: null
 outbound_pending: []
