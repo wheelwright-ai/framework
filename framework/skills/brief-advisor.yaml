@@ -27,15 +27,28 @@ prerequisites:
   - "access to past decision Lugs"
 
 behavior:
+  cascade_reading: |
+    Read BRIEF files in hierarchy (Hub → Project → Spoke):
+    1. Read hub/BRIEF.md (required, universal rules)
+    2. Read project/BRIEF.md (optional, shared rules)
+    3. Read spoke/BRIEF.md (optional, local rules)
+    4. Merge rules:
+       - Hub "always/never" cannot be overridden (highest priority)
+       - Project "always/never" cannot be overridden by spoke
+       - Preferences: Spoke > Project > Hub (lowest level wins)
+    5. Return merged rules for alignment checking
+
+    See: docs/BRIEF-CASCADE.md for complete algorithm
+
   on_pre_decision: |
-    1. Read BRIEF cascade (hub → project → spoke)
+    1. Read BRIEF cascade (hub → project → spoke) using cascade_reading
     2. Extract decision context from agent
     3. Search past decisions for similar scenarios:
        - Same topic/category
        - Similar alternatives_considered
        - Related resolution_reason
     4. Compare proposed decision with:
-       - BRIEF constraints (always/never rules)
+       - BRIEF constraints (always/never rules from cascade)
        - Past decisions (what was chosen before and why)
     5. Advise agent:
        - If aligned with BRIEF + past: "Consistent with prior decisions"
