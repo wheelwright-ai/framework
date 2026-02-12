@@ -1,0 +1,10 @@
+{"i":"logging-001","t":"Use StructuredLogger","ty":"constraint","s":"o","description":"Must use StructuredLogger from src.utils.logger for all logging"}
+{"i":"logging-002","t":"Log at Format Start","ty":"spec","s":"o","description":"Log at the beginning of format() method with input data"}
+{"i":"logging-003","t":"Log Field Formatting","ty":"spec","s":"o","description":"Log after each field is formatted (name, email, timestamp)"}
+{"i":"logging-004","t":"Log Final Result","ty":"spec","s":"o","description":"Log the final formatted result before returning"}
+{"i":"logging-005","t":"Use INFO Level","ty":"constraint","s":"o","description":"Use INFO level for normal operations"}
+{"i":"logging-006","t":"Use ERROR Level","ty":"constraint","s":"o","description":"Use ERROR level for validation failures"}
+{"i":"logger-context-001","t":"Include Field Names in Logs","ty":"spec","s":"o","description":"Log entries must include field names being formatted"}
+{"i":"logger-context-002","t":"Include Field Values in Logs","ty":"spec","s":"o","description":"Log entries should include the actual values being formatted"}
+{"i":"formatter-init-001","t":"Initialize Logger in __init__","ty":"spec","s":"o","description":"Create StructuredLogger instance in DataFormatter.__init__"}
+{"i":"formatter-import-001","t":"Import from src.utils","ty":"constraint","s":"o","description":"Import StructuredLogger from src.utils.logger"}

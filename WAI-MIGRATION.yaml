@@ -1,12 +1,17 @@
 migration: v2
 status: in_progress
-current_phase: 1
+current_phase: 2
 completed_phases:
 - phase: 0
   commit: 76458a8
   closed_at: '2026-02-12T07:14:34.841062+00:00'
   summary: Safety checkpoint created, migration branch established, migration state
     file initialized
+- phase: 1
+  commit: 73112e9
+  closed_at: '2026-02-12T07:24:35.882270+00:00'
+  summary: Lug schema migrated to v2, 350 Lugs with PEV fields, 10 signals absorbed,
+    backups created
 authoritative_format: v1
 retired_files:
 - WAI-Signals.jsonl
