@@ -34,14 +34,42 @@ behavior:
        b. Integration tests (if configured)
        c. Startup validation (can the app launch?)
        d. Coverage check (if threshold configured)
-    3. Collect results for each gate
-    4. Determine pass/fail based on thresholds
+    3. Run pre-commit warnings (Phase 5):
+       a. Scan for secrets (.env, *.key, credentials.*, *secret*, *password*)
+       b. Check file sizes (warn > 1MB, block > 10MB)
+       c. Detect debug statements (console.log, print(), debugger, breakpoint())
+       d. Find TODOs added (TODO, FIXME, XXX, HACK in staged files)
+    4. Collect results for each gate + warnings
+    5. Determine pass/fail/warn based on thresholds
+
+  pre_commit_warnings: |
+    New in Phase 5 - scan staged files for common issues:
+
+    CRITICAL (block commit):
+    - Secrets detected: .env, *.key, *.pem, credentials.*, config/*secret*, *password*
+    - Large files: > 10MB (suggest git-lfs or external storage)
+    - Syntax errors: File won't parse/compile
+
+    WARNINGS (show but don't block):
+    - Large files: 1MB - 10MB (warn about repo bloat)
+    - Debug statements: console.log(), print(), debugger, breakpoint()
+    - TODOs added: TODO, FIXME, XXX, HACK (signals incomplete work)
+    - Binary files: *.exe, *.dll, *.so (usually shouldn't be committed)
+
+    Check patterns (regex):
+    - Secrets: (password|secret|key|token|credential).*=.*["'](.+)["']
+    - Debug: console\\.log|print\\(|debugger|breakpoint\\(
+    - TODO: (TODO|FIXME|XXX|HACK):
 
   on_failure: |
     - If tests fail: BLOCK commit/shipit, show failures
     - If startup fails: BLOCK commit/shipit, show error
+    - If secrets detected: BLOCK commit/shipit, list files (Phase 5)
+    - If large files (>10MB): BLOCK commit/shipit, suggest alternatives (Phase 5)
     - If coverage below threshold: WARN (soft failure)
-    - Log all failures to session observations
+    - If debug statements found: WARN, suggest cleanup (Phase 5)
+    - If TODOs added: WARN, note incomplete work (Phase 5)
+    - Log all failures/warnings to session observations
 
   override_behavior: |
     Spoke-level {spoke}/skills/qc-check.yaml can define:
@@ -88,6 +116,27 @@ use_cases:
     what_happens: "Spoke override sets skip_tests: true temporarily"
     why_it_matters: "Quality gates shouldn't prevent emergency fixes"
     user_trigger: "Manual spoke-level override edit"
+
+  - scenario: "User accidentally stages .env file with API keys (Phase 5)"
+    what_happens: "qc-check detects secret pattern in .env, BLOCKS commit"
+    why_it_matters: "Secrets in git history = catastrophic exposure, costly remediation"
+    user_trigger: "pre_commit or pre_shipit with .env staged"
+    origin: "Phase 5 - pre-commit warnings added to prevent secret leaks"
+
+  - scenario: "User stages 20MB video file (Phase 5)"
+    what_happens: "qc-check detects file > 10MB, BLOCKS commit, suggests git-lfs"
+    why_it_matters: "Large files bloat repo, slow clones, make history unwieldy"
+    user_trigger: "pre_commit with large file staged"
+
+  - scenario: "User left console.log() in production code (Phase 5)"
+    what_happens: "qc-check detects debug statement, WARNS (doesn't block)"
+    why_it_matters: "Debug statements in production = poor code hygiene, potential info leak"
+    user_trigger: "pre_commit with console.log in staged files"
+
+  - scenario: "User added TODO comments in new code (Phase 5)"
+    what_happens: "qc-check detects TODO, WARNS about incomplete work"
+    why_it_matters: "TODOs signal work not finished - good to know before shipit"
+    user_trigger: "pre_commit with TODO in staged files"
 
 tests:
   - name: "Blocks commit when tests fail"

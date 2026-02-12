@@ -46,7 +46,8 @@ MINIFIED_KEYS = {
     'su': 'summary',
     'j': 'justification',
     'ff': 'from_file',
-    'ex': 'extras'
+    'ex': 'extras',
+    'cpa': 'compact_action'
 }
 
 # Reverse mapping (API → storage)
@@ -89,6 +90,9 @@ class Lug:
         self.scope: Optional[str] = data.get('scope')
         self.module_versions: Dict[str, str] = data.get('module_versions') or {}
         self.hub_submission: Optional[Dict[str, Any]] = data.get('hub_submission')
+
+        # Session continuity field (Phase 5)
+        self.compact_action: Optional[List[str]] = data.get('compact_action')
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to full dict with all fields."""
@@ -118,7 +122,8 @@ class Lug:
             'modules_affected': self.modules_affected,
             'scope': self.scope,
             'module_versions': self.module_versions,
-            'hub_submission': self.hub_submission
+            'hub_submission': self.hub_submission,
+            'compact_action': self.compact_action
         }
     
     def to_minified(self) -> Dict[str, Any]:

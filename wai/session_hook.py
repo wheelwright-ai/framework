@@ -5,8 +5,52 @@ This module provides the session start briefing that should be injected
 into Claude's system prompt and AGENTS.md at the beginning of each session.
 """
 
-from typing import Optional
+from typing import Optional, List
+from pathlib import Path
+import json
 from wai.briefing import build_session_briefing, get_briefing
+
+
+def get_compact_action_from_last_session() -> Optional[List[str]]:
+    """
+    Read the latest session summary Lug and extract compact_action.
+
+    Returns:
+        List of action steps, or None if no compact_action found
+    """
+    try:
+        # Find WAI-Lugs.jsonl (check common locations)
+        lug_paths = [
+            Path.cwd() / "WAI-Spoke" / "WAI-Lugs.jsonl",
+            Path.cwd() / "registry" / "wheelwright" / "framework" / "WAI-Lugs.jsonl",
+            Path.cwd() / ".." / "hub" / "WAI-Lugs.jsonl"
+        ]
+
+        lug_file = None
+        for path in lug_paths:
+            if path.exists():
+                lug_file = path
+                break
+
+        if not lug_file:
+            return None
+
+        # Read Lugs file (JSONL - last line is most recent)
+        with open(lug_file, 'r') as f:
+            lines = f.readlines()
+
+        # Search backwards for most recent session summary or observation with compact_action
+        for line in reversed(lines):
+            try:
+                lug = json.loads(line.strip())
+                if lug.get('compact_action'):
+                    return lug['compact_action']
+            except json.JSONDecodeError:
+                continue
+
+        return None
+    except Exception:
+        return None
 
 
 def get_session_start_briefing(session_id: Optional[str] = None) -> str:
@@ -25,25 +69,35 @@ def get_session_start_briefing(session_id: Optional[str] = None) -> str:
         Markdown-formatted briefing for Claude context
     """
     briefing = get_briefing()
-    
+
     # Build the briefing
     briefing_text = build_session_briefing(session_id)
-    
+
+    # Get compact action from last session
+    compact_action = get_compact_action_from_last_session()
+
+    # Build compact action section
+    compact_section = ""
+    if compact_action:
+        compact_section = "\n\n**Compact Action (Resume):**\n"
+        for i, step in enumerate(compact_action, 1):
+            compact_section += f"{i}. {step}\n"
+
     # Wrap with context marker for Claude
     wrapped = f"""
 # Session Start Briefing
 
 {briefing_text}
-
+{compact_section}
 ---
 
 **What to do next:**
 1. Review failed observations above (if any)
 2. Address remediation steps if needed
-3. Continue with your work
+3. Continue with your work (see Compact Action above)
 4. New observations will be logged automatically
 """
-    
+
     return wrapped
 
 
