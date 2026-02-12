@@ -1,0 +1,14 @@
+migration: v2
+status: in_progress
+current_phase: 1
+completed_phases:
+- phase: 0
+  commit: 76458a8
+  closed_at: '2026-02-12T07:14:34.841062+00:00'
+  summary: Safety checkpoint created, migration branch established, migration state
+    file initialized
+authoritative_format: v1
+retired_files:
+- WAI-Signals.jsonl
+- WAI-Backpressure.yaml
+notes: If you see this file, migration is active. Read it FIRST before any WAI operations.
