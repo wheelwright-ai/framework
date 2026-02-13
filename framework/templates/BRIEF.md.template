@@ -26,7 +26,7 @@ Rules that **must** be followed:
 - ✅ Run quality gates (tests, startup) before commits
 - ✅ Log high-impact decisions (impact >= 7) as Lugs
 - ✅ Respect CLAUDE.md instructions (priority 0)
-- ✅ Use PEV (Perspective-Evidence-Verdict) for important Lugs
+- ✅ Use PEV (Perceive-Execute-Verify) for important Lugs
 
 ---
 

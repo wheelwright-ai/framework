@@ -294,7 +294,7 @@ Duplicate if ALL true:
 ### With Phase 1 (Lug Schema)
 
 - Signal = Lug type (type: "signal")
-- Signals use PEV (perspective, evidence, verdict)
+- Signals use PEV (perceive, execute, verify)
 - Signal Lugs include compact_action (Phase 5 integration)
 
 ---

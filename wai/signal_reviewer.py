@@ -71,9 +71,9 @@ class SignalReviewer:
         if 'pev' in signal:
             pev = signal['pev']
             print(f"\nPEV:")
-            print(f"  Perspective: {pev.get('perspective', 'N/A')}")
-            print(f"  Evidence: {pev.get('evidence', 'N/A')}")
-            print(f"  Verdict: {pev.get('verdict', 'N/A')}")
+            print(f"  Perceive: {pev.get('perceive', 'N/A')}")
+            print(f"  Execute: {pev.get('execute', 'N/A')}")
+            print(f"  Verify: {pev.get('verify', 'N/A')}")
 
     def prompt_action(self) -> str:
         """

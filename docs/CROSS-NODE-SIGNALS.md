@@ -185,9 +185,9 @@ hub/archive/
   "body": "Detailed explanation of pattern/learning",
   "tags": ["category1", "category2"],
   "pev": {
-    "perspective": "Context/problem statement",
-    "evidence": "Data/observations supporting the learning",
-    "verdict": "Solution/conclusion"
+    "perceive": "Context/problem statement",
+    "execute": "Data/observations supporting the learning",
+    "verify": "Solution/conclusion"
   },
   "impact": 8-10,
   "status": "published",
@@ -410,9 +410,9 @@ signals:
   "title": "JWT refresh strategy reduces auth overhead 40%",
   "body": "Sliding window refresh: 15min token, 7day refresh token",
   "pev": {
-    "perspective": "Frequent token expiration caused UX issues",
-    "evidence": "200+ refresh calls/hour, user complaints",
-    "verdict": "Sliding window reduced to 120 calls/hour, zero complaints"
+    "perceive": "Frequent token expiration caused UX issues",
+    "execute": "200+ refresh calls/hour, user complaints",
+    "verify": "Sliding window reduced to 120 calls/hour, zero complaints"
   },
   "impact": 9,
   "source_spoke": "wheelwright/auth-service"
@@ -452,9 +452,9 @@ Action: [A]dopt
   "title": "Race condition in concurrent payment processing",
   "body": "Two simultaneous requests could charge user twice",
   "pev": {
-    "perspective": "Reports of duplicate charges",
-    "evidence": "Race condition in payment state check + update",
-    "verdict": "Added transaction lock, eliminated duplicates"
+    "perceive": "Reports of duplicate charges",
+    "execute": "Race condition in payment state check + update",
+    "verify": "Added transaction lock, eliminated duplicates"
   },
   "impact": 10,
   "tags": ["bug", "concurrency", "critical"],

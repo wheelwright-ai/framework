@@ -205,9 +205,9 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
   "title": "Adopt JWT refresh token pattern",
   "body": "Implement sliding window refresh...",
   "pev": {
-    "perspective": "Frequent token expiration caused UX issues",
-    "evidence": "200+ refresh calls/hour, user complaints",
-    "verdict": "Sliding window reduced overhead 40%"
+    "perceive": "Frequent token expiration caused UX issues",
+    "execute": "200+ refresh calls/hour, user complaints",
+    "verify": "Sliding window reduced overhead 40%"
   },
   "impact": 9,
   "status": "resolved"

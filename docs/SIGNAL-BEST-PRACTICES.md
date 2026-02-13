@@ -192,9 +192,9 @@ user complaints about frequent re-logins.
           optimized read cache, writes go to normalized DB. Improved
           read latency 10x.",
   "pev": {
-    "perspective": "Read queries slowing down write operations",
-    "evidence": "95% of requests are reads, 5% writes. Contention high.",
-    "verdict": "CQRS separated concerns, read latency dropped 10x"
+    "perceive": "Read queries slowing down write operations",
+    "execute": "95% of requests are reads, 5% writes. Contention high.",
+    "verify": "CQRS separated concerns, read latency dropped 10x"
   },
   "impact": 9,
   "tags": ["architecture", "cqrs", "performance", "pattern"]
@@ -216,9 +216,9 @@ user complaints about frequent re-logins.
           race condition in payment state check + update. Added
           transaction lock around payment flow.",
   "pev": {
-    "perspective": "Reports of duplicate charges from users",
-    "evidence": "3 duplicate charge incidents, race condition confirmed",
-    "verdict": "Transaction lock eliminated duplicates (zero incidents since)"
+    "perceive": "Reports of duplicate charges from users",
+    "execute": "3 duplicate charge incidents, race condition confirmed",
+    "verify": "Transaction lock eliminated duplicates (zero incidents since)"
   },
   "impact": 10,
   "tags": ["bug-fix", "concurrency", "critical", "payments"]
@@ -240,9 +240,9 @@ user complaints about frequent re-logins.
           Cache hit rate 85%, DB query load dropped 60%, API latency
           improved 3x.",
   "pev": {
-    "perspective": "DB queries bottleneck for API performance",
-    "evidence": "DB at 80% capacity, 200ms average query time",
-    "verdict": "Redis cache reduced load to 40%, query time down to 50ms"
+    "perceive": "DB queries bottleneck for API performance",
+    "execute": "DB at 80% capacity, 200ms average query time",
+    "verify": "Redis cache reduced load to 40%, query time down to 50ms"
   },
   "impact": 8,
   "tags": ["performance", "caching", "optimization", "redis"]
