@@ -1,0 +1,27 @@
+{
+  "id": "lug-2026-02-12-migration-decision",
+  "type": "decision",
+  "title": "WAI v2 migration completed",
+  "status": "resolved",
+  "impact": 10,
+  "created_at": "2026-02-13T01:30:03.377039+00:00",
+  "created_by": "conductor",
+  "node": "hub",
+  "resolution": "accepted",
+  "repo_version": "pending-merge",
+  "alternatives_considered": [
+    {
+      "option": "CLI-based management",
+      "chosen": false,
+      "reasoning": "CLI destroyed Hub folder on 2026-02-10; no data protection mechanism"
+    },
+    {
+      "option": "File-based protocol with Skills and Lugs",
+      "chosen": true,
+      "reasoning": "Agents communicate through files, show work via Lugs, execute via Skills, boundaries enforced by WAI-Integrity.md contract"
+    }
+  ],
+  "summary": "Full v1\u2192v2 migration executed across Phases 0-7, with Items 1-2 corrections.\n    \nCompleted work:\n- Phase 0: Safety checkpoint, migration branch, state tracking\n- Phase 1: Lug schema upgraded (350 Lugs), signals absorbed (10), PEV fields added\n- Phase 2: Registry structure, manifests, PROJECT.md files\n- Phase 3: Skills directory, extension identity, use_cases requirement\n- Phase 4: Hub infrastructure, BRIEF cascade (completed in Item 1)\n- Phase 5: WAI-Integrity.md data protection contract (completed in Item 1)\n- Phase 6: Cross-node signal propagation\n- Phase 7: Integration testing, user guide\n- Item 1: Spec alignment (PEV field corrections, integrity contract, BRIEF cascade)\n- Item 2: Session ledger pattern (append-only commitment tracking)\n\nArchitecture changes:\n- Signals \u2192 Lugs with impact >= 8\n- Backpressure \u2192 Skills (qc-check, safe-refactor)\n- WAI-Integrity.md: Read-only paths, append-only paths, scoped write access\n- Session ledger: Prevents context loss and premature completion\n- PEV fields: perceive/execute/verify for structured execution\n- Extension identity: EXTENSION.md per spoke\n\nData preservation: All v1 data migrated, backups retained, zero data loss.\n\nContext loss incident: During migration, token exhaustion caused PEV renaming\n(perspective/evidence/verdict) and phases 8-9 skipped. Item 1 corrected deviations,\nItem 2 installed ledger to prevent recurrence.",
+  "resolved_at": "2026-02-13T01:30:03.377203+00:00",
+  "resolved_by": "migration-closeout"
+}
