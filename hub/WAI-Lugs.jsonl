@@ -8,7 +8,7 @@
   "created_by": "conductor",
   "node": "hub",
   "resolution": "accepted",
-  "repo_version": "pending-merge",
+  "repo_version": "0893710",
   "alternatives_considered": [
     {
       "option": "CLI-based management",
