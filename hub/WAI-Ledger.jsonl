@@ -1,0 +1,6 @@
+# WAI Session Ledger - Hub
+# Purpose: Track commitments across sessions to prevent context loss
+# Origin: Created 2026-02-12 after WAI v2 migration context loss incident
+# Schema: See framework/templates/WAI-Ledger.jsonl.template
+# CRITICAL: This file is append-only per WAI-Integrity.md
+

@@ -36,9 +36,11 @@ These files grow but NEVER shrink. Lines are added, never removed:
 
 ```
 **/WAI-Lugs.jsonl          — All Lug files (every node)
-**/WAI-Ledger.jsonl        — All ledger files (every node)
+**/WAI-Ledger.jsonl        — Session ledger (commitments tracking, every node)
 hub/intake/**/*.yaml       — Intake submissions (moved to processed/ when done)
 ```
+
+**Session Ledger:** WAI-Ledger.jsonl tracks requests, agreements, and deliveries. It exists to prevent premature completion declarations and survive context loss. Every commitment is file-permanent.
 
 **Rule:** Agents write new lines. Agents NEVER delete lines, even if they look wrong. If a Lug needs correction, create a new Lug referencing the original. The history is the value.
 

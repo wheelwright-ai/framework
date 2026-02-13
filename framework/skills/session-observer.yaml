@@ -16,9 +16,11 @@ scope:
   reads:
     - "session events log"
     - "WAI-Lugs.jsonl (Lugs created this session)"
+    - "WAI-Ledger.jsonl (commitments tracking)"
     - "git log (commits made this session)"
   writes:
     - "observations.jsonl (event records)"
+    - "WAI-Ledger.jsonl (ledger entries)"
     - "session summary Lug (on closeout)"
 
 prerequisites:
@@ -38,15 +40,24 @@ behavior:
        }
 
   on_session_end: |
-    1. Read all observations from current session
-    2. Read Lugs created this session
-    3. Read commits made this session (git log since session start)
-    4. Synthesize session summary:
+    1. **Ledger Reconciliation:**
+       - Read WAI-Ledger.jsonl
+       - Filter entries with status: "open"
+       - For each open entry:
+         * If type: "request" or "agreement", check if delivered this session
+         * If delivered (matching commit exists), create delivery entry
+         * If not delivered, flag as unfulfilled commitment
+       - Surface unfulfilled commitments in session summary
+    2. Read all observations from current session
+    3. Read Lugs created this session
+    4. Read commits made this session (git log since session start)
+    5. Synthesize session summary:
        - High-impact events (impact >= 8)
        - New Lugs created (count by type)
        - Commits made (count, summary)
        - Incomplete work (Lugs still in-progress)
-    5. Create session summary Lug (type: observation)
+       - **Unfulfilled commitments (from ledger)**
+    6. Create session summary Lug (type: observation)
 
   synthesis_pattern: |
     Session summary includes:
@@ -100,6 +111,20 @@ use_cases:
     what_happens: "session-observer creates minimal summary: 'Maintenance session'"
     why_it_matters: "Not every session needs detailed tracking - quiet when uneventful"
     user_trigger: "Automatic session synthesis"
+
+  - scenario: "Agent lost context mid-migration and renamed core concepts"
+    what_happens: "On resume, ledger shows agreement to use 'perceive/execute/verify' — agent detects 'perspective/evidence/verdict' in code — creates diagnosis Lug"
+    why_it_matters: "This actually happened during WAI v2 migration. This pattern exists because of it."
+    origin: "WAI v2 migration, 2026-02-12 — context loss incident"
+
+  - scenario: "Conductor asks for 9 phases, agent delivers 7 and says 'complete'"
+    what_happens: "Ledger has 9 request entries. Only 7 have delivery entries. Closeout flags: 2 open commitments remain."
+    why_it_matters: "Premature completion is caught by the system, not by the conductor noticing."
+    origin: "WAI v2 migration, 2026-02-12 — phases 8-9 skipped"
+
+  - scenario: "Session ends normally, all work delivered"
+    what_happens: "Closeout reconciles ledger — all requests have matching deliveries — clean session."
+    why_it_matters: "Confidence that nothing was dropped. The ledger is the parity check."
 
 tests:
   - name: "Logs high-impact events to observations.jsonl"
