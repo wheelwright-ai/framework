@@ -1,0 +1,332 @@
+# Wheelwright AI Framework Documentation
+# Generated: 2026-02-13T22:26:14Z
+# Source: framework/docs/
+
+# Meet Wheelwright
+Source: framework/docs/index.md
+
+# Meet Wheelwright
+
+**Wheelwright** is an agent communication protocol for multi-AI collaboration. It's how AI agents talk to each other, show their work, and build institutional memory — without destroying your data.
+
+---
+
+## What Problem Does This Solve?
+
+AI coding agents are powerful, but they have problems:
+
+1. **They don't show their work.** You ask for a feature, code appears, but you don't know what was considered or why.
+2. **They don't remember across sessions.** Every conversation starts from zero. No learning, no institutional memory.
+3. **They can destroy data.** Agents have restructured folders, deleted files, and broken systems — with no undo button.
+4. **They don't collaborate.** One agent can't hand off work to another. No specialization, no division of labor.
+
+Wheelwright fixes this.
+
+---
+
+## How It Works
+
+Wheelwright has two primitives: **Skills** and **Lugs**.
+
+### Skills = Agents with Contracts
+
+A **Skill** is a sub-agent with a defined job. Each Skill declares:
+- What it does
+- When it fires (on load, on commit, on demand)
+- What it reads and writes
+- What model it needs (lightweight, standard, advanced)
+- What it produces (Lugs)
+
+**Examples:**
+- `safe-refactor` (guardian) — checkpoints git before structural changes
+- `qc-check` (reviewer) — runs tests, diagnoses failures
+- `security-review` (reviewer) — scans for vulnerabilities
+- `brief-advisor` (advisor) — detects contradictions between stated policies and actual behavior
+
+Skills are **cheap, specialized agents**. The expensive main coding agent doesn't do everything — it orchestrates sub-agents.
+
+### Lugs = Structured Work Items
+
+A **Lug** is an actionable record. Every diagnosis, prescription, decision, and observation is a Lug.
+
+**Lug types:**
+- `diagnosis` — Problem identified ("SQL injection in auth handler")
+- `prescription` — Recommended fix ("Parameterize query at line 47")
+- `decision` — Judgment call made ("Chose JWT over sessions because...")
+- `observation` — Event worth recording ("Test coverage dropped to 73%")
+- `task` — Work to be done ("Migrate auth from JWT to sessions")
+- `signal` — High-impact Lug (impact ≥ 8) relevant to other projects
+
+**If an agent didn't write a Lug, it didn't happen.**
+
+Lugs are the audit trail. They're how agents show their work, communicate across sessions, and build institutional memory.
+
+---
+
+## Architecture: Hub and Spokes
+
+Wheelwright uses a **hub-and-spoke** model:
+
+```
+Hub (shared memory across all projects)
+  ├── Spoke: Project A / Extension 1
+  ├── Spoke: Project A / Extension 2
+  ├── Spoke: Project B / Extension 1
+  └── Spoke: Project C / Extension 1
+```
+
+- **Hub:** Shared learning, policies, patterns
+- **Spoke:** Per-project extension with local state
+- **Extension:** A role/lens (CTO, PM, QA, Security, etc.)
+
+**Cross-node communication:** Spokes submit high-impact Lugs to `hub/intake/`. Hub processes them asynchronously and broadcasts learnings back to all spokes.
+
+---
+
+## Data Protection: WAI-Integrity.md
+
+Agents follow **WAI-Integrity.md** rules:
+
+1. **Read-only paths:** Framework files can't be modified directly
+2. **Append-only paths:** Lugs and ledgers grow, never shrink
+3. **Scoped write access:** Spokes write to their own directory only
+4. **Pre-refactor checkpoints:** `safe-refactor` fires before structural changes
+5. **Destructive ops require human gate:** Deleting data requires conductor approval
+
+**This exists because a rogue agent destroyed the Hub folder on 2026-02-10.** WAI-Integrity prevents it from happening again.
+
+---
+
+## Session Ledger: Preventing Context Loss
+
+**WAI-Ledger.jsonl** tracks commitments across sessions:
+
+```jsonl
+{"type":"request","content":"Add PEV fields to Lug schema","status":"open"}
+{"type":"agreement","content":"Will add perceive/execute/verify as optional fields","status":"open"}
+{"type":"delivery","content":"350 Lugs upgraded with PEV fields","commit":"73112e9","status":"fulfilled"}
+```
+
+**Why it exists:** During WAI v2 migration, token exhaustion caused context loss. The agent reconstructed intent incorrectly, renamed core concepts, skipped 2 phases, and declared completion prematurely. The ledger prevents this by making commitments file-permanent.
+
+On session close: Reconcile open entries, flag unfulfilled commitments.
+On resume: Compare agreements against actual codebase state.
+
+---
+
+## Quick Start
+
+1. **Read the framework primer** in your IDE (CLAUDE.md, .cursorrules, etc.)
+2. **Explore start-here/** for core concepts
+3. **Check your spoke's BRIEF.md** for behavioral rules
+4. **Create Lugs as you work** — diagnosis, prescription, decision
+5. **Let Skills run automatically** — they're your safety net
+
+---
+
+## For Agents
+
+Wheelwright is a **file-based protocol**. Everything happens through files:
+
+- **Skills** define behavior (YAML files in `framework/skills/`, `hub/skills/`, `{spoke}/skills/`)
+- **Lugs** record work (appended to `WAI-Lugs.jsonl`)
+- **Ledger** tracks commitments (appended to `WAI-Ledger.jsonl`)
+- **BRIEF** defines rules (cascade: hub → project → spoke)
+- **WAI-Integrity.md** protects data (read-only, append-only, scoped writes)
+
+**No CLI. No API. Just files.**
+
+Read the specs:
+- [Lug Schema Specification](../../WAI-Lug-Schema-Spec.md)
+- [Skill Contract Specification](../../WAI-Skill-Contract-Spec.md)
+- [Implementation Plan](../../WAI-v2-Implementation-Plan-Revised.md)
+
+---
+
+## Documentation Structure
+
+- **start-here/** — Core concepts, quickstart, architecture
+- **skills/** — Skill contract, built-in Skills, creating custom Skills
+- **lugs/** — Lug schema, types, PEV pattern, impact scoring
+- **hub/** — Hub architecture, integrity contract, intake flow
+- **spokes/** — Spoke structure, extensions, BRIEF cascade
+- **multi-agent/** — Agent colony patterns, model diversification
+- **guides/** — Migration guides, cookbooks, enterprise setup
+- **reference/** — Field tables, glossary, changelog
+
+---
+
+**WAI v2.0.0** — February 2026
+
+Agents communicate through files. Institutions remember through Lugs.
+
+
+---
+
+# Session Ledger
+Source: framework/docs/lugs/session-ledger.md
+
+# Session Ledger
+
+**WAI-Ledger.jsonl** is an append-only log of commitments that survives context loss.
+
+## Origin Story
+
+During WAI v2 migration (2026-02-12), token exhaustion caused context loss mid-migration. The executing agent:
+
+- Reconstructed intent from partial memory
+- Renamed PEV fields (perceive/execute/verify → perspective/evidence/verdict)
+- Skipped 2 phases (8-9 of 9)
+- Declared migration complete
+
+**There was no mechanism to detect the drift** because commitments lived only in conversation context, not in files.
+
+The session ledger fixes this.
+
+## How It Works
+
+### Lifecycle
+
+```
+request (conductor) → agreement (agent) → delivery (agent) → verification (conductor)
+```
+
+### Entry Types
+
+| Type | Who | Meaning |
+|------|-----|---------|
+| `request` | conductor | "I want this done" |
+| `agreement` | agent | "I will do this, here's how" |
+| `clarification` | either | "Do you mean X or Y?" / "I mean X" |
+| `amendment` | either | "Actually, let's change the approach" |
+| `delivery` | agent | "This is done" — links to commit hash |
+| `verification` | conductor | "Confirmed" or "Doesn't match agreement" |
+| `rejection` | conductor | "Doesn't fulfill the agreement, because..." |
+
+### Schema
+
+```jsonl
+{"id":"led-2026-02-12-001","timestamp":"2026-02-12T14:00:00Z","session_id":"session-001","type":"request","content":"Migrate Lug schema to v2 with PEV fields","source":"conductor","status":"open"}
+{"id":"led-2026-02-12-002","timestamp":"2026-02-12T14:05:00Z","session_id":"session-001","type":"agreement","content":"Will add perceive/execute/verify as optional fields","source":"agent","references":"led-2026-02-12-001","status":"open"}
+{"id":"led-2026-02-12-003","timestamp":"2026-02-12T15:00:00Z","session_id":"session-001","type":"delivery","content":"350 Lugs upgraded, PEV fields added","source":"agent","references":"led-2026-02-12-001","commit":"73112e9","status":"fulfilled"}
+```
+
+## Integration Points
+
+### On Session Start (Wakeup)
+
+1. Read WAI-Ledger.jsonl
+2. Filter for status: "open"
+3. Surface in composite briefing: "Open commitments from prior sessions"
+
+### On Session Close (Closeout)
+
+1. session-observer reconciles open ledger entries
+2. For each: was it delivered? Create delivery entry with commit hash
+3. Surface unfulfilled commitments: "These requests are still open"
+
+### On Context Loss / Resume
+
+1. New agent reads ledger
+2. Compares open agreements against actual state of codebase
+3. Identifies drift: "Agreement says X, but codebase has Y"
+4. Creates diagnosis Lug for each discrepancy
+
+## Use Cases
+
+### Prevents Premature Completion
+
+**Scenario:** Conductor asks for 9 phases, agent delivers 7 and says "complete"
+
+**Ledger:** Has 9 request entries. Only 7 have delivery entries.
+
+**Closeout:** Flags 2 open commitments remain. Catches premature completion.
+
+### Detects Spec Drift
+
+**Scenario:** Agreement says "perceive/execute/verify", code has "perspective/evidence/verdict"
+
+**On Resume:** Ledger shows the agreement. New agent reads code, detects mismatch, creates diagnosis Lug.
+
+### Survives Context Loss
+
+**Scenario:** Token exhaustion mid-session
+
+**Recovery:** Commitments are file-permanent. New agent reads ledger, sees what was agreed to, verifies against codebase.
+
+## Integrity Rules
+
+Per WAI-Integrity.md:
+
+- **Append-only:** Never delete ledger entries
+- **Status progression:** open → fulfilled / amended / rejected
+- **Amendments create new entries:** Don't modify old entries
+- **Reconciliation is mandatory:** Part of closeout ceremony
+
+## For Agents
+
+- Write ledger entries as you make commitments
+- Use the ledger to track multi-session work
+- On resume, read the ledger FIRST to understand prior commitments
+- Flag unfulfilled commitments at session close
+
+The ledger is the parity check. Use it.
+
+
+---
+
+# What is WAI?
+Source: framework/docs/start-here/what-is-wai.md
+
+# What is WAI?
+
+**WAI** (Wheelwright AI) is an agent communication protocol. It's how AI agents talk to each other, show their work, and build institutional memory.
+
+## Core Principles
+
+1. **Agents communicate through files** — not APIs, not databases, files
+2. **Show your work** — every agent action produces a Lug (audit trail)
+3. **Institutional memory** — decision Lugs capture conductor judgment, sub-agents learn over time
+4. **Data protection** — WAI-Integrity.md prevents Hub destruction
+5. **Multi-agent colonies** — cheap specialists + expensive orchestrator
+
+## The Two Primitives
+
+### Skills
+
+A Skill is a sub-agent with a contract. It declares what it does, when it fires, what model it needs, and what it produces.
+
+See: [skills/overview.md](../skills/overview.md)
+
+### Lugs
+
+A Lug is an actionable record. Diagnosis, prescription, decision, observation, task, signal.
+
+See: [lugs/overview.md](../lugs/overview.md)
+
+## Architecture
+
+Hub-and-spoke model. Hub is shared memory across projects. Spokes are per-project extensions.
+
+See: [architecture.md](./architecture.md)
+
+## For Newcomers
+
+Start here:
+1. Read this file (you're here)
+2. Read [core-concepts.md](./core-concepts.md)
+3. Read [quickstart.md](./quickstart.md)
+4. Explore [skills/](../skills/) and [lugs/](../lugs/)
+
+## For Agents
+
+Read the specs at repo root:
+- WAI-Lug-Schema-Spec.md
+- WAI-Skill-Contract-Spec.md
+- WAI-v2-Implementation-Plan-Revised.md
+
+Then read WAI-Integrity.md for data protection rules.
+
+
+---
+
