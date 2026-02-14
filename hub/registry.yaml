@@ -1,10 +1,117 @@
 nodes:
+  # Wheelwright Core Projects
   - path: "wheelwright/framework"
     type: spoke
     status: active
     framework_version: "2.0.0"
-  # Add your other spokes here:
-  # - path: "project-name/extension-name"
-  #   type: spoke
-  #   status: active
-  #   framework_version: "2.0.0"
+    description: "Framework development and maintenance"
+
+  - path: "wheelwright/hub"
+    type: hub
+    status: active
+    framework_version: "2.0.0"
+    description: "Central Hub - shared memory and pattern distribution"
+
+  - path: "wheelwright/website"
+    type: spoke
+    status: active
+    framework_version: "2.0.0"
+    description: "Marketing website and documentation"
+
+  # Active Projects
+  - path: "ezorg/email"
+    type: spoke
+    status: active
+    framework_version: "2.0.0"
+    description: "Email management and organization system"
+
+  # Archived Projects (Historical / Inactive)
+  - path: "archive/OwnersShare-pitch"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: OwnersShare pitch materials"
+
+  - path: "archive/VoiceFlow"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: VoiceFlow project"
+
+  - path: "archive/condoshield-cpanel-deploy"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: CondoShield cPanel deployment"
+
+  - path: "archive/condoshield-crm"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: CondoShield CRM"
+
+  - path: "archive/condoshield-gatsby"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: CondoShield Gatsby site"
+
+  - path: "archive/condoshield-website"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: CondoShield website"
+
+  - path: "archive/notionpilot"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: NotionPilot"
+
+  - path: "archive/owners-share"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: OwnersShare main project"
+
+  - path: "archive/post-pilot"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: PostPilot"
+
+  - path: "archive/scf-browser-extension"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: SCF browser extension"
+
+  - path: "archive/scf-vscode-extension"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: SCF VSCode extension"
+
+  - path: "archive/session-continuity-framework"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: Session Continuity Framework (SCF)"
+
+  - path: "archive/xn-insights"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: XN Insights"
+
+  - path: "archive/xn-insights-backup-20251024-115307"
+    type: spoke
+    status: archived
+    framework_version: "2.0.0"
+    description: "Archived: XN Insights backup"
+
+# Registry Stats
+# Total nodes: 18
+# Active: 4 (wheelwright/framework, wheelwright/hub, wheelwright/website, ezorg/email)
+# Archived: 14
+# Framework version: 2.0.0
