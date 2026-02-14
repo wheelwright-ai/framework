@@ -37,12 +37,23 @@ behavior:
 
   on_findings: |
     Framework update available:
-      - Notify agent: "Hub has framework v{X}, you're on v{Y}"
-      - Suggest: "Run /framework-update to review changes"
+      - Check hub/CHANGELOG.md or hub/WAI-Lugs.jsonl for update type
+      - If patch update (2.0.0 → 2.0.1) AND no breaking changes:
+        * Auto-apply: Update spoke WAI-Manifest.yaml framework_version
+        * Pull new templates from framework/templates/
+        * Create update Lug documenting what changed
+        * Report: "Auto-upgraded to v{X} (patch update)"
+      - If minor/major update (2.0.0 → 2.1.0 or 3.0.0):
+        * Notify agent: "Hub has framework v{X}, you're on v{Y}"
+        * Read hub update Lugs to show what changed
+        * Suggest: "Review changes and run /framework-update when ready"
+        * Flag: Breaking changes require review
 
     Pending signals:
       - Notify agent: "{N} high-impact signals in hub/intake/"
       - List: Signal titles and impact scores
+      - Auto-pull signals relevant to this spoke (matching subscription patterns)
+      - Create local Lugs with source_id pointing to hub signals
       - Suggest: "Review and acknowledge signals"
 
     Hub health issues:

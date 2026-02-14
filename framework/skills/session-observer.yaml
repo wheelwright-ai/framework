@@ -48,16 +48,23 @@ behavior:
          * If delivered (matching commit exists), create delivery entry
          * If not delivered, flag as unfulfilled commitment
        - Surface unfulfilled commitments in session summary
-    2. Read all observations from current session
-    3. Read Lugs created this session
-    4. Read commits made this session (git log since session start)
-    5. Synthesize session summary:
+    2. **Documentation Check:**
+       - If commits modified framework files (hub/BRIEF.md, *-Spec.md, templates/*)
+       - AND docs/ directory exists
+       - Flag: "Documentation may need updates"
+       - List: files changed that affect docs (specs, BRIEF, templates)
+       - Suggest: "Update README, regenerate llms-full.txt, update relevant guides"
+    3. Read all observations from current session
+    4. Read Lugs created this session
+    5. Read commits made this session (git log since session start)
+    6. Synthesize session summary:
        - High-impact events (impact >= 8)
        - New Lugs created (count by type)
        - Commits made (count, summary)
        - Incomplete work (Lugs still in-progress)
        - **Unfulfilled commitments (from ledger)**
-    6. Create session summary Lug (type: observation)
+       - **Documentation updates needed (if applicable)**
+    7. Create session summary Lug (type: observation)
 
   synthesis_pattern: |
     Session summary includes:
