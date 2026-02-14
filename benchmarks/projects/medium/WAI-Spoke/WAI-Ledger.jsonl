@@ -1,0 +1,6 @@
+# WAI Session Ledger - medium-benchmark
+# Purpose: Track commitments across sessions to prevent context loss
+# Origin: Created during WAI v2 benchmark upgrade 2026-02-14
+# Schema: See framework/templates/WAI-Ledger.jsonl.template
+# CRITICAL: This file is append-only per WAI-Integrity.md
+

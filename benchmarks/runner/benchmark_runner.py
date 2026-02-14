@@ -155,11 +155,21 @@ class WheelwrightAgent:
         self.constraints_violations = 0
 
     def _load_wai_config(self):
-        """Load WAI-Spoke configuration."""
+        """Load WAI-Spoke configuration (v2.0.0 uses WAI-Manifest.yaml)."""
+        import yaml
+
+        # Try v2.0.0 manifest first
+        manifest_file = self.project_dir / 'WAI-Spoke' / 'WAI-Manifest.yaml'
+        if manifest_file.exists():
+            with open(manifest_file) as f:
+                return yaml.safe_load(f)
+
+        # Fallback to v1 WAI-State.json
         config_file = self.project_dir / 'WAI-Spoke' / 'WAI-State.json'
         if config_file.exists():
             with open(config_file) as f:
                 return json.load(f)
+
         return {}
 
     def run_task(self, task_file: Path):
@@ -192,9 +202,11 @@ class WheelwrightAgent:
         """Wheelwright loads ONLY necessary files based on WAI config."""
         print("  Loading files selectively via WAI-Spoke...")
 
-        # Load core files only
-        core_files = self.wai_config.get('file_manifest', {}).get('core_files', [])
+        # Get file load policy (v2.0.0 has it at root level, v1 nested under file_load_policy)
         load_policy = self.wai_config.get('file_load_policy', {})
+        if not load_policy:
+            # Fallback for v1 structure
+            load_policy = self.wai_config.get('file_manifest', {}).get('file_load_policy', {})
 
         files_to_load = []
 

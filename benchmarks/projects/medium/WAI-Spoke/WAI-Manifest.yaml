@@ -1,0 +1,24 @@
+node_type: spoke
+node_path: "benchmark/medium"
+framework_version: "2.0.0"
+status: active
+template_versions:
+  lugs: 2
+  brief: 1
+  guide: 1
+hub_lug_cursor: null
+skills_loaded:
+  - safe-refactor
+  - session-observer
+file_load_policy:
+  load_always:
+    - "src/models/database.py"
+    - "src/middleware/error_handler.py"
+  load_on_demand:
+    - "src/config.py"
+    - "src/utils/validation.py"
+    - "src/utils/logger.py"
+  never_load:
+    - "reference/**/*"
+last_session: null
+outbound_pending: []
