@@ -1,0 +1,10 @@
+nodes:
+  - path: "wheelwright/framework"
+    type: spoke
+    status: active
+    framework_version: "2.0.0"
+  # Add your other spokes here:
+  # - path: "project-name/extension-name"
+  #   type: spoke
+  #   status: active
+  #   framework_version: "2.0.0"

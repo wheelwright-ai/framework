@@ -1,0 +1,5 @@
+intake_pending: 0
+oldest_pending: null
+last_hub_session: null
+framework_update_available: false
+spokes_with_stale_cursors: []
