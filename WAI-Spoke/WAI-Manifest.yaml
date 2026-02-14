@@ -1,0 +1,31 @@
+node_type: spoke
+node_path: "wheelwright/framework"
+framework_version: "2.0.0"
+template_versions:
+  lugs: 2
+  brief: 1
+  guide: 1
+hub_lug_cursor: null
+skills_loaded:
+  - wakeup
+  - status
+  - time
+  - rules
+  - closeout
+  - shipit
+  - teach
+  - learn
+  - red-light
+  - green-light
+  - complexity-advisor
+  - stewardship-advisor
+  - context-advisor
+  - foundation-advisor
+  - signal-advisor
+  - lug-advisor
+  - safe-refactor
+  - qc-check
+  - hub-watcher
+  - session-observer
+last_session: null
+outbound_pending: []
