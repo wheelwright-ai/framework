@@ -8,7 +8,9 @@ trigger:
     - session_start
     - on_demand
   conditions:
+    - "node_type == 'spoke' (from WAI-Manifest.yaml)"
     - "spoke has hub_path configured in WAI-State.json"
+    - "Skip if node_type == 'hub' (hub doesn't check itself for updates)"
 
 scope:
   reads:
@@ -26,6 +28,9 @@ prerequisites:
 
 behavior:
   on_trigger: |
+    0. **Check node_type from WAI-Manifest.yaml:**
+       - If node_type == "hub": SKIP (hub doesn't check itself)
+       - If node_type == "spoke": CONTINUE
     1. Read hub/registry.yaml - get hub framework_version
     2. Compare with spoke framework_version in WAI-Manifest.yaml
     3. Check hub/health.yaml for:
