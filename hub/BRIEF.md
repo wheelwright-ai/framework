@@ -55,6 +55,36 @@ Spoke BRIEF
 2. **Dismissed diagnosis patterns trigger calibration.** If a Skill's findings are consistently dismissed, brief-advisor flags it
 3. **Apprenticeship over time.** Sub-agents learn conductor preferences from decision Lug history
 
+### Communication Style
+
+**Context:** WAI is a communications protocol between humans ↔ agents ↔ agents. Consistent tone and structure ensures higher quality results across sessions.
+
+**Response Format:**
+1. **Lead with the answer.** Direct response first, then supporting details
+2. **Use consistent structures:**
+   - Multi-part answers → numbered lists
+   - Status reports → max 5 lines per item
+   - Verification results → numbered format (not tables, not verbose prose)
+   - Code blocks → include language tag, keep < 20 lines when inline
+3. **Avoid redundancy.** Don't repeat what the user said back to them
+4. **No placeholder language.** Remove "Let me...", "I'll...", "Now I will..." - just do it
+
+**Tone Matching:**
+1. **Mirror user's verbosity.** Terse question → terse answer. Detailed question → detailed answer
+2. **Match technical depth.** User's question specificity indicates their expertise level
+3. **Stay conversational.** Avoid excessive formality, corporate speak, or robotic patterns
+4. **No unnecessary superlatives.** "Great", "excellent", "perfect" only when genuinely exceptional
+
+**Agent-to-Agent Communication:**
+1. **Lugs are structured.** Follow Lug schema exactly (perceive/execute/verify when used)
+2. **Signals are concise.** Impact score + brief description + originating Lug reference
+3. **Intake submissions are actionable.** Clear request, clear rationale, clear acceptance criteria
+
+**Evolution:**
+- Communication preferences can be captured as "preference" Lugs in hub/WAI-Lugs.jsonl
+- Periodically consolidate preference Lugs into this BRIEF section
+- Style feedback via /wai-teach updates this section
+
 ---
 
 ## Node-Specific Overrides

@@ -32,6 +32,7 @@ Lugs serve as shared memory across agent colonies. They are how agents show thei
 | `prescription` | Recommended fix attached to a diagnosis | "Parameterize query at line 47" |
 | `decision` | A judgment call made by the conductor | "Accepted risk on X because Y" |
 | `observation` | Event or pattern worth recording | "Test coverage dropped from 82% to 73%" |
+| `preference` | Communication style or workflow preference | "User prefers terse confirmations over verbose status reports" |
 | `signal` | High-impact Lug (impact ≥ 8) relevant to other nodes | "Architecture change affects API contract" |
 | `update` | Framework or template version change notification | "Template v3 available, running v2" |
 | `session` | Session synthesis — human-readable summary of a work session | "Security review ran, 2 issues found, 1 resolved" |
@@ -46,8 +47,8 @@ Lugs serve as shared memory across agent colonies. They are how agents show thei
 
 ```yaml
 id: "lug-2026-02-11-001"          # Unique identifier: lug-{date}-{sequence}
-type: "diagnosis"                  # One of: task, diagnosis, prescription, decision, 
-                                   #   observation, signal, update, session
+type: "diagnosis"                  # One of: task, diagnosis, prescription, decision,
+                                   #   observation, preference, signal, update, session
 title: "SQL injection in auth handler"
 status: "published"                # Lifecycle state (see Lifecycle section)
 impact: 9                          # 1-10 scale. ≥8 = signal (visible to other nodes)
@@ -106,6 +107,31 @@ resolution_reason: "Applied as prescribed"  # One-line explanation
 resolved_at: "2026-02-11T15:00:00Z"
 resolved_by: "main-agent"
 ```
+
+### Preference Fields
+
+```yaml
+# For type: preference — communication style and workflow preferences
+category: "communication"          # communication | workflow | tooling
+observation: "User prefers terse confirmations over verbose status reports"
+context: "After seeing three different verification formats, requested homogenization"
+guidance: "Keep verification responses to numbered list format, <10 lines total"
+applies_to: "all"                  # all | hub | spoke | specific node path
+```
+
+**Purpose:** Preference Lugs capture the conductor's communication style, workflow preferences, and interaction patterns. They feed the apprenticeship loop by teaching agents how the user wants to work, not just what work they want done.
+
+**When to create preference Lugs:**
+- User gives feedback on response format or tone ("too verbose", "I just need bullets")
+- User corrects interaction patterns ("don't ask permission, just do it")
+- User establishes workflow preferences ("always run tests before committing")
+- User defines style boundaries ("never use emojis in technical docs")
+
+**Integration with hub/BRIEF.md:**
+- Preference Lugs are created in the moment when feedback is given
+- Periodically (via /wai-teach), preference Lugs are reviewed and consolidated
+- Common patterns get promoted into hub/BRIEF.md Communication Style section
+- Once codified in BRIEF, the original Lugs can be marked resolved
 
 ### PEV Fields (Perceive / Execute / Verify)
 
@@ -440,7 +466,7 @@ summary: "Migrated v1→v2. Signals absorbed into Lugs. Backpressure became Skil
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | id | string | yes | Unique identifier |
-| type | enum | yes | task, diagnosis, prescription, decision, observation, signal, update, session |
+| type | enum | yes | task, diagnosis, prescription, decision, observation, preference, signal, update, session |
 | title | string | yes | Human-readable one-line description |
 | status | enum | yes | draft, published, acknowledged, in_progress, resolved |
 | impact | integer | yes | 1-10 visibility score |
@@ -467,6 +493,10 @@ summary: "Migrated v1→v2. Signals absorbed into Lugs. Backpressure became Skil
 | resolved_at | datetime | no | When resolved |
 | resolved_by | string | no | Who resolved |
 | alternatives_considered | array | no | Decision alternatives (for decisions) |
+| observation | string | no | What preference pattern was observed (for preferences) |
+| context | string | no | Situation where preference was expressed (for preferences) |
+| guidance | string | no | How to apply this preference (for preferences) |
+| applies_to | string | no | Scope: all, hub, spoke, or node path (for preferences) |
 | skill_name | string | no | Skill that generated this Lug |
 | model_tier | enum | no | lightweight, standard, advanced |
 | execution_duration_ms | integer | no | How long the skill ran |
