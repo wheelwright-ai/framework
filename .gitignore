@@ -91,3 +91,10 @@ benchmarks/benchmark-*.json
 test_results.txt
 benchmark_epic008.json
 _custom/
+
+# Windows Zone.Identifier metadata
+*:Zone.Identifier
+*.Zone.Identifier
+
+# v1 migration backups (no longer needed)
+*.v1-backup

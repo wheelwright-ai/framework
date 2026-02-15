@@ -35,3 +35,4 @@
 {"id":"led-2026-02-14-shipit-001","timestamp":"2026-02-14T05:15:00Z","type":"delivery","content":"Session complete: Communication protocol + hub-processor + benchmark upgrades","source":"agent","status":"fulfilled","commit":"6400a45"}
 {"id":"led-2026-02-14-closeout-001","timestamp":"2026-02-14T05:30:00Z","type":"delivery","content":"Closeout complete: 6 commits shipped, documentation drift flagged","source":"agent","status":"fulfilled","commit":"6400a45","lug_ids":["lug-2026-02-14-session-001"]}
 {"id":"led-2026-02-14-doc-complete","timestamp":"2026-02-14T05:56:00Z","type":"delivery","content":"Documentation expanded: 333 lines → 3111 lines (9.3x), comprehensive WAI tale","source":"agent","status":"fulfilled"}
+{"id":"led-2026-02-14-cleanup","timestamp":"2026-02-14T20:15:00Z","type":"delivery","content":"Project cleanup complete: 130→11 root .md files, reference structure created, folder-hygiene skill added, v1 data preserved","source":"agent","status":"fulfilled"}
