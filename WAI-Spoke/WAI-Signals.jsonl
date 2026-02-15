@@ -1,5 +1,9 @@
 # RETIRED: Absorbed into WAI-Lugs.jsonl as of WAI v2 migration.
 # Do not use this file. All signals are now Lugs with impact >= 8.
+# Absorbed 10 signals on 2026-02-14T03:26:01.104837+00:00
+
+# RETIRED: Absorbed into WAI-Lugs.jsonl as of WAI v2 migration.
+# Do not use this file. All signals are now Lugs with impact >= 8.
 # Absorbed 10 signals on 2026-02-12T07:23:34.933052+00:00
 
 {"timestamp": "2026-02-05T03:31:33.435477", "by": "lug_system", "offers": [{"type": "lug_decision", "lug_type": "epic", "topic": "Session Epic: Shipit Quality Gates + Performance Validation", "impact": 9, "context": "Work cycle goal: Implement quality enforcement and validate performance metrics.\n\n**Scope:**\n1. Implement shipit quality gate enforcement (policy lug 1ef9b813ca6d)\n   - Update shipit command to run quality gates (tests, linting, benchmarks)\n   - Enforce README.md sync before commit\n   - Add failure ", "scope": "framework", "modules": [], "category": "", "lug_id": "4f8a2e7520ba"}], "flags": {"extracted_from_lug": true, "lug_promoted": true}}

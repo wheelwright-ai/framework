@@ -37,7 +37,12 @@
       "Bash(truncate:*)",
       "Bash(python -m wai.closeout:*)",
       "Bash(git tag:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(bash:*)",
+      "Bash(for proj in OwnersShare-pitch VoiceFlow condoshield-cpanel-deploy condoshield-crm condoshield-gatsby condoshield-website notionpilot owners-share post-pilot scf-browser-extension scf-vscode-extension session-continuity-framework xn-insights xn-insights-backup-20251024-115307)",
+      "Bash(do)",
+      "Bash(/tmp/upgrade-archive-spoke.sh \"/home/mario/projects/_archive/$proj\")",
+      "Bash(done)"
     ]
   }
 }

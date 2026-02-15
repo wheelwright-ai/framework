@@ -1,0 +1,38 @@
+[
+  {
+    "timestamp": "2026-02-14T08:04:24.714533",
+    "run_id": "a264648e",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "context_loaded",
+    "data": {
+      "files": [],
+      "total_files": 0,
+      "total_bytes": 0,
+      "tokens": 0
+    }
+  },
+  {
+    "timestamp": "2026-02-14T08:04:24.714553",
+    "run_id": "a264648e",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "token_used",
+    "data": {
+      "count": 500,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-02-14T08:04:24.714558",
+    "run_id": "a264648e",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 2000,
+      "tokens_used": 500
+    }
+  }
+]

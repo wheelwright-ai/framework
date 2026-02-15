@@ -1,0 +1,64 @@
+[
+  {
+    "timestamp": "2026-02-14T08:04:43.416375",
+    "run_id": "4f7f9a48",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "src/models/database.py",
+          "size_bytes": 2917,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/middleware/error_handler.py",
+          "size_bytes": 2162,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/config.py",
+          "size_bytes": 1927,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/validation.py",
+          "size_bytes": 2535,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/logger.py",
+          "size_bytes": 1874,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 5,
+      "total_bytes": 11415,
+      "tokens": 2851
+    }
+  },
+  {
+    "timestamp": "2026-02-14T08:04:43.416394",
+    "run_id": "4f7f9a48",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "token_used",
+    "data": {
+      "count": 500,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-02-14T08:04:43.416399",
+    "run_id": "4f7f9a48",
+    "tier": "medium",
+    "agent_type": "wheelwright",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 2000,
+      "tokens_used": 3351
+    }
+  }
+]
