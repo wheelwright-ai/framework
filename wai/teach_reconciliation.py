@@ -110,130 +110,122 @@ def perform_teaching_adoption(spoke_path: Path, teaching: Dict[str, Any]) -> boo
         teaching: A dictionary containing teaching details (id, file_path, metadata).
 
     Returns:
-        True if adoption was successful or completed with warnings, False if failed.
+        True if adoption was successful, False if it failed or requires review.
     """
-    warnings: List[str] = [] # Initialize warnings list only once at the beginning
+    warnings: List[str] = []  # Initialize warnings list only once at the beginning
     
-    try: # Wrap the entire function logic in a try-except block for comprehensive error handling
+    try: # Outer try block starts here, wrapping the entire function logic
         teach_file_path = Path(teaching['file_path'])
         manifest_path = teach_file_path.parent / "manifest.json" # Manifest is in the same folder as .teaching files
 
         # --- Fingerprint Verification Logic ---
-        spoke_root_path = spoke_path # Alias for clarity
-        
+        spoke_root_path = spoke_path
         spoke_wai_state_path = spoke_root_path / "WAI-Spoke" / "WAI-State.json"
         spoke_config_hub_fingerprint = None
 
         if spoke_wai_state_path.exists():
             try:
                 spoke_state_data = json.loads(spoke_wai_state_path.read_text())
-                # Assuming the Hub path is stored in _hub_profile within WAI-State.json
                 spoke_hub_path_str = spoke_state_data.get('_hub_profile', {}).get('hub_config', {}).get('hub_path')
                 if spoke_hub_path_str:
                     spoke_hub_path = Path(spoke_hub_path_str)
-                    # HubManager needs to be available in the scope (assumed to be imported at top level)
-                    hub_manager = HubManager() 
+                    hub_manager = HubManager()
                     spoke_config_hub_fingerprint = hub_manager.get_hub_fingerprint(spoke_hub_path)
             except Exception as e:
                 warnings.append(f"  [WARNING] Could not retrieve configured hub fingerprint from Spoke's WAI-State.json: {e}")
-                
-    # Extract fingerprint from the teaching plan if it's an upgrade plan
-    plan_hub_fingerprint = teaching['metadata'].get('verification', {}).get('hub_fingerprint')
-    
-    # Perform verification
-    if spoke_config_hub_fingerprint: # Spoke is configured to verify
-        if plan_hub_fingerprint: # Plan is signed
-            if spoke_config_hub_fingerprint != plan_hub_fingerprint:
+
+        plan_hub_fingerprint = teaching['metadata'].get('verification', {}).get('hub_fingerprint')
+
+        if spoke_config_hub_fingerprint: # Spoke is configured to verify
+            if not plan_hub_fingerprint: # Plan is NOT signed
+                warnings.append(f"  [ERROR] Spoke is configured with Hub fingerprint '{spoke_config_hub_fingerprint}', but teaching plan is not signed. Refusing adoption.")
+            elif spoke_config_hub_fingerprint != plan_hub_fingerprint: # Plan is signed, but fingerprints mismatch
                 warnings.append(f"  [ERROR] Teaching plan fingerprint mismatch. Configured Hub: '{spoke_config_hub_fingerprint}', Plan signed by: '{plan_hub_fingerprint}'. Refusing adoption.")
-                return False # Refuse adoption due to critical error
-        else: # Spoke configured, but plan is NOT signed
-            warnings.append(f"  [ERROR] Spoke configured with Hub fingerprint '{spoke_config_hub_fingerprint}', but teaching plan is not signed. Refusing adoption.")
-            return False # Refuse adoption due to critical error
-    elif plan_hub_fingerprint: # Spoke NOT configured, but plan IS signed
-        warnings.append(f"  [WARNING] Spoke is not configured with a Hub fingerprint, but teaching plan is signed by '{plan_hub_fingerprint}'. Proceeding with caution.")
-    # --- End Fingerprint Verification Logic ---
-    
-    # Determine target path
-    target_rel_path = teaching['metadata'].get('path') # Use path from manifest if provided
-    if not target_rel_path:
-        # Default to placing in spoke_path / teaching_filename without .teaching extension
-        target_name = teach_file_path.name.replace(".teaching", "")
-        # Heuristic: if name matches a known core WAI file, place it in WAI-Spoke/
-        # Otherwise, place it in reference/auto/
-        if target_name in ["WAI-AI-ONBOARDING.md", "WAI-Guide.md", "WAI-State.md", "WAI-State.json", "WAI-Lugs.jsonl"]:
-            target_path = spoke_path / "WAI-Spoke" / target_name
+        elif plan_hub_fingerprint: # Spoke NOT configured, but plan IS signed
+            warnings.append(f"  [WARNING] Spoke is not configured with a Hub fingerprint, but teaching plan is signed by '{plan_hub_fingerprint}'. Proceeding with caution.")
+
+        # Check for any [ERROR] in warnings AFTER fingerprint verification
+        if any("[ERROR]" in w for w in warnings):
+            return False
+        # --- End Fingerprint Verification Logic ---
+
+        # Determine target path
+        target_rel_path = teaching['metadata'].get('path')
+        if not target_rel_path:
+            target_name = teach_file_path.name.replace(".teaching", "")
+            if target_name in ["WAI-AI-ONBOARDING.md", "WAI-Guide.md", "WAI-State.md", "WAI-State.json", "WAI-Lugs.jsonl"]:
+                target_path = spoke_path / "WAI-Spoke" / target_name
+            else:
+                target_path = spoke_path / "WAI-Spoke" / "reference" / "auto" / target_name
         else:
-            target_path = spoke_path / "WAI-Spoke" / "reference" / "auto" / target_name
-    else:
-        target_path = spoke_path / target_rel_path
-        
-    target_path.parent.mkdir(parents=True, exist_ok=True) # Ensure target directory exists
+            target_path = spoke_path / target_rel_path
 
-    safe_to_auto_adopt = teaching['metadata'].get('safe_to_auto_adopt', False)
-    merge_strategy = teaching['metadata'].get('merge_strategy', 'overwrite')
-    
-    try: # Wrap the entire function logic in a try-except block for comprehensive error handling
-        if safe_to_auto_adopt:
-            if merge_strategy == 'overwrite':
-                shutil.copy2(teach_file_path, target_path)
-            elif merge_strategy == 'merge_sections':
-                if target_path.exists():
-                    try:
-                        current_content = json.loads(target_path.read_text())
-                        new_content = json.loads(teach_file_path.read_text())
-                        
-                        sections_to_preserve = teaching['metadata'].get('sections_to_preserve', [])
-                        sections_to_update = teaching['metadata'].get('sections_to_update', [])
-                        
-                        working_content = current_content.copy()
+        target_path.parent.mkdir(parents=True, exist_ok=True)
 
-                        for key, value in new_content.items():
-                            if key not in sections_to_preserve:
-                                working_content[key] = value
-                        
-                        for section in sections_to_update:
-                            if section not in new_content and section in working_content:
-                                del working_content[section]
+        requires_review = not teaching['metadata'].get('safe_to_auto_adopt', False)
 
-                        target_path.write_text(json.dumps(working_content, indent=2) + "\n")
-
-                    except json.JSONDecodeError as jde:
-                        warnings.append(f"  [ERROR] JSON decode error during merge for {teach_file_path.name} -> {target_path.name}: {jde}. Refusing adoption.")
-                        return False # Fatal error during merge, refuse adoption
-                    except Exception as exc:
-                        warnings.append(f"  [ERROR] Unexpected error during merge_sections for {teach_file_path.name}: {exc}. Refusing adoption.\nDetails: {exc}")
-                        return False # Fatal error during merge, refuse adoption
-                else: # Target doesn't exist, just copy
-                    shutil.copy2(teach_file_path, target_path)
-            else: # Default or unknown merge strategy
-                shutil.copy2(teach_file_path, target_path)
-            
-            teach_file_path.unlink() # Delete the teaching file after adoption
-
-            if manifest_path.exists():
-                with open(manifest_path, "r+") as f:
-                    manifest = json.load(f)
-                    manifest_entry = manifest.get(teaching['id'], {})
-                    manifest_entry['status'] = 'adopted'
-                    manifest_entry['adopted_at'] = datetime.now(timezone.utc).isoformat()
-                    manifest[teaching['id']] = manifest_entry # Ensure updated entry is stored back
-                    f.seek(0)
-                    json.dump(manifest, f, indent=2)
-                    f.truncate()
-            
-            # After auto-adoption, check for any [ERROR] in warnings
-            if any("[ERROR]" in w for w in warnings):
-                return False
-            return True
-
-        else: # requires review (safe_to_auto_adopt is False)
+        if requires_review:
             warnings.append(f"  [INFO] Teaching '{teaching['id']}' requires manual review. Not auto-adopting.")
             warnings.append(f"  Please review '{teach_file_path.relative_to(spoke_path)}' and merge manually into '{target_path.relative_to(spoke_path)}'.")
             return False # Always return False if requires review
-            
-    except Exception as e:
+
+        # --- Auto-Adoption Logic ---
+        merge_strategy = teaching['metadata'].get('merge_strategy', 'overwrite')
+
+        if merge_strategy == 'overwrite':
+            shutil.copy2(teach_file_path, target_path)
+        elif merge_strategy == 'merge_sections':
+            if target_path.exists():
+                try:
+                    current_content = json.loads(target_path.read_text())
+                    new_content = json.loads(teach_file_path.read_text())
+
+                    sections_to_preserve = teaching['metadata'].get('sections_to_preserve', [])
+                    sections_to_update = teaching['metadata'].get('sections_to_update', [])
+
+                    working_content = current_content.copy()
+
+                    for key, value in new_content.items():
+                        if key not in sections_to_preserve:
+                            working_content[key] = value
+
+                    for section in sections_to_update:
+                        if section not in new_content and section in working_content:
+                            del working_content[section]
+
+                    target_path.write_text(json.dumps(working_content, indent=2) + "\n")
+                except json.JSONDecodeError as jde:
+                    warnings.append(f"  [ERROR] JSON decode error during merge for {teach_file_path.name} -> {target_path.name}: {jde}. Refusing adoption.")
+                    return False # Fatal error during merge, refuse adoption
+                except Exception as exc:
+                    warnings.append(f"  [ERROR] Unexpected error during merge_sections for {teach_file_path.name}: {exc}. Refusing adoption.\nDetails: {exc}")
+                    return False # Fatal error during merge, refuse adoption
+            else: # Target doesn't exist, just copy
+                shutil.copy2(teach_file_path, target_path)
+        else: # Default or unknown merge strategy
+            shutil.copy2(teach_file_path, target_path)
+
+        teach_file_path.unlink() # Delete the teaching file after adoption
+
+        if manifest_path.exists():
+            with open(manifest_path, "r+") as f:
+                manifest = json.load(f)
+                manifest_entry = manifest.get(teaching['id'], {})
+                manifest_entry['status'] = 'adopted'
+                manifest_entry['adopted_at'] = datetime.now(timezone.utc).isoformat()
+                manifest[teaching['id']] = manifest_entry # Ensure updated entry is stored back
+                f.seek(0)
+                json.dump(manifest, f, indent=2)
+                f.truncate()
+
+    except Exception as e: # Catch any unhandled exceptions in the main logic
         warnings.append(f"  [ERROR] Unhandled exception during teaching adoption for '{teaching.get('id', 'unknown')}': {e}")
         return False # Any unhandled exception makes adoption fail
+    
+    if any("[ERROR]" in w for w in warnings): # Check for any [ERROR] in warnings AFTER all processing
+        return False
+
+    return True # Adopted successfully with or without warnings (but no critical errors)
 
 
 def cleanup_ingest_directory(ingest_path: Path) -> List[str]:

@@ -231,20 +231,28 @@ class UpgradeAdoptionPlanBuilder:
 
 def sign_upgrade_plan(
     plan: Dict[str, Any],
-    hub_fingerprint: str # Renamed for clarity
+    hub_fingerprint: str
 ) -> Dict[str, Any]:
     """Sign upgrade plan with hub fingerprint."""
-    
+
+    # Ensure verification section exists
+    if "verification" not in plan:
+        plan["verification"] = {
+            "spoke_signature": None,
+            "hash_algorithm": "sha256",
+            "verification_required": True
+        }
+
     # Recompute the content hash to ensure integrity
     content_to_hash = json.dumps(plan["files"] + plan.get("hub_files", []), sort_keys=True)
     content_hash = hashlib.sha256(content_to_hash.encode('utf-8')).hexdigest()
 
     # Update plan with fingerprint and signed_by
-    plan["verification"]["hub_fingerprint"] = hub_fingerprint # Directly use the UUID as the identifier
+    plan["verification"]["hub_fingerprint"] = hub_fingerprint
     plan["verification"]["signed_by"] = f"wheelwright-framework-{plan['metadata']['framework_version']}"
-    plan["verification"]["plan_content_hash"] = content_hash # Add a hash for the content itself
-    plan["verification"]["hash_algorithm"] = "sha256" # Clarify hash algorithm for content
-    
+    plan["verification"]["plan_content_hash"] = content_hash
+    plan["verification"]["hash_algorithm"] = "sha256"
+
     return plan
 
 

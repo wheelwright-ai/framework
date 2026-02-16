@@ -3,17 +3,18 @@
     "version": "3.1.0",
     "framework_version": "3.1.0",
     "spoke_structure_version": "3.0",
-    "created_at": "2026-02-08T21:40:21.217597Z",
+    "created_at": "2026-02-16T22:43:22.044916+00:00",
     "source": "framework",
     "target_type": "universal",
     "description": "Framework templates for universal distribution to hubs and spokes"
   },
   "verification": {
-    "hub_fingerprint": "694fc8b65df3352eb61519cca61cef179103bdafc67631f9060add49c01c9a71",
     "spoke_signature": null,
-    "hash_algorithm": "sha256-hmac",
+    "hash_algorithm": "sha256",
     "signed_by": "wheelwright-framework-3.1.0",
-    "verification_required": true
+    "verification_required": true,
+    "hub_fingerprint": "d0abad78-3a71-492f-9866-b7d12e6ccbe7",
+    "plan_content_hash": "0edb4cc34a47de4c4dfca933ae87efcd51f970d3ee66682953ac4a186c2ce48c"
   },
   "files": [
     {
@@ -21,7 +22,7 @@
       "path": "WAI-Spoke/WAI-Guide.md",
       "size": 13230,
       "hash": "sha256:f5a1b755e8df2ed50d1241aa3c0fcf1a9ed024ac4deba91d117970ae57597b6c",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-Guide.md",
+      "source_path": "templates/WAI-Spoke/WAI-Guide.md",
       "version": "3.1.0",
       "changed_from": "2.1.0",
       "why_changed": "Enhanced session start protocol, added teaching reconciliation section",
@@ -45,7 +46,7 @@
       "path": "WAI-Spoke/WAI-State.json",
       "size": 6669,
       "hash": "sha256:00d868ecb2c8c5d5395911d05ba8eb221d345e64cbac1c567470d5af379202de",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-State.json",
+      "source_path": "templates/WAI-Spoke/WAI-State.json",
       "version": "3.1.0",
       "changed_from": "2.0.1",
       "why_changed": "Structure version 3.0, added teaching-adoption-plan schema",
@@ -81,7 +82,7 @@
       "path": "WAI-Spoke/WAI-State.md",
       "size": 4301,
       "hash": "sha256:acfde1183d19e8ad88e933cafd3816d28baae8778434619b547a8a180af1f54f",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-State.md",
+      "source_path": "templates/WAI-Spoke/WAI-State.md",
       "version": "3.1.0",
       "changed_from": "2.0.0",
       "why_changed": "Updated strategic context for version 3.0",
@@ -105,7 +106,7 @@
       "path": "WAI-Spoke/WAI-State.json",
       "size": 8144,
       "hash": "sha256:59403223da5a92c29ce26a0aefe9a6469882cebf21ceb3c75e9dc9004afd479a",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/WAI-Spoke/WAI-State.json",
+      "source_path": "templates/HUB/WAI-Spoke/WAI-State.json",
       "version": "3.1.0",
       "changed_from": "3.0.0",
       "why_changed": "Hub-specific state with _hub_profile section",
@@ -124,7 +125,7 @@
       "path": "WAI-Spoke/WAI-State.md",
       "size": 3635,
       "hash": "sha256:3e49c6a3f6b8177fcc87f3128670637cd325c400374a239a2ec6f32257950907",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/WAI-Spoke/WAI-State.md",
+      "source_path": "templates/HUB/WAI-Spoke/WAI-State.md",
       "version": "3.1.0",
       "changed_from": "3.0.0",
       "why_changed": "Hub identity and operations tracking",
@@ -143,7 +144,7 @@
       "path": "WAI-Spoke/WAI-Guide.md",
       "size": 16323,
       "hash": "sha256:1547a9ac314c4749009c514288567e2d47ee12f6c4c17ab1e8e656365d32a3b4",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/WAI-Spoke/WAI-Guide.md",
+      "source_path": "templates/HUB/WAI-Spoke/WAI-Guide.md",
       "version": "3.1.0",
       "changed_from": "3.0.0",
       "why_changed": "Hub-specific AI assistant instructions",
@@ -162,7 +163,7 @@
       "path": "hub-registry.json",
       "size": 2135,
       "hash": "sha256:6ee1c3839a3b2ce942da9bd0db6b9ec53373bf71c55ecd5e3ff54095451a30e7",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/hub-registry.json",
+      "source_path": "templates/HUB/hub-registry.json",
       "version": "3.1.0",
       "changed_from": "2.0.0",
       "why_changed": "Updated registry tracking wheels and teaching history",
@@ -181,7 +182,7 @@
       "path": "hub-learning-index.md",
       "size": 5426,
       "hash": "sha256:49462df501894c4f08fb01f7533d8c7bcd1e3332b453d26e33626b4552232aa1",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/hub-learning-index.md",
+      "source_path": "templates/HUB/hub-learning-index.md",
       "version": "3.1.0",
       "changed_from": "2.0.0",
       "why_changed": "Knowledge base index for learning aggregation",
@@ -200,7 +201,7 @@
       "path": "hub-security-policy.json",
       "size": 2744,
       "hash": "sha256:f3f98fbdb517cbe6c620db7c71b55706e66608ba0a3a1c5b73d850d9ae47ff06",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/hub-security-policy.json",
+      "source_path": "templates/HUB/hub-security-policy.json",
       "version": "3.1.0",
       "changed_from": "2.0.0",
       "why_changed": "Security settings for hub-spoke communication",
@@ -213,29 +214,10 @@
       ],
       "status": "ready",
       "action": "adopt"
-    },
-    {
-      "name": "AGENTS.md",
-      "path": "AGENTS.md",
-      "size": 16011,
-      "hash": "sha256:1b1b2916770c5a3d7fa5f7ea5b1a73dd8095a902ca1e5c80c06c80ee8ce85de8",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/AGENTS.md",
-      "version": "3.1.0",
-      "changed_from": "2.0.0",
-      "why_changed": "Hub-specific AI assistant instructions (legacy)",
-      "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "mentions": [],
-      "applies_to": [
-        "hub"
-      ],
-      "status": "ready",
-      "action": "adopt"
     }
   ],
   "checksums": {
-    "all_files_hash": "sha256:1cd3d1d304e571f677f18fbda39996780f17ff21824033c8d2e2bf58d97a2e46",
+    "all_files_hash": "sha256:7e2d86bc3d3add4a3dfe11c50d2040391ff49fa4861caad849da727437e6ae4a",
     "verification_required": true
   },
   "adoption_guidance": {
@@ -254,8 +236,7 @@
         "WAI-Guide.md (adopt immediately)",
         "hub-registry.json (adopt immediately)",
         "hub-learning-index.md (adopt immediately)",
-        "hub-security-policy.json (adopt immediately)",
-        "AGENTS.md (adopt immediately)"
+        "hub-security-policy.json (adopt immediately)"
       ],
       "post_adoption": "Run: WAI hub status to verify"
     }
