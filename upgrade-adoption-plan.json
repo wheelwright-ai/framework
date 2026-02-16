@@ -3,7 +3,7 @@
     "version": "3.1.0",
     "framework_version": "3.1.0",
     "spoke_structure_version": "3.0",
-    "created_at": "2026-02-16T22:43:22.044916+00:00",
+    "created_at": "2026-02-16T22:56:40.571709+00:00",
     "source": "framework",
     "target_type": "universal",
     "description": "Framework templates for universal distribution to hubs and spokes"
@@ -14,7 +14,7 @@
     "signed_by": "wheelwright-framework-3.1.0",
     "verification_required": true,
     "hub_fingerprint": "d0abad78-3a71-492f-9866-b7d12e6ccbe7",
-    "plan_content_hash": "0edb4cc34a47de4c4dfca933ae87efcd51f970d3ee66682953ac4a186c2ce48c"
+    "plan_content_hash": "c057d43cedf5fc857238942c5c0a369770d8c8cb7e544c941ab357bf19891493"
   },
   "files": [
     {
@@ -95,6 +95,56 @@
       ],
       "applies_to": [
         "spoke"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "commands/wai-closeout.md",
+      "path": "WAI-Spoke/commands/wai-closeout.md",
+      "size": 4572,
+      "hash": "sha256:f4be8c2496b8aecbfcbcc1c066c15f1fb77f34475c9bb5df0e2b342d5ce43924",
+      "source_path": "templates/WAI-Spoke/commands/wai-closeout.md",
+      "version": "3.1.0",
+      "changed_from": "3.1.0",
+      "why_changed": "Consolidated closeout protocol with WAI principles, 4-phase execution, verification checklist.",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [
+        "closeout",
+        "protocol",
+        "verification",
+        "git"
+      ],
+      "applies_to": [
+        "spoke",
+        "hub"
+      ],
+      "status": "ready",
+      "action": "adopt"
+    },
+    {
+      "name": "commands/wai-shipit.md",
+      "path": "WAI-Spoke/commands/wai-shipit.md",
+      "size": 3444,
+      "hash": "sha256:9f51891b2b920cb7cc82c88d77542da69b028cefd3c98da5d6b35d02939dd726",
+      "source_path": "templates/WAI-Spoke/commands/wai-shipit.md",
+      "version": "3.1.0",
+      "changed_from": "3.1.0",
+      "why_changed": "Complete shipit protocol: closeout + commit + push + verify.",
+      "breaking_changes": false,
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "mentions": [
+        "shipit",
+        "closeout",
+        "git",
+        "verification"
+      ],
+      "applies_to": [
+        "spoke",
+        "hub"
       ],
       "status": "ready",
       "action": "adopt"
@@ -217,7 +267,7 @@
     }
   ],
   "checksums": {
-    "all_files_hash": "sha256:7e2d86bc3d3add4a3dfe11c50d2040391ff49fa4861caad849da727437e6ae4a",
+    "all_files_hash": "sha256:5193edea57f3b9ff2afce302e5a992b439289301a1419a66e23e0cbd897426c9",
     "verification_required": true
   },
   "adoption_guidance": {
@@ -225,6 +275,8 @@
       "recommended_order": [
         "WAI-Guide.md (adopt immediately - Enhanced session start protocol, added teaching reconciliation section)",
         "WAI-State.md (adopt immediately - Updated strategic context for version 3.0)",
+        "commands/wai-closeout.md (adopt immediately - Consolidated closeout protocol with WAI principles, 4-phase execution, verification checklist.)",
+        "commands/wai-shipit.md (adopt immediately - Complete shipit protocol: closeout + commit + push + verify.)",
         "WAI-State.json (review merge strategy)"
       ],
       "post_adoption": "Run: WAI sync to process updated structure"

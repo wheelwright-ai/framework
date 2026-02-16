@@ -114,23 +114,23 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
             'applies_to': ['spoke'],
         },
         {
-            'name': 'closeout.md',
-            'path': 'WAI-Spoke/reference/commands/closeout.md',
+            'name': 'commands/wai-closeout.md',
+            'path': 'WAI-Spoke/commands/wai-closeout.md',
             'changed_from': '3.1.0',
-            'why_changed': "Introduced standard agent logic for the 'closeout' command.",
+            'why_changed': "Consolidated closeout protocol with WAI principles, 4-phase execution, verification checklist.",
             'safe_to_auto_adopt': True,
             'requires_review': False,
-            'mentions': ['closeout', 'protocol', 'agent-logic'],
+            'mentions': ['closeout', 'protocol', 'verification', 'git'],
             'applies_to': ['spoke', 'hub'],
         },
         {
-            'name': 'shipit.md',
-            'path': 'WAI-Spoke/reference/commands/shipit.md',
+            'name': 'commands/wai-shipit.md',
+            'path': 'WAI-Spoke/commands/wai-shipit.md',
             'changed_from': '3.1.0',
-            'why_changed': "Introduced standard agent logic for the 'shipit' command.",
+            'why_changed': "Complete shipit protocol: closeout + commit + push + verify.",
             'safe_to_auto_adopt': True,
             'requires_review': False,
-            'mentions': ['shipit', 'protocol', 'agent-logic', 'git'],
+            'mentions': ['shipit', 'closeout', 'git', 'verification'],
             'applies_to': ['spoke', 'hub'],
         },
     ]
@@ -311,6 +311,8 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
         if src_path.exists():
             try:
                 dst = teach_manager.ingest_dir / f"{file_config['name']}.teaching"
+                # Ensure parent directories exist for nested paths
+                dst.parent.mkdir(parents=True, exist_ok=True)
                 # Check if file already exists (for replacement message)
                 file_exists = dst.exists()
                 content = src_path.read_text(encoding='utf-8')
