@@ -13,15 +13,17 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-
+from pathlib import Path # Added Path import
 from ..reference_manager import TeachingManager
+from ..teach_reconciliation import scan_teach_ingest_dir, perform_teaching_adoption
 from ..upgrade_adoption import UpgradeAdoptionPlanBuilder, sign_upgrade_plan, save_upgrade_plan
 from ..utils.input import print_info, print_success, print_error, print_warning
 from ..core import FRAMEWORK_VERSION
 from ..observation import get_logger, log_observation
+from ..hub import HubManager
 
 
-def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Path) -> bool:
+def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Path) -> bool:
     """
     Teach a spoke (and optionally hub) with updated templates from framework using upgrade adoption plans.
     
@@ -65,6 +67,9 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
     print_info("  Generating Upgrade Adoption Plan...")
     if is_hub_target:
         print_info(f"  Teaching both spoke ({spoke_path.name}) and hub ({hub_path.name})")
+
+    hub_manager = HubManager()
+    current_hub_fingerprint = hub_manager.get_hub_fingerprint(hub_path) if hub_path else None
     
     # Create builder for upgrade adoption plan
     builder = UpgradeAdoptionPlanBuilder(
@@ -107,6 +112,26 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
             'requires_review': False,
             'mentions': ['strategy', 'context'],
             'applies_to': ['spoke'],
+        },
+        {
+            'name': 'closeout.md',
+            'path': 'WAI-Spoke/reference/commands/closeout.md',
+            'changed_from': '3.1.0',
+            'why_changed': "Introduced standard agent logic for the 'closeout' command.",
+            'safe_to_auto_adopt': True,
+            'requires_review': False,
+            'mentions': ['closeout', 'protocol', 'agent-logic'],
+            'applies_to': ['spoke', 'hub'],
+        },
+        {
+            'name': 'shipit.md',
+            'path': 'WAI-Spoke/reference/commands/shipit.md',
+            'changed_from': '3.1.0',
+            'why_changed': "Introduced standard agent logic for the 'shipit' command.",
+            'safe_to_auto_adopt': True,
+            'requires_review': False,
+            'mentions': ['shipit', 'protocol', 'agent-logic', 'git'],
+            'applies_to': ['spoke', 'hub'],
         },
     ]
     
@@ -217,7 +242,7 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
                 hub_count += 1
     
     # Build the plan
-    plan = builder.build()
+    plan = builder.build(hub_fingerprint=current_hub_fingerprint)
     
     # Sign with hub fingerprint if hub exists
     hub_fingerprint = None
@@ -434,4 +459,66 @@ def teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Pa
     
     print_success(f"\n  [OK] Observations logged for session: {session_id}")
     return True
+
+def adopt_teach_command(spoke_path: Path, teaching_id: Optional[str]) -> bool:
+    """
+    Adopt pending teaching files for a spoke.
+
+    Args:
+        spoke_path: Path to the spoke project.
+        teaching_id: The ID of the teaching to adopt, or 'all' to adopt all pending.
+
+    Returns:
+        True if adoption was successful, False otherwise.
+    """
+    from ..teach_reconciliation import scan_teach_ingest_dir, perform_teaching_adoption # New function for adoption logic
+    from ..utils.input import print_info, print_success, print_warning, print_error, safe_confirm
+
+    ingest_path = spoke_path / "WAI-Spoke" / "seed" / "ingest"
+    pending_teachings = scan_teach_ingest_dir(ingest_path)
+
+    if not pending_teachings:
+        print_info("  No pending teachings found for adoption.")
+        return True
+
+    teachings_to_adopt = []
+    if teaching_id == 'all':
+        teachings_to_adopt = pending_teachings
+        print_info(f"  Found {len(teachings_to_adopt)} pending teaching(s) to adopt.")
+        if not safe_confirm("  Proceed with adopting all pending teachings?", default=True):
+            print_info("  Adoption cancelled.")
+            return False
+    else:
+        found_teaching = next((t for t in pending_teachings if t['id'] == teaching_id), None)
+        if found_teaching:
+            teachings_to_adopt.append(found_teaching)
+            print_info(f"  Found teaching '{teaching_id}'.")
+            if not safe_confirm(f"  Proceed with adopting '{teaching_id}'?", default=True):
+                print_info("  Adoption cancelled.")
+                return False
+        else:
+            print_error(f"  Teaching '{teaching_id}' not found in pending list.")
+            return False
+            
+    success_count = 0
+    for teaching in teachings_to_adopt:
+        try:
+            print_info(f"  Adopting '{teaching['id']}'...")
+            if perform_teaching_adoption(spoke_path, teaching):
+                print_success(f"  [OK] '{teaching['id']}' adopted successfully.")
+                success_count += 1
+            else:
+                print_warning(f"  [WARN] '{teaching['id']}' adoption completed with warnings.")
+        except Exception as e:
+            print_error(f"  [FAIL] Error adopting '{teaching['id']}': {e}")
+
+    if success_count == len(teachings_to_adopt):
+        print_success(f"\n✓ Successfully adopted {success_count}/{len(teachings_to_adopt)} teaching(s).")
+        return True
+    elif success_count > 0:
+        print_warning(f"\n⚠️  Adopted {success_count}/{len(teachings_to_adopt)} teaching(s) with some failures/warnings.")
+        return False
+    else:
+        print_error("\n✗ No teachings were adopted.")
+        return False
 

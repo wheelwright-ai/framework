@@ -7,6 +7,8 @@ Provides AI with complete session lookback including observation playback.
 from typing import Dict, Any, List, Optional
 from wai.observation import get_logger
 from datetime import datetime, timezone
+from pathlib import Path # Add Path import as well for teach_reconciliation
+from . import teach_reconciliation
 
 
 class SessionBriefing:
@@ -186,6 +188,16 @@ class SessionBriefing:
                 status = "✅" if obs["status"] == "complete" else "❌"
                 lines.append(f"- {status} {obs['action']['id']} at {obs['timestamp'][:19]}")
             lines.append("")
+
+        # Pending Teachings
+        try:
+            ingest_path = Path.cwd() / "WAI-Spoke" / "seed" / "ingest"
+            pending_teachings = teach_reconciliation.scan_teach_ingest_dir(ingest_path)
+            if pending_teachings:
+                lines.append(teach_reconciliation.brief_pending_teachings(pending_teachings))
+        except Exception:
+            # Gracefully skip if teach_reconciliation encounters an error
+            pass
 
         return "\n".join(lines)
 

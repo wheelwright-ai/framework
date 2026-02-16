@@ -475,10 +475,19 @@ Examples:
         time_parser = subparsers.add_parser('time', help='Show current session token usage and capacity')
         time_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
 
-        # Teach command - distribute updated templates
-        teach_parser = subparsers.add_parser('teach', help='Distribute upgraded templates to spoke')
-        teach_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
-        teach_parser.add_argument('--hub', help='Path to hub (optional, for knowledge distribution)')
+        # Teach command with subcommands for distribute and adopt
+        teach_parser = subparsers.add_parser('teach', help='Manage framework templates and teachings')
+        teach_subparsers = teach_parser.add_subparsers(dest='teach_command', required=True)
+
+        # Teach distribute subcommand
+        teach_distribute_parser = teach_subparsers.add_parser('distribute', help='Distribute upgraded templates to spoke')
+        teach_distribute_parser.add_argument('path', nargs='?', default='.', help='Project path (default: current directory)')
+        teach_distribute_parser.add_argument('--hub', help='Path to hub (optional, for knowledge distribution)')
+
+        # Teach adopt subcommand
+        teach_adopt_parser = teach_subparsers.add_parser('adopt', help='Adopt pending teaching files')
+        teach_adopt_parser.add_argument('teaching_id', nargs='?', default='all', help='ID of teaching to adopt, or "all"')
+        teach_adopt_parser.add_argument('--path', nargs='?', default='.', help='Project path (default: current directory)')
 
         # Shipit command (closeout + git commit)
         shipit_parser = subparsers.add_parser('shipit', help='Closeout session and create git commit')
@@ -2791,7 +2800,10 @@ Examples:
         elif args.command == 'time':
             self._cmd_time(args)
         elif args.command == 'teach':
-            self._cmd_teach(args)
+            if args.teach_command == 'distribute':
+                self._cmd_teach_distribute(args)
+            elif args.teach_command == 'adopt':
+                self._cmd_teach_adopt(args)
         elif args.command == 'shipit':
             self._cmd_shipit(args)
         elif args.command == 'template':
@@ -4336,9 +4348,9 @@ Examples:
             import traceback
             traceback.print_exc()
 
-    def _cmd_teach(self, args):
-        """Handle teach command - distribute updated templates."""
-        from .commands.teach import teach_command
+    def _cmd_teach_distribute(self, args):
+        """Handle teach distribute command - distribute updated templates."""
+        from .commands.teach import distribute_teach_command # Renamed import
         from .utils.paths import normalize_path
 
         try:
@@ -4373,6 +4385,38 @@ Examples:
 
         except Exception as e:
             print_error(f"Teach command failed: {e}")
+            import traceback
+            traceback.print_exc()
+
+    def _cmd_teach_adopt(self, args):
+        """Handle teach adopt command - adopt pending teaching files."""
+        from .commands.teach import adopt_teach_command
+        from .utils.paths import normalize_path
+
+        try:
+            spoke_path = normalize_path(args.path)
+
+            # Check if spoke exists
+            if not check_spoke_initialized(spoke_path):
+                print_error(f"No spoke found at {spoke_path}")
+                print_info("Run 'WAI init' to initialize a spoke first.")
+                return
+
+            print_info("\n" + "=" * 60)
+            print_success("  Adopting Pending Teachings")
+            print_info("=" * 60 + "\n")
+
+            # Run adopt command
+            if adopt_teach_command(spoke_path, args.teaching_id):
+                print_success("\n  [OK] Teachings adopted successfully!")
+                print_info("  Please review the changes.")
+            else:
+                print_error("\n  [FAIL] Teaching adoption failed - check messages above")
+
+            print_info("=" * 60 + "\n")
+
+        except Exception as e:
+            print_error(f"Teach adopt command failed: {e}")
             import traceback
             traceback.print_exc()
 

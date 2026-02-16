@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -14,9 +14,9 @@
   },
   "_session_state": {
     "last_session_id": "2026-02-15T05:57:53+00:00Z",
-    "last_modified_by": "Gemini",
-    "last_modified_at": "2026-02-15T05:57:53+00:00Z",
-    "last_closeout": "2026-02-15T05:57:53+00:00Z",
+    "last_modified_by": "agent",
+    "last_modified_at": "2026-02-16T20:23:56.053064+00:00",
+    "last_closeout": "2026-02-16T21:50:03.186554+00:00",
     "session_count": 4,
     "current_session": "Closed",
     "protocol_completed": true

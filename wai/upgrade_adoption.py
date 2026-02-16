@@ -12,7 +12,7 @@ import json
 import hashlib
 import hmac
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone # Added timezone import
 from typing import Dict, List, Any, Optional, Tuple
 
 
@@ -31,7 +31,7 @@ class UpgradeAdoptionPlanBuilder:
         self.source = source
         self.files: List[Dict[str, Any]] = []
         self.hub_files: List[Dict[str, Any]] = []
-        self.created_at = datetime.utcnow().replace(tzinfo=None).isoformat() + "Z"
+        self.created_at = datetime.now(timezone.utc).isoformat()
 
     def add_file(
         self,
@@ -148,13 +148,12 @@ class UpgradeAdoptionPlanBuilder:
                 "target_type": "universal",
                 "description": "Framework templates for universal distribution to hubs and spokes"
             },
-            "verification": {
-                "hub_fingerprint": hub_fingerprint,
+            "verification": { # Start of verification section
                 "spoke_signature": None,
-                "hash_algorithm": "sha256-hmac",
+                "hash_algorithm": "sha256-hmac", # This will be changed by sign_upgrade_plan
                 "signed_by": f"wheelwright-framework-{self.framework_version}",
                 "verification_required": True
-            },
+            }, # End of verification section
             "files": self.files,
             "hub_files": self.hub_files if self.hub_files else [],
             "checksums": {
@@ -165,6 +164,12 @@ class UpgradeAdoptionPlanBuilder:
         
         # Add adoption guidance
         plan["adoption_guidance"] = self._build_adoption_guidance()
+
+        # Sign the plan if a hub_fingerprint is provided
+        if hub_fingerprint:
+            plan = sign_upgrade_plan(plan, hub_fingerprint)
+        else:
+            plan.pop("verification", None) # Remove verification if no fingerprint
         
         return plan
 
@@ -226,21 +231,19 @@ class UpgradeAdoptionPlanBuilder:
 
 def sign_upgrade_plan(
     plan: Dict[str, Any],
-    hub_key: str
+    hub_fingerprint: str # Renamed for clarity
 ) -> Dict[str, Any]:
     """Sign upgrade plan with hub fingerprint."""
     
-    # Create signature of plan content
-    plan_json = json.dumps(plan["files"] + plan.get("hub_files", []), sort_keys=True)
-    signature = hmac.new(
-        hub_key.encode('utf-8'),
-        plan_json.encode('utf-8'),
-        hashlib.sha256
-    ).hexdigest()
-    
-    # Update plan with signature
-    plan["verification"]["hub_fingerprint"] = signature
+    # Recompute the content hash to ensure integrity
+    content_to_hash = json.dumps(plan["files"] + plan.get("hub_files", []), sort_keys=True)
+    content_hash = hashlib.sha256(content_to_hash.encode('utf-8')).hexdigest()
+
+    # Update plan with fingerprint and signed_by
+    plan["verification"]["hub_fingerprint"] = hub_fingerprint # Directly use the UUID as the identifier
     plan["verification"]["signed_by"] = f"wheelwright-framework-{plan['metadata']['framework_version']}"
+    plan["verification"]["plan_content_hash"] = content_hash # Add a hash for the content itself
+    plan["verification"]["hash_algorithm"] = "sha256" # Clarify hash algorithm for content
     
     return plan
 

@@ -6,6 +6,7 @@ Intelligent hub discovery with scoring, verification, and creation.
 
 import os
 import json
+import uuid # Needed for fingerprint generation
 from pathlib import Path
 from typing import Optional, List, Tuple
 from datetime import datetime, timedelta
@@ -455,6 +456,26 @@ class HubManager:
                         shutil.copy2(seed_readme, wai_spoke_dir / 'seed' / 'README.md')
 
         # Copy hub-specific templates
+        # Handle hub-profile.json separately to add fingerprint
+        hub_profile_template = hub_templates / 'hub-profile.json'
+        hub_profile_path = hub_path / 'hub-profile.json'
+        if hub_profile_template.exists():
+            shutil.copy2(hub_profile_template, hub_profile_path)
+            try:
+                profile_data = json.loads(hub_profile_path.read_text())
+                if 'hub_config' not in profile_data:
+                    profile_data['hub_config'] = {}
+                # Generate a unique fingerprint
+                if not profile_data['hub_config'].get('fingerprint'):
+                    profile_data['hub_config']['fingerprint'] = str(uuid.uuid4())
+                
+                profile_data['hub_config']['created_at'] = datetime.now().isoformat()
+                profile_data['hub_config']['hub_path'] = str(hub_path)
+
+                hub_profile_path.write_text(json.dumps(profile_data, indent=2, ensure_ascii=False) + '\n')
+            except Exception as e:
+                print_warning(f"  Warning: Could not add fingerprint to hub-profile.json: {{e}}")
+
         for template_name in ['hub-registry.json', 'hub-security-policy.json', 'hub-learning-index.md']:
             template_file = hub_templates / template_name
             if template_file.exists():
@@ -597,5 +618,25 @@ class HubManager:
                 return line.replace('## ', '').strip()
             if line.startswith('**') and line.endswith('**'):
                 return line.strip('* ')
+        return None
+
+
+    def get_hub_fingerprint(self, hub_path: Path) -> Optional[str]:
+        """
+        Retrieve the hub's fingerprint from hub-profile.json.
+
+        Args:
+            hub_path: Path to the hub directory.
+
+        Returns:
+            The hub fingerprint string, or None if not found.
+        """
+        hub_profile_path = hub_path / 'hub-profile.json'
+        if hub_profile_path.exists():
+            try:
+                profile_data = json.loads(hub_profile_path.read_text())
+                return profile_data.get('hub_config', {}).get('fingerprint')
+            except Exception:
+                pass
         return None
 

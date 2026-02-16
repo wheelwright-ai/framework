@@ -9,8 +9,21 @@ from typing import Optional, List, Tuple, Any
 # Import formatter functions for compatibility
 def _get_formatter():
     """Lazy import formatter to avoid circular dependencies."""
-    from ..cli.visuals.formatter import get_formatter
-    return get_formatter()
+    try:
+        from ..cli.visuals.formatter import get_formatter
+        return get_formatter()
+    except ModuleNotFoundError:
+        # Fallback for when CLI components are not available (e.g., during testing or standalone script execution)
+        class DummyFormatter:
+            def info(self, msg): print(msg)
+            def success(self, msg): print(msg)
+            def error(self, msg): print(f"ERROR: {msg}")
+            def warning(self, msg): print(f"WARNING: {msg}")
+            def print_info(self, msg): print(msg) # Added for compatibility with existing calls
+            def print_success(self, msg): print(msg)
+            def print_error(self, msg): print(f"ERROR: {msg}")
+            def print_warning(self, msg): print(f"WARNING: {msg}")
+        return DummyFormatter()
 
 
 def print_info(message: str):

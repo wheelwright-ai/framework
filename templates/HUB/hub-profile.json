@@ -40,15 +40,16 @@
       "avoid": []
     }
   },
-  "hub_config": {
-    "created_at": null,
-    "hub_path": null,
-    "framework_path": null,
-    "version": "3.0.0",
-    "auto_teach_on_recon": false,
-    "signal_noise_threshold": 8,
-    "_note": "framework_path: Set during 'WAI hub create' to point to wheelwright framework location"
-  },
+      "hub_config": {
+        "created_at": null,
+        "hub_path": null,
+        "framework_path": null,
+        "version": "3.0.0",
+        "fingerprint": null,
+        "auto_teach_on_recon": false,
+        "signal_noise_threshold": 8,
+        "_note": "framework_path: Set during 'WAI hub create' to point to wheelwright framework location"
+      },
   "learning_philosophy": {
     "share_threshold": 8,
     "description": "Only share high-impact learnings (impact >= 8) to keep signals valuable. Quality over quantity.",

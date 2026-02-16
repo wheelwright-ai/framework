@@ -17,6 +17,7 @@ import uuid
 from wai.observation import get_logger
 from wai.config import get_config
 from wai.utils.git import create_git_ops
+from wai.teach_reconciliation import cleanup_ingest_directory
 
 
 class CloseoutWorkflow:
@@ -86,6 +87,16 @@ class CloseoutWorkflow:
         status = self.git.get_status()
         changes["files_modified"] = status["modified_files"]
         print(f"  ✓ {len(changes['files_modified'])} files modified")
+
+        # Cleanup ingest directory (processed .teaching files)
+        ingest_path = spoke_path / "WAI-Spoke" / "seed" / "ingest"
+        if ingest_path.exists():
+            cleaned_files = cleanup_ingest_directory(ingest_path)
+            if cleaned_files:
+                print(f"  ✓ Cleaned up {len(cleaned_files)} adopted teaching file(s) from ingest.")
+                changes["files_modified"].extend([str(ingest_path / f) for f in cleaned_files])
+            else:
+                print("  ✓ No adopted teaching files to clean from ingest.")
         
         return changes
 
