@@ -226,6 +226,16 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
             'applies_to': ['spoke', 'hub'],
         },
         {
+            'name': 'commands/wai-learn.md',
+            'path': 'WAI-Spoke/commands/wai-learn.md',
+            'changed_from': '3.1.0',
+            'why_changed': "P9 format learn skill - reads signals from lugs, feedback collection, any-node execution.",
+            'safe_to_auto_adopt': True,
+            'requires_review': False,
+            'mentions': ['learn', 'signals', 'hub', 'lugs'],
+            'applies_to': ['spoke', 'hub'],
+        },
+        {
             'name': 'WAI-Events.json',
             'path': 'WAI-Spoke/WAI-Events.json',
             'changed_from': '3.1.0',
