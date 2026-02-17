@@ -9,6 +9,8 @@ set -e
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-${WAI_PROJECT_DIR:-${CODEX_PROJECT_DIR:-.}}}"
 STATE_FILE="$PROJECT_DIR/WAI-Spoke/WAI-State.json"
 LUGS_FILE="$PROJECT_DIR/WAI-Spoke/WAI-Lugs.jsonl"
+STARTUP_MANIFEST="$PROJECT_DIR/WAI-Spoke/WAI-Startup.json"
+EVENTS_FILE="$PROJECT_DIR/WAI-Spoke/WAI-Events.json"
 
 # Exit if WAI-Spoke doesn't exist
 [[ ! -f "$STATE_FILE" ]] && echo "WAI not initialized in this project" && exit 1
@@ -252,14 +254,29 @@ except Exception as e:
     echo ""
   fi
 
-  # Quick Commands
-  echo "### Quick Commands"
-  echo "- **/wai-status** - Integration health check"
-  echo "- **/wai-time** - Token usage estimate"
-  echo "- **/wai-rules** - Project boundaries and guidelines"
-  echo "- **/wai-closeout** - End session and extract signals"
-  echo "- **/wai-shipit** - Closeout + commit WAI files"
+  # Quick Commands - read from startup manifest if available
+  echo "### Available Skills"
+  if [[ -f "$STARTUP_MANIFEST" ]]; then
+    # Read skills from manifest (skip _note key)
+    jq -r '.skills_exposed | to_entries | .[] | select(.key | startswith("_") | not) | "- **/\(.key)** - \(.value.brief)"' "$STARTUP_MANIFEST" 2>/dev/null
+  else
+    # Fallback to hardcoded list
+    echo "- **/wai** - Unified briefing"
+    echo "- **/wai-status** - Integration health check"
+    echo "- **/wai-time** - Token usage estimate"
+    echo "- **/wai-rules** - Project boundaries and guidelines"
+    echo "- **/wai-closeout** - End session and extract signals"
+    echo "- **/wai-shipit** - Closeout + commit WAI files"
+  fi
   echo ""
+
+  # Show exposure context if manifest exists
+  if [[ -f "$STARTUP_MANIFEST" ]]; then
+    local exposure=$(jq -r '.exposure.context // "unknown"' "$STARTUP_MANIFEST" 2>/dev/null)
+    echo "**Exposure:** $exposure"
+    echo ""
+  fi
+
   echo "---"
   echo "*Ask \"what should I work on?\" for recommendations*"
 }

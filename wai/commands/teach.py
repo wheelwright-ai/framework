@@ -225,6 +225,26 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
             'mentions': ['shipit', 'closeout', 'git', 'verification'],
             'applies_to': ['spoke', 'hub'],
         },
+        {
+            'name': 'WAI-Events.json',
+            'path': 'WAI-Spoke/WAI-Events.json',
+            'changed_from': '3.1.0',
+            'why_changed': "Valid events/triggers skills can hook into - lifecycle, knowledge, work, user events.",
+            'safe_to_auto_adopt': True,
+            'requires_review': False,
+            'mentions': ['events', 'triggers', 'skills'],
+            'applies_to': ['spoke', 'hub'],
+        },
+        {
+            'name': 'WAI-Startup.json',
+            'path': 'WAI-Spoke/WAI-Startup.json',
+            'changed_from': '3.1.0',
+            'why_changed': "Skill manifest - defines skills exposed at wakeup, triggers, exposure contexts.",
+            'safe_to_auto_adopt': True,
+            'requires_review': False,
+            'mentions': ['startup', 'skills', 'manifest', 'exposure'],
+            'applies_to': ['spoke', 'hub'],
+        },
     ]
     
     # Add spoke files
@@ -393,9 +413,34 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
             f.write(json.dumps(Lug(upgrade_lug_data).to_minified()) + '\n')
             
         print_success(f"    [OK] Lugs v2 Upgrade Notification → /seed/ingest/")
-        
+
     except Exception as e:
         print_warning(f"    Failed to distribute framework upgrade lug: {e}")
+
+    # Distribute Paths Lug - minimal viable paths for spoke operation
+    try:
+        paths_lug_data = {
+            'id': 'lug-wai-paths',
+            'ty': 'config',
+            'title': 'WAI Network Paths',
+            'created_at': datetime.now().isoformat(),
+            'hub_path': str(hub_path) if hub_path else None,
+            'framework_path': str(framework_path),
+            'taught_by': 'framework:teach',
+            'taught_at': datetime.now().isoformat(),
+            'summary': 'Minimal viable paths for spoke operation. Hub path for learn/signals, framework path for teach source.',
+            'policy_tags': ['config', 'paths'],
+            'origin': 'framework:teach'
+        }
+
+        dst = teach_manager.ingest_dir / 'lug-wai-paths.jsonl'
+        with open(dst, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(paths_lug_data) + '\n')
+
+        print_success(f"    [OK] WAI Paths Lug → /seed/ingest/")
+
+    except Exception as e:
+        print_warning(f"    Failed to distribute paths lug: {e}")
     
     # Distribute spoke files
     for file_config in spoke_files:
