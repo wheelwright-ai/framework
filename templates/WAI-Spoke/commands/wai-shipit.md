@@ -4,6 +4,54 @@
 
 Verify this version is ready to ship to users.
 
+---
+
+## When to Use
+
+- Before releasing to users/production
+- Before publishing a package
+- Before merging to main branch
+- After completing a feature set
+- When user explicitly requests quality verification
+
+## Prerequisites
+
+- Code changes complete (not mid-implementation)
+- Tests exist for the codebase
+- WAI-Spoke/ directory exists
+- Git repository initialized
+
+## Follow-ons
+
+- Push to remote (if shipit passes)
+- `/wai-teach` — Distribute to spokes (if framework)
+- Deploy to production (if applicable)
+- Announce release (if public)
+
+## Use Cases
+
+**Use Case 1: Feature Complete**
+- Situation: New feature implemented, ready for users
+- Action: Run shipit to verify quality before release
+- Result: All gates pass, safe to deploy
+
+**Use Case 2: Before PR Merge**
+- Situation: PR ready, need to verify quality
+- Action: Run shipit to catch issues before merge
+- Result: Clean code, tests pass, ready for review
+
+**Use Case 3: Periodic Health Check**
+- Situation: Want to verify codebase is in good shape
+- Action: Run shipit as quality audit
+- Result: Identify tech debt, sprawl, security issues
+
+**Use Case 4: After AI-Heavy Session**
+- Situation: Lots of AI-generated code, worried about sprawl
+- Action: Run shipit for file hygiene + quality gates
+- Result: Cleaned up files, validated implementations
+
+---
+
 ## Purpose
 
 Confirm the current state meets quality standards before release:

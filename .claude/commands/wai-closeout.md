@@ -4,6 +4,53 @@
 
 Save where we are so we can pick up seamlessly in a new session.
 
+---
+
+## When to Use
+
+- End of any work session
+- Before context fills up (>70% capacity)
+- Before breaks or stopping work
+- When switching to different task/project
+- After completing a milestone
+
+## Prerequisites
+
+- WAI-Spoke/ directory exists
+- WAI-State.json is valid
+- Git repository initialized
+- Work worth preserving exists
+
+## Follow-ons
+
+- `/wai-learn` — Push signals to hub (if high-impact signals extracted)
+- `/wai-teach` — Distribute updates to spokes (if framework changes)
+- New session — Will load from closeout checkpoint
+
+## Use Cases
+
+**Use Case 1: End of Day**
+- Situation: Finished working, need to preserve progress
+- Action: Run closeout to save state
+- Result: Next session loads exactly where you left off
+
+**Use Case 2: Context Near Capacity**
+- Situation: `/wai-time` shows >70% context used
+- Action: Run closeout before context overflow
+- Result: State saved, can continue in fresh session
+
+**Use Case 3: Incomplete Work**
+- Situation: Task partially done, need to stop
+- Action: Run closeout with detailed incomplete work capture
+- Result: New agent can identify and continue the work
+
+**Use Case 4: Milestone Complete**
+- Situation: Feature or fix finished
+- Action: Run closeout to checkpoint progress
+- Result: Clean save point, version incremented
+
+---
+
 ## Purpose
 
 Persist session state with enough detail that a new agent/session can:
