@@ -32,9 +32,8 @@ Save where we are so we can pick up seamlessly in a new session.
 
 ## Follow-ons
 
-- `/wai-learn` — Push signals to hub (if high-impact signals extracted)
-- `/wai-teach` — Distribute updates to spokes (if framework changes)
-- New session — Will load from closeout checkpoint
+- `/wai-teach` — Push signals/updates to hub or spokes (if outbox has items)
+- New session — Will auto-learn from inbox on wakeup
 
 ## Use Cases
 
@@ -241,7 +240,7 @@ This enables any new session to identify and resume the work.
 ## Related Commands
 
 - `/wai-shipit` - Quality gates + closeout (for releases)
-- `/wai-learn` - Push signals to hub
+- `/wai-teach` - Push outbox to target (hub or spokes)
 - `/wai-time` - Check context before closeout
 
 ---

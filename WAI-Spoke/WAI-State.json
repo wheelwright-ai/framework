@@ -1,25 +1,25 @@
 {
   "wheel": {
-    "version": "2.0.3",
+    "version": "2.0.4",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
     "description": "",
     "created": "2026-02-08T13:28:21.240569",
-    "last_modified": "2026-02-17T01:16:00+00:00",
+    "last_modified": "2026-02-17T03:30:00+00:00",
     "hub_path": "/home/mario/projects/wheelwright-ai/hub"
   },
   "_project_foundation": {
     "completed": false
   },
   "_session_state": {
-    "last_session_id": "2026-02-17T01:16:00+00:00",
+    "last_session_id": "2026-02-17T03:30:00+00:00",
     "last_modified_by": "Claude Opus 4.5",
-    "last_modified_at": "2026-02-17T01:16:00+00:00",
-    "last_closeout": "2026-02-17T01:16:00+00:00",
-    "session_count": 6,
+    "last_modified_at": "2026-02-17T03:30:00+00:00",
+    "last_closeout": "2026-02-17T03:30:00+00:00",
+    "session_count": 7,
     "current_session": "Closed",
     "protocol_completed": true,
-    "next_session_recommendation": "Consider running /wai-foundation to establish project identity in lugs"
+    "next_session_recommendation": "Implement task-implement-lug-dirs-v1: scaffold inbox/outbox for all spokes"
   }
 }

@@ -204,6 +204,30 @@ except Exception as e:
     fi
   fi
 
+  # Inbox Processing (Auto-Learn on Wakeup)
+  local INBOX_DIR="$PROJECT_DIR/WAI-Spoke/lugs/inbox"
+
+  if [[ -d "$INBOX_DIR" ]]; then
+    local inbox_files=($(ls -1 "$INBOX_DIR"/*.jsonl 2>/dev/null))
+    local inbox_count=${#inbox_files[@]}
+
+    if [[ $inbox_count -gt 0 ]]; then
+      echo "### 📥 Inbox (Auto-Learning)"
+      echo ""
+      echo "**$inbox_count item(s) received:**"
+
+      for f in "${inbox_files[@]}"; do
+        local lug_id=$(jq -r '.id // "unknown"' "$f" 2>/dev/null)
+        local lug_type=$(jq -r '.ty // .category // "unknown"' "$f" 2>/dev/null)
+        local lug_status=$(jq -r '.status // "pending"' "$f" 2>/dev/null)
+        echo "- \`$lug_id\` ($lug_type) - $lug_status"
+      done
+      echo ""
+      echo "**Action:** Process inbox items or mark as handled"
+      echo ""
+    fi
+  fi
+
   # Teaching Files Detection
   local MANIFEST_FILE="$PROJECT_DIR/WAI-Spoke/seed/ingest/manifest.json"
 

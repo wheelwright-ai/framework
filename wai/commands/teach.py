@@ -497,8 +497,11 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
             except Exception as e:
                 print_warning(f"    Failed to distribute {file_config['name']}: {e}")
     
-    # Distribute any waiting lugs from hub/outbound/[spoke-id]/
+    # Distribute any waiting lugs from hub's outbox to spoke's inbox
+    # Protocol: hub/WAI-Spoke/lugs/outbox → spoke/WAI-Spoke/lugs/inbox
+    # Routing: filter by destination_wheel_id matching spoke
     lugs_distributed = 0
+    delivery_confirmations = []
     if hub_path:
         try:
             # Get spoke_id from WAI-State.json if available
@@ -507,29 +510,91 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
             if spoke_state_path.exists():
                 try:
                     state = json.loads(spoke_state_path.read_text(encoding='utf-8'))
-                    spoke_id = state.get('_spoke_id', spoke_path.name)
+                    spoke_id = state.get('wheel', {}).get('name', spoke_path.name)
                 except Exception:
                     pass
-            
-            outbound_spoke_dir = hub_path / 'WAI-Hub' / 'outbound' / spoke_id
-            if outbound_spoke_dir.exists() and outbound_spoke_dir.is_dir():
-                ingest_dir = teach_manager.ingest_dir
-                lug_files = list(outbound_spoke_dir.glob('*.jsonl'))
-                
+
+            # Read from hub's outbox (not WAI-Hub which doesn't exist)
+            hub_outbox_dir = hub_path / 'WAI-Spoke' / 'lugs' / 'outbox'
+            if hub_outbox_dir.exists() and hub_outbox_dir.is_dir():
+                # Destination: spoke's inbox
+                lug_inbox_dir = spoke_path / 'WAI-Spoke' / 'lugs' / 'inbox'
+                lug_inbox_dir.mkdir(parents=True, exist_ok=True)
+                lug_files = list(hub_outbox_dir.glob('*.jsonl'))
+
                 if lug_files:
-                    print_info("\n  Distributing Lugs from Hub...")
+                    print_info("\n  Checking Hub Outbox for Lugs...")
                     for lug_file in lug_files:
                         try:
-                            dst = ingest_dir / lug_file.name
+                            # Read lug to check destination
+                            lug_data = json.loads(lug_file.read_text(encoding='utf-8').strip())
+                            lug_id = lug_data.get('id', lug_file.stem)
+                            dest_wheel = lug_data.get('destination_wheel_id', '')
+
+                            # Only deliver if destination matches this spoke
+                            if dest_wheel.lower() != spoke_id.lower() and dest_wheel.lower() != spoke_path.name.lower():
+                                continue  # Skip - not for this spoke
+
+                            dst = lug_inbox_dir / lug_file.name
                             shutil.copy2(lug_file, dst)
-                            print_success(f"    [OK] {lug_file.name} (lug) → /seed/ingest/")
+
+                            # Verify file write
+                            if not dst.exists():
+                                raise Exception(f"Failed to verify write for lug {lug_id} at {dst}")
+
+                            print_success(f"    [OK] {lug_file.name} → spoke/lugs/inbox/")
                             lugs_distributed += 1
-                            # Remove from outbound after successful distribution
+
+                            # Track for delivery confirmation
+                            delivery_confirmations.append({
+                                'delivered_lug_id': lug_id,
+                                'destination_spoke_id': spoke_id,
+                                'destination_path': str(dst),
+                                'timestamp': datetime.utcnow().isoformat() + 'Z'
+                            })
+
+                            # Remove from hub outbox after successful distribution
                             lug_file.unlink()
+                        except json.JSONDecodeError as e:
+                            print_warning(f"    Invalid JSON in {lug_file.name}: {e}")
                         except Exception as e:
                             print_warning(f"    Failed to distribute lug {lug_file.name}: {e}")
         except Exception as e:
-            print_warning(f"  Warning: Could not process hub lugs: {e}")
+            print_warning(f"  Warning: Could not process hub outbox: {e}")
+
+    # Generate delivery confirmation lugs → hub's inbox
+    # Skip confirmation for self-delivery (framework teaching itself)
+    is_self_delivery = spoke_path.resolve() == framework_path.resolve()
+
+    if delivery_confirmations and hub_path and not is_self_delivery:
+        try:
+            hub_inbox_dir = hub_path / 'WAI-Spoke' / 'lugs' / 'inbox'
+            hub_inbox_dir.mkdir(parents=True, exist_ok=True)
+
+            for confirmation in delivery_confirmations:
+                confirm_lug = {
+                    'id': f"lug-confirm-{confirmation['delivered_lug_id'][:20]}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                    'ty': 'signal',
+                    'signal_type': 'delivery_confirmation',
+                    'source_wheel_id': spoke_id,
+                    'destination_wheel_id': 'hub',
+                    'delivered_lug_id': confirmation['delivered_lug_id'],
+                    'delivered_to': confirmation['destination_spoke_id'],
+                    'delivered_at': confirmation['timestamp'],
+                    'created_at': datetime.utcnow().isoformat() + 'Z'
+                }
+
+                confirm_path = hub_inbox_dir / f"{confirm_lug['id']}.jsonl"
+                confirm_path.write_text(json.dumps(confirm_lug) + '\n', encoding='utf-8')
+
+                if confirm_path.exists():
+                    print_success(f"    [OK] Delivery confirmation → hub/lugs/inbox/")
+                else:
+                    print_warning(f"    Failed to verify delivery confirmation write")
+        except Exception as e:
+            print_warning(f"  Warning: Could not write delivery confirmations: {e}")
+    elif delivery_confirmations and is_self_delivery:
+        print_info(f"    [SELF] Skipping confirmation (self-delivery)")
     
     # Save upgrade adoption plan to spoke
     try:

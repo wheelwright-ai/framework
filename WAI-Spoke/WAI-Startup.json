@@ -37,6 +37,12 @@
       "brief": "Unified briefing - project state, active work, context health",
       "nodes": ["spoke", "hub"]
     },
+    "wai-foundation": {
+      "triggers": ["no foundation exists", "user says 'foundation'", "scope change requested"],
+      "brief": "Project identity, goals, boundaries - personality and memory stored in lugs",
+      "nodes": ["spoke", "hub"],
+      "lug_type": "foundation"
+    },
     "wai-status": {
       "triggers": ["user asks 'status'", "user asks 'health check'"],
       "brief": "Integration health check - git, hub connection, pending items",
@@ -53,16 +59,17 @@
       "nodes": ["spoke", "hub"]
     },
     "wai-teach": {
-      "triggers": ["framework updated", "user says 'teach'", "after shipit on framework"],
-      "brief": "Distribute templates to spokes - signed upgrade plans",
+      "triggers": ["framework updated", "user says 'teach'", "after shipit on framework", "outbox has items"],
+      "brief": "Push outbox to target's inbox - templates, lugs, signals",
       "nodes": ["spoke", "hub", "framework"],
-      "paths_required": ["framework_path", "spoke_path", "hub_path"]
+      "paths_required": ["spoke_path", "hub_path"]
     },
     "wai-learn": {
-      "triggers": ["learn.ready", "user says 'learn'", "high-impact lugs pending"],
-      "brief": "Push signals to hub - lugs with impact >= 8",
+      "triggers": ["session.start"],
+      "brief": "Automatic inbox processing on wakeup - no manual invocation",
       "nodes": ["spoke", "hub"],
-      "paths_required": ["spoke_path", "hub_path"]
+      "auto": true,
+      "note": "Learning is passive. Teach is active."
     },
     "wai-time": {
       "triggers": ["user asks about context", "user asks 'how much time'"],
@@ -84,6 +91,10 @@
   "advisors": {
     "_note": "Auto-triggered advisors that monitor and intervene",
 
+    "foundation-advisor": {
+      "triggers": ["session.start", "no foundation lugs exist"],
+      "action": "Check foundation, gather if missing, verify if exists"
+    },
     "complexity-advisor": {
       "triggers": ["task involves 2+ files OR 6+ steps"],
       "action": "Warn user, suggest breakdown"

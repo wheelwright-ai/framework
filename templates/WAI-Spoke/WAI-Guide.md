@@ -109,8 +109,9 @@ Each skill that needs persistent state has a corresponding lug type:
 |-------|----------|---------|
 | `/wai-foundation` | `ty: "foundation"` | Project identity, goals, boundaries |
 | `/wai-closeout` | `ty: "session-summary"` | Session work and decisions |
-| `/wai-learn` | `ty: "signal"` | High-impact patterns (impact >= 8) |
+| `/wai-closeout` | `ty: "signal"` | High-impact patterns (impact >= 8) |
 | (auto) | `ty: "autosave"` | Crash recovery checkpoints |
+| `/wai-teach` | `ty: "task"`, `ty: "task-result"` | Tasks and completions between nodes |
 
 ### Lug Evolution
 
@@ -135,6 +136,61 @@ Lugs aren't static config - they're **living memory** that captures evolution:
 - **WAI-State.json** = Cache (snapshot, overwritten)
 
 When discrepancy exists, lugs win.
+
+---
+
+## Teach/Learn Communication Protocol
+
+**Teach = Push (active). Learn = Pull (automatic on wakeup).**
+
+### Directory Structure
+
+Every node has inbox and outbox directories:
+
+```
+WAI-Spoke/
+└── lugs/
+    ├── inbox/    ← Incoming lugs (to be processed)
+    └── outbox/   ← Outgoing lugs (to be sent)
+```
+
+### The Protocol
+
+```
+NODE A                              NODE B
+┌──────────────┐                    ┌──────────────┐
+│   outbox/    │ ──[A teaches B]──► │   inbox/     │
+│              │                    │              │
+│   inbox/     │ ◄──[B teaches A]── │   outbox/    │
+└──────────────┘                    └──────────────┘
+```
+
+### Verbs and Direction
+
+| Verb | Direction | Action | When |
+|------|-----------|--------|------|
+| **teach** | push | Send your outbox → target's inbox | Manual: `/wai-teach [target]` |
+| **learn** | pull | Process your inbox | Automatic on `/wai` wakeup |
+
+### Lug Routing
+
+Lugs use `destination_wheel_id` for routing:
+
+```json
+{
+  "id": "task-abc-123",
+  "source_wheel_id": "hub",
+  "destination_wheel_id": "framework",
+  "category": "task",
+  ...
+}
+```
+
+When teaching, only lugs matching the target's wheel_id are delivered.
+
+### Self-Delivery
+
+When a node teaches itself, delivery confirmations are skipped (no loop).
 
 ---
 
