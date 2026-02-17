@@ -71,6 +71,73 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 
 ---
 
+## File Naming Conventions
+
+WAI uses consistent prefixes to organize files and enable automation:
+
+| Prefix | Case | Purpose | Examples |
+|--------|------|---------|----------|
+| `WAI-` | UPPER | Core state and config files | WAI-State.json, WAI-Lugs.jsonl, WAI-Spoke/ |
+| `wai-` | lower | Commands and skills (executable) | wai-closeout.md, wai-learn.md |
+| `hub-` | lower | Hub-only files (excluded from spoke teach) | hub-registry.json, hub-security-policy.json |
+| `lug-` | lower | Ingestible lug files in seed/ingest/ | lug-wai-paths.jsonl |
+
+### Why Prefixes Matter
+
+1. **Glob-friendly** - `WAI-*.json` or `wai-*.md` finds all related files instantly
+2. **Teach filtering** - Hub excludes `hub-*` files when teaching spokes
+3. **Collision avoidance** - Won't conflict with project's own State.json or Guide.md
+4. **Visual sorting** - Related files group together in directory listings
+5. **Context clarity** - In search results, git diffs, or errors, origin is immediately clear
+
+### Convention Rules
+
+- **UPPER case prefix** (`WAI-`) = State/config files that persist across sessions
+- **lower case prefix** (`wai-`) = Executable skills/commands
+- **Files in WAI-Spoke/** still use prefix - the redundancy helps when paths are truncated
+- **Never remove prefixes** - Automation depends on them
+
+---
+
+## Skills and Lugs Pattern
+
+**Skills define behavior. Lugs store data.**
+
+Each skill that needs persistent state has a corresponding lug type:
+
+| Skill | Lug Type | Purpose |
+|-------|----------|---------|
+| `/wai-foundation` | `ty: "foundation"` | Project identity, goals, boundaries |
+| `/wai-closeout` | `ty: "session-summary"` | Session work and decisions |
+| `/wai-learn` | `ty: "signal"` | High-impact patterns (impact >= 8) |
+| (auto) | `ty: "autosave"` | Crash recovery checkpoints |
+
+### Lug Evolution
+
+Lugs aren't static config - they're **living memory** that captures evolution:
+
+```jsonl
+{"id": "lug-fnd-001", "ty": "foundation", "v": 1, "title": "Initial Foundation", ...}
+{"id": "lug-fnd-002", "ty": "foundation", "v": 2, "evolved_from": "lug-fnd-001", "rationale": "Scope expanded", ...}
+{"id": "lug-fnd-003", "ty": "foundation", "v": 3, "evolved_from": "lug-fnd-002", "rationale": "Pivot to B2B", ...}
+```
+
+### Querying Lugs
+
+- **Current state:** `ty=foundation | sort created_at desc | first`
+- **History:** `ty=foundation | sort created_at asc`
+- **Why changed:** Read `rationale` chain through `evolved_from`
+
+### WAI-State.json as Cache
+
+`WAI-State.json` caches latest lug state for fast wakeup:
+- **Lugs** = Source of truth (versioned, append-only)
+- **WAI-State.json** = Cache (snapshot, overwritten)
+
+When discrepancy exists, lugs win.
+
+---
+
 ## CRITICAL: Foundation Check
 
 **Before ANY work, check the project foundation:**

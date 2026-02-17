@@ -6,6 +6,15 @@ Verify this version is ready to ship to users.
 
 ---
 
+## Execution Context
+
+- **Nodes:** spoke, hub, framework
+- **Exposure:** spoke.chat:local, spoke.chat:external
+- **Paths Required:** spoke_path; framework_path + hub_path (for auto-teach)
+- **Lug Storage:** `ty: "shipit"` records in WAI-Lugs.jsonl
+
+---
+
 ## When to Use
 
 - Before releasing to users/production
@@ -319,6 +328,37 @@ Run full `/wai-closeout` protocol:
 
 ---
 
+### 9. Teach All Spokes (Auto)
+
+**After successful closeout, distribute updates to all spokes.**
+
+This step runs automatically when:
+- Running from framework or hub node
+- `lug-wai-paths` provides hub_path and framework_path
+- Closeout completed successfully
+
+**Teach Procedure:**
+```
+1. Read hub registry for active spokes
+2. For each spoke with WAI-Spoke/:
+   - Generate upgrade-adoption-plan.json
+   - Distribute template files to seed/ingest/
+   - Update registry with taught_at timestamp
+3. Report results
+```
+
+**Report:**
+```
+Teach Distribution:
+- Spokes taught: [N]/[M]
+- Files distributed: [N] per spoke
+- Registry updated: ✓
+```
+
+**If teach fails for a spoke:** Log warning, continue with others. Report failures at end.
+
+---
+
 ## Failure Handling
 
 **Do not proceed blindly. At each step:**
@@ -345,6 +385,7 @@ Run full `/wai-closeout` protocol:
 - [ ] Documentation updated
 - [ ] User confirmed ready to ship
 - [ ] Closeout executed successfully
+- [ ] All spokes taught (if framework/hub)
 
 ---
 
@@ -368,6 +409,11 @@ Run full `/wai-closeout` protocol:
 - Version: [X.Y.Z]
 - Commit: [hash]
 - Push: [status]
+
+### Teach (auto)
+- Spokes: [N]/[M] taught
+- Files: [N] per spoke
+- Registry: updated
 
 ## Status: SHIPPED ✓
 ```

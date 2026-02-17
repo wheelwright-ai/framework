@@ -236,6 +236,16 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
             'applies_to': ['spoke', 'hub'],
         },
         {
+            'name': 'commands/wai-foundation.md',
+            'path': 'WAI-Spoke/commands/wai-foundation.md',
+            'changed_from': '3.1.0',
+            'why_changed': "Foundation skill - project identity, goals, boundaries stored in lugs with versioned evolution.",
+            'safe_to_auto_adopt': True,
+            'requires_review': False,
+            'mentions': ['foundation', 'identity', 'boundaries', 'lugs', 'evolution'],
+            'applies_to': ['spoke', 'hub'],
+        },
+        {
             'name': 'WAI-Events.json',
             'path': 'WAI-Spoke/WAI-Events.json',
             'changed_from': '3.1.0',

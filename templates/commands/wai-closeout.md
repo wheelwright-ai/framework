@@ -6,6 +6,15 @@ Save where we are so we can pick up seamlessly in a new session.
 
 ---
 
+## Execution Context
+
+- **Nodes:** spoke, hub
+- **Exposure:** spoke.chat:local, spoke.chat:external
+- **Paths Required:** spoke_path (current directory)
+- **Paths Source:** Current working directory with WAI-Spoke/
+
+---
+
 ## When to Use
 
 - End of any work session
