@@ -23,6 +23,98 @@ from ..observation import get_logger, log_observation
 from ..hub import HubManager
 
 
+def update_registry_after_teach(
+    hub_path: Path,
+    spoke_path: Path,
+    framework_version: str,
+    files_distributed: int,
+    session_id: str
+) -> bool:
+    """
+    Update hub registry after successfully teaching a spoke.
+
+    Updates:
+    - wheel.taught_at, wheel.taught_version for the spoke
+    - teaching_history with new event
+    - statistics.last_teach and counts
+
+    Returns:
+        True if registry updated successfully
+    """
+    registry_path = hub_path / 'hub-registry.json'
+    if not registry_path.exists():
+        return False
+
+    try:
+        registry = json.loads(registry_path.read_text(encoding='utf-8'))
+        now = datetime.utcnow().isoformat() + 'Z'
+        spoke_path_str = str(spoke_path).rstrip('/') + '/'
+
+        # Find and update the wheel entry
+        wheel_found = False
+        for wheel in registry.get('wheels', []):
+            wheel_path = wheel.get('path', '').rstrip('/') + '/'
+            if wheel_path == spoke_path_str:
+                wheel['taught_at'] = now
+                wheel['taught_version'] = framework_version
+                wheel['last_sync'] = now
+                wheel_found = True
+                print_success(f"    [REGISTRY] Updated {wheel.get('wheel_id')}")
+                break
+
+        if not wheel_found:
+            print_warning(f"    [REGISTRY] Spoke not found in registry: {spoke_path.name}")
+
+        # Append to teaching_history
+        if 'teaching_history' not in registry:
+            registry['teaching_history'] = []
+
+        # Check if we already have an event for this session (batch teaching)
+        existing_event = None
+        for event in registry['teaching_history']:
+            if event.get('event_id') == session_id:
+                existing_event = event
+                break
+
+        if existing_event:
+            # Update existing event
+            existing_event['wheels_taught'] = existing_event.get('wheels_taught', 0) + 1
+            if spoke_path.name not in existing_event.get('spokes_taught', []):
+                existing_event.setdefault('spokes_taught', []).append(spoke_path.name)
+        else:
+            # Create new event
+            registry['teaching_history'].append({
+                'event_id': session_id,
+                'timestamp': now,
+                'framework_version': framework_version,
+                'wheels_taught': 1,
+                'spokes_taught': [spoke_path.name],
+                'files_per_spoke': files_distributed,
+                'status': 'complete'
+            })
+
+        # Update statistics
+        if 'statistics' not in registry:
+            registry['statistics'] = {}
+        registry['statistics']['last_teach'] = now
+        registry['statistics']['last_teach_version'] = framework_version
+
+        # Count active wheels
+        active_count = sum(1 for w in registry.get('wheels', []) if w.get('status') == 'active')
+        taught_count = sum(1 for w in registry.get('wheels', []) if w.get('taught_at'))
+        registry['statistics']['total_wheels'] = len(registry.get('wheels', []))
+        registry['statistics']['active_wheels'] = active_count
+        registry['statistics']['taught_wheels'] = taught_count
+
+        # Write back
+        registry_path.write_text(json.dumps(registry, indent=2), encoding='utf-8')
+        return True
+
+    except Exception as e:
+        print_warning(f"    [REGISTRY] Failed to update: {e}")
+        return False
+
+
 def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framework_path: Path) -> bool:
     """
     Teach a spoke (and optionally hub) with updated templates from framework using upgrade adoption plans.
@@ -458,7 +550,17 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
         agent="TeachCommand",
         tags=["teaching"]
     )
-    
+
+    # Update hub registry with teach timestamp
+    if hub_path:
+        update_registry_after_teach(
+            hub_path=hub_path,
+            spoke_path=spoke_path,
+            framework_version=FRAMEWORK_VERSION,
+            files_distributed=files_distributed,
+            session_id=session_id
+        )
+
     print_success(f"\n  [OK] Observations logged for session: {session_id}")
     return True
 
