@@ -1,102 +1,302 @@
 # WAI Shipit
 
-**Complete Session Closeout + Git Commit + Push**
+**Production Readiness Verification Protocol**
 
-One command to end session properly: closeout, commit, push, verify.
+Verify this version is ready to ship to users.
 
-## WAI Principles Reinforced
+## Purpose
 
-- **P1: Persistence** - Ship it or lose it
-- **P2: Verification** - Verify push succeeded before claiming done
-- **P3: Stewardship** - Complete the work responsibly
-- **P7: Evolution** - Capture session learnings in commit
+Confirm the current state meets quality standards before release:
+- Clean, organized codebase
+- All tests pass
+- Dependencies secure
+- Documentation current
+- No breaking changes (or documented)
 
-## When to Use
-
-- End of productive session
-- Before context fills up (check with `/wai-time`)
-- Before breaks or stopping work
-- After completing a feature or fix
+**Critical:** If issues arise at any step, **call them out immediately**. Do not proceed blindly.
 
 ---
 
-## Instructions
+## Shipit Procedure
 
-### Step 1: Execute Full Closeout
+### 1. File Hygiene & Maintenance (FIRST)
 
-Run the complete `/wai-closeout` protocol:
+**AI tends to create sprawl. Clean it up before validation.**
 
-1. **Reconcile autosave lugs** - Consolidate session work
-2. **Extract signals** - Capture high-impact decisions (impact >= 8)
-3. **Update WAI-State.json** - Increment session count, timestamps
-4. **Clear session log** - Ready for next session
+**Scan for orphaned/temp files:**
+```bash
+# Find common AI sprawl patterns
+find . -name "temp_*.py" -o -name "test_*.py.bak" -o -name "*.tmp"
+find . -name "debug_*" -o -name "scratch_*" -o -name "old_*"
+find . -name "*.orig" -o -name "*_backup*" -o -name "copy_of_*"
+```
 
-### Step 2: Stage Changes
+**Relocate or delete:**
+
+| File Type | Action |
+|-----------|--------|
+| Temp/debug files | Delete |
+| Useful reference | Move to `WAI-Spoke/reference/` |
+| Teaching material | Move to `WAI-Spoke/seed/ingest/` |
+| Outdated duplicates | Delete |
+| Unknown purpose | Ask user |
+
+**Check for:**
+- Files in wrong directories
+- Duplicate implementations
+- Abandoned experiments
+- Uncommitted large files
+
+**Report findings before proceeding:**
+```
+File Hygiene Report:
+- [N] temp files deleted
+- [N] files relocated to reference/
+- [N] files need user decision
+- Issues: [list any concerns]
+```
+
+**If issues found:** Stop and resolve before continuing.
+
+---
+
+### 2. Breaking Change Detection (P3)
+
+**Identify changes that could break existing users.**
+
+**Check for:**
+- API signature changes
+- Removed public functions/classes
+- Changed configuration formats
+- Database schema changes
+- CLI argument changes
+- File format changes
+
+**For each breaking change:**
+- Document in CHANGELOG.md
+- Add migration guidance
+- Consider deprecation warnings
+- Update version appropriately (major bump if significant)
+
+**Report:**
+```
+Breaking Changes Detected:
+- [change 1]: [migration path]
+- [change 2]: [migration path]
+- None detected ✓
+```
+
+**If breaking changes found:** Confirm user acknowledges before proceeding.
+
+---
+
+### 3. Dependency Audit (P4)
+
+**Verify dependencies are secure and current.**
 
 ```bash
-git status
+# Python
+pip-audit  # or safety check
+pip list --outdated
+
+# Node
+npm audit
+npm outdated
+
+# General
+# Check for known vulnerabilities in dependencies
 ```
 
-Review what will be committed:
-- WAI-Spoke/ files (always)
-- Code changes from this session
-- New files created
+**Check for:**
+- Known security vulnerabilities
+- Severely outdated packages
+- Deprecated dependencies
+- License compatibility issues
+
+**Report:**
+```
+Dependency Audit:
+- Security vulnerabilities: [count] ([severity])
+- Outdated packages: [count]
+- Action required: [yes/no]
+```
+
+**If critical vulnerabilities found:** Stop and address before proceeding.
+
+---
+
+### 4. Quality Gates (P3, P4)
+
+**All quality checks must pass.**
+
+#### 4a. Test Execution
+```bash
+pytest -v  # or project test command
+```
+- **100% of tests must pass**
+- Report any failures with details
+
+#### 4b. Coverage Check
+```bash
+pytest --cov=. --cov-report=term-missing
+```
+- Check against coverage threshold (if defined)
+- Report uncovered critical paths
+
+#### 4c. Linting & Type Checking
+```bash
+ruff check .  # or flake8, pylint
+mypy .        # if using type hints
+```
+- Must be clean (no errors)
+- Warnings acceptable but report them
+
+**Report:**
+```
+Quality Gates:
+- Tests: [passed/failed] ([X]/[Y] tests)
+- Coverage: [X]% (threshold: [Y]%)
+- Linting: [clean/N issues]
+- Type checking: [clean/N issues]
+```
+
+**If any gate fails:** Stop. Fix issues before proceeding.
+
+---
+
+### 5. Benchmark Execution (P5)
+
+**Run performance benchmarks (if available).**
 
 ```bash
-git add WAI-Spoke/
-git add [specific files from session work]
+# Run project benchmarks
+pytest benchmarks/ -v  # or custom benchmark command
 ```
 
-**Important:** Be deliberate about what you stage. Don't blindly `git add -A`.
+**Record results:**
+- Append to `benchmarks/results.md` (or project equivalent)
+- Compare against previous run
+- Flag significant regressions
 
-### Step 3: Generate Commit Message
-
-Create a message capturing:
-- Session number (from WAI-State.json)
-- What was accomplished
-- Key decisions made
-- Impact summary
-
-Format:
+**Report:**
 ```
-WAI Session [N]: [brief summary of accomplishments]
+Benchmarks:
+- Executed: [N] benchmarks
+- Regressions: [none / list]
+- Results logged to: [path]
 ```
 
-Example:
+**If significant regression:** Alert user, get acknowledgment before proceeding.
+
+---
+
+### 6. Documentation Updates (P7, P8)
+
+**Document what's known and can be captured.**
+
+**Review and update:**
+- `README.md` - Current with new features/changes?
+- `CHANGELOG.md` - Version changes documented?
+- `llms-full.txt` (or master prompt) - Capabilities current?
+- API documentation - Endpoints/functions documented?
+- Configuration docs - New options documented?
+
+**For each file:**
+- Check if session changes require updates
+- Make updates where applicable
+- Note what was updated
+
+**Report:**
 ```
-WAI Session 28: Fix teach_reconciliation syntax errors, add hub fingerprint signing
+Documentation:
+- README.md: [updated/no changes needed]
+- CHANGELOG.md: [updated/no changes needed]
+- [other docs]: [status]
 ```
 
-### Step 4: Commit
+---
 
-```bash
-git commit -m "WAI Session [N]: [summary]"
+### 7. Pre-Ship Summary
+
+**Before executing closeout, present full report:**
+
+```markdown
+## Shipit Pre-Flight Check
+
+### File Hygiene
+[summary]
+
+### Breaking Changes
+[summary]
+
+### Dependencies
+[summary]
+
+### Quality Gates
+- Tests: ✓/✗
+- Coverage: ✓/✗
+- Linting: ✓/✗
+
+### Benchmarks
+[summary]
+
+### Documentation
+[summary]
+
+## Ready to Ship: [YES/NO]
+
+[If NO: list blockers]
+[If YES: proceed to closeout?]
 ```
 
-### Step 5: Push
+**Get user confirmation before closeout.**
 
-```bash
-git push origin main
-```
+---
 
-### Step 6: Verify (CRITICAL)
+### 8. Execute Closeout
 
-**Do NOT skip this step. Do NOT assume success.**
+**Only after all checks pass:**
 
-```bash
-# Check local is clean
-git status
-# MUST show: "nothing to commit, working tree clean"
-# MUST show: "up to date with 'origin/main'"
+Run full `/wai-closeout` protocol:
+1. Lug reconciliation
+2. Signal extraction
+3. Incomplete work capture
+4. Version increment
+5. State update
+6. Session log clear
+7. Documentation finalization
+8. Summary generation
+9. Git commit
+10. Verification
 
-# Check remote has the commit
-git log origin/main --oneline -1
-# MUST show your commit hash
+---
 
-# Verify hashes match
-git log --oneline -1
-# Local hash MUST equal remote hash
-```
+## Failure Handling
+
+**Do not proceed blindly. At each step:**
+
+| Issue Severity | Action |
+|----------------|--------|
+| Critical (security, test failures) | **Stop immediately.** Report and fix. |
+| Warning (outdated deps, low coverage) | Report, get user acknowledgment |
+| Info (minor cleanup) | Note and continue |
+
+**Always report what was found, even if proceeding.**
+
+---
+
+## Success Criteria
+
+- [ ] File hygiene complete (no sprawl)
+- [ ] Breaking changes documented with migration paths
+- [ ] Dependencies audited (no critical vulnerabilities)
+- [ ] All tests pass
+- [ ] Coverage meets threshold
+- [ ] Linting clean
+- [ ] Benchmarks run (no regressions)
+- [ ] Documentation updated
+- [ ] User confirmed ready to ship
+- [ ] Closeout executed successfully
 
 ---
 
@@ -105,82 +305,33 @@ git log --oneline -1
 ```
 ## Shipit Complete
 
+### Pre-Flight
+- File hygiene: ✓ [N files cleaned]
+- Breaking changes: ✓ [none / documented]
+- Dependencies: ✓ [secure]
+- Tests: ✓ [X/X passing]
+- Coverage: ✓ [X%]
+- Linting: ✓ [clean]
+- Benchmarks: ✓ [no regressions]
+- Documentation: ✓ [updated]
+
 ### Closeout
-- Session #[N] reconciled
-- [N] signals extracted
-- State files updated
-
-### Git
-- Staged: [N] files
+- Session #[N] saved
+- Version: [X.Y.Z]
 - Commit: [hash]
-- Message: "WAI Session [N]: [summary]"
-- Push: origin/main
+- Push: [status]
 
-### Verification
-- Local clean: yes
-- Remote updated: yes
-- Commit visible: [hash]
-
-## Status: SHIPPED
-
-Next session will load from this checkpoint.
+## Status: SHIPPED ✓
 ```
-
----
-
-## If Something Fails
-
-### Closeout Failed
-- Check WAI-Spoke/ directory exists
-- Check WAI-State.json is valid JSON
-- Retry closeout phase
-
-### Commit Failed
-- Check for unstaged changes: `git status`
-- Check for merge conflicts: `git diff`
-- Stage missing files: `git add [file]`
-
-### Push Failed
-```bash
-# Test SSH
-ssh -T git@github.com
-
-# Check remote
-git remote -v
-
-# Check for divergence
-git fetch origin
-git status
-```
-
-If remote is ahead:
-```bash
-git pull --rebase origin main
-git push origin main
-```
-
----
-
-## Language Rules
-
-**Never say:**
-- "Should be pushed"
-- "Probably worked"
-- "I think it shipped"
-
-**Always say:**
-- "Verified with git status"
-- "Confirmed push with git log origin/main"
-- "Commit [hash] visible on remote"
 
 ---
 
 ## Related Commands
 
-- `/wai-closeout` - Just closeout, no git
-- `/wai-time` - Check context before shipping
+- `/wai-closeout` - Just save state (no quality gates)
 - `/wai-status` - Framework health check
+- `/wai-time` - Check context usage
 
 ---
 
-*Shipit = Closeout + Commit + Push + Verify. No shortcuts.*
+*Shipit = Verify quality, then save. Ready for users.*
