@@ -402,6 +402,112 @@ def clear_notification(notification_id: str, hub_path: Optional[Path] = None):
         pass
 
 
+def check_hub_analysis_staleness(hub_path: Optional[Path] = None, threshold_days: int = 7) -> Dict[str, Any]:
+    """
+    Check if hub analysis is stale and needs attention.
+
+    Args:
+        hub_path: Path to hub
+        threshold_days: Days before analysis is considered stale (default 7)
+
+    Returns:
+        Dict with:
+        - stale: bool - Whether analysis is stale
+        - days_since: int - Days since last analysis (None if never)
+        - message: str - Human-readable status message
+    """
+    if not hub_path:
+        from .hub import discover_hub
+        hub_path = discover_hub()
+        if not hub_path:
+            return {"stale": False, "days_since": None, "message": "No hub connected"}
+
+    # Check hub's WAI-State.json for analysis timestamp
+    state_file = hub_path / 'WAI-Spoke' / 'WAI-State.json'
+    if not state_file.exists():
+        return {"stale": True, "days_since": None, "message": "Hub not initialized"}
+
+    try:
+        state = json.loads(state_file.read_text())
+    except (json.JSONDecodeError, IOError):
+        return {"stale": False, "days_since": None, "message": "Could not read hub state"}
+
+    # Get hub_analysis section
+    hub_analysis = state.get('hub_analysis', {})
+    last_analysis = hub_analysis.get('last_analysis_at')
+    custom_threshold = hub_analysis.get('analysis_threshold_days', threshold_days)
+
+    if not last_analysis:
+        return {
+            "stale": True,
+            "days_since": None,
+            "message": "Hub has never been analyzed. Consider running hub analysis."
+        }
+
+    try:
+        last_dt = datetime.fromisoformat(last_analysis.replace('Z', '+00:00'))
+        now = datetime.now(last_dt.tzinfo) if last_dt.tzinfo else datetime.now()
+        days_since = (now - last_dt).days
+
+        if days_since >= custom_threshold:
+            return {
+                "stale": True,
+                "days_since": days_since,
+                "message": f"Hub analysis is {days_since} days old (threshold: {custom_threshold} days)"
+            }
+        else:
+            return {
+                "stale": False,
+                "days_since": days_since,
+                "message": f"Hub analysis is current ({days_since} days old)"
+            }
+    except (ValueError, TypeError):
+        return {"stale": False, "days_since": None, "message": "Invalid analysis timestamp"}
+
+
+def update_hub_analysis_timestamp(hub_path: Optional[Path] = None) -> bool:
+    """
+    Update the hub analysis timestamp to now.
+
+    Call this after completing a hub analysis session.
+
+    Args:
+        hub_path: Path to hub
+
+    Returns:
+        True if updated successfully, False otherwise
+    """
+    if not hub_path:
+        from .hub import discover_hub
+        hub_path = discover_hub()
+        if not hub_path:
+            return False
+
+    state_file = hub_path / 'WAI-Spoke' / 'WAI-State.json'
+    if not state_file.exists():
+        return False
+
+    try:
+        state = json.loads(state_file.read_text())
+    except (json.JSONDecodeError, IOError):
+        return False
+
+    # Ensure hub_analysis section exists
+    if 'hub_analysis' not in state:
+        state['hub_analysis'] = {
+            'analysis_threshold_days': 7
+        }
+
+    state['hub_analysis']['last_analysis_at'] = datetime.now().isoformat()
+    state['last_updated'] = datetime.now().isoformat()
+
+    try:
+        state_file.write_text(json.dumps(state, indent=2))
+        return True
+    except IOError:
+        return False
+
+
 def _cleanup_expired_quotas(state: Dict[str, Any], hub_path: Optional[Path] = None):
     """
     Remove expired quota entries from state.

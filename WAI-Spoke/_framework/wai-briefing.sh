@@ -208,22 +208,100 @@ except Exception as e:
   local INBOX_DIR="$PROJECT_DIR/WAI-Spoke/lugs/inbox"
 
   if [[ -d "$INBOX_DIR" ]]; then
-    local inbox_files=($(ls -1 "$INBOX_DIR"/*.jsonl 2>/dev/null))
+    local inbox_files=($(ls -1 "$INBOX_DIR"/*.jsonl 2>/dev/null || true))
     local inbox_count=${#inbox_files[@]}
 
     if [[ $inbox_count -gt 0 ]]; then
-      echo "### 📥 Inbox (Auto-Learning)"
+      echo "### 📥 Auto-Learning from Inbox"
       echo ""
-      echo "**$inbox_count item(s) received:**"
 
-      for f in "${inbox_files[@]}"; do
-        local lug_id=$(jq -r '.id // "unknown"' "$f" 2>/dev/null)
-        local lug_type=$(jq -r '.ty // .category // "unknown"' "$f" 2>/dev/null)
-        local lug_status=$(jq -r '.status // "pending"' "$f" 2>/dev/null)
-        echo "- \`$lug_id\` ($lug_type) - $lug_status"
-      done
+      # Call Python inbox processor
+      local process_result=$(python3 -c "
+import sys
+sys.path.insert(0, '$PROJECT_DIR')
+try:
+    from wai.inbox_processor import process_inbox
+    from pathlib import Path
+    result = process_inbox(Path('$PROJECT_DIR'))
+    print(f\"{result['processed']}|{result['failed']}\")
+except Exception as e:
+    print(f'0|0|{e}')
+" 2>/dev/null)
+
+      local processed=$(echo "$process_result" | cut -d'|' -f1)
+      local failed=$(echo "$process_result" | cut -d'|' -f2)
+
+      if [[ "$processed" -gt 0 ]] || [[ "$failed" -gt 0 ]]; then
+        echo "**Auto-learned on wakeup:**"
+        echo "- Processed: $processed item(s)"
+        if [[ "$failed" -gt 0 ]]; then
+          echo "- Failed: $failed item(s) (check logs)"
+        fi
+        echo ""
+      else
+        # Show pending items if processor didn't run
+        echo "**$inbox_count item(s) pending in inbox:**"
+        for f in "${inbox_files[@]}"; do
+          local lug_id=$(jq -r '.id // "unknown"' "$f" 2>/dev/null)
+          local lug_type=$(jq -r '.ty // .category // "unknown"' "$f" 2>/dev/null)
+          echo "- \`$lug_id\` ($lug_type)"
+        done
+        echo ""
+      fi
+    fi
+  fi
+
+  # Hub Staleness Check
+  if [[ -n "$hub_connected" ]] && [[ -d "$hub_connected" ]]; then
+    local staleness_result=$(python3 -c "
+import sys
+sys.path.insert(0, '$PROJECT_DIR')
+try:
+    from wai.hub_state import check_hub_analysis_staleness
+    from pathlib import Path
+    result = check_hub_analysis_staleness(Path('$hub_connected'))
+    if result['stale']:
+        print(f\"stale|{result['days_since'] or 'never'}|{result['message']}\")
+    else:
+        print('ok')
+except Exception as e:
+    print('error')
+" 2>/dev/null)
+
+    if [[ "$staleness_result" == stale* ]]; then
+      local days_since=$(echo "$staleness_result" | cut -d'|' -f2)
+      local message=$(echo "$staleness_result" | cut -d'|' -f3)
+      echo "### 🔔 Hub Analysis Reminder"
       echo ""
-      echo "**Action:** Process inbox items or mark as handled"
+      echo "**$message**"
+      echo ""
+      echo "Consider running hub analysis to review cross-project patterns."
+      echo ""
+    fi
+  fi
+
+  # Heartbeat Error Check
+  local HEARTBEAT_LOG="$PROJECT_DIR/WAI-Spoke/logs/heartbeat.jsonl"
+  if [[ -f "$HEARTBEAT_LOG" ]]; then
+    local recent_errors=$(python3 -c "
+import sys
+sys.path.insert(0, '$PROJECT_DIR')
+try:
+    from wai.heartbeat import get_recent_errors
+    from pathlib import Path
+    errors = get_recent_errors(Path('$PROJECT_DIR'), last_n=5)
+    for e in errors:
+        print(f\"{e.get('timestamp', 'unknown')}|{e.get('error', 'unknown error')}\")
+except:
+    pass
+" 2>/dev/null)
+
+    if [[ -n "$recent_errors" ]]; then
+      echo "### ⚠️ Recent Heartbeat Errors"
+      echo ""
+      echo "$recent_errors" | while IFS='|' read -r ts err; do
+        echo "- **$ts**: $err"
+      done
       echo ""
     fi
   fi

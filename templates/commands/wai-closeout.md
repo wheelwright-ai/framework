@@ -187,6 +187,37 @@ git log --oneline -1              # Verify commit exists
 git log origin/main --oneline -1  # If pushed, verify remote
 ```
 
+### 11. Auto-Teach Distribution (Framework/Hub Only)
+
+**Only for framework/hub nodes:**
+
+This step automatically distributes outbox items to target spokes.
+
+1. **Check outbox for items:**
+   ```
+   WAI-Spoke/lugs/outbox/
+   ```
+   If empty, skip this step.
+
+2. **Read hub-registry.json for active spokes:**
+   ```python
+   from wai.inbox_processor import distribute_outbox
+   result = distribute_outbox(project_path)
+   ```
+
+3. **For each spoke with pending items:**
+   - Copy lug file to spoke's `WAI-Spoke/lugs/inbox/`
+   - Mark original as distributed (move to `outbox/distributed/`)
+
+4. **Report distribution:**
+   - "Distributed X items to Y spokes"
+   - List spoke names that received items
+
+**On failure:** Log warning, continue (don't block closeout)
+
+**Note:** Regular spokes don't run this step. Only framework and hub
+have outbox items destined for other spokes.
+
 ---
 
 ## Success Criteria
@@ -200,6 +231,7 @@ git log origin/main --oneline -1  # If pushed, verify remote
 - [ ] Documentation updated where applicable
 - [ ] Changes committed with descriptive message
 - [ ] User prompted before push
+- [ ] Auto-teach completed (framework/hub only)
 
 ---
 
