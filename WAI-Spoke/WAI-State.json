@@ -1,26 +1,26 @@
 {
   "wheel": {
-    "version": "2.0.5",
+    "version": "2.0.6",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
     "description": "",
     "created": "2026-02-08T13:28:21.240569",
-    "last_modified": "2026-02-18T23:30:00+00:00",
+    "last_modified": "2026-02-21T00:48:00+00:00",
     "hub_path": "/home/mario/projects/wheelwright-ai/hub"
   },
   "_project_foundation": {
     "completed": false
   },
   "_session_state": {
-    "last_session_id": "2026-02-18T23:30:00+00:00",
-    "last_modified_by": "Claude Opus 4.5",
-    "last_modified_at": "2026-02-18T23:30:00+00:00",
-    "last_closeout": "2026-02-18T23:30:00+00:00",
-    "session_count": 8,
+    "last_session_id": "2026-02-21T00:48:00+00:00",
+    "last_modified_by": "Claude Sonnet 4.5",
+    "last_modified_at": "2026-02-21T00:48:00+00:00",
+    "last_closeout": "2026-02-21T00:48:00+00:00",
+    "session_count": 9,
     "current_session": "Closed",
     "protocol_completed": true,
-    "next_session_recommendation": "Next hub wakeup: auto-teach distributes phone-home tasks to 14 spokes. Spokes will respond on their next wakeup."
+    "next_session_recommendation": "Test auto-delivery: 2 lugs delivered to hub (upgrade plan + phone-home response). Broadcast signal (* destination) needs hub-side implementation. Hub can now distribute upgrade plan to all 13 active spokes."
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

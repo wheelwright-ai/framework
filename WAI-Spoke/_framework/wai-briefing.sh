@@ -251,6 +251,49 @@ except Exception as e:
     fi
   fi
 
+  # Recent Deliveries (Outbox Distribution Summary)
+  local OUTBOX_DISTRIBUTED="$PROJECT_DIR/WAI-Spoke/lugs/outbox/distributed"
+  if [[ -d "$OUTBOX_DISTRIBUTED" ]]; then
+    local delivered_files=($(ls -1 "$OUTBOX_DISTRIBUTED"/*.jsonl 2>/dev/null || true))
+    local delivered_count=${#delivered_files[@]}
+
+    if [[ $delivered_count -gt 0 ]]; then
+      echo "### 📬 Recent Deliveries (Last Closeout)"
+      echo ""
+
+      # Count deliveries by destination
+      local destinations=$(python3 -c "
+import sys
+from pathlib import Path
+import json
+
+distributed_dir = Path('$OUTBOX_DISTRIBUTED')
+destinations = {}
+for lug_file in distributed_dir.glob('*.jsonl'):
+    try:
+        with open(lug_file) as f:
+            lug = json.load(f)
+            dest = lug.get('destination_wheel_id', 'unknown')
+            destinations[dest] = destinations.get(dest, 0) + 1
+    except:
+        pass
+
+for dest, count in sorted(destinations.items()):
+    print(f'{dest}|{count}')
+" 2>/dev/null)
+
+      echo "**Outgoing (Delivered):**"
+      if [[ -n "$destinations" ]]; then
+        echo "$destinations" | while IFS='|' read -r dest count; do
+          echo "- Delivered: $count lug(s) to $dest"
+        done
+      else
+        echo "- Delivered: $delivered_count lug(s)"
+      fi
+      echo ""
+    fi
+  fi
+
   # Hub Staleness Check
   if [[ -n "$hub_connected" ]] && [[ -d "$hub_connected" ]]; then
     local staleness_result=$(python3 -c "
@@ -327,7 +370,7 @@ except:
 
   # Recent High-Impact Decisions
   local recent_decisions=$(jq -r '
-    .decisions
+    .decisions // []
     | map(select(.impact >= 8))
     | sort_by(.date)
     | reverse
@@ -344,7 +387,7 @@ except:
 
   # Next Actions
   local next_actions=$(jq -r '
-    .context.next_actions
+    .context.next_actions // []
     | .[0:5]
     | map("- " + .)
     | join("\n")

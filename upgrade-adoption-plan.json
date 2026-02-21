@@ -3,37 +3,25 @@
     "version": "3.1.0",
     "framework_version": "3.1.0",
     "spoke_structure_version": "3.0",
-    "created_at": "2026-02-17T06:10:18.780268+00:00",
+    "created_at": "2026-02-21T08:45:49.563580+00:00",
     "source": "framework",
     "target_type": "universal",
     "description": "Framework templates for universal distribution to hubs and spokes"
-  },
-  "verification": {
-    "spoke_signature": null,
-    "hash_algorithm": "sha256",
-    "signed_by": "wheelwright-framework-3.1.0",
-    "verification_required": true,
-    "hub_fingerprint": "d0abad78-3a71-492f-9866-b7d12e6ccbe7",
-    "plan_content_hash": "df1082af6b67158b589b55ee4e37fb9670adb92f79486a9bab7863e68edb0494"
   },
   "files": [
     {
       "name": "WAI-Guide.md",
       "path": "WAI-Spoke/WAI-Guide.md",
-      "size": 13230,
-      "hash": "sha256:f5a1b755e8df2ed50d1241aa3c0fcf1a9ed024ac4deba91d117970ae57597b6c",
+      "size": 19724,
+      "hash": "sha256:45c2be1bf6876fcb54e01416a8744a1c9efb6b9a04dc293add2a9dadf63317b7",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-Guide.md",
       "version": "3.1.0",
-      "changed_from": "2.1.0",
-      "why_changed": "Enhanced session start protocol, added teaching reconciliation section",
+      "changed_from": "3.0.0",
+      "why_changed": "Enhanced session start protocol with auto-teach/learn support",
       "breaking_changes": false,
       "safe_to_auto_adopt": true,
       "requires_review": false,
-      "mentions": [
-        "session-start",
-        "teaching",
-        "reconciliation"
-      ],
+      "mentions": [],
       "applies_to": [
         "spoke",
         "hub"
@@ -44,38 +32,21 @@
     {
       "name": "WAI-State.json",
       "path": "WAI-Spoke/WAI-State.json",
-      "size": 6669,
-      "hash": "sha256:00d868ecb2c8c5d5395911d05ba8eb221d345e64cbac1c567470d5af379202de",
+      "size": 7960,
+      "hash": "sha256:1ccc32bf9eb9196f9c311db37b32ba423c613e4c63035ed490442e8fe2f25ff3",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-State.json",
       "version": "3.1.0",
-      "changed_from": "2.0.1",
-      "why_changed": "Structure version 3.0, added teaching-adoption-plan schema",
+      "changed_from": "3.0.0",
+      "why_changed": "Added wheel.name initialization support",
       "breaking_changes": false,
       "safe_to_auto_adopt": false,
       "requires_review": true,
-      "mentions": [
-        "structure",
-        "version",
-        "state-management"
-      ],
+      "mentions": [],
       "applies_to": [
-        "spoke",
-        "hub"
+        "spoke"
       ],
       "status": "review_needed",
-      "action": "review",
-      "merge_strategy": "merge_sections",
-      "sections_to_preserve": [
-        "_session_state",
-        "_project_foundation",
-        "decisions",
-        "analytics"
-      ],
-      "sections_to_update": [
-        "wheelwright.structure_version",
-        "wheelwright.version",
-        "_file_meta"
-      ]
+      "action": "review"
     },
     {
       "name": "WAI-State.md",
@@ -84,15 +55,12 @@
       "hash": "sha256:acfde1183d19e8ad88e933cafd3816d28baae8778434619b547a8a180af1f54f",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-State.md",
       "version": "3.1.0",
-      "changed_from": "2.0.0",
-      "why_changed": "Updated strategic context for version 3.0",
+      "changed_from": "2.1.0",
+      "why_changed": "Updated documentation for new wheel identity fields",
       "breaking_changes": false,
       "safe_to_auto_adopt": true,
       "requires_review": false,
-      "mentions": [
-        "strategy",
-        "context"
-      ],
+      "mentions": [],
       "applies_to": [
         "spoke"
       ],
@@ -100,76 +68,39 @@
       "action": "adopt"
     },
     {
-      "name": "commands/wai-closeout.md",
+      "name": "wai-closeout.md",
       "path": "WAI-Spoke/commands/wai-closeout.md",
-      "size": 5810,
-      "hash": "sha256:5d370a6345ceb9e9114cf01314ac86550bbb57fab0d3df7ad218d8690d0c6303",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/commands/wai-closeout.md",
+      "size": 7104,
+      "hash": "sha256:f80c207feaafc4a91d6c7f76aa3eac287624b455e25b86e1f92935c853e29543",
+      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/commands/wai-closeout.md",
       "version": "3.1.0",
-      "changed_from": "3.1.0",
-      "why_changed": "Consolidated closeout protocol with WAI principles, 4-phase execution, verification checklist.",
+      "changed_from": "2.0.0",
+      "why_changed": "Added automatic outbox delivery as Step 1",
       "breaking_changes": false,
       "safe_to_auto_adopt": true,
       "requires_review": false,
-      "mentions": [
-        "closeout",
-        "protocol",
-        "verification",
-        "git"
-      ],
+      "mentions": [],
       "applies_to": [
-        "spoke",
-        "hub"
+        "spoke"
       ],
       "status": "ready",
       "action": "adopt"
     },
     {
-      "name": "commands/wai-shipit.md",
+      "name": "wai-shipit.md",
       "path": "WAI-Spoke/commands/wai-shipit.md",
-      "size": 8195,
-      "hash": "sha256:810d1f00ade26960610f33e70440b3663683ad77f77dea1483477cfb647ba0ac",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/commands/wai-shipit.md",
+      "size": 10887,
+      "hash": "sha256:eb8cddb709604fe780569a7ee8e3d33221f7cad0281347361e5706baea28687e",
+      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/commands/wai-shipit.md",
       "version": "3.1.0",
-      "changed_from": "3.1.0",
-      "why_changed": "Complete shipit protocol: closeout + commit + push + verify.",
+      "changed_from": "2.0.0",
+      "why_changed": "Integrated QC checks and auto-teach workflow",
       "breaking_changes": false,
       "safe_to_auto_adopt": true,
       "requires_review": false,
-      "mentions": [
-        "shipit",
-        "closeout",
-        "git",
-        "verification"
-      ],
+      "mentions": [],
       "applies_to": [
-        "spoke",
-        "hub"
-      ],
-      "status": "ready",
-      "action": "adopt"
-    },
-    {
-      "name": "commands/wai-learn.md",
-      "path": "WAI-Spoke/commands/wai-learn.md",
-      "size": 4124,
-      "hash": "sha256:4d3515d736351a4e58a63ae7658bde0c7fc6e752470eb0d1787d93fafbc87c28",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/commands/wai-learn.md",
-      "version": "3.1.0",
-      "changed_from": "3.1.0",
-      "why_changed": "P9 format learn skill - reads signals from lugs, feedback collection, any-node execution.",
-      "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "mentions": [
-        "learn",
-        "signals",
-        "hub",
-        "lugs"
-      ],
-      "applies_to": [
-        "spoke",
-        "hub"
+        "spoke"
       ],
       "status": "ready",
       "action": "adopt"
@@ -181,19 +112,14 @@
       "hash": "sha256:886e6ef8bb9d7242022714f01f0225382b56393cea62619ee44fd423f8516540",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-Events.json",
       "version": "3.1.0",
-      "changed_from": "3.1.0",
-      "why_changed": "Valid events/triggers skills can hook into - lifecycle, knowledge, work, user events.",
+      "changed_from": "1.0.0",
+      "why_changed": "Added new event types for inbox processing",
       "breaking_changes": false,
       "safe_to_auto_adopt": true,
       "requires_review": false,
-      "mentions": [
-        "events",
-        "triggers",
-        "skills"
-      ],
+      "mentions": [],
       "applies_to": [
-        "spoke",
-        "hub"
+        "spoke"
       ],
       "status": "ready",
       "action": "adopt"
@@ -201,24 +127,18 @@
     {
       "name": "WAI-Startup.json",
       "path": "WAI-Spoke/WAI-Startup.json",
-      "size": 4489,
-      "hash": "sha256:4c2d3cb36e2ef981b1106ea02e5589df407e2a8a6a47cf25b215c8f9af42f524",
+      "size": 4943,
+      "hash": "sha256:e7d8cb7ce1c3ec23459c6f4712c444866d2968a466ea6236a31c650f5c20689b",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/WAI-Spoke/WAI-Startup.json",
       "version": "3.1.0",
-      "changed_from": "3.1.0",
-      "why_changed": "Skill manifest - defines skills exposed at wakeup, triggers, exposure contexts.",
+      "changed_from": "1.0.0",
+      "why_changed": "Defined skill manifest for startup loading",
       "breaking_changes": false,
       "safe_to_auto_adopt": true,
       "requires_review": false,
-      "mentions": [
-        "startup",
-        "skills",
-        "manifest",
-        "exposure"
-      ],
+      "mentions": [],
       "applies_to": [
-        "spoke",
-        "hub"
+        "spoke"
       ],
       "status": "ready",
       "action": "adopt"
@@ -226,147 +146,44 @@
   ],
   "hub_files": [
     {
-      "name": "WAI-State.json",
-      "path": "WAI-Spoke/WAI-State.json",
-      "size": 8144,
-      "hash": "sha256:59403223da5a92c29ce26a0aefe9a6469882cebf21ceb3c75e9dc9004afd479a",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/WAI-Spoke/WAI-State.json",
-      "version": "3.1.0",
-      "changed_from": "3.0.0",
-      "why_changed": "Hub-specific state with _hub_profile section",
-      "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "mentions": [],
-      "applies_to": [
-        "hub"
-      ],
-      "status": "ready",
-      "action": "adopt"
-    },
-    {
-      "name": "WAI-State.md",
-      "path": "WAI-Spoke/WAI-State.md",
-      "size": 3635,
-      "hash": "sha256:3e49c6a3f6b8177fcc87f3128670637cd325c400374a239a2ec6f32257950907",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/WAI-Spoke/WAI-State.md",
-      "version": "3.1.0",
-      "changed_from": "3.0.0",
-      "why_changed": "Hub identity and operations tracking",
-      "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "mentions": [],
-      "applies_to": [
-        "hub"
-      ],
-      "status": "ready",
-      "action": "adopt"
-    },
-    {
-      "name": "WAI-Guide.md",
-      "path": "WAI-Spoke/WAI-Guide.md",
-      "size": 16323,
-      "hash": "sha256:1547a9ac314c4749009c514288567e2d47ee12f6c4c17ab1e8e656365d32a3b4",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/WAI-Spoke/WAI-Guide.md",
-      "version": "3.1.0",
-      "changed_from": "3.0.0",
-      "why_changed": "Hub-specific AI assistant instructions",
-      "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "mentions": [],
-      "applies_to": [
-        "hub"
-      ],
-      "status": "ready",
-      "action": "adopt"
-    },
-    {
       "name": "hub-registry.json",
-      "path": "hub-registry.json",
+      "path": "WAI-Spoke/hub-registry.json",
       "size": 2135,
       "hash": "sha256:6ee1c3839a3b2ce942da9bd0db6b9ec53373bf71c55ecd5e3ff54095451a30e7",
       "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/hub-registry.json",
       "version": "3.1.0",
       "changed_from": "2.0.0",
-      "why_changed": "Updated registry tracking wheels and teaching history",
+      "why_changed": "Added wheel.name initialization during registration",
       "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
+      "safe_to_auto_adopt": false,
+      "requires_review": true,
       "mentions": [],
       "applies_to": [
         "hub"
       ],
-      "status": "ready",
-      "action": "adopt"
-    },
-    {
-      "name": "hub-learning-index.md",
-      "path": "hub-learning-index.md",
-      "size": 5426,
-      "hash": "sha256:49462df501894c4f08fb01f7533d8c7bcd1e3332b453d26e33626b4552232aa1",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/hub-learning-index.md",
-      "version": "3.1.0",
-      "changed_from": "2.0.0",
-      "why_changed": "Knowledge base index for learning aggregation",
-      "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "mentions": [],
-      "applies_to": [
-        "hub"
-      ],
-      "status": "ready",
-      "action": "adopt"
-    },
-    {
-      "name": "hub-security-policy.json",
-      "path": "hub-security-policy.json",
-      "size": 2744,
-      "hash": "sha256:f3f98fbdb517cbe6c620db7c71b55706e66608ba0a3a1c5b73d850d9ae47ff06",
-      "source_path": "/home/mario/projects/wheelwright-ai/framework/templates/HUB/hub-security-policy.json",
-      "version": "3.1.0",
-      "changed_from": "2.0.0",
-      "why_changed": "Security settings for hub-spoke communication",
-      "breaking_changes": false,
-      "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "mentions": [],
-      "applies_to": [
-        "hub"
-      ],
-      "status": "ready",
-      "action": "adopt"
+      "status": "review_needed",
+      "action": "review"
     }
   ],
   "checksums": {
-    "all_files_hash": "sha256:1e848eb476f3fcc2d985bbc9548570fc5ab226c6a21636892dd9cca0d6defa2a",
+    "all_files_hash": "sha256:a04974e24c5c3622e4596f209f3ac759274c5ad4d8de3fd49110247143c2092f",
     "verification_required": true
   },
   "adoption_guidance": {
     "for_spoke": {
       "recommended_order": [
-        "WAI-Guide.md (adopt immediately - Enhanced session start protocol, added teaching reconciliation section)",
-        "WAI-State.md (adopt immediately - Updated strategic context for version 3.0)",
-        "commands/wai-closeout.md (adopt immediately - Consolidated closeout protocol with WAI principles, 4-phase execution, verification checklist.)",
-        "commands/wai-shipit.md (adopt immediately - Complete shipit protocol: closeout + commit + push + verify.)",
-        "commands/wai-learn.md (adopt immediately - P9 format learn skill - reads signals from lugs, feedback collection, any-node execution.)",
-        "WAI-Events.json (adopt immediately - Valid events/triggers skills can hook into - lifecycle, knowledge, work, user events.)",
-        "WAI-Startup.json (adopt immediately - Skill manifest - defines skills exposed at wakeup, triggers, exposure contexts.)",
+        "WAI-Guide.md (adopt immediately - Enhanced session start protocol with auto-teach/learn support)",
+        "WAI-State.md (adopt immediately - Updated documentation for new wheel identity fields)",
+        "wai-closeout.md (adopt immediately - Added automatic outbox delivery as Step 1)",
+        "wai-shipit.md (adopt immediately - Integrated QC checks and auto-teach workflow)",
+        "WAI-Events.json (adopt immediately - Added new event types for inbox processing)",
+        "WAI-Startup.json (adopt immediately - Defined skill manifest for startup loading)",
         "WAI-State.json (review merge strategy)"
       ],
       "post_adoption": "Run: WAI sync to process updated structure"
     },
     "for_hub": {
-      "recommended_order": [
-        "WAI-State.json (adopt immediately)",
-        "WAI-State.md (adopt immediately)",
-        "WAI-Guide.md (adopt immediately)",
-        "hub-registry.json (adopt immediately)",
-        "hub-learning-index.md (adopt immediately)",
-        "hub-security-policy.json (adopt immediately)"
-      ],
+      "recommended_order": [],
       "post_adoption": "Run: WAI hub status to verify"
     }
   }

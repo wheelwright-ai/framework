@@ -70,7 +70,36 @@ Persist session state with enough detail that a new agent/session can:
 
 ## Closeout Procedure
 
-### 1. Lug Reconciliation (P6, P7)
+### 1. Distribute Outbox Lugs (P1, Auto-Teach)
+
+**Purpose:** Automatically deliver lugs to their destinations
+
+**Actions:**
+1. Call `deliver_outbox_lugs(project_path, interactive=True)` from `wai.outbox_delivery`
+2. For each lug in `WAI-Spoke/lugs/outbox/`:
+   - Read destination_wheel_id
+   - Resolve destination path (hub registry lookup)
+   - Copy to destination inbox
+   - Create delivery confirmation for hub
+   - Move delivered lug to `outbox/distributed/`
+3. If any destinations unresolved:
+   - Present AskUserQuestion with valid spoke options from hub registry
+   - Update lug destination_wheel_id with user choice
+   - Retry delivery
+4. Display delivery summary:
+   - X lugs delivered to Y spokes
+   - Z lugs skipped (with reasons)
+
+**Failure Handling:**
+- Delivery failures do NOT block closeout
+- Undelivered lugs remain in outbox for next attempt
+- Log all errors for user review
+
+**Note:** This step runs for ALL nodes (spoke, hub, framework). Previously manual `/wai-teach` is now automated.
+
+---
+
+### 2. Lug Reconciliation (P6, P7)
 
 **Review autosave lugs:**
 ```
@@ -87,7 +116,7 @@ WAI-Spoke/WAI-Lugs.jsonl
   - Final state
 - Mark autosave lugs: `reconciled=true`, `s="c"`
 
-### 2. Signal Extraction (P6, P7)
+### 3. Signal Extraction (P6, P7)
 
 **Identify high-impact decisions (impact >= 8):**
 
@@ -98,7 +127,7 @@ WAI-Spoke/WAI-Lugs.jsonl
   - Architectural insights
   - Reusable solutions
 
-### 3. Incomplete Work Capture (P1, P2)
+### 4. Incomplete Work Capture (P1, P2)
 
 **Critical for session continuity.**
 
@@ -110,7 +139,7 @@ Document any unfinished work with enough detail to resume:
 
 Store in session-summary lug and/or `_session_state.next_session_recommendation`.
 
-### 4. Version Increment (P7)
+### 5. Version Increment (P7)
 
 **Bump project state version:**
 
@@ -118,7 +147,7 @@ Store in session-summary lug and/or `_session_state.next_session_recommendation`
 - Increment `wheel.version` patch (e.g., 2.0.1 → 2.0.2)
 - This versions the *session state*, not a release
 
-### 5. State Update (P1)
+### 6. State Update (P1)
 
 **Update session metadata:**
 
@@ -128,14 +157,14 @@ Store in session-summary lug and/or `_session_state.next_session_recommendation`
 - `_session_state.last_modified_at` = current UTC timestamp
 - Write to `WAI-State.json`
 
-### 6. Session Log Clear (P1)
+### 7. Session Log Clear (P1)
 
 **Prepare for next session:**
 
 - Truncate `WAI-Spoke/WAI-Session-Log.jsonl`
 - Insights already extracted to lugs/signals
 
-### 7. Documentation Updates (P7, P8)
+### 8. Documentation Updates (P7, P8)
 
 **Document what's known and can be captured:**
 
@@ -144,7 +173,7 @@ Store in session-summary lug and/or `_session_state.next_session_recommendation`
 - Update any documentation files affected by session work
 - Generate clear, descriptive commit message
 
-### 8. Summary Generation (P2)
+### 9. Summary Generation (P2)
 
 **Create session summary:**
 
@@ -157,7 +186,7 @@ Store in session-summary lug and/or `_session_state.next_session_recommendation`
 
 Present to user before commit.
 
-### 9. Git Commit (P7)
+### 10. Git Commit (P7)
 
 **Persist to repository:**
 
@@ -177,7 +206,7 @@ git commit -m "WAI Session [N]: [accomplishments] | Incomplete: [if any]"
 Push to origin/main? (yes/no)
 ```
 
-### 10. Verification
+### 11. Verification
 
 **Confirm persistence:**
 
@@ -187,41 +216,10 @@ git log --oneline -1              # Verify commit exists
 git log origin/main --oneline -1  # If pushed, verify remote
 ```
 
-### 11. Auto-Teach Distribution (Framework/Hub Only)
-
-**Only for framework/hub nodes:**
-
-This step automatically distributes outbox items to target spokes.
-
-1. **Check outbox for items:**
-   ```
-   WAI-Spoke/lugs/outbox/
-   ```
-   If empty, skip this step.
-
-2. **Read hub-registry.json for active spokes:**
-   ```python
-   from wai.inbox_processor import distribute_outbox
-   result = distribute_outbox(project_path)
-   ```
-
-3. **For each spoke with pending items:**
-   - Copy lug file to spoke's `WAI-Spoke/lugs/inbox/`
-   - Mark original as distributed (move to `outbox/distributed/`)
-
-4. **Report distribution:**
-   - "Distributed X items to Y spokes"
-   - List spoke names that received items
-
-**On failure:** Log warning, continue (don't block closeout)
-
-**Note:** Regular spokes don't run this step. Only framework and hub
-have outbox items destined for other spokes.
-
----
 
 ## Success Criteria
 
+- [ ] Outbox lugs distributed to destinations (Step 1)
 - [ ] Autosave lugs reconciled into permanent record
 - [ ] High-impact signals extracted and flagged for hub
 - [ ] **Incomplete work documented with continuation guidance**
@@ -231,7 +229,7 @@ have outbox items destined for other spokes.
 - [ ] Documentation updated where applicable
 - [ ] Changes committed with descriptive message
 - [ ] User prompted before push
-- [ ] Auto-teach completed (framework/hub only)
+- [ ] Delivery summary displayed (X lugs to Y spokes)
 
 ---
 
