@@ -130,7 +130,49 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
     # Initialize observation logging
     session_id = f"teach-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
     logger = get_logger()
-    
+
+    wai_spoke_templates_dir = framework_path / 'templates' / 'WAI-Spoke'
+    target_wai_spoke_dir = spoke_path / 'WAI-Spoke'
+
+    if not wai_spoke_templates_dir.exists():
+        print_error(f"  Framework templates not found at {wai_spoke_templates_dir}")
+        return False
+
+    # Logic for initialization or update of WAI-Spoke structure
+    if not target_wai_spoke_dir.exists():
+        print_info(f"  [INIT] WAI-Spoke not found in {spoke_path.name}. Initializing bootstrap files...")
+        target_wai_spoke_dir.mkdir(parents=True, exist_ok=True)
+        # Copy all templates for initialization
+        try:
+            for item in wai_spoke_templates_dir.iterdir():
+                if item.is_dir():
+                    shutil.copytree(item, target_wai_spoke_dir / item.name, dirs_exist_ok=True)
+                else:
+                    shutil.copy2(item, target_wai_spoke_dir / item.name)
+            
+            # Also copy top-level integration files from template root if they exist
+            for integration_file in ['CLAUDE.md', 'GEMINI.md', 'README.md']:
+                src_integration = wai_spoke_templates_dir / integration_file
+                if src_integration.exists():
+                    shutil.copy2(src_integration, spoke_path / integration_file)
+
+            print_success(f"  [OK] Successfully initialized WAI-Spoke in {spoke_path.name}")
+        except Exception as e:
+            print_error(f"  [FAIL] Failed to initialize WAI-Spoke: {e}")
+            return False
+    else:
+        print_info(f"  [UPDATE] WAI-Spoke already exists in {spoke_path.name}. Updating with latest template files...")
+        # Update existing structure with latest templates (simple copy-over as requested)
+        try:
+            for item in wai_spoke_templates_dir.iterdir():
+                if item.is_dir():
+                    shutil.copytree(item, target_wai_spoke_dir / item.name, dirs_exist_ok=True)
+                else:
+                    shutil.copy2(item, target_wai_spoke_dir / item.name)
+            print_success(f"  [OK] Successfully updated WAI-Spoke templates in {spoke_path.name}")
+        except Exception as e:
+            print_warning(f"  [WARN] Failed to update some template files: {e}")
+
     # Log plan generation start
     logger.log_observation(
         action_id="teach.plan",
@@ -146,12 +188,7 @@ def distribute_teach_command(spoke_path: Path, hub_path: Optional[Path], framewo
         tags=["teaching"]
     )
     
-    wai_spoke_templates_dir = framework_path / 'templates' / 'WAI-Spoke'
     wai_hub_templates_dir = framework_path / 'templates' / 'HUB'
-    
-    if not wai_spoke_templates_dir.exists():
-        print_error(f"  Framework templates not found at {wai_spoke_templates_dir}")
-        return False
     
     # Determine if hub is being taught (has WAI-Spoke/ structure)
     is_hub_target = hub_path and (hub_path / 'WAI-Spoke').exists() if hub_path else False

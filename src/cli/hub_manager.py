@@ -10,7 +10,7 @@ from datetime import datetime # New import
 # This needs to be resolved based on actual project structure
 # For now, let's assume WAI-Spoke is one level up from cli/src (or where main.py is)
 # or that the framework root is the current working directory.
-WAI_STATE_PATH = "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke/WAI-State.json" # Absolute path
+WAI_STATE_PATH = os.path.join(os.getcwd(), "WAI-Spoke/WAI-State.json") # Absolute path
 
 def _get_wai_state():
     """Reads and returns the content of WAI-State.json."""
@@ -34,7 +34,7 @@ def verify_hub_exists():
     Returns the hub path if found, otherwise None.
     """
     state = _get_wai_state()
-    hub_path = state.get("wheel", {}).get("hub_path")
+    hub_path = state.get("wheelwright", {}).get("hub_path") or state.get("wheel", {}).get("hub_path")
     if hub_path and os.path.isdir(hub_path):
         return hub_path
     return None
