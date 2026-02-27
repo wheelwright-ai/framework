@@ -11,7 +11,7 @@
 When you first receive a message in this project directory, execute the session start protocol:
 
 1. **Load WAI Context**:
-   - Read `WAI-Spoke/WAI-AI-ONBOARDING.md` (AI quick start guide)
+   - Read `WAI-Spoke/reference/WAI-AI-ONBOARDING.md` (AI quick start guide)
    - Read `WAI-Spoke/WAI-Guide.md` (full project instructions)
    - Read `WAI-Spoke/WAI-State.json` (project state, decisions)
    - Read `WAI-Spoke/WAI-State.md` (strategic vision)
@@ -174,7 +174,7 @@ See **WAI-MERGE-PROTOCOLS.md** for detailed merge guidance.
 Project name, goals, and current phase are in **WAI-State.json**.
 
 Key files to load on session start:
-- `WAI-Spoke/WAI-AI-ONBOARDING.md` - AI quick start
+- `WAI-Spoke/reference/WAI-AI-ONBOARDING.md` - AI quick start
 - `WAI-Spoke/WAI-Guide.md` - Full project instructions
 - `WAI-Spoke/WAI-State.json` - Current project state
 - `WAI-Spoke/WAI-State.md` - Strategic vision

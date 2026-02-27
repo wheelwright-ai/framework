@@ -44,7 +44,9 @@
       "Bash(/tmp/upgrade-archive-spoke.sh \"/home/mario/projects/_archive/$proj\")",
       "Bash(done)",
       "Bash(xargs dirname:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(::*)",
+      "Bash(pip3 list:*)"
     ]
   }
 }

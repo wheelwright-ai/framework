@@ -21,17 +21,15 @@ Execute this on first message:
 
    **This is AUTOMATIC** - briefing displays first thing, before any other action.
 
-2. **Verify Machine Optimization** (Automatic at startup):
-   The system automatically checks and applies IDE optimizations for the current machine.
-   Machine profile stored in `../hub/machines/{hostname}.lug.json` includes:
+2. **Verify Machine Optimization** (When available):
+   If machine profile exists at `../hub/machines/{hostname}.lug.json`, the system
+   checks and applies IDE optimizations. Profile includes:
    - Hardware specs (CPU, RAM, GPU)
    - Classification (high-performance/standard/low-power)
    - IDE settings recommendations
-   - Optimization history
 
-   **You'll see:** `✓ IDE optimized for {machine} ({classification})`
-
-   This ensures you're running with optimal settings for the hardware available.
+   **If configured, you'll see:** `✓ IDE optimized for {machine} ({classification})`
+   **If not configured:** Skip this step — machine optimization is optional.
 
 3. **Validate Session State** (Closeout Verification):
    ```bash

@@ -287,8 +287,14 @@ def execute_adoptions(
             
             content = ingest_file.read_text(encoding='utf-8')
             
-            # Determine target path
+            # Determine target path with traversal protection
             target_path = spoke_path / file_entry.get('path', file_name)
+            try:
+                target_path.resolve().relative_to(spoke_path.resolve())
+            except ValueError:
+                print_error(f"  ✗ Path traversal detected: {file_entry.get('path', file_name)}")
+                error_count += 1
+                continue
             target_path.parent.mkdir(parents=True, exist_ok=True)
             
             # Write to final location

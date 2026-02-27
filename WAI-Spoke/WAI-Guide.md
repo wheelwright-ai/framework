@@ -1,8 +1,12 @@
 # Wheelwright Framework Guide
 
+> **Note:** This guide is a legacy reference document. Authoritative behavioral rules now live in
+> skill files (templates/commands/*.md). CLAUDE.md and GEMINI.md are the primary entry points
+> for AI assistants. This file is retained for context and strategic reference.
+
 **For Humans:** This project uses Wheelwright for AI-assisted development with continuous context across sessions.
 
-**For AI Assistants:** Read the sections below BEFORE making any changes to this project.
+**For AI Assistants:** Start with CLAUDE.md or GEMINI.md, not this file.
 
 ---
 
@@ -65,7 +69,7 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 |------|---------|-------------|
 | `WAI-State.json` | Technical spec, foundation, session state | UPDATE |
 | `WAI-State.md` | Strategic context, vision | UPDATE |
-| `wheel-signals.jsonl` | High-impact learnings | APPEND (never overwrite) |
+| `WAI-Signals.jsonl` | High-impact learnings | APPEND (never overwrite) |
 | `kb-sync.json` | Hub sync status | READ ONLY |
 | `WAI-Guide.md` (this file) | Your instructions | READ ONLY |
 
@@ -437,12 +441,12 @@ When you make a decision with **impact >= 8**, share it:
 }
 ```
 
-### 2. Append to wheel-signals.jsonl
+### 2. Append to WAI-Signals.jsonl
 ```json
 {"timestamp": "ISO-8601", "by": "AI-Name", "hub_kb_version": "...", "wheel_kb_version": "...", "offers": [{"type": "pattern_type", "topic": "Brief title", "impact": 8, "context": "Why this matters"}], "requests": [], "flags": {"has_high_impact_learnings": true}}
 ```
 
-**IMPORTANT:** Append only, never overwrite wheel-signals.jsonl!
+**IMPORTANT:** Append only, never overwrite WAI-Signals.jsonl!
 
 ### What to Signal
 - Architectural breakthroughs

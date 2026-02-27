@@ -43,13 +43,13 @@
     {
       "name": "wai-teach",
       "file": "wai-teach.md",
-      "description": "Pull learnings from hub",
+      "description": "Push templates and lugs to spokes",
       "aliases": ["Teach", "teach"]
     },
     {
       "name": "wai-learn",
       "file": "wai-learn.md",
-      "description": "Push signals to hub",
+      "description": "Auto-process inbox on wakeup",
       "aliases": ["Learn", "learn"]
     },
     {

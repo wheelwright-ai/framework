@@ -1,21 +1,42 @@
+import json
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 
-from wai.closeout import CloseoutProcessor
-from wai.init import init_spoke
+from wai.closeout import CloseoutWorkflow
 
 
-def test_closeout_processes_seed_cleanup(tmp_path: Path) -> None:
+def test_generate_session_id() -> None:
+    with patch('wai.closeout.get_logger'), \
+         patch('wai.closeout.get_config'), \
+         patch('wai.closeout.create_git_ops'):
+        workflow = CloseoutWorkflow(repo_path="/tmp/fake")
+    assert workflow.session_id.startswith("closeout-")
+    assert len(workflow.session_id) > len("closeout-")
+
+
+def test_find_spoke_path(tmp_path: Path) -> None:
     project_dir = tmp_path / "project"
-    project_dir.mkdir()
-    init_spoke(project_dir, is_framework=False, verbose=False)
-
     wai_spoke = project_dir / "WAI-Spoke"
-    seed_ingest = wai_spoke / "seed" / "ingest"
-    seed_ingest.mkdir(parents=True, exist_ok=True)
-    (seed_ingest / "notes.md").write_text("Seeded notes")
+    wai_spoke.mkdir(parents=True)
 
-    processor = CloseoutProcessor(project_dir)
-    results = processor.process_closeout(interactive=False)
+    with patch('wai.closeout.get_logger'), \
+         patch('wai.closeout.get_config'), \
+         patch('wai.closeout.create_git_ops'):
+        workflow = CloseoutWorkflow(repo_path=str(project_dir))
+    result = workflow._find_spoke_path()
+    assert result == wai_spoke
 
-    assert "steps_completed" in results
-    assert not (seed_ingest / "notes.md").exists()
+
+def test_find_spoke_path_not_found(tmp_path: Path) -> None:
+    empty_dir = tmp_path / "empty"
+    empty_dir.mkdir()
+
+    with patch('wai.closeout.get_logger'), \
+         patch('wai.closeout.get_config'), \
+         patch('wai.closeout.create_git_ops'):
+        workflow = CloseoutWorkflow(repo_path=str(empty_dir))
+    try:
+        workflow._find_spoke_path()
+        assert False, "Should have raised RuntimeError"
+    except RuntimeError as e:
+        assert "WAI-Spoke not found" in str(e)
