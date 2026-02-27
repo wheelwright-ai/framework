@@ -141,7 +141,6 @@ class TeachingManager:
     @staticmethod
     def _create_signature(content: str, hub_fingerprint: str) -> str:
         """Create HMAC signature of content using hub fingerprint as key."""
-        import hmac
         sig = hmac.new(
             hub_fingerprint.encode(),
             content.encode(),

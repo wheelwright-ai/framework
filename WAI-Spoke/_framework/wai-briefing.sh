@@ -29,8 +29,8 @@ generate_wai_briefing() {
 
   # Context Health
   local token_pct=$(jq -r '._session_state.context_usage_at_closeout // 0 | . * 100 | floor' "$STATE_FILE" 2>/dev/null || echo "0")
-  local last_teach=$(jq -r '.wheelwright.sync_history[-1].date // "never"' "$STATE_FILE" 2>/dev/null || echo "never")
-  local hub_connected=$(jq -r '.wheelwright.hub_path // ""' "$STATE_FILE")
+  local last_teach=$(jq -r '(.wheelwright.sync_history[-1].date // .wheel.sync_history[-1].date) // "never"' "$STATE_FILE" 2>/dev/null || echo "never")
+  local hub_connected=$(jq -r '(.wheel.hub_path // .wheelwright.hub_path) // ""' "$STATE_FILE")
   [[ -n "$hub_connected" ]] && hub_status="✓ Connected" || hub_status="⚠ Not connected"
 
   # Git Status

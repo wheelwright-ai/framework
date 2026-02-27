@@ -34,19 +34,22 @@
     }
   },
   "_project_foundation": {
-    "completed": false,
-    "completed_at": null,
-    "completed_with": null,
+    "source_lug": "lug-fnd-f0aa32c5",
+    "version": 1,
+    "cached_at": "2026-02-27T21:35:13+00:00",
+    "completed": true,
+    "completed_at": "2026-02-27T21:35:13+00:00",
+    "completed_with": "Claude Opus 4.6",
     "identity": {
-      "type": null,
-      "name": null,
-      "one_liner": null,
-      "success_looks_like": null
+      "type": "code",
+      "name": "Wheelwright Framework",
+      "one_liner": "AI session continuity framework - persistent context, structured memory (lugs), and hub-spoke knowledge distribution. This repo is both the framework source AND a live spoke that uses itself.",
+      "success_looks_like": "Any AI assistant can wake up on any project, know what happened before, and pick up where the last session left off - across tools, machines, and time"
     },
     "boundaries": {
-      "in_scope": [],
-      "out_of_scope": [],
-      "constraints": []
+      "in_scope": ["Session state management and closeout protocol", "Lug authoring, storage, and versioning", "Teach/learn distribution pipeline", "Hub-spoke architecture and registry", "Skill system (behavioral rules as files)", "Multi-AI support (Claude, Gemini, etc.)", "CLI tooling (WAI command)", "Dogfooding - this repo uses its own WAI-Spoke for session continuity"],
+      "out_of_scope": ["Being an AI itself", "Replacing IDE functionality", "Project-specific business logic", "Hosting or cloud infrastructure"],
+      "constraints": ["Must work across AI tools - not locked to one provider", "Lugs must be human-readable (JSONL)", "Framework must be lightweight - no heavy dependencies", "Python + bash + git as core stack", "Self-hosting: framework repo plays by its own rules via WAI-Spoke/"]
     },
     "approach": {
       "stack_or_tools": [],

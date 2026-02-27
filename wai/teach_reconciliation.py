@@ -4,7 +4,6 @@ import json
 import shutil
 from datetime import datetime, timezone
 from wai.hub import HubManager # For Hub fingerprint verification
-# from ..utils.input import print_info, print_success, print_error, print_warning # Implicitly used by print() in dummy functions
 
 # Constants for ingest and processed directories - these should ideally be in a config file
 TEACH_INGEST_DIR = "WAI-Spoke/seed/ingest"

@@ -27,7 +27,7 @@ mkdir -p "$SPOKE_DIR"
 
 # Configure Spoke to point to Hub
 STATE_FILE="$SPOKE_DIR/WAI-Spoke/WAI-State.json"
-jq --arg hub "$HUB_DIR" '.wheelwright.hub_path = $hub' "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
+jq --arg hub "$HUB_DIR" '.wheel.hub_path = $hub' "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
 
 # 3. Add High Impact Signal
 echo "Adding Signal..."
