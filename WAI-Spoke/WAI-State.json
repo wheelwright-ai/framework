@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.6",
+    "version": "2.0.7",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -47,9 +47,29 @@
       "success_looks_like": "Any AI assistant can wake up on any project, know what happened before, and pick up where the last session left off - across tools, machines, and time"
     },
     "boundaries": {
-      "in_scope": ["Session state management and closeout protocol", "Lug authoring, storage, and versioning", "Teach/learn distribution pipeline", "Hub-spoke architecture and registry", "Skill system (behavioral rules as files)", "Multi-AI support (Claude, Gemini, etc.)", "CLI tooling (WAI command)", "Dogfooding - this repo uses its own WAI-Spoke for session continuity"],
-      "out_of_scope": ["Being an AI itself", "Replacing IDE functionality", "Project-specific business logic", "Hosting or cloud infrastructure"],
-      "constraints": ["Must work across AI tools - not locked to one provider", "Lugs must be human-readable (JSONL)", "Framework must be lightweight - no heavy dependencies", "Python + bash + git as core stack", "Self-hosting: framework repo plays by its own rules via WAI-Spoke/"]
+      "in_scope": [
+        "Session state management and closeout protocol",
+        "Lug authoring, storage, and versioning",
+        "Teach/learn distribution pipeline",
+        "Hub-spoke architecture and registry",
+        "Skill system (behavioral rules as files)",
+        "Multi-AI support (Claude, Gemini, etc.)",
+        "CLI tooling (WAI command)",
+        "Dogfooding - this repo uses its own WAI-Spoke for session continuity"
+      ],
+      "out_of_scope": [
+        "Being an AI itself",
+        "Replacing IDE functionality",
+        "Project-specific business logic",
+        "Hosting or cloud infrastructure"
+      ],
+      "constraints": [
+        "Must work across AI tools - not locked to one provider",
+        "Lugs must be human-readable (JSONL)",
+        "Framework must be lightweight - no heavy dependencies",
+        "Python + bash + git as core stack",
+        "Self-hosting: framework repo plays by its own rules via WAI-Spoke/"
+      ]
     },
     "approach": {
       "stack_or_tools": [],
@@ -70,13 +90,13 @@
   },
   "_session_state": {
     "last_session_id": null,
-    "last_modified_by": null,
-    "last_modified_at": null,
-    "last_closeout": null,
-    "session_count": 0,
+    "last_modified_by": "Claude Opus 4.6",
+    "last_modified_at": "2026-02-27T22:01:05.781618+00:00",
+    "last_closeout": "2026-02-27T22:01:05.781618+00:00",
+    "session_count": 1,
     "current_session": null,
-    "protocol_completed": false,
-    "next_session_recommendation": "Test auto-delivery: 2 lugs delivered to hub (upgrade plan + phone-home response). Broadcast signal (* destination) needs hub-side implementation. Hub can now distribute upgrade plan to all 13 active spokes.",
+    "protocol_completed": true,
+    "next_session_recommendation": "Backlog clean of bugs. Next: 4 review tasks (test coverage, architecture, security, docs) or feature work (skill registry E1-E7, hub templates, unified teach/learn).",
     "requires_review": false,
     "review_reason": null
   },
@@ -255,8 +275,8 @@
     "_note": "Registry of environments that have worked on this project. Auto-populated by closeout."
   },
   "meta": {
-    "total_sessions": 0,
+    "total_sessions": 1,
     "total_turns": 0,
-    "last_closeout": null
+    "last_closeout": "2026-02-27T22:01:05.781618+00:00"
   }
 }
