@@ -46,7 +46,12 @@
       "Bash(xargs dirname:*)",
       "Bash(python3:*)",
       "Bash(::*)",
-      "Bash(pip3 list:*)"
+      "Bash(pip3 list:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)"
     ]
   }
 }
