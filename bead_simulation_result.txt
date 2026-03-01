@@ -1,4 +1,0 @@
-Running _finalize_closeout...
-       recorded session bead
-Finalize executed.
-Failure: lug-sessions.jsonl not found.

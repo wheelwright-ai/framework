@@ -1,2 +1,0 @@
-[main 9fd3c83] feat(cli): polish output with pretty json, markdown, and updated terminology
- 3 files changed, 111 insertions(+), 66 deletions(-)
