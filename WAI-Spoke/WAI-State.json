@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.7",
+    "version": "2.0.8",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -89,16 +89,20 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": null,
-    "last_modified_by": "Claude Opus 4.6",
-    "last_modified_at": "2026-02-27T22:01:05.781618+00:00",
-    "last_closeout": "2026-02-27T22:01:05.781618+00:00",
-    "session_count": 1,
-    "current_session": null,
+    "last_session_id": "session-20260302-closeout",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-02T19:19:53Z",
+    "last_closeout": "2026-03-02T19:19:53Z",
+    "session_count": 2,
+    "current_session": {
+      "session_id": "session-20260302-closeout",
+      "started_at": "2026-03-02T19:19:53Z"
+    },
     "protocol_completed": true,
-    "next_session_recommendation": "Backlog clean of bugs. Next: 4 review tasks (test coverage, architecture, security, docs) or feature work (skill registry E1-E7, hub templates, unified teach/learn).",
+    "next_session_recommendation": "1. Close epic-slimdown-20260227 lug. 2. Add .claude/commands/ sync step to wai-shipit. 3. Add CRLF note to wai-ide-setup.md.",
     "requires_review": false,
-    "review_reason": null
+    "review_reason": null,
+    "protocol_last_run": "2026-03-01T02:04:25Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

@@ -46,3 +46,35 @@ Quality gate: pause work, inspect last 10 autosave checkpoints, assess crash rec
    ```
 
 7. **Pause** — wait for user response or Green Light.
+
+## Context
+
+### Autosave Protocol
+
+After each significant action, an autosave lug is appended to WAI-Lugs.jsonl:
+- Editing or creating a file
+- Making an architectural/design decision
+- Completing a sub-task
+- Before asking a clarifying question
+- Switching context
+
+**Autosave Lug Schema:**
+```json
+{
+  "i": "as-{12-char-hex}",
+  "ty": "autosave",
+  "s": "o",
+  "autosave": true,
+  "reconciled": false,
+  "session_id": "...",
+  "seq": 1,
+  "title": "Brief: what was just done",
+  "task_context": "Parent task being worked on",
+  "action_taken": "What AI did in this turn",
+  "current_state": "Where we are in the task",
+  "what_remains": "What's left to complete",
+  "files_touched": ["list", "of", "files"],
+  "completion_estimate": "25%",
+  "next_step": "Exactly what to do next"
+}
+```

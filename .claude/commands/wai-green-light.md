@@ -21,3 +21,11 @@ Resume execution from last autosave checkpoint.
    ```
 
 3. **Continue execution** — proceed with next_step immediately.
+
+## Context
+
+### Wakeup Detection
+
+On session start, if unreconciled autosave lugs exist (ty=autosave, reconciled=false), the briefing shows an "Incomplete Work" section with count, task context, and progress estimate. Options presented: Resume (Green Light) / Inspect (Red Light) / Continue without.
+
+See `wai-red-light.md` for the autosave lug schema.
