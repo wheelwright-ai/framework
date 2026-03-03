@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.8",
+    "version": "2.0.9",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -89,20 +89,20 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260302-closeout",
+    "last_session_id": "session-20260303-closeout",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-02T19:19:53Z",
-    "last_closeout": "2026-03-02T19:19:53Z",
-    "session_count": 2,
+    "last_modified_at": "2026-03-03T08:48:35Z",
+    "last_closeout": "2026-03-03T08:48:35Z",
+    "session_count": 3,
     "current_session": {
-      "session_id": "session-20260302-closeout",
-      "started_at": "2026-03-02T19:19:53Z"
+      "session_id": "session-20260303-closeout",
+      "started_at": "2026-03-03T08:48:35Z"
     },
     "protocol_completed": true,
-    "next_session_recommendation": "1. Close epic-slimdown-20260227 lug. 2. Add .claude/commands/ sync step to wai-shipit. 3. Add CRLF note to wai-ide-setup.md.",
+    "next_session_recommendation": "1. Add .claude/commands/ sync step to wai-shipit (Session 12 signal [9]). 2. Add CRLF note to wai-ide-setup.md (Session 12 signal [8]). 3. Pick up hub-deliver tasks (upgrade-adoption-plan, inbox/outbox dirs, teach routing).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-01T02:04:25Z"
+    "protocol_last_run": "2026-03-03T07:23:59Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

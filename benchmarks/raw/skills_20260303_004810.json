@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-03-03T00:48:10.905031",
+  "benchmarks": [
+    {
+      "name": "Wakeup simulation",
+      "description": "Read WAI-State.json + query open lugs",
+      "median_ms": 5.445,
+      "min_ms": 5.019,
+      "max_ms": 7.555,
+      "result": "project='Wheelwright', open_lugs=9"
+    },
+    {
+      "name": "Skill loading",
+      "description": "Read 23 skill files, count sections",
+      "median_ms": 51.424,
+      "min_ms": 48.7,
+      "max_ms": 56.097,
+      "result": "23 skills, 3123 lines, 161 sections"
+    },
+    {
+      "name": "Session detection",
+      "description": "Read state, detect new session vs continuation",
+      "median_ms": 2.124,
+      "min_ms": 1.91,
+      "max_ms": 2.572,
+      "result": "new_session=True, protocol_done=True"
+    },
+    {
+      "name": "Teach preparation",
+      "description": "Enumerate skills, build distribution manifest",
+      "median_ms": 60.549,
+      "min_ms": 56.412,
+      "max_ms": 73.714,
+      "result": "23 skills, 83.8KB total"
+    },
+    {
+      "name": "Lug query performance",
+      "description": "Filter 111 lugs by status / type / impact",
+      "queries": {
+        "status_filter_ms": 1.034,
+        "type_filter_ms": 1.019,
+        "impact_filter_ms": 0.997
+      },
+      "result": "111 lugs: 9 open, 3 tasks, 67 high-impact"
+    }
+  ],
+  "architecture_comparison": {
+    "old_architecture": {
+      "description": "Python wai/ module (~55K lines) + wai-briefing.sh bash script",
+      "runtime_required": true,
+      "install_required": true,
+      "estimated_load_time_ms": "200-500ms (Python import)"
+    },
+    "new_architecture": {
+      "description": "Skills (markdown) + Lugs (JSONL) \u2014 read by agent directly",
+      "runtime_required": false,
+      "install_required": false,
+      "context_files_kb": 226.5,
+      "skills": 23
+    }
+  }
+}
