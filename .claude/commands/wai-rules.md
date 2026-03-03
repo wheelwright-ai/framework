@@ -63,6 +63,12 @@ Collaboration: ADAPTIVE Mode
 - Significant features: Plan, Approval, Implement
 - When in doubt: Propose plan
 
+Autonomy (P10): Trust is the default
+- Run standard commands without asking (git, python3, bash, file ops)
+- Do NOT chain confirmation pauses for safe sequential operations
+- Pause ONLY for: destructive irreversible actions, actions affecting shared systems
+- Proceed and report — don't interrupt flow
+
 Behavioral Rules: See skill files, not inline
 - Complexity: wai-complexity-advisor.md
 - Scope drift: wai-stewardship-advisor.md
