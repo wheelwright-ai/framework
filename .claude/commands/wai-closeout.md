@@ -209,9 +209,9 @@ This versions the *session state*, not a release.
 
 Present to user before commit.
 
-### 9. Git Commit
+### 9. Git Commit + Push
 
-**Persist to repository:**
+**Persist to repository and push — always.**
 
 ```bash
 git add WAI-Spoke/
@@ -224,10 +224,12 @@ git status  # Review what's staged
 git commit -m "WAI Session [N]: [accomplishments] | Incomplete: [if any]"
 ```
 
-**Ask before push:**
+**Push immediately after commit (no confirmation needed):**
+```bash
+git push origin main
 ```
-Push to origin/main? (yes/no)
-```
+
+Push is mandatory. Do not ask. P10: Trust is the default.
 
 ### 10. Verification
 
@@ -236,6 +238,7 @@ Push to origin/main? (yes/no)
 ```bash
 git status                        # Must be clean
 git log --oneline -1              # Verify commit exists
+git log --oneline origin/main..HEAD  # Must show no commits ahead
 ```
 
 ---
@@ -250,7 +253,7 @@ git log --oneline -1              # Verify commit exists
 - [ ] Session log cleared
 - [ ] Documentation updated where applicable
 - [ ] Changes committed with descriptive message
-- [ ] User prompted before push
+- [ ] Changes pushed to origin/main
 
 ---
 

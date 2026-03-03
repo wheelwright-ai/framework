@@ -51,7 +51,8 @@
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(mv:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(yes:*)"
     ]
   }
 }

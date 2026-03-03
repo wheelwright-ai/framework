@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.10",
+    "version": "2.0.11",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,18 +91,18 @@
   "_session_state": {
     "last_session_id": "session-20260303-p10",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-03T11:34:53Z",
-    "last_closeout": "2026-03-03T11:34:53Z",
-    "session_count": 4,
+    "last_modified_at": "2026-03-03T17:57:44Z",
+    "last_closeout": "2026-03-03T17:57:44Z",
+    "session_count": 5,
     "current_session": {
       "session_id": "session-20260303-p10",
       "started_at": "2026-03-03T11:34:53Z"
     },
     "protocol_completed": true,
-    "next_session_recommendation": "1. wai-shipit: add .claude/commands/ sync step (signal [9]). 2. wai-ide-setup: add CRLF note (signal [8]). 3. Hub-deliver tasks: upgrade-adoption-plan, inbox/outbox dirs, teach routing fix.",
+    "next_session_recommendation": "Push is now mandatory on closeout (P10). Pending: hub-deliver tasks (build upgrade-adoption-plan.json, lugs/inbox+outbox dirs, teach lug routing fix).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-03T11:34:12Z"
+    "protocol_last_run": "2026-03-03T12:04:15Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

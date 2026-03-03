@@ -200,6 +200,17 @@ If briefing doesn't appear:
 - Check settings.json has correct hook path
 - Verify WAI-Spoke/WAI-State.json exists
 
+**Hook exits with code 2 or `/r': command not found` errors?**
+
+This is a CRLF line-ending issue — the hook was written on Windows and bash can't parse `\r\n` endings.
+
+Fix:
+```bash
+sed -i 's/\r//' .claude/hooks/user-prompt-submit.sh
+```
+
+Root cause: Any file created or edited on Windows (even via WSL2 path) may have `\r\n` line endings. Always run the sed fix after copying hook files from Windows paths.
+
 ---
 
 ## CLAUDE.md and GEMINI.md as Thin Pointers

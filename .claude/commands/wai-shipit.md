@@ -32,7 +32,7 @@ Verify this version is ready to ship to users.
 
 ## Follow-ons
 
-- Push to remote (if shipit passes)
+- Push to remote (always — closeout handles this automatically)
 - `/wai-teach` — Distribute to spokes (if framework)
 - Deploy to production (if applicable)
 - Announce release (if public)
@@ -76,7 +76,21 @@ Confirm the current state meets quality standards before release:
 
 ## Shipit Procedure
 
-### 1. File Hygiene & Maintenance (FIRST)
+### 1. Sync `.claude/commands/` (FRAMEWORK ONLY)
+
+**If running from the framework repo: keep IDE skills in sync with canonical templates.**
+
+```bash
+yes | cp templates/commands/wai*.md .claude/commands/
+```
+
+This prevents the two-copy problem: `templates/commands/` is canonical; `.claude/commands/` is what Claude Code reads. They must match.
+
+**Skip this step** if not running from the framework repo (spokes have no `.claude/commands/`).
+
+---
+
+### 2. File Hygiene & Maintenance
 
 **AI tends to create sprawl. Clean it up before validation.**
 
@@ -117,7 +131,7 @@ File Hygiene Report:
 
 ---
 
-### 2. Breaking Change Detection (P3)
+### 3. Breaking Change Detection (P3)
 
 **Identify changes that could break existing users.**
 
@@ -147,7 +161,7 @@ Breaking Changes Detected:
 
 ---
 
-### 3. Dependency Audit (P4)
+### 4. Dependency Audit (P4)
 
 **Verify dependencies are secure and current.**
 
@@ -182,25 +196,25 @@ Dependency Audit:
 
 ---
 
-### 4. Quality Gates (P3, P4)
+### 5. Quality Gates (P3, P4)
 
 **All quality checks must pass.**
 
-#### 4a. Test Execution
+#### 5a. Test Execution
 ```bash
 pytest -v  # or project test command
 ```
 - **100% of tests must pass**
 - Report any failures with details
 
-#### 4b. Coverage Check
+#### 5b. Coverage Check
 ```bash
 pytest --cov=. --cov-report=term-missing
 ```
 - Check against coverage threshold (if defined)
 - Report uncovered critical paths
 
-#### 4c. Linting & Type Checking
+#### 5c. Linting & Type Checking
 ```bash
 ruff check .  # or flake8, pylint
 mypy .        # if using type hints
@@ -221,7 +235,7 @@ Quality Gates:
 
 ---
 
-### 5. Benchmark Execution (P5)
+### 6. Benchmark Execution (P5)
 
 **Run performance benchmarks (if available).**
 
@@ -247,7 +261,7 @@ Benchmarks:
 
 ---
 
-### 6. Documentation Updates (P7, P8)
+### 7. Documentation Updates (P7, P8)
 
 **Document what's known and can be captured.**
 
@@ -273,7 +287,7 @@ Documentation:
 
 ---
 
-### 7. Pre-Ship Summary
+### 8. Pre-Ship Summary
 
 **Before executing closeout, present full report:**
 
@@ -310,7 +324,7 @@ Documentation:
 
 ---
 
-### 8. Execute Closeout
+### 9. Execute Closeout
 
 **Only after all checks pass:**
 
@@ -323,12 +337,12 @@ Run full `/wai-closeout` protocol:
 6. Session log clear
 7. Documentation finalization
 8. Summary generation
-9. Git commit
+9. Git commit + push (mandatory)
 10. Verification
 
 ---
 
-### 9. Teach All Spokes (Auto)
+### 10. Teach All Spokes (Auto)
 
 **After successful closeout, distribute updates to all spokes.**
 
