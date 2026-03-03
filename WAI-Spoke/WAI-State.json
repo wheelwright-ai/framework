@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.9",
+    "version": "2.0.10",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -89,20 +89,20 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260303-closeout",
+    "last_session_id": "session-20260303-p10",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-03T08:48:35Z",
-    "last_closeout": "2026-03-03T08:48:35Z",
-    "session_count": 3,
+    "last_modified_at": "2026-03-03T11:34:53Z",
+    "last_closeout": "2026-03-03T11:34:53Z",
+    "session_count": 4,
     "current_session": {
-      "session_id": "session-20260303-closeout",
-      "started_at": "2026-03-03T08:48:35Z"
+      "session_id": "session-20260303-p10",
+      "started_at": "2026-03-03T11:34:53Z"
     },
     "protocol_completed": true,
-    "next_session_recommendation": "1. Add .claude/commands/ sync step to wai-shipit (Session 12 signal [9]). 2. Add CRLF note to wai-ide-setup.md (Session 12 signal [8]). 3. Pick up hub-deliver tasks (upgrade-adoption-plan, inbox/outbox dirs, teach routing).",
+    "next_session_recommendation": "1. wai-shipit: add .claude/commands/ sync step (signal [9]). 2. wai-ide-setup: add CRLF note (signal [8]). 3. Hub-deliver tasks: upgrade-adoption-plan, inbox/outbox dirs, teach routing fix.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-03T07:23:59Z"
+    "protocol_last_run": "2026-03-03T11:34:12Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
