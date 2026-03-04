@@ -20,6 +20,7 @@ learn = PULL (passive, automatic on wakeup)
 - After completing work worth sharing (impact >= 8)
 - After updating skills or protocols in `templates/commands/`
 - To deliver lugs from your outbox to a target spoke or hub
+- To initialize a new project as a spoke (auto-detects and creates structure)
 - When hub sync is > 7 days old (flagged in wakeup briefing)
 
 ---
@@ -27,6 +28,8 @@ learn = PULL (passive, automatic on wakeup)
 ## Concept
 
 Teaching is the act of **pushing what you know to another node**. The sender (you) places files and lugs into the target's inbox. The target learns them automatically on their next wakeup.
+
+**Auto-detects spoke status**: If the target directory is not a spoke (no `WAI-Spoke/WAI-State.json`), teaching automatically initializes it with the complete spoke template structure before distributing files.
 
 ```
 YOUR NODE                           TARGET NODE
@@ -115,7 +118,185 @@ After teaching, update the hub registry (`hub-registry.json`) to record the teac
 
 ---
 
+## Spoke Detection
+
+Before teaching, determine if target is a spoke:
+
+### Detection Steps
+
+1. **Get target path**:
+   - From `WAI-State.json` → `wheel.hub_path` (when teaching hub)
+   - Or user-provided target path (when teaching a spoke)
+
+2. **Check for spoke marker**:
+   ```bash
+   if [ -f "$target_path/WAI-Spoke/WAI-State.json" ]; then
+     # Is a spoke - proceed to teach
+   else
+     # Not a spoke - initialize first
+   fi
+   ```
+
+### Detection Decision Tree
+
+| Condition | Action |
+|-----------|--------|
+| `target_path/WAI-Spoke/WAI-State.json` exists | Proceed to [Teach Protocol Steps](#teach-protocol-steps) |
+| Target directory exists but no WAI-Spoke/ | Proceed to [Spoke Initialization](#spoke-initialization) |
+| Target directory does not exist | Ask user: "Target path does not exist. Create it?" |
+
+---
+
+## Spoke Initialization
+
+When target is not a spoke, initialize it from `templates/spoke/` template.
+
+### Init Steps
+
+#### 1. Identify Framework Path
+
+Determine where the `templates/` directory lives:
+
+```bash
+# Check current WAI-State.json for framework path
+framework_path=$(jq -r '.wheelwright.framework_path' WAI-Spoke/WAI-State.json)
+
+# If null, prompt user
+if [ "$framework_path" == "null" ]; then
+  echo "Framework path not found in WAI-State.json"
+  echo "Enter path to Wheelwright framework (where templates/ lives):"
+  read framework_path
+fi
+```
+
+#### 2. Initialize Spoke Structure
+
+Copy the complete spoke template to target:
+
+```bash
+# Copy all files including hidden files
+cp -r "$framework_path/templates/spoke/"* "$target_path/"
+cp -r "$framework_path/templates/spoke/".* "$target_path/" 2>/dev/null || true
+
+# Create required directories if missing
+mkdir -p "$target_path/WAI-Spoke/seed/ingest"
+mkdir -p "$target_path/WAI-Spoke/lugs/inbox"
+mkdir -p "$target_path/WAI-Spoke/lugs/outbox"
+mkdir -p "$target_path/WAI-Spoke/sessions"
+```
+
+#### 3. Configure WAI-State.json with Smart Defaults
+
+Update the target's `WAI-Spoke/WAI-State.json`:
+
+```bash
+# Extract smart defaults
+project_name=$(basename "$target_path")
+framework_version=$(jq -r '.wheel.version' WAI-Spoke/WAI-State.json)
+spoke_id=$(echo -n "$project_name" | sha256sum | cut -c1-12)
+
+# Check if it's a git repo
+if [ -d "$target_path/.git" ]; then
+  repo_url=$(cd "$target_path" && git remote get-url origin 2>/dev/null || echo "unknown")
+else
+  repo_url=null
+fi
+
+# Update target WAI-State.json
+jq --arg name "$project_name" \
+   --arg version "$framework_version" \
+   --arg spoke_id "$spoke_id" \
+   --arg repo "$repo_url" \
+   '.wheel.name = $name |
+    .wheel.version = $version |
+    .wheel.spoke_id = $spoke_id |
+    .wheel.repository = $repo' \
+   "$target_path/WAI-Spoke/WAI-State.json" > "$target_path/WAI-Spoke/WAI-State.json.tmp" \
+   && mv "$target_path/WAI-Spoke/WAI-State.json.tmp" "$target_path/WAI-Spoke/WAI-State.json"
+```
+
+#### 4. Prompt for Hub Path
+
+Ask user where the hub is located (needed for registration):
+
+```bash
+echo "Enter hub path for this spoke:"
+echo "(Example: /home/user/projects/wheelwright-hub)"
+read hub_path
+```
+
+#### 5. Register Spoke in Hub Registry
+
+Load the hub's registry and add the new wheel:
+
+```bash
+hub_registry="$hub_path/hub-registry.json"
+
+# Generate unique wheel ID
+wheel_id="$project_name"
+timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# Add wheel entry to registry
+jq --arg wheel_id "$wheel_id" \
+   --arg spoke_id "$spoke_id" \
+   --arg path "$target_path" \
+   --arg timestamp "$timestamp" \
+   --arg version "$framework_version" \
+   '.wheels += [{
+     "wheel_id": $wheel_id,
+     "spoke_id": $spoke_id,
+     "path": $path,
+     "status": "active",
+     "taught_at": $timestamp,
+     "taught_version": $version,
+     "last_sync": $timestamp,
+     "learnings_contributed": 0,
+     "signals_received": [],
+     "adoptions": [],
+     "module_adoption": {
+       "lugs": "2.0",
+       "registry": "3.0",
+       "teach": "1.0"
+     },
+     "pending_contributions": {},
+     "adoption_lag": {
+       "behind_modules": [],
+       "missing_modules": []
+     }
+   }] |
+   .statistics.total_wheels += 1 |
+   .statistics.active_wheels += 1 |
+   .statistics.last_teach = $timestamp' \
+   "$hub_registry" > "$hub_registry.tmp" \
+   && mv "$hub_registry.tmp" "$hub_registry"
+```
+
+### Post-Init Confirmation
+
+After initialization, present confirmation:
+
+```
+## Spoke Initialized ✓
+
+Created: /path/to/target
+- Name: [directory_name]
+- Spoke ID: [spoke_id]
+- Hub: [hub_path]
+- Version: [framework_version]
+- Git Repo: [repo_url or "none"]
+
+Registered in hub registry.
+
+Next: Proceeding to teach skills and lugs...
+```
+
+Then continue to [Teach Protocol Steps](#teach-protocol-steps).
+
+---
+
 ## Teach Protocol Steps
+
+**Prerequisite**: Target is a verified spoke (either existing or newly initialized via [Spoke Initialization](#spoke-initialization))
 
 1. **Identify target** — hub path from `WAI-State.json` → `wheel.hub_path`, or explicit target name
 2. **Check target exists** — verify directory and WAI-Spoke/ structure

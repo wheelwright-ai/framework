@@ -1,4 +1,24 @@
 
+## [2.0.11] - 2026-03-03
+
+### Added
+- **Spoke Detection and Initialization**: `wai-teach` now auto-detects if target is a spoke
+  - Detects spoke by checking for `WAI-Spoke/WAI-State.json`
+  - Automatically initializes new spokes from `templates/spoke/` template
+  - Configures WAI-State.json with smart defaults (directory name, git repo detection)
+  - Prompts for hub path and registers spoke in hub registry
+  - Enables any spoke to teach any directory - universal teach capability
+
+### Changed
+- `wai-teach.md`: Added "Spoke Detection" and "Spoke Initialization" sections
+- `wai.md`: Updated skills documentation to reflect new auto-detect capability
+
+### Fixed
+- Teach protocol no longer requires manual spoke setup
+- Hub registry is automatically updated when initializing new spokes
+
+---
+
 ## [2.0.6] - 2026-02-21
 
 ### Added

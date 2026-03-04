@@ -137,7 +137,7 @@ From `WAI-State.json` → `context.next_actions` (first 5 items).
 - **/wai-status** — Quick health check (hub, sync, session)
 - **/wai-closeout** — Save session state, extract signals, commit
 - **/wai-shipit** — Quality gates + closeout (for releases)
-- **/wai-teach** — Push outbox to hub or spokes
+- **/wai-teach** — Push outbox to hub or spokes (auto-detects and initializes new spokes)
 - **/wai-learn** — Process inbox teachings on wakeup
 - **/wai-time** — Token usage estimate
 - **/wai-rules** — Project boundaries and guidelines

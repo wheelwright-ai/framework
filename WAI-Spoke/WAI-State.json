@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.11",
+    "version": "2.0.12",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -90,19 +90,19 @@
   },
   "_session_state": {
     "last_session_id": "session-20260303-p10",
-    "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-03T17:57:44Z",
-    "last_closeout": "2026-03-03T17:57:44Z",
-    "session_count": 5,
+    "last_modified_by": "claude-opus-4-6",
+    "last_modified_at": "2026-03-04T02:50:12Z",
+    "last_closeout": "2026-03-04T02:50:12Z",
+    "session_count": 6,
     "current_session": {
       "session_id": "session-20260303-p10",
       "started_at": "2026-03-03T11:34:53Z"
     },
     "protocol_completed": true,
-    "next_session_recommendation": "Push is now mandatory on closeout (P10). Pending: hub-deliver tasks (build upgrade-adoption-plan.json, lugs/inbox+outbox dirs, teach lug routing fix).",
+    "next_session_recommendation": "Codified teach skill with spoke detection; added spoke initialization; updated documentation; synced commands; session-summary created",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-03T12:04:15Z"
+    "protocol_last_run": "2026-03-04T02:45:21Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -122,7 +122,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

@@ -153,25 +153,42 @@ Lugs travel across sessions, models, and projects. They must be self-contained â
 
 ## Quick Start: New Spoke
 
-### 1. Copy the spoke template
+### Option A: Automatic Initialization (Recommended)
+
+From an existing spoke or framework, run `/wai-teach` with a target directory:
+
+```bash
+# From any spoke or framework
+/wai-teach /path/to/new-project
+
+# Automatically:
+# - Detects if target is a spoke
+# - If not, copies templates/spoke/ and initializes
+# - Configures WAI-State.json with smart defaults
+# - Registers spoke in hub registry
+```
+
+**Benefit**: No manual configuration needed. Use `/wai-teach` to initialize any project as a spoke.
+
+### Option B: Manual Initialization
 
 ```bash
 cp -r /path/to/framework/templates/spoke/ your-project/WAI-Spoke/
 ```
 
-### 2. Initialize WAI-State.json
+### 2. Initialize WAI-State.json (manual only)
 
 Edit `WAI-Spoke/WAI-State.json`:
 - Set `wheel.name`, `wheel.one_liner`, `wheel.spoke_id`
 - Set `foundation.scope.in_scope` and `out_of_scope`
 
-### 3. Set up IDE hooks
+### 3. Set up IDE hooks (manual only)
 
 Follow the `/wai-ide-setup` skill (`templates/commands/wai-ide-setup.md`) to configure:
 - `.claude/hooks/user-prompt-submit.sh` (Claude Code)
 - `.claude/settings.json` hook registration
 
-### 4. Start your first session
+### 4. Start your first session (manual only)
 
 Open Claude Code (or your AI tool) in the project directory.
 The hook runs automatically and the agent produces the WAI Point briefing.
