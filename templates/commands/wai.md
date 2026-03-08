@@ -36,6 +36,10 @@ Read `WAI-Spoke/WAI-State.md` (if it exists and is relevant):
 - Strategic vision and evolution log
 - Key decisions and their rationale
 
+Check `_session_state.last_compact` (if present):
+- Read `compact_tokens_before` and `compact_tokens_after`
+- Display token meter in header if available
+
 Output header:
 ```
 ## WAI Point — {wheel.name}
@@ -43,7 +47,10 @@ Output header:
 **Phase:** {current_phase}
 **Last session:** {last_modified_at} by {last_modified_by}
 **Environment:** {tool} on {hostname} ({OS})
+**Last compact:** Session {N} — ~{before}K → ~{after}K tokens
 ```
+
+Note: If no `last_compact` in `_session_state`, omit the last line.
 
 ### Step 2: Check Git Status
 
@@ -64,6 +71,8 @@ Read last teach date from sync history or `_session_state.last_closeout`.
 ### Step 4: Query Active Work
 
 Read `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line). Note: some entries use shorthand keys (`i`=id, `t`=title, `ty`=type, `s`=status).
+
+**IMPORTANT: De-duplicate by ID first.** Build a map of ID → latest entry (WAI-Lugs.jsonl is append-only; reconciliation records override earlier entries with the same ID). All counts below use only the latest entry per ID.
 
 **Status codes:** `s: "o"` or `"open"` = open; `s: "p"` or `"in-progress"` = in progress; `s: "c"`, `"closed"`, `"resolved"` = done (skip).
 
@@ -91,11 +100,24 @@ Output:
 
 ### Step 5: Detect Autosave Checkpoints
 
-Scan `WAI-Spoke/WAI-Lugs.jsonl` for entries where:
-- `ty == "autosave"` (or `autosave == true`) AND
-- `reconciled` is false or absent
+**De-duplicate by ID first** — WAI-Lugs.jsonl is append-only. Reconciliation records are appended as overrides (same ID, but with `reconciled: true`). Build a map of ID → latest entry, then check only the latest.
 
-If found:
+```python
+# Pseudocode for deduplication
+latest_by_id = {}
+for line in WAI-Lugs.jsonl:
+    lug = json.loads(line)
+    lid = lug.get('id') or lug.get('i')
+    latest_by_id[lid] = lug  # Overwrite with latest
+
+unreconciled = []
+for lug in latest_by_id.values():
+    if (lug.get('ty') == 'autosave' or lug.get('autosave') == True):
+        if not lug.get('reconciled', False):
+            unreconciled.append(lug)
+```
+
+If unreconciled autosaves found:
 ```
 ### ⚠️ Incomplete Work (N autosave checkpoints)
 - Task: {task_context}

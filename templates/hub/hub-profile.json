@@ -1,7 +1,6 @@
 {
   "_wai_bootstrap": {
     "_purpose": "Instructions for AI assistants working with this hub",
-
     "find_framework": {
       "check_order": [
         "1. Read framework_path from hub_config below",
@@ -12,17 +11,14 @@
       "if_not_found": "Ask user: 'Where is your Wheelwright framework? (git clone https://github.com/wheelwright-ai/framework)'",
       "after_found": "Update framework_path in hub_config"
     },
-
     "update_hub": {
       "command": "cd <framework_path> && ./WAI hub status",
       "sync_wheels": "cd <framework_path> && ./WAI sync --all"
     },
-
     "add_wheel": {
       "command": "cd <framework_path> && ./WAI init <project_path> --guided"
     }
   },
-
   "user": {
     "name": null,
     "email": null,
@@ -44,15 +40,16 @@
       "avoid": []
     }
   },
-  "hub_config": {
-    "created_at": null,
-    "hub_path": null,
-    "framework_path": null,
-    "version": "v1.0",
-    "auto_teach_on_recon": false,
-    "signal_noise_threshold": 8,
-    "_note": "framework_path: Set during 'WAI hub create' to point to wheelwright framework location"
-  },
+      "hub_config": {
+        "created_at": null,
+        "hub_path": null,
+        "framework_path": null,
+        "version": "3.0.0",
+        "fingerprint": null,
+        "auto_teach_on_recon": false,
+        "signal_noise_threshold": 8,
+        "_note": "framework_path: Set during 'WAI hub create' to point to wheelwright framework location"
+      },
   "learning_philosophy": {
     "share_threshold": 8,
     "description": "Only share high-impact learnings (impact >= 8) to keep signals valuable. Quality over quantity.",

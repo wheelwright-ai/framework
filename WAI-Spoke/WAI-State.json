@@ -1,13 +1,13 @@
 {
   "wheel": {
-    "version": "2.0.12",
+    "version": "2.0.13",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
     "description": null,
     "created": "2026-02-08T13:28:21.240569",
     "last_modified": "2026-02-21T00:48:00+00:00",
-    "hub_path": "/home/mario/projects/wheelwright-ai/hub",
+    "hub_path": "/home/mario/projects/wheelwright/hub/",
     "abbrev": null,
     "type": null,
     "repository": null,
@@ -89,20 +89,20 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260303-p10",
-    "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-04T02:50:12Z",
-    "last_closeout": "2026-03-04T02:50:12Z",
-    "session_count": 6,
+    "last_session_id": "session-20260308-closeout",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-08T00:45:00Z",
+    "last_closeout": "2026-03-08T00:45:00Z",
+    "session_count": 7,
     "current_session": {
-      "session_id": "session-20260303-p10",
-      "started_at": "2026-03-03T11:34:53Z"
+      "session_id": "session-20260308-closeout",
+      "started_at": "2026-03-08T00:00:00Z"
     },
     "protocol_completed": true,
-    "next_session_recommendation": "Codified teach skill with spoke detection; added spoke initialization; updated documentation; synced commands; session-summary created",
+    "next_session_recommendation": "Implement hub connectivity check in wakeup; derive next_actions from lug state; consider SQLite read-cache for efficient lug queries",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-04T03:07:22Z"
+    "protocol_last_run": "2026-03-08T21:07:02Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -279,8 +279,8 @@
     "_note": "Registry of environments that have worked on this project. Auto-populated by closeout."
   },
   "meta": {
-    "total_sessions": 1,
+    "total_sessions": 6,
     "total_turns": 0,
-    "last_closeout": "2026-02-27T22:01:05.781618+00:00"
+    "last_closeout": "2026-03-04T02:50:12Z"
   }
 }
