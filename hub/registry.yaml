@@ -1,29 +1,136 @@
+---
+# Registry: Expertise Map for Self-Aware Help Routing
+# Each node declares what it offers and what it subscribes to
+# /help skill uses this to route questions to the right expert
+
+version: 2.0
+last_updated: "2026-03-12"
+last_updated_by: "Claude Sonnet 4.6"
+
 nodes:
   # Wheelwright Core Projects
   - path: "wheelwright/framework"
     type: spoke
     status: active
     framework_version: "2.0.0"
-    description: "Framework development and maintenance"
+    role: "Framework Authority"
+    description: "Core WAI framework — skills, lugs, architecture"
+
+    lens: "Technical authority on WAI mechanics, agent colony patterns, teaching file formats"
+
+    offers:
+      - capability: "WAI framework guidance"
+        scope: "How to use skills, lugs, teaching files, registry routing"
+      - capability: "Teaching file specification"
+        scope: "Best practices for creating versioned, self-documenting teaching files"
+      - capability: "Skill definition and use cases"
+        scope: "How to create and document skills with real scenarios"
+      - capability: "Lug schema and decision records"
+        scope: "Creating decisions, learning records, deficiency tracking"
+
+    subscribes_to:
+      - topic: "spoke-patterns"
+        from: "hub"
+        description: "Cross-spoke patterns, lessons learned"
+      - topic: "help-requests"
+        from: "all-spokes"
+        description: "Questions spokes can't answer locally"
+
+    contact_on:
+      - pattern: "How do I use.*WAI|skills|lugs|teaching"
+        description: "WAI framework questions"
+      - pattern: "What is.*lug|skill|teaching file"
+        description: "WAI mechanics questions"
+      - pattern: "How do I create.*skill|teaching file|lug"
+        description: "WAI creation questions"
 
   - path: "wheelwright/hub"
     type: hub
     status: active
     framework_version: "2.0.0"
-    description: "Central Hub - shared memory and pattern distribution"
+    role: "Hub — Shared Knowledge & Orchestration"
+    description: "Central knowledge store, cross-spoke pattern distribution"
+
+    lens: "Cross-project patterns, shared learnings, architectural decisions affecting multiple spokes"
+
+    offers:
+      - capability: "Cross-spoke patterns"
+        scope: "Patterns seen across multiple spokes, generalizable solutions"
+      - capability: "Shared decision records"
+        scope: "Architectural decisions affecting the whole wheel"
+      - capability: "Observation synthesis"
+        scope: "Trends across spokes (e.g., 'all spokes ask about X')"
+
+    subscribes_to:
+      - topic: "help-requests-unanswered"
+        from: "all-spokes"
+        description: "Questions no spoke could answer — framework should know"
+      - topic: "local-learnings"
+        from: "all-spokes"
+        description: "Patterns worth sharing across spokes"
+
+    contact_on:
+      - pattern: "What.*patterns|other projects|how do.*spokes.*handle"
+        description: "Cross-spoke pattern questions"
+      - pattern: "Does anyone.*|Who else.*"
+        description: "Hub-wide knowledge questions"
 
   - path: "wheelwright/website"
     type: spoke
     status: active
     framework_version: "2.0.0"
-    description: "Marketing website and documentation"
+    role: "Marketing & Public Documentation"
+    description: "Public-facing website, user documentation"
+
+    lens: "How to present Wheelwright to users, marketing messaging, onboarding flow"
+
+    offers:
+      - capability: "User documentation generation"
+        scope: "Automatic doc site generation from framework state"
+      - capability: "Marketing strategy"
+        scope: "How to position/explain Wheelwright features"
+      - capability: "User onboarding flow"
+        scope: "Getting new users started quickly"
+
+    subscribes_to:
+      - topic: "framework-updates"
+        from: "wheelwright/framework"
+        description: "New framework features to document"
+      - topic: "teaching-files"
+        from: "wheelwright/framework"
+        description: "New teaching files to integrate into docs"
+
+    contact_on:
+      - pattern: "How do users.*|marketing|onboarding|documentation site"
+        description: "User-facing questions"
 
   # Active Projects
   - path: "ezorg/email"
     type: spoke
     status: active
     framework_version: "2.0.0"
-    description: "Email management and organization system"
+    role: "Email Management System"
+    description: "Email organization and automation"
+
+    lens: "Email workflows, inbox management, automation rules"
+
+    offers:
+      - capability: "Email system architecture"
+        scope: "Email processing, storage, workflow patterns"
+      - capability: "Automation patterns"
+        scope: "How to build email automation systems"
+
+    subscribes_to:
+      - topic: "framework-updates"
+        from: "wheelwright/framework"
+        description: "New WAI features"
+      - topic: "shared-patterns"
+        from: "wheelwright/hub"
+        description: "Cross-spoke patterns"
+
+    contact_on:
+      - pattern: "email|inbox|automation"
+        description: "Email system questions"
 
   # Archived Projects (Historical / Inactive)
   - path: "archive/OwnersShare-pitch"
@@ -115,3 +222,44 @@ nodes:
 # Active: 4 (wheelwright/framework, wheelwright/hub, wheelwright/website, ezorg/email)
 # Archived: 14
 # Framework version: 2.0.0
+
+  # Archived Projects (Historical / Inactive)
+  # These are kept for reference but not routed to for help requests
+  - path: "archive/OwnersShare-pitch"
+    type: spoke
+    status: archived
+    archived_at: "2026-02-01"
+
+  - path: "archive/VoiceFlow"
+    type: spoke
+    status: archived
+    archived_at: "2026-02-01"
+
+  - path: "archive/condoshield-crm"
+    type: spoke
+    status: archived
+    archived_at: "2026-02-01"
+
+  - path: "archive/session-continuity-framework"
+    type: spoke
+    status: archived
+    archived_at: "2026-02-01"
+    note: "Ancestor of Wheelwright. Historical reference only."
+
+# Registry Features
+help_routing_rules:
+  - rule: "Question starts with 'How do I...?'"
+    logic: "Search local → Match contact_on patterns → Route to best expert"
+  - rule: "Question is 'What is...?'"
+    logic: "Search local EXTENSION.md + BRIEF → If not found, route to framework or hub"
+  - rule: "Question references specific project"
+    logic: "Look up project in registry → Ask that project directly"
+  - rule: "Question not matched by any contact_on"
+    logic: "Create help-request lug, submit to hub"
+
+registry_notes:
+  - "Each active spoke declares what it offers (expertise) and subscribes to (what it needs)"
+  - "/help skill uses 'contact_on' patterns to route questions to right expert"
+  - "If no spoke matches, hub becomes the destination (cross-spoke or framework learning questions)"
+  - "Unanswered help-requests create lugs that framework uses to create new teaching files"
+  - "Registry is self-documenting; each node's role/lens/offers tell you who to ask about what"

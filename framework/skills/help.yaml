@@ -1,0 +1,206 @@
+id: help
+name: "Help / Expert Routing"
+role: advisor
+model_tier: standard
+
+trigger: "on_demand"  # /help "query"
+
+description: >
+  Self-aware help system that routes questions to the right expertise.
+  Searches local documentation first, then uses registry to route to expert spokes.
+  Creates help-request lugs for unanswered questions.
+
+scope:
+  reads:
+    - "local teaching files"
+    - "local skills (use_cases)"
+    - "local EXTENSION.md"
+    - "local BRIEF.md"
+    - "local WAI-Lugs.jsonl (decisions, learnings)"
+    - "hub/registry.yaml (expertise map)"
+    - "WAI-Spoke/WAI-Guide.md (project identity)"
+
+  writes:
+    - "local WAI-Lugs.jsonl (help-request lugs only)"
+    - "WAI-Spoke/lugs/outbox/ (if escalating)"
+
+prerequisites:
+  - "Hub registry.yaml must be readable (to see expertise map)"
+  - "Local teaching files and skills must be present"
+
+output:
+  on_success: "Answer returned with source file, version, created_at"
+  on_local_ambiguity: "Multiple answers found, clarification requested"
+  on_escalation: "help-request lug created, submitted to expert spoke/hub"
+  on_unanswered: "Escalated to framework or hub for consideration"
+
+algorithm:
+  step_1_parse_query:
+    description: "Understand what the user is asking"
+    extract:
+      - question_text: "full query"
+      - question_type: "how-to | what-is | pattern | expert-specific"
+      - domain: "inferred domain (WAI, email, marketing, etc.)"
+
+  step_2_search_local:
+    description: "Search spoke's own files first (fastest, most relevant)"
+    search_in:
+      - teaching_files: "WAI-Spoke/seed/ingest/ — search by title, description"
+      - skills: "framework/skills/ — search use_cases, description"
+      - decisions: "WAI-Spoke/WAI-Lugs.jsonl — filter by type=decision|learning"
+      - brief: "BRIEF.md — operational rules for this spoke"
+      - extension: "EXTENSION.md — role, lens, behaviors"
+      - guide: "WAI-Guide.md — project identity, goals"
+
+    return_if_found:
+      - result: "Answer found"
+      - source_file: "path to file"
+      - version: "file metadata (created_at, created_by)"
+      - confidence: "high | medium"
+
+  step_3_evaluate_results:
+    if_found_and_clear:
+      action: "Return answer with source and version"
+      format: |
+        Here's what I found (current as of {created_at}):
+        {answer}
+        Source: {file_path} (v{version}, created by {created_by})
+
+    if_multiple_answers:
+      action: "Ask user for clarification"
+      format: |
+        I found multiple possible answers. Which applies?
+        1. {answer_1} (from {source_1})
+        2. {answer_2} (from {source_2})
+        Tell me which, or I'll ask an expert.
+
+    if_nothing_found:
+      action: "Escalate to registry routing"
+      goto: "step_4_route_to_expert"
+
+  step_4_route_to_expert:
+    description: "Use registry to find who specializes in this domain"
+
+    routing_logic:
+      - read: "hub/registry.yaml"
+      - match_question_against: "each node's contact_on patterns"
+      - select: "best-match node (highest confidence)"
+
+    routing_rules:
+      rule_1:
+        pattern: "How do I.*WAI|skills|lugs|teaching"
+        expert: "wheelwright/framework"
+        reason: "Framework is authority on WAI mechanics"
+
+      rule_2:
+        pattern: "What is.*|How does.*work"
+        expert: "Check spoke's EXTENSION.md first → if not there → framework"
+        reason: "Definitions often in EXTENSION.md or framework specs"
+
+      rule_3:
+        pattern: "Does anyone.*|How do other.*|patterns"
+        expert: "wheelwright/hub"
+        reason: "Hub knows cross-spoke patterns"
+
+      rule_4:
+        pattern: "{specific_project_name}"
+        expert: "Look up project in registry"
+        reason: "Route to the project that owns it"
+
+      rule_5:
+        pattern: "no match"
+        expert: "wheelwright/hub (default escalation)"
+        reason: "Hub coordinates unanswered questions"
+
+  step_5_send_help_request:
+    description: "If escalating, create help-request lug"
+
+    create_lug:
+      id: "help-request-{spoke-name}-{timestamp}"
+      type: "help-request"
+      title: "Help request: {question_summary}"
+      description: "{full question text}"
+      asked_by_spoke: "{current spoke path}"
+      question_domain: "{inferred domain}"
+      local_search_done: true
+      local_search_results: "{what was found locally, if anything}"
+      routed_to: "{expert spoke path}"
+      status: "published"
+      impact: "4"  # Medium — answer would be useful
+      perceive: "Spoke asked question: {question}"
+      execute: "Routed to {expert}. Awaiting response."
+      verify: "Response received and shared back to asking spoke"
+
+    submit_to:
+      - destination: "{expert spoke, hub, or framework}"
+      - method: "WAI-Spoke/lugs/outbox/ → next teach cycle"
+      - inform_user: "Submitted to {expert} for next teach cycle"
+
+  step_6_wait_for_response:
+    description: "Expert spoke receives help-request lug"
+    expert_action:
+      - search: "expert's local files for answer"
+      - respond: "create resolution lug"
+      - submit_back: "to asking spoke via teach cycle"
+
+    asking_spoke_receives:
+      - resolution_lug: "answer from expert"
+      - status: "acknowledged"
+      - created_at: "timestamp when expert responded"
+      - expert: "{expert spoke}"
+
+use_cases:
+  - scenario: "Spoke asks: How do I create a teaching file?"
+    local_search: "finds wai-v2-migration-state-v2.md.teaching in local files"
+    action: "Return teaching file with version, created_at, created_by"
+    outcome: "Agent reads local file, learns without escalation"
+
+  - scenario: "Spoke asks: How do I create a skill?"
+    local_search: "finds help.yaml (this skill) + framework/templates/skill-contract.spec.md"
+    action: "Return both resources with version info"
+    outcome: "Agent has everything needed to create a skill"
+
+  - scenario: "Spoke asks: What patterns have other spokes discovered?"
+    local_search: "no local answer (cross-spoke question)"
+    registry_routing: "matches 'patterns' → route to wheelwright/hub"
+    action: "Create help-request lug, submit to hub"
+    outcome: "Hub responds with cross-spoke patterns"
+
+  - scenario: "Email spoke asks: How do I integrate OAuth?"
+    local_search: "no local teaching file on OAuth"
+    registry_routing: "no spoke specializes in 'OAuth' yet"
+    fallback: "Create help-request, submit to framework (framework maintains auth patterns)"
+    outcome: "Framework creates teaching-oauth.md.teaching → taught back to all spokes"
+
+  - scenario: "Any spoke asks: What does {other_project} do?"
+    registry_lookup: "find {other_project} in registry"
+    direct_route: "Ask that project directly"
+    outcome: "Project responds with current role/capabilities from its EXTENSION.md"
+
+tests:
+  - name: "Local search finds teaching file"
+    input: "/help 'How do I create a teaching file?'"
+    expected: "Returns wai-v2-migration-state-v2.md.teaching with version"
+
+  - name: "Registry routing to framework"
+    input: "/help 'How do I create a skill?'"
+    expected: "Matches contact_on pattern, routes to wheelwright/framework"
+
+  - name: "Hub escalation for cross-spoke question"
+    input: "/help 'What patterns do other spokes follow?'"
+    expected: "Creates help-request lug, routes to wheelwright/hub"
+
+  - name: "Unanswered question creates permanent lug"
+    input: "/help 'How do I integrate OAuth?' (assuming not documented)"
+    expected: "Creates help-request lug in WAI-Lugs.jsonl, submits to expert"
+
+  - name: "Direct project lookup"
+    input: "/help 'Tell me about wheelwright/website'"
+    expected: "Looks up in registry, returns website spoke's role/offers/lens"
+
+notes:
+  - "Help requests are permanent (lugs). Over time, patterns emerge of what spokes need to know."
+  - "Framework sees help-request lugs and creates teaching files for unanswered questions."
+  - "Each spoke inherits teaching files on next teach cycle, so the next spoke asking gets local answer."
+  - "Registry is self-documenting. Spokes' role/lens/offers tell you who to ask about what."
+  - "This skill is self-aware: it knows its own limitations and routes intelligently."

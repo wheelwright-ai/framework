@@ -1,0 +1,338 @@
+---
+teaching_id: help-skill-and-registry-routing
+teaching_type: executable
+version: 1.0
+created_at: 2026-03-12T14:00:00Z
+created_by: Claude Sonnet 4.6
+target_phase: "Phase 9: Self-Aware Help System"
+safe_to_auto_adopt: false
+
+teaching_about:
+  - topic: "Help / Expert Routing System"
+    subtopic: "How spokes ask questions and get answers from the right expert"
+
+teaching_for:
+  - agent_scenario: "AI working on a spoke, needs help with something"
+  - agent_scenario: "AI learning how the wheel routes knowledge"
+
+verification_required: true
+if_not_found: "This is a v1.0 teaching file. It will be cold-reviewed and improved to v2.0. If it seems confusing, that's the point—deficiencies will be captured as lugs and the spec improved."
+---
+
+# Help Skill & Registry-Driven Expert Routing — v1.0
+
+**Teaching type:** Executable (how to use the help system)
+**For AI assistants:** This teaches you how to ask questions in a Wheelwright spoke and how the system routes your question to the right expert.
+
+---
+
+## Purpose
+
+Wheelwright spokes are self-aware and registry-aware. When you need help:
+
+1. You search your own files first (fastest, most current)
+2. If you don't find an answer, the **registry tells you who specializes in what**
+3. You ask the right expert directly
+4. Unanswered questions create lugs that the framework uses to improve its teaching files
+
+This system means:
+- ✅ You get answers fast (local search first)
+- ✅ You ask the right expert (registry routing)
+- ✅ Unanswered questions improve the framework
+- ✅ All spokes benefit from each other's questions
+
+---
+
+## The Help System Flow
+
+### Step 1: You Ask a Question
+
+```
+You: /help "How do I create a teaching file?"
+```
+
+### Step 2: Help Skill Searches Locally
+
+The help skill searches your spoke's files:
+- Teaching files (`WAI-Spoke/seed/ingest/`)
+- Skills with use_cases (`framework/skills/`)
+- Decision lugs (`WAI-Spoke/WAI-Lugs.jsonl`)
+- Your spoke's BRIEF.md and EXTENSION.md
+
+**If found:** Returned immediately with version info
+```
+Found: wai-v2-migration-state-v2.md.teaching
+Created: 2026-03-12
+By: Claude Sonnet 4.6
+Status: Current ✓
+```
+
+### Step 3: If Not Found Locally → Use Registry
+
+The help skill reads `hub/registry.yaml` to find the expert:
+
+```yaml
+# Registry entry for framework spoke
+path: "wheelwright/framework"
+role: "Framework Authority"
+offers:
+  - capability: "Teaching file specification"
+    scope: "Best practices for creating versioned teaching files"
+
+contact_on:
+  - pattern: "How do I create.*teaching file"
+    description: "Teaching file questions"
+```
+
+Help skill matches your question against these patterns.
+
+**If matched:** Your question is routed to that spoke
+```
+Your question matches: "How do I create.*teaching file"
+Expert: wheelwright/framework
+Routing: Creating help-request lug and submitting to framework
+```
+
+### Step 4: Expert Spoke Responds
+
+The framework spoke receives your help-request lug:
+- Searches its own files
+- Finds answer (or creates new teaching file if gap found)
+- Creates resolution lug
+- Sends back to you on next teach cycle
+
+### Step 5: You Get Answer
+
+On your next `/wai` wakeup:
+- You see the resolution lug from the expert
+- You now have the answer locally
+- Next spoke that asks the same question gets local answer
+
+---
+
+## The Registry: Expertise Map
+
+The `hub/registry.yaml` file is your directory of expertise. Each spoke declares:
+
+```yaml
+- path: "wheelwright/framework"
+  role: "Framework Authority"
+
+  offers:
+    - capability: "WAI framework guidance"
+    - capability: "Teaching file specification"
+    - capability: "Skill definition and use cases"
+
+  contact_on:
+    - pattern: "How do I use.*WAI|skills|lugs|teaching"
+    - pattern: "What is.*lug|skill|teaching file"
+    - pattern: "How do I create.*skill|teaching file|lug"
+```
+
+**This tells you:**
+- What this spoke specializes in (offers)
+- What patterns of questions to send them (contact_on)
+- What role they play in the wheel
+
+---
+
+## Three Types of Questions
+
+### Type 1: "How do I...?" — Implementation Questions
+
+Example: `/help "How do I create a skill?"`
+
+**Flow:**
+1. Local search → No answer
+2. Registry routing → matches "How do I create.*skill"
+3. Expert: `wheelwright/framework`
+4. Help-request created, submitted to framework
+5. Framework responds with teaching file or expert guidance
+
+### Type 2: "What is...?" — Definition Questions
+
+Example: `/help "What is a Lug?"`
+
+**Flow:**
+1. Local search → Check EXTENSION.md, BRIEF.md
+2. If not there → Registry routing
+3. Expert: Framework (definitions live in specifications)
+4. Help-request created
+
+### Type 3: "Pattern/Cross-Spoke" Questions
+
+Example: `/help "What patterns have other spokes discovered?"`
+
+**Flow:**
+1. Local search → No answer (by definition, cross-spoke)
+2. Registry routing → matches "patterns|other projects"
+3. Expert: `wheelwright/hub`
+4. Hub knows cross-spoke learnings
+5. Hub responds with patterns
+
+---
+
+## How Unanswered Questions Improve the Framework
+
+This is the feedback loop:
+
+1. **Spoke asks:** `/help "How do I integrate OAuth?"`
+2. **Local search fails:** No teaching file on OAuth
+3. **Registry routing fails:** No spoke specializes in OAuth
+4. **Help-request created:**
+   ```json
+   {
+     "id": "help-request-ezorg-email-oauth",
+     "type": "help-request",
+     "title": "How do I integrate OAuth?",
+     "asked_by_spoke": "ezorg/email",
+     "status": "published"
+   }
+   ```
+5. **Framework sees this lug:** "Ah, spokes need to know about OAuth"
+6. **Framework creates:** `teaching-oauth-integration.md.teaching`
+7. **Next teach cycle:** OAuth teaching file is pushed to all spokes
+8. **Future:** Next spoke asking same question gets local answer ✓
+
+---
+
+## Prerequisites (Before Using `/help`)
+
+Before you can use the help system:
+
+- [ ] `hub/registry.yaml` exists and is readable
+- [ ] Your spoke has local teaching files (received from framework)
+- [ ] Your spoke has skills with use_cases documented
+- [ ] Your BRIEF.md and EXTENSION.md are present
+- [ ] You can submit lugs to `WAI-Spoke/lugs/outbox/`
+
+**If any prerequisite is missing:**
+- You can still ask help questions
+- Local search will be limited
+- More questions will escalate to experts
+- That's OK—unanswered questions create lugs that improve the framework
+
+---
+
+## Using `/help`: Examples
+
+### Example 1: Local Answer (Fast)
+
+```
+You: /help "How do I create a teaching file?"
+
+Help skill searches locally...
+Found: wai-v2-migration-state-v2.md.teaching
+
+Response:
+Here's what I found (current as of 2026-03-12):
+1. Create teaching file v1.0 (ground truth)
+2. Submit to cold review
+3. Create deficiency lugs
+4. Improve to v2.0
+...
+Source: WAI-Spoke/seed/ingest/processed/wai-v2-migration-state-v2.md.teaching
+Version: 2.0, created by Claude Sonnet 4.6
+```
+
+### Example 2: Registry Routing
+
+```
+You: /help "How do I create a skill?"
+
+Help skill searches locally...
+Not found locally.
+
+Checking registry for "How do I create.*skill"...
+Match found: wheelwright/framework
+
+Response:
+I didn't find this locally, but framework specializes in skill creation.
+Creating help-request lug and submitting to framework.
+You'll get an answer on the next teach cycle.
+```
+
+### Example 3: Clarification Needed
+
+```
+You: /help "What is a Lug?"
+
+Help skill searches locally...
+Found multiple answers:
+1. WAI-Lugs.jsonl field reference (technical)
+2. EXTENSION.md mentions lugs (conceptual)
+3. Decision lug on lug schema (design rationale)
+
+Response:
+I found multiple answers. Which would help?
+1. Technical field reference
+2. Conceptual explanation
+3. Design rationale
+
+Tell me which, or I'll ask the framework for a better teaching file.
+```
+
+---
+
+## The Registry Is Self-Documenting
+
+You don't need to memorize who does what. The registry shows you:
+
+```yaml
+# Ask the registry: who specializes in X?
+# It answers via "offers" and "contact_on"
+
+wheelwright/framework:
+  offers: [WAI framework guidance, Teaching file spec, Skill definition]
+  contact_on: [How do I.*WAI, What is.*lug, How do I create.*skill]
+
+wheelwright/hub:
+  offers: [Cross-spoke patterns, Shared decision records, Observation synthesis]
+  contact_on: [What.*patterns, Does anyone, Who else]
+
+wheelwright/website:
+  offers: [User documentation generation, Marketing strategy]
+  contact_on: [How do users, marketing, onboarding]
+```
+
+When you ask a question, help skill matches it to these patterns. **You don't need to think about routing—the registry does it.**
+
+---
+
+## Deficiency Review (Why This Is v1.0)
+
+This teaching file will be cold-reviewed by a fresh AI who hasn't seen it before. They'll note things like:
+- Jargon used without definition
+- Steps that seem obvious to me but aren't documented
+- Fallback instructions for unexpected states
+- Missing examples
+
+Those deficiencies become lugs, and v2.0 will address them.
+
+For now: If this feels incomplete, that's expected. Help-request lug will capture what's missing, and the spec will improve.
+
+---
+
+## Related Teachings
+
+- `wai-v2-migration-state-v2.md.teaching` — Background on teaching files
+- Skill definition: `framework/skills/help.yaml` — Full technical spec
+- Registry definition: `hub/registry.yaml` — Expertise map
+- Decision: `hub/intake/wai-v2-migration/decision.lug.json` — Why this architecture
+
+---
+
+## Next Steps
+
+1. Read `framework/skills/help.yaml` for technical details
+2. Try `/help "question"` on your spoke
+3. If answer is local: great, you learned
+4. If escalated: great, you're contributing to the framework's learning
+5. On next teach cycle: check if expert responded, new teaching files arrived
+6. Create a deficiency lug if this teaching file is confusing
+
+---
+
+## Version History
+
+**v1.0** (2026-03-12): Ground truth. Explains the help system as built. Awaiting cold review for deficiencies.
