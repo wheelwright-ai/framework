@@ -54,7 +54,10 @@
       "Bash(cp:*)",
       "Bash(yes:*)",
       "Bash(test:*)",
-      "Bash(length:*)"
+      "Bash(length:*)",
+      "Bash(for f in /home/mario/projects/wheelwright/framework/WAI-Spoke/WAI-Signals.jsonl /home/mario/projects/wheelwright/framework/reference/v1-data/WAI-Signals.jsonl)",
+      "Read(//home/mario/projects/wheelwright/framework/**)",
+      "Bash(for f in /home/mario/projects/wheelwright/framework/examples/demo-wheel/WAI-Spoke/WAI-Signals.jsonl /home/mario/projects/wheelwright/framework/reference/v1-data/WAI-Signals.jsonl /home/mario/projects/wheelwright/framework/templates/spoke/WAI-Signals.jsonl /home/mario/projects/wheelwright/framework/verification_copilot_script/WAI-Spoke/WAI-Signals.jsonl)"
     ]
   }
 }
