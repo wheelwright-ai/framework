@@ -21,7 +21,7 @@ completed_phases:
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Registry structure verified. registry/wheelwright/framework/ created. hub/WAI-Manifest.yaml created. hub/registry.yaml, WAI-Manifest.yaml files were already in place from prior sessions on main."
   - phase: 3
-    commit: ""  # filled after commit
+    commit: "9542a56"
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Skills verified: all 8 required Skills have use_cases and tests sections. EXTENSION.md present with full sections. WAI-Manifest.yaml skills_loaded complete. Teaching files adopted."
 
