@@ -1,0 +1,46 @@
+{
+  "id": "wai-v2-migration-decision",
+  "type": "decision",
+  "title": "WAI v2 migration completed and accepted",
+  "status": "resolved",
+  "description": "Full migration from v1 to v2 completed. Signals absorbed into Lugs (impact >= 8). Backpressure config became qc-check Skill. Registry structure established. Integrity contract in place. Wakeup sequence v2-ready. authoritative_format flipped to v2.",
+  "impact": 10,
+  "created_by": "Claude Sonnet 4.6",
+  "created_at": "2026-03-12T10:19:49.300112Z",
+  "node": "wheelwright/framework",
+  "perceive": "Migration plan reviewed and executed across 8 phases",
+  "execute": "All 8 phases completed and committed to wai-v2-migration branch",
+  "verify": "Wakeup tests pass, data preservation verified, v2 schema confirmed",
+  "resolution": "accepted",
+  "resolution_reason": "v2 format is superior: PEV fields enable rich Lug semantics, hierarchical skills enable agent colony patterns, integrity contract prevents data loss",
+  "priority": "critical",
+  "tags": [
+    "framework",
+    "v2-migration",
+    "architectural-decision"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "alternatives_considered": [
+    {
+      "option": "Stay with v1 format",
+      "chosen": false,
+      "reasoning": "v1 lacks PEV fields, lacks skill hierarchy, lacks integrity guarantees"
+    },
+    {
+      "option": "Build v2 from scratch",
+      "chosen": false,
+      "reasoning": "Would lose 759 existing lugs. v1\u2192v2 migration preserves all data and history."
+    },
+    {
+      "option": "CLI-based management (original approach)",
+      "chosen": false,
+      "reasoning": "CLI destroyed Hub folder on 2026-02-10. File-based protocol with agent communication via Lugs is safer."
+    },
+    {
+      "option": "File-based protocol: Skills, Lugs, Integrity (chosen)",
+      "chosen": true,
+      "reasoning": "Agents communicate through files. Boundaries enforced by convention. Integrity contract prevents destructive operations."
+    }
+  ]
+}

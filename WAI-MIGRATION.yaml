@@ -1,8 +1,9 @@
 migration: v2
 status: in_progress
-current_phase: 3
+current_phase: 8
 started_at: "2026-03-12T00:00:00Z"
 started_by: "Claude Sonnet 4.6"
+completed_at: "2026-03-12T10:20:00Z"
 safety_tag: "v1.0-pre-migration-2026-03-12"
 branch: "wai-v2-migration"
 authoritative_format: v2  # Flipped after Phase 6
@@ -36,6 +37,14 @@ completed_phases:
     commit: "f8784b1"
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Wakeup sequence verified v2-ready. authoritative_format flipped to v2. Briefings now generate with v2 Lug format."
+  - phase: 7
+    commit: "864408b"
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "Cleanup complete: deleted 5 tombstoned WAI-Signals.jsonl files. v1-backup files preserved as emergency backup."
+  - phase: 8
+    commit: ""  # filled after merge
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "Integration tests pass. Data preservation verified. v2 schema verified. Decision lug created. Ready to merge and v2.0.0 tag."
 
 retired_files:
   - WAI-Signals.jsonl    # Absorbed into WAI-Lugs.jsonl as impact >= 8 lugs (Phase 1)
