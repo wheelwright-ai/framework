@@ -102,7 +102,7 @@
     "next_session_recommendation": "Ready.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-12T20:54:57Z"
+    "protocol_last_run": "2026-03-12T21:05:48Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -277,6 +277,22 @@
   },
   "environments": {
     "_note": "Registry of environments that have worked on this project. Auto-populated by closeout."
+  },
+  "model_log": {
+    "_note": "Track model switches within and across sessions. Enables retrospective analysis of model-task fit.",
+    "entries": [
+      {
+        "session": 18,
+        "date": "2026-03-12",
+        "switches": [
+          {"model": "claude-haiku-4-5", "task_type": "execution", "turns": "1-45", "notes": "Sessions 15-17 continuation. Built Phases 9-12 artifacts."},
+          {"model": "claude-opus-4-6", "task_type": "architectural_review", "turns": "46+", "notes": "User switched for planning. Caught 6 issues, reconciled stale lugs, created test-bench skill."}
+        ],
+        "mismatch_detected": true,
+        "mismatch_description": "Haiku used for architectural design (sessions 15-17). Built prescriptive artifacts on wrong model of framework role. Opus caught immediately.",
+        "lesson": "Architectural/design sessions need Sonnet or Opus."
+      }
+    ]
   },
   "meta": {
     "total_sessions": 6,
