@@ -1,0 +1,20 @@
+migration: v2
+status: in_progress
+current_phase: 0
+started_at: "2026-03-12T00:00:00Z"
+started_by: "Claude Sonnet 4.6"
+safety_tag: "v1.0-pre-migration-2026-03-12"
+branch: "wai-v2-migration"
+authoritative_format: v1  # Flips to v2 after Phase 6
+
+completed_phases: []
+
+retired_files:
+  - WAI-Signals.jsonl    # Absorbed into WAI-Lugs.jsonl as impact >= 8 lugs (Phase 1)
+  - WAI-Backpressure.yaml  # Becomes qc-check Skill definition (Phase 3)
+
+notes: >
+  If you see this file, migration is active. Read it FIRST before any work.
+  Do not read or write retired_files after their phase is complete.
+  Phase plan: WAI-v2-Implementation-Plan-Revised.md
+  Schema spec: WAI-Lug-Schema-Spec.md
