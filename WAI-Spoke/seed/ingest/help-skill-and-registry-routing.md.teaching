@@ -136,63 +136,166 @@ The `hub/registry.yaml` file is your directory of expertise. Each spoke declares
 
 ---
 
-## Three Types of Questions
+## Three Types of Questions and Where They Go
 
-### Type 1: "How do I...?" — Implementation Questions
+### Type 1: WAI Mechanics Questions → Framework
 
-Example: `/help "How do I create a skill?"`
+Example: `/help "How do I create a skill?"` or `/help "What is a Lug?"`
 
 **Flow:**
-1. Local search → No answer
-2. Registry routing → matches "How do I create.*skill"
-3. Expert: `wheelwright/framework`
+1. Local search → Teaching file, BRIEF, EXTENSION
+2. If not found → Question category = "WAI mechanics"
+3. Routing: `wheelwright/framework` (authority on WAI)
 4. Help-request created, submitted to framework
-5. Framework responds with teaching file or expert guidance
+5. Framework improves/creates teaching file
+6. All spokes inherit improved teaching next cycle
 
-### Type 2: "What is...?" — Definition Questions
+### Type 2: Cross-Spoke Pattern Questions → Hub
 
-Example: `/help "What is a Lug?"`
-
-**Flow:**
-1. Local search → Check EXTENSION.md, BRIEF.md
-2. If not there → Registry routing
-3. Expert: Framework (definitions live in specifications)
-4. Help-request created
-
-### Type 3: "Pattern/Cross-Spoke" Questions
-
-Example: `/help "What patterns have other spokes discovered?"`
+Example: `/help "What patterns have other spokes discovered for error handling?"`
 
 **Flow:**
-1. Local search → No answer (by definition, cross-spoke)
-2. Registry routing → matches "patterns|other projects"
-3. Expert: `wheelwright/hub`
-4. Hub knows cross-spoke learnings
-5. Hub responds with patterns
+1. Local search → No answer (cross-spoke, by definition)
+2. Question category = "Cross-spoke pattern"
+3. Routing: `wheelwright/hub` (maintains pattern KB)
+4. Pattern-inquiry created, submitted to hub
+5. Hub searches learnings across projects
+6. Hub responds: "Project X did this, Project Y did that"
+7. Asking spoke gets response lug with patterns
+
+### Type 3: Domain Knowledge Questions → Hub or External
+
+Example: `/help "How do I integrate OAuth?"` or `/help "What's the best email architecture?"`
+
+**Flow:**
+1. Local search → No teaching file on OAuth
+2. Question category = "Domain knowledge"
+3. Routing: **NOT framework** (wrong scope)
+4. Help skill offers user choices:
+   - Option A: "Check hub — have other projects solved this?"
+   - Option B: "Query external source — ChatGPT, docs, research?"
+5. If user chooses hub:
+   - Pattern-inquiry created: "Any OAuth patterns?"
+   - Hub responds with cross-project approach
+6. If user chooses external:
+   - Help skill helps formulate query for ChatGPT
+7. **Framework stays clean:** No domain knowledge teaching files
+
+**Key:** Domain questions go to hub (as pattern inquiry) or external sources. NOT to framework.
 
 ---
 
-## How Unanswered Questions Improve the Framework
+## How Questions Improve the System (Correct Routing)
 
-This is the feedback loop:
+The system has **three feedback loops**, not one:
 
-1. **Spoke asks:** `/help "How do I integrate OAuth?"`
-2. **Local search fails:** No teaching file on OAuth
-3. **Registry routing fails:** No spoke specializes in OAuth
-4. **Help-request created:**
+### Loop 1: WAI Mechanics Questions → Framework
+
+1. **Spoke asks:** `/help "How do I create a teaching file?"`
+2. **Local search fails:** No teaching file found
+3. **Question type:** WAI mechanics
+4. **Help-request created to framework:**
    ```json
    {
-     "id": "help-request-ezorg-email-oauth",
+     "id": "help-request-wai-spoke-name-timestamp",
      "type": "help-request",
-     "title": "How do I integrate OAuth?",
-     "asked_by_spoke": "ezorg/email",
+     "question_category": "wai-mechanics",
+     "title": "How do I create a teaching file?",
+     "asked_by_spoke": "project/spoke",
      "status": "published"
    }
    ```
-5. **Framework sees this lug:** "Ah, spokes need to know about OAuth"
-6. **Framework creates:** `teaching-oauth-integration.md.teaching`
-7. **Next teach cycle:** OAuth teaching file is pushed to all spokes
-8. **Future:** Next spoke asking same question gets local answer ✓
+5. **Framework sees this lug:** "Spoke needs better teaching on teaching files"
+6. **Framework creates/improves:** Teaching file on creating teaching files
+7. **Next teach cycle:** Improved teaching pushed to all spokes
+8. **Result:** All spokes have better documentation ✓
+
+### Loop 2: Cross-Spoke Patterns → Hub
+
+1. **Spoke asks:** `/help "What patterns have other spokes discovered for error handling?"`
+2. **Local search fails:** Cross-spoke question
+3. **Question type:** Cross-spoke pattern
+4. **Pattern-inquiry created to hub:**
+   ```json
+   {
+     "id": "pattern-inquiry-spoke-name-timestamp",
+     "type": "pattern-inquiry",
+     "title": "What patterns for error handling?",
+     "asked_by_spoke": "project/spoke",
+     "status": "published"
+   }
+   ```
+5. **Hub sees this lug:** "Spokes are looking for error handling patterns"
+6. **Hub searches:** Its KB of cross-project learnings
+7. **Hub responds:** "Project X uses this approach, Project Y uses this, here's what research shows"
+8. **Response lug sent back:** To asking spoke on next teach cycle
+9. **Result:** Spoke learns from other projects' experience ✓
+
+### Loop 3: Domain Knowledge Questions → User/External
+
+1. **Spoke asks:** `/help "How do I integrate OAuth?"`
+2. **Local search fails:** No local teaching on OAuth
+3. **Question type:** Domain knowledge (implementation)
+4. **Help skill offers user:** Two choices:
+   - "Check hub KB: Have other projects solved OAuth?"
+   - "Query external source: Ask ChatGPT or search docs"
+5. **User chooses "hub":**
+   - Help-request created: "Any patterns on OAuth integration?"
+   - Hub responds: "Here's how projects have approached OAuth"
+6. **User chooses "external":**
+   - Help skill helps formulate query for ChatGPT
+7. **Framework stays clean:** No OAuth teaching files, framework not polluted with domain knowledge
+
+### Why This Separation Matters
+
+**Framework is the WAI authority** — it teaches how to use skills, lugs, teaching files, registry
+**Framework does NOT teach domain knowledge** — OAuth, email systems, payment processing, etc.
+**Hub is the pattern library** — cross-project learnings, architectural approaches
+**External sources** — for domain-specific implementation details
+
+If framework started teaching OAuth, it would become:
+- ❌ Unfocused (WAI + everything else)
+- ❌ Hard to maintain (everyone wants their domain knowledge in it)
+- ❌ Polluted with advice outside its scope
+- ❌ Confused with the hub's job
+
+---
+
+## Critical: Framework Scope Boundary
+
+**Framework teaches ONLY WAI mechanics. It does NOT teach domain knowledge.**
+
+```
+✅ Framework teaches:
+  - How to use skills, lugs, teaching files
+  - How to structure agents and spokes
+  - Registry routing, help flow
+  - Teaching file best practices
+  - Decision record patterns
+
+❌ Framework does NOT teach:
+  - OAuth integration
+  - Email system architecture
+  - Payment processing
+  - Specific implementation patterns
+  - Domain-specific solutions
+```
+
+**Why this boundary matters:**
+
+If framework became a general knowledge base (WAI + OAuth + email + payments + ...):
+- ❌ It becomes unfocused and hard to maintain
+- ❌ Every domain expert demands their knowledge be in it
+- ❌ It competes with the hub's job (cross-project pattern synthesis)
+- ❌ It stops being the source of truth for "how WAI works"
+
+**The correct separation:**
+
+| Repository | Teaches | Maintains | Users |
+|---|---|---|---|
+| Framework | WAI mechanics, patterns, best practices | How to use WAI | Spokes learning WAI |
+| Hub | Cross-project patterns, learnings | Pattern KB from all projects | Spokes seeking patterns |
+| External | Domain knowledge, implementation | ChatGPT, docs, research | Anyone needing domain expertise |
 
 ---
 
@@ -235,7 +338,7 @@ Source: WAI-Spoke/seed/ingest/processed/wai-v2-migration-state-v2.md.teaching
 Version: 2.0, created by Claude Sonnet 4.6
 ```
 
-### Example 2: Registry Routing
+### Example 2: WAI Mechanics Question Not Found Locally
 
 ```
 You: /help "How do I create a skill?"
@@ -243,16 +346,58 @@ You: /help "How do I create a skill?"
 Help skill searches locally...
 Not found locally.
 
-Checking registry for "How do I create.*skill"...
-Match found: wheelwright/framework
+Question category: WAI mechanics
+Expert: wheelwright/framework
 
 Response:
-I didn't find this locally, but framework specializes in skill creation.
+I didn't find this locally. Framework specializes in skill creation.
 Creating help-request lug and submitting to framework.
 You'll get an answer on the next teach cycle.
 ```
 
-### Example 3: Clarification Needed
+### Example 3: Domain Knowledge Question (NOT to framework)
+
+```
+You: /help "How do I integrate OAuth?"
+
+Help skill searches locally...
+Not found locally.
+
+Question category: Domain knowledge (implementation)
+Routing: NOT framework (wrong scope)
+
+Response:
+This is a domain knowledge question, not a WAI mechanics question.
+Framework only teaches WAI itself, not implementation domains.
+
+Two options:
+1. Check hub: "Have other projects solved OAuth integration?"
+   → I'll submit pattern-inquiry to hub
+2. External: "Ask ChatGPT or search documentation"
+   → I can help you formulate a query
+
+Which would help?
+```
+
+### Example 4: Cross-Spoke Pattern Question
+
+```
+You: /help "What patterns have other spokes discovered for error handling?"
+
+Help skill searches locally...
+Not found locally (cross-spoke question).
+
+Question category: Cross-spoke pattern
+Expert: wheelwright/hub
+
+Response:
+This is a cross-spoke pattern question.
+Creating pattern-inquiry lug and submitting to hub.
+Hub will search its KB of learnings across projects.
+You'll get pattern response on next teach cycle.
+```
+
+### Example 5: Clarification When Multiple Local Answers
 
 ```
 You: /help "What is a Lug?"
@@ -269,7 +414,7 @@ I found multiple answers. Which would help?
 2. Conceptual explanation
 3. Design rationale
 
-Tell me which, or I'll ask the framework for a better teaching file.
+Tell me which, or I'll submit help-request to framework for a clearer teaching file.
 ```
 
 ---
@@ -335,4 +480,4 @@ For now: If this feels incomplete, that's expected. Help-request lug will captur
 
 ## Version History
 
-**v1.0** (2026-03-12): Ground truth. Explains the help system as built. Awaiting cold review for deficiencies.
+**v1.0** (2026-03-12, revised): Ground truth with corrected scoping. Framework teaches ONLY WAI mechanics, not domain knowledge. Domain questions route to hub (patterns) or external (ChatGPT/research). Framework scope boundary is critical to maintain. Awaiting cold review for deficiencies and clarity improvements.
