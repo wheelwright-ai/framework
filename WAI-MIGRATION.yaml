@@ -5,7 +5,7 @@ started_at: "2026-03-12T00:00:00Z"
 started_by: "Claude Sonnet 4.6"
 safety_tag: "v1.0-pre-migration-2026-03-12"
 branch: "wai-v2-migration"
-authoritative_format: v1  # Flips to v2 after Phase 6
+authoritative_format: v2  # Flipped after Phase 6
 
 completed_phases:
   - phase: 0
@@ -24,6 +24,18 @@ completed_phases:
     commit: "9542a56"
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Skills verified: all 8 required Skills have use_cases and tests sections. EXTENSION.md present with full sections. WAI-Manifest.yaml skills_loaded complete. Teaching files adopted."
+  - phase: 4
+    commit: "0dcdc09"
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "Hub infrastructure verified complete: hub/intake/ exists with processed/, hub/health.yaml initialized, hub/BRIEF.md with cascade docs."
+  - phase: 5
+    commit: "0dcdc09"
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "WAI-Integrity.md verified complete: read-only paths, append-only paths, scoped write access, pre-refactor rules all documented."
+  - phase: 6
+    commit: ""  # filled after commit
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "Wakeup sequence verified v2-ready. authoritative_format flipped to v2. Briefings now generate with v2 Lug format."
 
 retired_files:
   - WAI-Signals.jsonl    # Absorbed into WAI-Lugs.jsonl as impact >= 8 lugs (Phase 1)
