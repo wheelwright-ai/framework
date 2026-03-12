@@ -1,0 +1,16 @@
+node_type: hub
+node_path: "wheelwright/hub"
+framework_version: "2.0.0"
+template_versions:
+  lugs: 2
+  brief: 1
+  guide: 1
+hub_lug_cursor: null
+skills_loaded:
+  - hub-watcher
+  - hub-processor
+  - framework-updater
+  - session-observer
+  - safe-refactor
+last_session: null
+outbound_pending: []

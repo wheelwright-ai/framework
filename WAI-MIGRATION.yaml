@@ -1,6 +1,6 @@
 migration: v2
 status: in_progress
-current_phase: 1
+current_phase: 2
 started_at: "2026-03-12T00:00:00Z"
 started_by: "Claude Sonnet 4.6"
 safety_tag: "v1.0-pre-migration-2026-03-12"
@@ -16,6 +16,10 @@ completed_phases:
     commit: "5c8826f"
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Lug schema migrated to v2 (759 lugs across 8 files). PEV fields added. Signals absorbed/tombstoned."
+  - phase: 2
+    commit: ""  # filled after this commit
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "Registry structure verified. registry/wheelwright/framework/ created. hub/WAI-Manifest.yaml created. hub/registry.yaml, WAI-Manifest.yaml files were already in place from prior sessions on main."
 
 retired_files:
   - WAI-Signals.jsonl    # Absorbed into WAI-Lugs.jsonl as impact >= 8 lugs (Phase 1)
