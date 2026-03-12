@@ -70,6 +70,52 @@ Persist session state with enough detail that a new agent/session can:
 
 ## Closeout Procedure
 
+### Step 0: Ask What's Next (Before Everything Else)
+
+**Purpose:** Shape how the session will be documented and whether gaps need filling.
+
+This is the very first step, before any document writing or reconciliation:
+
+```
+Before I close out — what are you doing next?
+  a) Continuing work (I'll optimize the handoff)
+  b) Done for this session
+```
+
+Save the user's answer. Proceed to the next step with that context.
+
+---
+
+### Step 0b: Lug Gap Review (If Continuing)
+
+**Purpose:** Ensure the next lug is complete enough to hand off to the next session.
+
+If the user answered "Continuing work" in Step 0:
+
+1. **Identify the next lug** using this priority order (same as wakeup Step 4):
+   - `s: "p"` (in progress) → resume this
+   - `priority: "before_next_epic"` AND `s: "o"` → start this
+   - `ty: "bug"` AND `s: "o"` → fix this
+   - First `s: "o"` non-epic → start this
+
+2. **Review that lug against this gap checklist:**
+   ```
+   Gap check on next lug ({i} — {t}):
+   □ perceive — describes current state and what to look at?
+   □ execute — describes approach, constraints, what to avoid?
+   □ verify — describes how to confirm success?
+   □ description — detailed enough for a fresh agent to proceed?
+   □ Discussed context — anything agreed outside the lug this session that should be added?
+   ```
+
+3. **Fill any gaps found** by updating the lug in `WAI-Spoke/WAI-Lugs.jsonl` before proceeding.
+
+4. **Note completion:**
+   - If gaps found and filled: "Lug updated with [specific field]."
+   - If complete: "Lug is ready, no gaps found."
+
+---
+
 ### 1. Lug Reconciliation (P6, P7)
 
 **Review autosave lugs:**
@@ -189,8 +235,109 @@ git log origin/main --oneline -1  # If pushed, verify remote
 
 ---
 
+### Step 11: Intelligent Landing
+
+**Purpose:** Provide clear context for the next session and optionally compress context.
+
+#### Branch A — Continuing
+
+If the user answered "Continuing work" in Step 0:
+
+1. **Token meter BEFORE** — Estimate current context:
+   - Formula: (turns × ~500 tokens/turn) + loaded files (1 token ≈ 4 bytes)
+   - Record as `tokens_before`
+
+2. **Build retention summary** (terse, 200–300 words):
+   ```markdown
+   ## Compact — Session {N} → {N+1}
+
+   **Next:** {lug i} — {lug title}
+
+   **Architecture decisions:**
+   - {decision 1}
+   - {decision 2}
+
+   **Files touched:**
+   - {path}: {one-line note}
+
+   **Next lug (gap-filled):**
+   - Perceive: {summary}
+   - Execute: {summary}
+   - Verify: {summary}
+   - Discussed context: {anything agreed outside the lug this session}
+
+   **WAI expectations:**
+   - Signal threshold: {N} | Lug conventions: s=o/p/c | Closeout on >70% context
+
+   **Dropped:** {N} turns exploration, resolved questions, file dumps
+   ```
+
+3. **Record compact event** — Append to `WAI-Spoke/WAI-Lugs.jsonl`:
+   ```json
+   {
+     "i": "compact-{YYYYMMDD-HHMMSS}",
+     "ty": "compact",
+     "t": "Context compact: Session {N} → {N+1}",
+     "s": "c",
+     "ca": "{ISO-8601}",
+     "gb": "{agent}",
+     "from_session": "{session_id}",
+     "tokens_before": {N},
+     "tokens_after": null,
+     "next_lug": "{next_lug_id}",
+     "summary": "{retention_summary}"
+   }
+   ```
+   Note: `tokens_after` is null here — it gets filled by wakeup after `/compact` fires.
+
+4. **Auto-compress** — Invoke `/compact` with the retention summary as custom summary.
+
+5. **Token meter AFTER** — Estimate tokens of the summary itself:
+   ```
+   Context compressed: ~{BEFORE}K → ~{AFTER}K ({PCT}% reduction)
+   Next up: {lug title}
+   ```
+
+6. **Update WAI-State.json** — Record compact event reference in `_session_state`:
+   ```json
+   "_session_state": {
+     "last_compact": "{compact-lug-id}",
+     "compact_tokens_before": {N},
+     "compact_tokens_after": {M}
+   }
+   ```
+
+---
+
+#### Branch B — Ending Session
+
+If the user answered "Done for this session" in Step 0:
+
+Display a summary and stop (no compression):
+
+```
+Session {N} complete. All work saved.
+
+Accomplished:
+- {item 1}
+- {item 2}
+
+When you return:
+- Run /wai to orient
+- Next up: {next lug title OR next_action}
+- Version: {wheel.version}
+
+See you next session.
+```
+
+Do not invoke `/compact`, do not write compact lug, do not read further files.
+
+---
+
 ## Success Criteria
 
+- [ ] Step 0: User answer recorded ("continuing" or "done")
+- [ ] Step 0b (if continuing): Next lug gaps reviewed and filled if needed
 - [ ] Autosave lugs reconciled into permanent record
 - [ ] High-impact signals extracted and flagged for hub
 - [ ] **Incomplete work documented with continuation guidance**
@@ -200,6 +347,7 @@ git log origin/main --oneline -1  # If pushed, verify remote
 - [ ] Documentation updated where applicable
 - [ ] Changes committed with descriptive message
 - [ ] User prompted before push
+- [ ] Step 11 completed: Branch A (compact + token meter) OR Branch B (clean exit)
 
 ---
 
