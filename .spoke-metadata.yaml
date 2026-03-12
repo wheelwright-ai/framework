@@ -1,0 +1,110 @@
+---
+# .spoke-metadata.yaml — Framework Spoke Self-Declaration
+# Maintained by self-registry skill to declare what we are and what we do.
+# Hub's registry-refresh skill reads this on wakeup and aggregates into the live registry.
+
+metadata_version: "2.0"
+last_updated: "2026-03-12T12:38:51Z"
+last_updated_by: "Claude Haiku 4.5 (Phase 9 dogfood)"
+
+# Identity & Mission
+identity:
+  path: "wheelwright/framework"
+  type: "spoke"
+  status: "active"
+  name: "Wheelwright Framework"
+  mission: "Define and maintain the WAI framework—Skills, Lugs, session architecture, and hub-spoke patterns that enable AI session continuity and multi-agent learning."
+
+# Scope & Expertise
+scope:
+  domains:
+    - "WAI framework architecture"
+    - "Session continuity and state management"
+    - "Lug schema and decision records"
+    - "Skill definition and patterns"
+    - "Hub-spoke knowledge distribution"
+    - "Multi-agent collaboration"
+  boundaries:
+    - "We do NOT implement domain-specific functionality (email, auth, etc.)"
+    - "We do NOT maintain project-specific business logic"
+    - "We do NOT replace IDE functionality or cloud infrastructure"
+    - "We teach WAI mechanics only, not domain knowledge"
+
+expertise:
+  offers:
+    - "WAI framework guidance and best practices"
+    - "Teaching file specification and creation patterns"
+    - "Skill definition, schema, and use case documentation"
+    - "Lug authoring and decision record patterns"
+    - "Hub-spoke architecture and registry design"
+    - "Session continuity protocols and closeout validation"
+    - "Multi-agent coordination patterns"
+  stack:
+    - "Python 3.8+"
+    - "YAML (Skill definitions, configurations)"
+    - "JSON/JSONL (Lugs, state files)"
+    - "Bash (CLI tools, git integration)"
+    - "Git (version control, history)"
+  team_model: "Research-focused with self-dogfooding. Framework uses its own WAI-Spoke for session continuity, testing new patterns before release to other spokes."
+
+# Framework & Infrastructure
+framework:
+  version: "2.0.0"
+  skills_loaded:
+    - "wai (wakeup protocol)"
+    - "wai-status (health check)"
+    - "wai-time (token usage)"
+    - "wai-closeout (session end)"
+    - "wai-shipit (release gates)"
+    - "wai-teach (distribute templates)"
+    - "wai-learn (process inbox)"
+    - "safe-refactor (structural changes)"
+    - "qc-check (quality gates)"
+    - "self-registry (maintain .spoke-metadata.yaml)"
+    - "hub-registry-refresh (hub aggregates spoke metadata)"
+    - "help (agent navigation and routing)"
+  teaching_files_count: "5 (specification files: teaching-file.spec.md, lug-schema.spec, skill-contract.spec, etc.)"
+
+# Activity & Business Intelligence
+activity:
+  created_at: "2025-12-15T00:00:00Z"
+  last_modified: "2026-03-12T12:38:51Z"
+
+  git_metrics:
+    commits_last_30_days: 83
+    last_commit_date: "2026-03-12T12:38:51Z"
+    active_branches: 5
+
+  lug_metrics:
+    lugs_created_30_days: 7
+    open_lugs: 0
+    decisions_made: 7
+    teaching_files_created_30d: 2
+
+  session_metrics:
+    last_session: "2026-03-12T19:37:51Z"
+    session_count: 14
+    days_since_last_activity: 0
+
+  health_status: "active"
+
+# Metadata Quality & Validation
+metadata_quality:
+  validated: true
+  validation_timestamp: "2026-03-12T12:38:51Z"
+  validation_checks:
+    - mission: "Non-empty and specific ✓"
+    - scope_domains: "Specific to WAI mechanics ✓"
+    - boundaries: "Clear about what we don't do ✓"
+    - offers: "Match actual capability (skills, templates, guides) ✓"
+    - stack: "Current technologies used ✓"
+    - activity_metrics: "Recent and accurate ✓"
+
+# Instructions for Hub and Agents
+metadata_notes:
+  - "This file is maintained by the self-registry skill"
+  - "Framework spoke uses itself as a dogfood test bed"
+  - "Activity metrics show health: 83 commits in 30d, 7 decisions, session count 14"
+  - "Hub queries this on wakeup to include framework in live registry"
+  - "Agents can find framework expertise in registry and route framework questions here"
+  - "This demonstrates Phase 9 architecture in practice: self-declaring spoke"
