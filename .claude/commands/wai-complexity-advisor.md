@@ -56,6 +56,39 @@ User: PLAN ACCEPTED
 
 AI: (Proceeds with implementation)
 
+## Model-Task Awareness
+
+In addition to complexity, this advisor watches for **architectural signals** — indicators that the current task needs stronger model judgment than the active model may provide.
+
+### Architectural Signals
+
+- User is correcting fundamental assumptions about system design
+- Task involves defining new protocols or boundaries
+- Decisions affect multiple spokes or the entire wheel
+- Task requires "should we?" judgment, not "how do we?" execution
+- Agent is making assumptions about projects it hasn't verified
+- Agent is creating multiple new artifacts without user validation
+
+### When Detected
+
+Prompt the user **once per session** (not repeatedly):
+
+> "This work involves architectural decisions. I'm running as {model_name}. For design-level work where judgment matters, consider `/model` to switch to Sonnet or Opus."
+
+### Model Tier Guidance
+
+| Tier | Good For | Watch Out |
+|------|----------|-----------|
+| Haiku | Execution, file ops, following plans, tests | Misses assumption errors, treats design as execution |
+| Sonnet | Balanced work, moderate design + execution | May miss novel architectural issues |
+| Opus | Architecture, protocol design, reviewing prior work | Higher token cost; use when judgment matters |
+
+### Session Logging
+
+Model switches are recorded in `WAI-State.json` under `model_log`. On closeout, note which models were active and what task types they handled. This enables retrospective analysis.
+
+See lug: `decision-model-task-awareness-protocol` for full protocol and incident record.
+
 ## Related Skills
 
 - /wai-rules — Show scope boundaries

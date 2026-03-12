@@ -42,12 +42,23 @@ algorithm:
     action: |
       Create test-bench/ directory (temporary).
       Copy WAI-Spoke/ into test-bench/WAI-Spoke/ as-is.
-      This gives the test agent a realistic spoke environment:
+      This gives the test agent a realistic spoke environment.
+
+      v2 spokes will have:
         - WAI-State.json (project identity, session state)
         - WAI-Lugs.jsonl (existing decisions and learnings)
         - WAI-Guide.md (protocol reference)
         - seed/ingest/ (where teaching file will land)
         - lugs/inbox/ (where inbox lugs arrive)
+
+      v1 spokes may only have:
+        - WAI-State.json (different top-level structure)
+        - WAI-Guide.md
+        - seed/ (flat, no ingest/ subdirectory)
+        - No WAI-Lugs.jsonl, no lugs/ directory
+
+      Both are valid test environments. If seed/ingest/ doesn't exist
+      in the clone, create it before injecting the teaching file.
 
     note: >
       The clone is the test agent's entire world. It knows nothing about
@@ -157,18 +168,30 @@ algorithm:
       The test bench is temporary. The teaching file, the gap assessment,
       and the iteration lugs are the permanent artifacts.
 
-  step_7_optional_real_world_validation:
+  step_7_real_world_validation:
     description: "After local pass, test against a real spoke's WAI-Spoke"
 
     when: "Teaching file passed local test (step 5 = pass)"
+    required: true  # Empirically proven essential — not optional
 
     action: |
       Clone a real spoke's WAI-Spoke/ folder into test-bench/WAI-Spoke/.
+      Pick a spoke at random or choose one known to have older structure.
       Re-run steps 2-5 with real spoke data.
+
       This catches issues that only surface with real project context:
-        - File paths that don't exist in real spokes
-        - Assumptions about spoke structure
-        - Refactor logic that doesn't work with real data
+        - v1 spokes missing WAI-Lugs.jsonl, seed/ingest/, lugs/inbox/
+        - Different WAI-State.json structure (top-level keys vary by version)
+        - Files the teaching references that don't exist in real spokes
+        - Assumptions about directory structure the author takes for granted
+        - Teachings that work on framework clone but fail on simple projects
+
+    why_required: >
+      First test run of this skill (2026-03-12) proved this step catches a
+      different class of gaps than the framework-clone test. The framework
+      spoke has all v2 infrastructure pre-built. Real spokes (especially v1)
+      exposed 2 blocking gaps invisible from the framework's perspective:
+      WAI-Lugs.jsonl didn't exist, and seed/ingest/processed/ didn't exist.
 
     note: >
       This is the final validation. If it passes here, the teaching file
@@ -206,6 +229,14 @@ use_cases:
     assessment: "pass — works with real spoke context"
     result: "Teaching ready for production deployment"
 
+  - scenario: "v1 spoke structure reveals missing file assumptions"
+    action: "Teaching passed framework-clone test, now testing against v1 spoke (solutions-by-mv)"
+    test_agent: "Reports: 'WAI-Lugs.jsonl does not exist' and 'seed/ingest/processed/ does not exist'"
+    framework: "Adds fallback: 'If file/dir doesn't exist, create it' and v1/v2 compatibility note"
+    second_pass: "Test agent processes cleanly with create-if-missing logic"
+    result: "Teaching now works across both v1 and v2 spoke structures"
+    origin: "First real test bench run, 2026-03-12, model-task-advisor.md.teaching"
+
 tests:
   - name: "Test bench creates clean clone"
     input: "Framework WAI-Spoke with standard files"
@@ -227,6 +258,10 @@ tests:
     input: "Teaching tested locally (pass), then against real spoke"
     expected: "Real spoke reveals gap not visible in framework clone"
 
+  - name: "v1 spoke structure handled gracefully"
+    input: "Teaching injected into v1 spoke (no WAI-Lugs.jsonl, no seed/ingest/)"
+    expected: "Test agent reports missing files; teaching updated with create-if-missing logic"
+
   - name: "Cleanup removes test bench"
     input: "Test complete (any verdict)"
     expected: "test-bench/ directory deleted, lugs preserved"
@@ -235,7 +270,10 @@ notes:
   - "The test agent must be genuinely naive — no framework development context"
   - "Gap assessments are the primary feedback mechanism"
   - "Iteration count is tracked to show teaching quality improvement"
-  - "Real-world validation is optional but recommended before production"
+  - "Real-world validation is REQUIRED before production — proven essential on first run"
   - "The test bench is always temporary and disposable"
   - "This skill is framework-only — spokes don't need it"
   - "Teaching files are the only artifact that reaches spokes; this skill ensures quality"
+  - "Two-stage testing catches two gap classes: Stage 1 = author clarity gaps, Stage 2 = structural assumption gaps"
+  - "v1 spokes are common — always test against at least one v1 spoke before deployment"
+  - "Most teachings converge in 2-3 iterations per stage"
