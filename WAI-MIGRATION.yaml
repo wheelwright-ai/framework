@@ -33,7 +33,7 @@ completed_phases:
     closed_at: "2026-03-12T00:00:00Z"
     summary: "WAI-Integrity.md verified complete: read-only paths, append-only paths, scoped write access, pre-refactor rules all documented."
   - phase: 6
-    commit: ""  # filled after commit
+    commit: "f8784b1"
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Wakeup sequence verified v2-ready. authoritative_format flipped to v2. Briefings now generate with v2 Lug format."
 
