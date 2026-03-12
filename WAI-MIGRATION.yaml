@@ -17,7 +17,7 @@ completed_phases:
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Lug schema migrated to v2 (759 lugs across 8 files). PEV fields added. Signals absorbed/tombstoned."
   - phase: 2
-    commit: ""  # filled after this commit
+    commit: "39a0bf0"
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Registry structure verified. registry/wheelwright/framework/ created. hub/WAI-Manifest.yaml created. hub/registry.yaml, WAI-Manifest.yaml files were already in place from prior sessions on main."
 
