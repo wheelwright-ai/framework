@@ -78,6 +78,12 @@
 - context-advisor, foundation-advisor
 - signal-advisor, lug-advisor
 
+**Phase 9 Infrastructure Skills:**
+- self-registry (spoke self-declaration)
+- hub-registry-refresh (hub aggregation)
+- help (internal agent navigation/routing)
+- teaching-test-bench (teaching file quality validation)
+
 ---
 
 ## Offers
