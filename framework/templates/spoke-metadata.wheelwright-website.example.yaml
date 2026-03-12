@@ -1,0 +1,99 @@
+---
+# Example: Website Spoke Self-Declaration
+# This is what wheelwright/website spoke would create in its root directory as .spoke-metadata.yaml
+# Based on Phase 11 adoption pattern - shows concrete example
+
+metadata_version: "2.0"
+last_updated: "2026-03-12T12:00:00Z"
+last_updated_by: "website-agent"
+
+# Identity & Mission
+identity:
+  path: "wheelwright/website"
+  type: "spoke"
+  status: "active"
+  name: "Wheelwright Website & Documentation"
+  mission: "Create user-facing documentation and marketing website. Showcase Wheelwright capabilities, provide onboarding guides, and maintain searchable knowledge base."
+
+# Scope & Expertise
+scope:
+  domains:
+    - "User documentation generation"
+    - "Marketing messaging and positioning"
+    - "User onboarding flow"
+    - "Public API documentation"
+  boundaries:
+    - "We do NOT implement Wheelwright framework itself (that's framework spoke)"
+    - "We do NOT maintain user authentication or account systems"
+    - "We do NOT provide support/SLA (that's external support team)"
+    - "We do NOT write business marketing (executive messaging handled separately)"
+
+expertise:
+  offers:
+    - "User documentation generation from framework state"
+    - "Marketing strategy for Wheelwright features"
+    - "User onboarding flow design"
+    - "API reference documentation"
+  stack:
+    - "Next.js (React framework)"
+    - "TypeScript"
+    - "Markdown (content)"
+    - "Docusaurus (doc site)"
+    - "Netlify (hosting & deployment)"
+  team_model: "Single agent per session with documentation and design expertise. Uses WAI for session continuity."
+
+# Framework & Infrastructure
+framework:
+  version: "2.0.0"
+  skills_loaded:
+    - "wai (wakeup protocol)"
+    - "wai-status (health check)"
+    - "wai-closeout (session end)"
+    - "wai-teach (distribute docs to hub)"
+    - "self-registry (maintain metadata)"
+    - "help (navigate registry)"
+    - "safe-refactor (structural changes)"
+  teaching_files_count: "4 (doc generation, marketing messaging, onboarding, API docs)"
+
+# Activity & Business Intelligence
+activity:
+  created_at: "2025-11-01T00:00:00Z"
+  last_modified: "2026-03-12T12:00:00Z"
+
+  git_metrics:
+    commits_last_30_days: 12
+    last_commit_date: "2026-03-10T14:00:00Z"
+    active_branches: 1
+
+  lug_metrics:
+    lugs_created_30_days: 2
+    open_lugs: 0
+    decisions_made: 1
+    teaching_files_created_30d: 1
+
+  session_metrics:
+    last_session: "2026-03-10T14:00:00Z"
+    session_count: 5
+    days_since_last_activity: 2
+
+  health_status: "active"
+
+# Metadata Quality & Validation
+metadata_quality:
+  validated: true
+  validation_timestamp: "2026-03-12T12:00:00Z"
+  validation_checks:
+    - mission: "Non-empty and specific ✓"
+    - scope_domains: "Specific to documentation and marketing ✓"
+    - boundaries: "Clear about what we don't do ✓"
+    - offers: "Match actual capability (4 expertise areas) ✓"
+    - stack: "Current technologies used ✓"
+    - activity_metrics: "Recent and accurate ✓"
+
+# Instructions for Hub and Agents
+metadata_notes:
+  - "Website spoke maintains this file in its root directory"
+  - "Activity metrics show health: 12 commits in 30d, 2 lugs created, session count 5"
+  - "Hub queries this on wakeup to include website spoke in live registry"
+  - "Agents asking about documentation, onboarding, or marketing will be routed here"
+  - "Health status 'active' means this spoke is healthy and available"
