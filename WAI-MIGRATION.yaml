@@ -1,13 +1,21 @@
 migration: v2
 status: in_progress
-current_phase: 0
+current_phase: 1
 started_at: "2026-03-12T00:00:00Z"
 started_by: "Claude Sonnet 4.6"
 safety_tag: "v1.0-pre-migration-2026-03-12"
 branch: "wai-v2-migration"
 authoritative_format: v1  # Flips to v2 after Phase 6
 
-completed_phases: []
+completed_phases:
+  - phase: 0
+    commit: "a405093"
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "Safety tag v1.0-pre-migration-2026-03-12 created, migration branch created, WAI-MIGRATION.yaml initialized"
+  - phase: 1
+    commit: ""  # filled after this commit
+    closed_at: "2026-03-12T00:00:00Z"
+    summary: "Lug schema migrated to v2 (759 lugs across 8 files). PEV fields added. Signals absorbed/tombstoned."
 
 retired_files:
   - WAI-Signals.jsonl    # Absorbed into WAI-Lugs.jsonl as impact >= 8 lugs (Phase 1)
