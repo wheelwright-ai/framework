@@ -13,7 +13,7 @@ completed_phases:
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Safety tag v1.0-pre-migration-2026-03-12 created, migration branch created, WAI-MIGRATION.yaml initialized"
   - phase: 1
-    commit: ""  # filled after this commit
+    commit: "5c8826f"
     closed_at: "2026-03-12T00:00:00Z"
     summary: "Lug schema migrated to v2 (759 lugs across 8 files). PEV fields added. Signals absorbed/tombstoned."
 
