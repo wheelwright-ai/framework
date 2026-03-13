@@ -125,12 +125,68 @@ If unreconciled autosaves found:
 - **Resume:** `Green Light` | **Inspect:** `Red Light` | **Discard:** reconciled on next Closeout
 ```
 
+### Step 5a: Read Session Track (Resume / Recovery)
+
+Check for previous session tracks in `WAI-Spoke/session-*/track.jsonl`:
+
+1. List `WAI-Spoke/session-*/` directories sorted by name (newest last)
+2. If no session directories exist → skip silently (legacy spoke, no tracks yet)
+3. Read the most recent `track.jsonl`
+4. Check if previous session had a clean closeout:
+   - Compare `_session_state.last_closeout` against last point's `ts` field
+   - If closeout timestamp > last point timestamp → **resume** (clean end)
+   - If closeout timestamp < last point timestamp or missing → **recovery** (session interrupted)
+5. Read last 5 points and produce a catch-up brief:
+
+```
+### Session Track (session-YYYYMMDD-HHMM)
+**Turns:** N | **Final phase:** {phase}
+**Status:** Clean closeout / ⚠️ Incomplete (no closeout detected)
+
+**Arc:** {evolution chain — how focus shifted across turns}
+**Decisions:** {accumulated decisions from all points}
+**Open threads:** {open questions from final points}
+
+**Resume recommendation:** {what to do next based on track state}
+```
+
+If recovery mode (no closeout), highlight incomplete work from the track and ask the user whether to resume that work or start fresh.
+
+### Step 5b: Read Taste Files
+
+Load user and project preferences:
+
+1. Check for `WAI-Spoke/taste.spoke.yaml` — if exists, read all entries with `status: accepted`
+2. Check hub connection. If connected, check for `{hub_path}/taste.user.yaml` — if exists, read accepted entries
+3. Apply accepted preferences to session behavior (communication style, workflow, approach)
+4. If either taste file has entries with `status: proposed`:
+   - Present proposed entries: "Historian suggests: {preference}. Accept / Reject?"
+   - Wait for user response before proceeding
+5. If no taste files exist → skip silently (they will be created when the Historian first runs)
+
+Note: `taste.spoke` overrides `taste.user` for project-specific matters. User's direct instructions override both.
+
+### Step 5c: Check Historian Threshold
+
+Check if the Historian advisor should propose a review:
+
+1. If `WAI-Spoke/advisors/historian/` directory does not exist → skip silently
+2. Read `WAI-Spoke/advisors/historian/passes.jsonl` (if exists) to find last reviewed session and point count
+3. Count total unreviewed points across all session tracks since last pass
+4. If >= 30 unreviewed points: suggest review
+   - Output: "Historian: {N} unreviewed points across {M} sessions. Run `/wai-review` when ready."
+5. If < 30 → silent
+
 ### Step 6: Detect Pending Teachings
 
 Check if `WAI-Spoke/seed/ingest/manifest.json` exists:
 - If yes: read `files_taught` count and `taught_at` timestamp
 - Output: "🎓 N file(s) awaiting review — taught {date}"
 - **Action required:** Prioritize review before other work
+
+Also check `WAI-Spoke/seed/ingest/` for `.track.jsonl` files — these are session tracks captured externally (via bootstrap) waiting to be ingested. If present:
+- Output: "📋 N track file(s) awaiting ingest"
+- Process: Create `WAI-Spoke/session-{date from track}/` and move the track file into it as `track.jsonl`
 
 Also check `WAI-Spoke/lugs/inbox/` for `.jsonl` files — these are lugs received from hub waiting to be processed. If present, note count and suggest `/wai-learn`.
 
@@ -150,7 +206,18 @@ Estimate token footprint of loaded files:
 
 From `WAI-State.json` → `context.next_actions` (first 5 items).
 
-### Step 9: Show Available Skills
+### Step 9: Initialize Session Track
+
+Create the session track directory and prepare for point capture:
+
+1. Generate session ID from current UTC time: `session-YYYYMMDD-HHMM`
+2. Create directory: `WAI-Spoke/session-{id}/`
+3. Update `_session_state.track_path` in WAI-State.json to point to the new track
+4. The first point will be written after this wakeup briefing completes (phase: `orientation`)
+
+Note: After each subsequent turn in this session, append a point to `WAI-Spoke/session-{id}/track.jsonl`. See `framework/skills/track-encapsulation.yaml` for the point schema and phase definitions.
+
+### Step 10: Show Available Skills
 
 ```
 ### Available Skills
@@ -161,6 +228,7 @@ From `WAI-State.json` → `context.next_actions` (first 5 items).
 - **/wai-shipit** — Quality gates + closeout (for releases)
 - **/wai-teach** — Push outbox to hub or spokes (auto-detects and initializes new spokes)
 - **/wai-learn** — Process inbox teachings on wakeup
+- **/wai-review** — Run Historian review of accumulated session tracks
 - **/wai-time** — Token usage estimate
 - **/wai-rules** — Project boundaries and guidelines
 - **/wai-principles** — WAI principles P1-P9
@@ -189,6 +257,8 @@ From `WAI-State.json` → `context.next_actions` (first 5 items).
 - Hub: ✓ Connected / ⚠ Not connected
 - Last teach: {date} / never
 - Git: ✓ Clean / ⚠ N uncommitted
+- Track: session-YYYYMMDD-HHMM initialized / ⚠ Previous session incomplete
+- Taste: N accepted preferences loaded / none
 
 ### Next Actions
 - {action 1}
@@ -200,6 +270,7 @@ From `WAI-State.json` → `context.next_actions` (first 5 items).
 - **/wai-shipit** — Quality gates + closeout
 - **/wai-teach** — Push to hub/spokes
 - **/wai-learn** — Process inbox
+- **/wai-review** — Historian review of session tracks
 - **/wai-time** — Token usage
 - **/wai-rules** — Project boundaries
 

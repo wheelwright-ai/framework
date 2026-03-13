@@ -1,0 +1,204 @@
+# Teaching: Track Encapsulation + Historian + Taste
+
+**Type:** Behavioral upgrade + advisor installation
+**Target:** All spokes
+**Version:** 1.0
+**Created:** 2026-03-12
+
+---
+
+## What This Teaching Does
+
+Installs three interconnected systems:
+
+1. **Track Encapsulation** — Per-turn point capture in session tracks. After each turn, the agent records what happened, why, and what's still open.
+2. **Historian Advisor** — Periodic review of accumulated tracks from three perspectives (user, model, directions) to identify patterns and propose improvements.
+3. **Taste Files** — User and project preference files that shape agent behavior, nudge-updated by the Historian.
+
+**This is NOT:** A replacement for existing closeout or lug systems. Track works alongside lugs and signals. It adds a richer session record, not a replacement for structured work tracking.
+
+---
+
+## Why This Exists
+
+**Problem:** Conversations produce cognitive signals that degrade each turn. By session end, early insights are lost to context. Current closeout captures a summary, but the turn-by-turn arc — reasoning, decisions, shifts in focus — disappears.
+
+**Solution:** Capture a "point" after each turn. Points accumulate into a "track" that tells the full story of a session. This track enables better resume/recovery, powers the Historian advisor, and can even bootstrap a new spoke from conversation data.
+
+---
+
+## Input: What You Have Now
+
+Check for these files/directories:
+
+- `WAI-Spoke/WAI-State.json` — must exist
+- `WAI-Spoke/session-*/` — may not exist yet (this teaching creates the pattern)
+- `WAI-Spoke/advisors/` — may not exist yet
+- `WAI-Spoke/taste.spoke.yaml` — may not exist yet
+- `WAI-Spoke/WAI-Lugs.jsonl` — may not exist (v1 spokes). Create if missing.
+
+**Note on spoke versions:** Some spokes use an older (v1) structure that may not have `WAI-Lugs.jsonl`, `seed/ingest/`, or `lugs/inbox/`. This is normal. Create these paths as needed — this teaching is compatible with both v1 and v2 spoke structures.
+
+---
+
+## Transformation: What Changes
+
+### Step 1: Create Directory Structure
+
+Create these directories if they don't exist:
+
+```
+WAI-Spoke/advisors/historian/reviews/
+```
+
+### Step 2: Understand the Point Schema
+
+After each turn, append one JSONL line to the active session's `track.jsonl`:
+
+```json
+{"turn":1,"ts":"2026-03-12T21:01:00Z","focus":"session orientation","action":"Ran wakeup protocol","thinking":"No active work, clean state. Waiting for user direction.","activity":["read WAI-State.json","read WAI-Lugs.jsonl"],"decisions":[],"insights":[],"open":["What should we work on?"],"phase":"orientation","evolution":null}
+```
+
+**Fields:**
+- `turn` — Sequential number within session
+- `ts` — ISO-8601 UTC timestamp
+- `focus` — Topic thread this turn (short phrase)
+- `action` — What happened (observable outcome)
+- `thinking` — Agent's reasoning: why it chose what it chose, what it considered, what it rejected. 2-3 sentences max.
+- `activity` — List of concrete actions (files read, commands run)
+- `decisions` — Choices made this turn (empty array if none)
+- `insights` — New understanding that emerged (empty array if none)
+- `open` — Unresolved questions (empty array if none)
+- `phase` — One of: `orientation`, `exploration`, `planning`, `execution`, `review`, `recovery`
+- `evolution` — How focus shifted from previous turn. Null on first point. Format: `"previous -> current: reason"`
+- `signals` — (optional) High-impact items worth elevating. Omit this field entirely if none; include as an array of strings when present
+
+**Phase definitions:**
+- `orientation` — Getting bearings: reading state, running wakeup
+- `exploration` — Researching, reading code, investigating without a plan
+- `planning` — Designing approach, proposing architecture, not yet building
+- `execution` — Building, writing, editing, implementing
+- `review` — Evaluating completed work, checking quality
+- `recovery` — Reconstructing context after interruption
+
+### Step 3: Session Lifecycle
+
+**On wakeup:**
+1. Create session directory: `WAI-Spoke/session-YYYYMMDD-HHMM/` (UTC time)
+2. Write first point after wakeup completes (phase: `orientation`)
+
+**On each turn:**
+1. Append a point to `WAI-Spoke/session-YYYYMMDD-HHMM/track.jsonl`
+2. Keep points concise (~200 tokens max)
+3. If write fails, note and retry next turn. Never block user response.
+
+**On closeout:**
+1. Write final point (phase: `review`)
+2. Track file is permanent — do NOT delete or truncate
+3. Session directory is committed to git
+
+**Fallback (no file access):**
+If you cannot write to disk (external tool, permissions), generate points at end of conversation and output as copyable content.
+
+### Step 4: Resume and Recovery on Wakeup
+
+When waking up, check for previous session tracks:
+
+1. Find most recent `WAI-Spoke/session-*/track.jsonl`
+2. Check if previous session had a clean closeout:
+   - Read `_session_state.last_closeout` from `WAI-State.json`
+   - Compare against the `ts` field of the last point in the track
+   - If `last_closeout` >= last point's `ts`: clean closeout (resume)
+   - If `last_closeout` < last point's `ts` or is missing: **recovery** — the previous session was interrupted
+3. Read last 5 points and present a catch-up brief:
+   - Arc of the work (focus threads, evolution chain)
+   - Decisions made
+   - Open threads still unresolved
+   - Phase at interruption
+4. Ask user whether to resume or start fresh
+
+**Resume** = previous session closed cleanly, track provides context.
+**Recovery** = previous session was interrupted, flag incomplete work.
+
+### Step 5: Historian Awareness
+
+The Historian advisor lives at `WAI-Spoke/advisors/historian/`. It reviews accumulated track points from three perspectives:
+
+- **User perspective:** Preference patterns, recurring corrections, satisfaction signals
+- **Model perspective:** Reasoning patterns, difficulty clusters, model-task fit
+- **Directions perspective:** Gaps in guidance, rules followed/ignored, missing protocols
+
+On wakeup, if 30+ unreviewed points exist, suggest: "Historian: N unreviewed points. Run `/wai-review` when ready."
+
+Points are considered "reviewed" once they appear in a Historian pass record (`WAI-Spoke/advisors/historian/passes.jsonl`). If no passes.jsonl exists, all points are unreviewed.
+
+The Historian is an **interpreter, not an editor**. It reads tracks but never modifies them. It proposes improvements via taste nudges and protocol suggestions (which require user approval).
+
+### Step 6: Taste Files
+
+Two taste files shape agent behavior:
+
+**`WAI-Spoke/taste.spoke.yaml`** — Project-specific preferences:
+```yaml
+entries:
+  - id: "taste-001"
+    category: "workflow"
+    preference: "Always run test bench before declaring teachings deployable."
+    status: "accepted"
+    source: "user-direct"
+    proposed_at: "2026-03-12T22:00:00Z"
+    accepted_at: "2026-03-12T22:00:00Z"
+```
+
+**`{hub}/taste.user.yaml`** — User-level preferences (crosses all spokes).
+
+Categories: `communication`, `workflow`, `approach`, `boundaries`, `philosophy`.
+
+On wakeup, load accepted entries and apply. If proposed entries exist, present to user for approval. Taste is advisory — user's direct instructions always override.
+
+---
+
+## Output: What You Should Have After
+
+- `WAI-Spoke/session-YYYYMMDD-HHMM/track.jsonl` created on each session
+- `WAI-Spoke/advisors/historian/reviews/` directory ready for Historian output
+- Agent captures a point after each turn
+- Wakeup reads previous tracks for resume/recovery
+- Closeout finalizes track without deleting it
+- Taste files loaded on wakeup (when they exist)
+
+---
+
+## Verification Checklist
+
+After processing this teaching, verify:
+
+- [ ] `WAI-Spoke/advisors/historian/reviews/` directory exists
+- [ ] Agent understands point schema (can produce a sample point)
+- [ ] Agent knows to create `session-YYYYMMDD-HHMM/` on wakeup
+- [ ] Agent knows track files are permanent (never deleted)
+- [ ] Agent knows resume vs recovery distinction
+- [ ] Agent knows Historian threshold (30 unreviewed points)
+- [ ] Agent understands taste file lifecycle (proposed -> accepted/rejected)
+
+---
+
+## Embedded Lug
+
+After completing this teaching, extract and append this lug to your `WAI-Lugs.jsonl`.
+If `WAI-Lugs.jsonl` does not exist, create it with this lug as the first line:
+
+```json
+{"i":"teaching-track-encapsulation-v1","t":"Installed track encapsulation + historian + taste systems","ty":"signal","s":"c","ca":"2026-03-12T00:00:00Z","gb":"teaching-file","impact":8,"content":{"what":"Installed per-turn track capture, historian advisor, and taste preference files. Agent now records points each turn, supports resume/recovery from tracks, and will propose historian reviews at 30+ unreviewed points.","source":"track-encapsulation.md.teaching v1.0"},"_behavior_directive":{"what_this_is":"Record that this spoke has track encapsulation installed.","what_this_is_NOT":"An instruction to re-process this teaching."}}
+```
+
+---
+
+## Post-Completion
+
+Move this file to the spoke's processed directory after successful processing.
+
+Check which path exists (spokes vary):
+- `seed/ingest/processed/` (v2 spokes) — use this if it exists
+- `seed/processed/` (v1 spokes) — use this if `seed/ingest/processed/` does not exist
+- If neither exists, create `seed/ingest/processed/` and use it

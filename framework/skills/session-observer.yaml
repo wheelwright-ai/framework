@@ -1,7 +1,16 @@
 name: session-observer
 role: watcher
 model: lightweight
-description: "Event recording and session synthesis - captures what happened for next session"
+status: superseded
+superseded_by: "track-encapsulation.yaml + historian.yaml"
+superseded_at: "2026-03-12"
+superseded_reason: >
+  Track encapsulation captures everything the observer did (events, session
+  synthesis) plus per-turn telemetry with richer schema. The Historian advisor
+  handles periodic review that the observer's synthesis_pattern attempted.
+  observations.jsonl (the observer's output file) contained only test scaffold
+  data and is being discarded.
+description: "SUPERSEDED. Event recording and session synthesis - captures what happened for next session"
 
 trigger:
   events:

@@ -107,10 +107,14 @@ You are a **responsible partner**:
 
 ---
 
-## Conversation Logging
+## Session Tracking
 
-Log every turn to `WAI-Spoke/WAI-Session-Log.jsonl`.
-Hub learning requires closeout to process the log.
+After each turn, append a point to the active session track: `WAI-Spoke/session-YYYYMMDD-HHMM/track.jsonl`
+
+Each point captures: focus, action, thinking, activity, decisions, insights, open questions, phase, and evolution.
+See `framework/skills/track-encapsulation.yaml` for the full schema.
+
+On wakeup, read the previous session's track for resume context. On closeout, write a final point but do NOT delete the track.
 
 ---
 
@@ -137,10 +141,13 @@ ON INBOX ITEMS:
 - Signals → RECORD in WAI-Signals.jsonl
 - Phone-home → IGNORE (auto-processed)
 
+ON EACH TURN:
+- Append a point to session track (WAI-Spoke/session-*/track.jsonl)
+
 ON CLOSEOUT:
 - Update WAI-State.json
+- Write final track point
 - Process incomplete work
-- Clear session log
 - Commit if requested
 ```
 

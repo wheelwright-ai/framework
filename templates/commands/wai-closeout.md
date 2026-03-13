@@ -160,6 +160,8 @@ Document any unfinished work with enough detail to resume:
 
 Store in session-summary lug `incomplete_work` field AND in `_session_state.next_session_recommendation`.
 
+**Enhanced with Track:** If a session track exists (`_session_state.track_path`), also read the track's open threads and phase state. The track captures unresolved questions that may not surface in the lug reconciliation. Include any `open` items from the last 3 track points in the incomplete work section.
+
 ### 4. Version Increment
 
 **Bump project state version:**
@@ -180,12 +182,19 @@ This versions the *session state*, not a release.
 - `_session_state.last_modified_by` = current AI model name
 - `_session_state.last_modified_at` = current UTC timestamp
 - `_session_state.next_session_recommendation` = summary of what to do next
+- `_session_state.track_path` = path to current session's track directory (e.g., `WAI-Spoke/session-20260312-2100/`)
 
-### 6. Session Log Clear
+### 6. Finalize Session Track
 
-**Prepare for next session:**
+**Close the session track (if active):**
 
-- Truncate `WAI-Spoke/WAI-Session-Log.jsonl` (if exists)
+- Write a final point to `track.jsonl` recording the closeout activity (phase: `review`)
+- The track file is the permanent session record — do NOT delete or truncate it
+- The session directory is committed to git with other WAI-Spoke files
+
+**Legacy cleanup:**
+
+- Truncate `WAI-Spoke/WAI-Session-Log.jsonl` (if exists) — replaced by session tracks
 - Insights already extracted to lugs/signals
 
 ### 7. Documentation Updates
@@ -206,6 +215,7 @@ This versions the *session state*, not a release.
 - New version number
 - Signals extracted
 - Files modified
+- **Track stats** (if session track exists): total turns, phase distribution, open threads carried forward
 
 Present to user before commit.
 
@@ -249,10 +259,11 @@ git log --oneline origin/main..HEAD  # Must show no commits ahead
 - [ ] High-impact signals extracted (impact >= 8)
 - [ ] **Incomplete work documented with continuation guidance**
 - [ ] Version incremented in WAI-State.json
-- [ ] Session state updated (session_count, timestamps)
-- [ ] Session log cleared
+- [ ] Session state updated (session_count, timestamps, track_path)
+- [ ] Session track finalized (final point written, track NOT deleted)
+- [ ] Legacy session log cleared (if exists)
 - [ ] Documentation updated where applicable
-- [ ] Changes committed with descriptive message
+- [ ] Changes committed with descriptive message (session directory included)
 - [ ] Changes pushed to origin/main
 
 ---
