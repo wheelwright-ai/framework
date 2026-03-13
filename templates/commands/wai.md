@@ -70,6 +70,20 @@ From `WAI-State.json`, read `wheel.hub_path`:
 
 Read last teach date from sync history or `_session_state.last_closeout`.
 
+### Step 3a: Pull Broadcast Updates from Hub (Spoke only)
+
+If `hub_path` is connected, check for broadcast updates:
+
+1. **Check for Teachings:** Check `{hub_path}/broadcast/teachings/latest/`
+   - If version in `latest/upgrade-adoption-plan.json` > local `wheel.version`:
+     - Copy new `.teaching` files to `WAI-Spoke/seed/ingest/`
+     - Copy `upgrade-adoption-plan.json` to local root
+     - Note in briefing: "📥 Pulled {N} new teaching(s) from Hub broadcast"
+2. **Check for Global Lugs:** Check `{hub_path}/broadcast/lugs/` for `.jsonl` files
+   - Compare with local `hub_lug_cursor` or processed history
+   - Copy new lugs to `WAI-Spoke/lugs/inbox/`
+   - Note in briefing: "📥 Pulled {N} global lug(s) from Hub broadcast"
+
 ### Step 4: Query Active Work
 
 Read `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line). Note: some entries use shorthand keys (`i`=id, `t`=title, `ty`=type, `s`=status).
