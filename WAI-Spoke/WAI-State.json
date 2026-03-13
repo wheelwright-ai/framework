@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.15",
+    "version": "2.0.16",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -31,7 +31,9 @@
           "hub": null
         }
       }
-    }
+    },
+    "last_modified_at": "2026-03-13T07:28:46Z",
+    "last_modified_by": "Gemini CLI"
   },
   "_project_foundation": {
     "source_lug": "lug-fnd-f0aa32c5",
@@ -103,7 +105,7 @@
     "next_session_recommendation": "Track system live and self-taught. Next: distribute track-encapsulation teaching to spokes via /wai-teach, or accumulate track data for Historian.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-13T05:00:00Z"
+    "protocol_last_run": "2026-03-13T06:49:12Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -123,7 +125,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
@@ -306,8 +308,8 @@
     ]
   },
   "meta": {
-    "total_sessions": 6,
+    "total_sessions": 7,
     "total_turns": 0,
-    "last_closeout": "2026-03-04T02:50:12Z"
+    "last_closeout": "2026-03-13T07:28:46Z"
   }
 }
