@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.14",
+    "version": "2.0.15",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -89,20 +89,21 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260312-testbench",
+    "last_session_id": "session-20260313-0400",
     "last_modified_by": "Claude Opus 4.6",
-    "last_modified_at": "2026-03-12T22:30:00+00:00",
-    "last_closeout": "2026-03-12T22:30:00+00:00",
-    "session_count": 10,
+    "last_modified_at": "2026-03-13T05:00:00+00:00",
+    "last_closeout": "2026-03-13T05:00:00+00:00",
+    "session_count": 11,
     "current_session": {
-      "session_id": "session-20260312-testbench",
-      "started_at": "2026-03-12T21:00:00Z"
+      "session_id": "session-20260313-0400",
+      "started_at": "2026-03-13T03:30:00Z"
     },
+    "track_path": "WAI-Spoke/session-20260313-0400/",
     "protocol_completed": true,
-    "next_session_recommendation": "Teaching file deployable. Next: build self-registry teaching file and test bench it, or begin teaching distribution to spokes.",
+    "next_session_recommendation": "Track system live and self-taught. Next: distribute track-encapsulation teaching to spokes via /wai-teach, or accumulate track data for Historian.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-13T03:40:32Z"
+    "protocol_last_run": "2026-03-13T05:00:00Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
