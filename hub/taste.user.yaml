@@ -1,0 +1,16 @@
+---
+entries:
+  - id: "taste-user-001"
+    category: "communication"
+    preference: "Always provide intent and technical rationale before tool calls."
+    status: "accepted"
+    source: "user-foundation"
+    proposed_at: "2026-03-13T07:50:00Z"
+    accepted_at: "2026-03-13T07:50:00Z"
+  - id: "taste-user-002"
+    category: "workflow"
+    preference: "Favor surgical edits via 'replace' over complete file rewrites."
+    status: "accepted"
+    source: "user-foundation"
+    proposed_at: "2026-03-13T07:50:00Z"
+    accepted_at: "2026-03-13T07:50:00Z"

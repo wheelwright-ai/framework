@@ -79,11 +79,10 @@
     "last_session_id": null,
     "last_modified_by": null,
     "last_modified_at": null,
-    "requires_review": false,
-    "review_reason": null,
+    "last_closeout": null,
     "session_count": 0,
     "current_session": null,
-    "last_closeout": null,
+    "track_path": null,
     "protocol_completed": false
   },
   "analytics": {

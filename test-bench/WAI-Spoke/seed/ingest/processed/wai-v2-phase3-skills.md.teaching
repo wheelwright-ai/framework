@@ -1,0 +1,147 @@
+# WAI v2 Phase 3 — Skills Directory + Extension Identity
+
+**Teaching type:** Implementation instructions
+**For AI assistants:** This is Phase 3 of the WAI v2 migration. Do not start this phase unless Phase 2 is confirmed complete in WAI-MIGRATION.yaml.
+
+---
+
+## What Phase 3 Does
+
+Creates:
+1. `framework/skills/` — Built-in Skill YAML definitions with use cases
+2. `EXTENSION.md` for the framework spoke (may already exist — verify first)
+3. Migrates `WAI-Backpressure.yaml` content into `qc-check` Skill override
+
+---
+
+## Pre-Phase Checklist
+
+Before starting Phase 3:
+- [ ] On branch `wai-v2-migration`
+- [ ] `WAI-MIGRATION.yaml` shows `current_phase: 2` (Phase 2 complete)
+- [ ] `hub/WAI-Manifest.yaml` exists
+- [ ] `registry/wheelwright/framework/SPOKE.md` exists
+
+---
+
+## Skills That Need To Be Created
+
+Each Skill lives in `framework/skills/{skill-name}.yaml`.
+
+### Required Built-In Skills
+
+| File | Role | Trigger |
+|------|------|---------|
+| `safe-refactor.yaml` | guardian | pre-structural-change |
+| `qc-check.yaml` | reviewer | pre-commit, on-demand |
+| `hub-watcher.yaml` | watcher | on-wakeup |
+| `framework-updater.yaml` | worker | on-demand |
+| `brief-advisor.yaml` | advisor | on-demand |
+| `session-observer.yaml` | watcher | on-closeout |
+| `file-audit.yaml` | reviewer | on-demand |
+| `integration-check.yaml` | guardian | on-wakeup |
+
+### Skill YAML Schema
+
+Every Skill YAML **MUST** include a `use_cases` section with real scenarios. This is non-negotiable — it serves as documentation, agent context, and institutional memory.
+
+```yaml
+id: "safe-refactor"
+name: "Safe Refactor Guardian"
+role: "guardian"
+model_tier: "lightweight"          # lightweight | standard | advanced
+trigger: "pre_refactor"
+scope:
+  reads: ["**/*"]
+  writes: ["none — read only, fires events"]
+
+description: >
+  Ensures a clean git checkpoint exists before any structural code changes.
+  If git is dirty, prompts for a commit before proceeding.
+
+use_cases:
+  - scenario: "Agent is about to refactor the auth module"
+    what_happens: "safe-refactor fires, checks git status, commits if dirty"
+    why_it_matters: "If refactoring breaks something, one git revert recovers everything"
+    user_trigger: "Automatic — fires on pre_refactor event"
+
+  - scenario: "Hub folder was destroyed by a rogue agent"
+    what_happens: "Would have been prevented — checkpoint would exist to revert to"
+    why_it_matters: "This actually happened on 2026-02-10. This Skill exists because of it."
+    origin: "WAI v2 architectural session, 2026-02-11"
+
+prerequisites:
+  - "git must be initialized in the project"
+
+output:
+  on_success: "Clean git state confirmed or new commit created"
+  on_failure: "Lug created: 'Refactor blocked — uncommitted changes detected'"
+
+tests:
+  - name: "Fires on dirty working tree"
+    input: "git status shows modified files"
+    expected: "Prompts for commit or blocks refactor"
+  - name: "Passes on clean tree"
+    input: "git status shows nothing to commit"
+    expected: "Proceeds without interruption"
+```
+
+---
+
+## EXTENSION.md Schema
+
+`EXTENSION.md` describes the identity and behavior of a spoke. Check if it already exists (`EXTENSION.md` at repo root) before creating. If it exists, verify it has all required sections.
+
+Required sections:
+```markdown
+# {Extension Name}
+
+## Identity
+Role: {e.g., Framework — Core implementation and agent tools}
+Lens: {How this extension interprets information}
+
+## Behaviors
+Always: {What this extension always does}
+Never: {What this extension never does}
+
+## Skills Loaded
+- safe-refactor (guardian)
+- qc-check (reviewer)
+- {any project-specific skills}
+
+## Offers
+- {What this spoke produces that others may need}
+
+## Subscribes To
+- hub:framework:* (framework updates)
+```
+
+---
+
+## WAI-Backpressure.yaml Migration
+
+If `WAI-Backpressure.yaml` exists in any spoke:
+1. Read its contents
+2. Create `{spoke}/skills/qc-check.yaml` with those commands as the skill's check list
+3. Add tombstone comment to `WAI-Backpressure.yaml`: `# RETIRED: Migrated to skills/qc-check.yaml as of WAI v2`
+
+---
+
+## Phase 3 Closeout
+
+After all Skills and EXTENSION.md are created:
+1. Update `WAI-MIGRATION.yaml`: `current_phase: 3`, add phase 3 to `completed_phases` with commit hash
+2. Commit: `"WAI v2 Phase 3: Skills, extension identity, and integration-check created"`
+3. Push branch
+
+---
+
+## Verification Checklist
+
+- [ ] `framework/skills/` has all 8 built-in Skill YAMLs
+- [ ] Every Skill has `use_cases` section with at least 2 real scenarios
+- [ ] Every Skill has `tests` section
+- [ ] `EXTENSION.md` exists with all required sections
+- [ ] `WAI-Backpressure.yaml` tombstoned (if it existed)
+- [ ] `WAI-Manifest.yaml` `skills_loaded` field reflects new skills
+- [ ] WAI-MIGRATION.yaml updated with Phase 3 commit hash

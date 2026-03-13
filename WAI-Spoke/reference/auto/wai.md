@@ -66,6 +66,8 @@ From `WAI-State.json`, read `wheel.hub_path`:
 - Path exists and is a directory → `✓ Connected`
 - Missing or not a directory → `⚠ Not connected`
 
+**Warning:** If `hub_path` is configured but the directory is missing or inaccessible, surface a prominent warning: `⚠ CRITICAL: Configured hub_path is inaccessible. Check connection or run '/wai-status'.`
+
 Read last teach date from sync history or `_session_state.last_closeout`.
 
 ### Step 4: Query Active Work
@@ -204,7 +206,13 @@ Estimate token footprint of loaded files:
 
 ### Step 8: Show Next Actions
 
-From `WAI-State.json` → `context.next_actions` (first 5 items).
+Derive `Next Actions` from the de-duplicated map of active lugs (Step 4):
+1. **Wakeup Visibility:** Show up to 3 lugs with `wakeup_visibility: true`
+2. **Flagged Priority:** Show up to 3 items where `priority == "before_next_epic"`
+3. **In Progress:** Show up to 3 items where `s == "p"`
+4. **Bugs:** Show up to 3 items where `ty == "bug"`
+5. **Open Tasks:** If less than 5 total items, fill with `s == "o"` and `ty != "epic"` items
+6. Format as a prioritized list.
 
 ### Step 9: Initialize Session Track
 

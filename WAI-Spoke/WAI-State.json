@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.16",
+    "version": "2.0.17",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -92,10 +92,10 @@
   },
   "_session_state": {
     "last_session_id": "session-20260313-0400",
-    "last_modified_by": "Claude Opus 4.6",
-    "last_modified_at": "2026-03-13T05:00:00+00:00",
-    "last_closeout": "2026-03-13T05:00:00+00:00",
-    "session_count": 11,
+    "last_modified_by": "Gemini CLI",
+    "last_modified_at": "2026-03-13T18:14:46Z",
+    "last_closeout": "2026-03-13T18:14:46Z",
+    "session_count": 12,
     "current_session": {
       "session_id": "session-20260313-0400",
       "started_at": "2026-03-13T03:30:00Z"
@@ -308,8 +308,8 @@
     ]
   },
   "meta": {
-    "total_sessions": 7,
+    "total_sessions": 8,
     "total_turns": 0,
-    "last_closeout": "2026-03-13T07:28:46Z"
+    "last_closeout": "2026-03-13T18:14:46Z"
   }
 }
