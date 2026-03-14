@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.20",
+    "version": "2.0.21",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,21 +91,21 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260314-pev-dogfood",
-    "last_modified_by": "Claude Opus 4.6",
-    "last_modified_at": "2026-03-14T19:05:00Z",
-    "last_closeout": "2026-03-14T19:05:00Z",
-    "session_count": 16,
+    "last_session_id": "session-20260314-200000",
+    "last_modified_by": "Claude Sonnet 4.6",
+    "last_modified_at": "2026-03-14T20:00:00Z",
+    "last_closeout": "2026-03-14T20:00:00Z",
+    "session_count": 17,
     "current_session": {
-      "session_id": "session-20260314-pev-dogfood",
+      "session_id": "session-20260314-200000",
       "started_at": "2026-03-14T18:45:00Z"
     },
-    "track_path": "WAI-Spoke/session-20260313-1845/",
+    "track_path": "WAI-Spoke/session-20260314-0903/",
     "protocol_completed": true,
-    "next_session_recommendation": "Enrich 15 actionable lugs with PEV fields (perceive/execute/verify). Skills folder architecture epic (#7) remains the priority after PEV enrichment. See WAI-Lugs.jsonl for the work queue.",
+    "next_session_recommendation": "PRIORITY 1: Read decision-plan-dogfood-execute-protocol lug \u2014 new mandatory governance for multi-file changes. PRIORITY 2: Sync .claude/commands/ from templates/commands/ using plan\u2192dogfood\u2192execute. PRIORITY 3: /wai-teach to push signal-no-wai-cli-v1 to hub.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-13T06:49:12Z"
+    "protocol_last_run": "2026-03-14T20:00:00Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -161,11 +161,11 @@
         "3. Look for ~/.wheelwright-hub",
         "4. Check framework's connected_wheels for this project"
       ],
-      "if_not_found": "Run: cd <framework_path> && ./WAI hub create"
+      "if_not_found": "Ask user where the hub is, or run /wai-teach to initialize one"
     },
     "create_hub": {
       "requires": "framework_path must be set",
-      "command": "cd <framework_path> && ./WAI hub create --guided",
+      "note": "Hub creation is manual \u2014 copy templates/HUB/ to your desired hub path and configure hub-profile.json",
       "what_it_creates": [
         "~/wheelwright-hub/ (or user-chosen path)",
         "hub-profile.json (user preferences)",

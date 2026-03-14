@@ -16,8 +16,6 @@ Pull new learnings from hub into this spoke.
    - Update WAI-Guide.md with new "Hub Learnings" section
    - Update kb-sync.json with new version
 
-4. If WAI CLI available, suggest: `WAI sync --teach`
-
 Output format:
 ```
 **Hub Teachings Available**

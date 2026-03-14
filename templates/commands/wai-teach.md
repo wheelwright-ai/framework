@@ -45,16 +45,17 @@ YOUR NODE                           TARGET NODE
 
 ### 1. Template Files (Skills and Protocols)
 
-Framework template files are distributed **with `.teaching` extension** into the target's `seed/ingest/` directory:
+Framework template files are built with `.teaching` extension and staged in the framework's `teachings/` folder. The hub accesses this folder via symlink (`{hub_path}/framework/ → framework/teachings/`). From there, teachings are distributed to each target spoke's `seed/ingest/` directory:
 
 ```
-templates/commands/wai-closeout.md  →  target/WAI-Spoke/seed/ingest/wai-closeout.md.teaching
-templates/commands/wai-teach.md     →  target/WAI-Spoke/seed/ingest/wai-teach.md.teaching
+templates/commands/wai-closeout.md  →  teachings/wai-closeout.md.teaching  →  target/WAI-Spoke/seed/ingest/wai-closeout.md.teaching
 ```
 
 The `.teaching` extension signals that the file requires **verification before adoption** (the teach verification ceremony).
 
 **Exception:** Hub-specific files (hub-registry.json, hub-security-policy.json) are distributed WITHOUT the `.teaching` extension for immediate adoption.
+
+**Important:** The hub's `framework` symlink points to the `teachings/` folder only — not the entire framework repo. This minimizes data exposure and prevents pollution.
 
 ### 2. Lugs from Outbox
 
@@ -70,35 +71,26 @@ your outbox/task-for-basher.jsonl  →  basher/WAI-Spoke/lugs/inbox/task-for-bas
 
 ### 3. Upgrade Adoption Plan
 
-An `upgrade-adoption-plan.json` is generated and saved in the target root. This plan:
-- Lists all files being distributed
+An `upgrade-adoption-plan.json` is generated and written to `target/WAI-Spoke/seed/ingest/upgrade-adoption-plan.json`. This plan:
+- Lists all `.teaching` files being delivered
 - Records framework version (`wheel.version`)
 - Marks each file's `safe_to_auto_adopt` flag (true = automatic, false = requires review)
-- Is signed with hub fingerprint (HMAC via hub-profile.json → `hub_config.fingerprint`)
 
 Schema:
 ```json
 {
   "metadata": {
     "framework_version": "2.0.7",
-    "spoke_structure_version": "3.0",
     "generated_at": "ISO-8601",
     "source": "framework"
-  },
-  "verification": {
-    "hub_fingerprint": "sha256-hash",
-    "signature": "hmac-sha256-value"
   },
   "files": [
     {
       "name": "wai-closeout.md",
       "path": "WAI-Spoke/seed/ingest/wai-closeout.md.teaching",
       "version": "2.0.7",
-      "changed_from": "2.0.6",
-      "why_changed": "Removed deliver_outbox_lugs() reference",
       "safe_to_auto_adopt": true,
-      "requires_review": false,
-      "applies_to": ["spoke", "hub"]
+      "requires_review": false
     }
   ]
 }
@@ -180,6 +172,7 @@ cp -r "$framework_path/templates/spoke/".* "$target_path/" 2>/dev/null || true
 
 # Create required directories if missing
 mkdir -p "$target_path/WAI-Spoke/seed/ingest"
+mkdir -p "$target_path/WAI-Spoke/seed/ingest/processed"
 mkdir -p "$target_path/WAI-Spoke/lugs/inbox"
 mkdir -p "$target_path/WAI-Spoke/lugs/outbox"
 mkdir -p "$target_path/WAI-Spoke/sessions"
@@ -298,17 +291,18 @@ Then continue to [Teach Protocol Steps](#teach-protocol-steps).
 
 **Prerequisite**: Target is a verified spoke (either existing or newly initialized via [Spoke Initialization](#spoke-initialization))
 
-1. **Identify target** — hub path from `WAI-State.json` → `wheel.hub_path`, or explicit target name
-2. **Check target exists** — verify directory and WAI-Spoke/ structure
-3. **Scan templates** — collect files from `templates/commands/` and `templates/spoke/`
-4. **Build upgrade adoption plan** — with file hashes, version, safe_to_auto_adopt flags
-5. **Sign plan** — with hub fingerprint from `hub-profile.json` → `hub_config.fingerprint`
-6. **Distribute template files** — copy with `.teaching` extension to `target/WAI-Spoke/seed/ingest/`
-7. **Deliver outbox lugs** — copy matching lugs to `target/WAI-Spoke/lugs/inbox/`
-8. **Save adoption plan** — write `upgrade-adoption-plan.json` to target root
-9. **Send delivery confirmations** — write confirmation lug to hub's inbox for each delivered lug
-10. **Update hub registry** — record teach event in `hub-registry.json`
-11. **Report summary** — show files distributed, lugs delivered, version taught
+1. **Identify target** — read `wheel.hub_path` (or `wheelwright.hub_path` for older spokes) from `WAI-State.json`, or use explicit target path
+2. **Check target exists** — verify directory and `WAI-Spoke/WAI-State.json` structure
+3. **Scan templates** — collect files from `templates/commands/` and `templates/spoke/commands/`
+4. **Stage to teachings/** — for each collected file, copy it to `framework/teachings/` with `.teaching` appended to the filename (e.g., `wai-closeout.md` → `teachings/wai-closeout.md.teaching`). This is a plain file copy with a renamed extension.
+5. **Build upgrade adoption plan** — produce `upgrade-adoption-plan.json` listing each `.teaching` file with its `safe_to_auto_adopt` flag and the current `wheel.version`
+6. **Distribute to target** — copy `.teaching` files from `teachings/` to `target/WAI-Spoke/seed/ingest/`
+7. **Write adoption plan** — write `upgrade-adoption-plan.json` to `target/WAI-Spoke/seed/ingest/upgrade-adoption-plan.json`
+8. **Ensure processed/ exists** — create `target/WAI-Spoke/seed/ingest/processed/` if it does not exist
+9. **Deliver outbox lugs** — copy matching lugs from `WAI-Spoke/lugs/outbox/` to `target/WAI-Spoke/lugs/inbox/`
+10. **Send delivery confirmations** — write confirmation lug to hub's inbox for each delivered lug (skip if self-delivering)
+11. **Update hub registry** — record teach event in `hub-registry.json`
+12. **Report summary** — show files distributed, lugs delivered, version taught
 
 ---
 
@@ -331,7 +325,7 @@ Template Files:
 Lugs Delivered:
 ✓ task-for-basher.jsonl → basher/lugs/inbox/
 
-Upgrade Plan: upgrade-adoption-plan.json (signed)
+Upgrade Plan: upgrade-adoption-plan.json
 Registry: Updated hub-registry.json
 
 Teaching complete — [target] will learn on next wakeup.

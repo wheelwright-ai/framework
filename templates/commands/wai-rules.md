@@ -40,7 +40,7 @@ Identity:
 Scope:
 
 In Scope:
-- Core framework code (WAI CLI, Python modules)
+- Core framework code (Python modules, skills, templates)
 - Wheel templates and schemas
 - Hub creation and management
 - Spoke loader architecture

@@ -62,27 +62,27 @@ Do NOT auto-commit or auto-resolve uncommitted changes. If uncommitted work exis
 
 ### Step 3: Check Hub Connection
 
-From `WAI-State.json`, read `wheel.hub_path`:
+From `WAI-State.json`, read the hub path — check `wheel.hub_path` first, fall back to `wheelwright.hub_path` for older spokes:
 - Path exists and is a directory → `✓ Connected`
-- Missing or not a directory → `⚠ Not connected`
+- Both fields are null or missing → `⚠ Not connected`
 
-**Warning:** If `hub_path` is configured but the directory is missing or inaccessible, surface a prominent warning: `⚠ CRITICAL: Configured hub_path is inaccessible. Check connection or run '/wai-status'.`
+**Warning:** If `hub_path` is configured but the directory is missing or inaccessible, surface a prominent warning: `⚠ CRITICAL: Configured hub_path is inaccessible. Check path or ask user.`
 
 Read last teach date from sync history or `_session_state.last_closeout`.
 
-### Step 3a: Pull Broadcast Updates from Hub (Spoke only)
+### Step 3a: Check Hub for New Teachings (Spoke only)
 
-If `hub_path` is connected, check for broadcast updates:
+If `hub_path` is connected, check for new teachings available from the hub:
 
-1. **Check for Teachings:** Check `{hub_path}/broadcast/teachings/latest/`
-   - If version in `latest/upgrade-adoption-plan.json` > local `wheel.version`:
-     - Copy new `.teaching` files to `WAI-Spoke/seed/ingest/`
-     - Copy `upgrade-adoption-plan.json` to local root
-     - Note in briefing: "📥 Pulled {N} new teaching(s) from Hub broadcast"
-2. **Check for Global Lugs:** Check `{hub_path}/broadcast/lugs/` for `.jsonl` files
-   - Compare with local `hub_lug_cursor` or processed history
-   - Copy new lugs to `WAI-Spoke/lugs/inbox/`
-   - Note in briefing: "📥 Pulled {N} global lug(s) from Hub broadcast"
+1. **Check teachings:** List `.teaching` files in `{hub_path}/framework/`
+   - This path is a symlink the hub maintains pointing to the framework's `teachings/` folder
+   - If the path does not exist or is empty, skip silently
+   - Compare filenames against `WAI-Spoke/seed/ingest/processed/` (create this directory if it does not exist)
+   - Any `.teaching` file present in hub but absent from `processed/` is new
+   - If new teachings found: note in briefing "📥 {N} new teaching(s) available — run `/wai-learn` to ingest"
+
+2. **Check lug inbox:** Check `WAI-Spoke/lugs/inbox/` for `.jsonl` files not yet processed
+   - If present, note count and suggest `/wai-learn`
 
 ### Step 4: Query Active Work
 
@@ -193,18 +193,19 @@ Check if the Historian advisor should propose a review:
    - Output: "Historian: {N} unreviewed points across {M} sessions. Run `/wai-review` when ready."
 5. If < 30 → silent
 
-### Step 6: Detect Pending Teachings
+### Step 6: Detect Pending Teachings (Local Inbox)
+
+Hub teaching detection was already handled in Step 3a. This step checks the local inbox only.
 
 Check if `WAI-Spoke/seed/ingest/manifest.json` exists:
 - If yes: read `files_taught` count and `taught_at` timestamp
 - Output: "🎓 N file(s) awaiting review — taught {date}"
 - **Action required:** Prioritize review before other work
 
-Also check `WAI-Spoke/seed/ingest/` for `.track.jsonl` files — these are session tracks captured externally (via bootstrap) waiting to be ingested. If present:
+Check `WAI-Spoke/seed/ingest/` for `.track.jsonl` files — session tracks captured externally (via bootstrap) waiting to be ingested. If present:
 - Output: "📋 N track file(s) awaiting ingest"
-- Process: Create `WAI-Spoke/session-{date from track}/` and move the track file into it as `track.jsonl`
-
-Also check `WAI-Spoke/lugs/inbox/` for `.jsonl` files — these are lugs received from hub waiting to be processed. If present, note count and suggest `/wai-learn`.
+- For each file: read the first JSON line and extract the `ts` field for the date portion (`YYYYMMDD-HHMM`)
+- Create `WAI-Spoke/session-{ts}/` and move the track file into it as `track.jsonl`
 
 ### Step 7: Context Health
 

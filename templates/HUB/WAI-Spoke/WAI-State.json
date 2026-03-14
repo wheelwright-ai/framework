@@ -21,11 +21,10 @@
             "after_found": "Update framework_path in hub_profile"
         },
         "update_hub": {
-            "command": "cd <framework_path> && ./WAI hub status",
-            "sync_wheels": "cd <framework_path> && ./WAI sync --all"
+            "note": "Hub sync is managed via /wai-teach from spokes and /wai-learn on wakeup — no CLI required"
         },
         "add_wheel": {
-            "command": "cd <framework_path> && ./WAI init <project_path> --guided"
+            "note": "Run /wai-teach from the new project to register it with the hub"
         }
     },
     "_hub_profile": {
