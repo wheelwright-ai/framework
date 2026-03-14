@@ -31,7 +31,6 @@ Save where we are so we can pick up seamlessly in a new session.
 
 ## Follow-ons
 
-- `/wai-teach` — Push updates to hub or spokes (if outbox has items)
 - New session — Will auto-learn from inbox on wakeup
 
 ## Use Cases
@@ -232,7 +231,18 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 **Skip conditions:** If no actionable lugs were created/modified this session, skip this step entirely.
 
-### 9. Summary Generation
+### 9. Outbox Delivery
+
+**Deliver queued lugs to hub before committing.**
+
+1. Check `WAI-Spoke/lugs/outbox/` for `.jsonl` files
+2. If outbox is empty → skip, note "Outbox empty" in summary
+3. If items found and `hub_path` is connected:
+   - For each file where `destination_wheel_id` matches hub or target: copy to `{hub_path}/WAI-Spoke/lugs/inbox/`
+   - Report: "N lugs delivered to hub"
+4. If hub unreachable: note in `_session_state.next_session_recommendation`, continue — do not block commit
+
+### 10. Summary Generation
 
 **Create and present session summary:**
 
@@ -246,7 +256,7 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 Present to user before commit.
 
-### 10. Git Commit + Push
+### 11. Git Commit + Push
 
 **Persist to repository and push — always.**
 
@@ -268,7 +278,7 @@ git push origin main
 
 Push is mandatory. Do not ask. P10: Trust is the default.
 
-### 11. Verification
+### 12. Verification
 
 **Confirm persistence:**
 
@@ -291,6 +301,7 @@ git log --oneline origin/main..HEAD  # Must show no commits ahead
 - [ ] Legacy session log cleared (if exists)
 - [ ] Documentation updated where applicable
 - [ ] Lugs dogfooded (PEV fields validated, gaps filled)
+- [ ] Outbox delivered (or deferred with note if hub unreachable)
 - [ ] Changes committed with descriptive message (session directory included)
 - [ ] Changes pushed to origin/main
 
@@ -313,7 +324,6 @@ git log --oneline origin/main..HEAD  # Must show no commits ahead
 ## Related Commands
 
 - `/wai-shipit` - Quality gates + closeout (for releases)
-- `/wai-teach` - Push outbox to target (hub or spokes)
 - `/wai-time` - Check context before closeout
 
 ---

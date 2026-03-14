@@ -23,8 +23,6 @@ Skills are in `templates/commands/`:
 | `wai.md` | Wakeup protocol — produces WAI Point briefing |
 | `wai-closeout.md` | Session preservation — reconcile, signal, commit |
 | `wai-shipit.md` | Quality gates + closeout for releases |
-| `wai-teach.md` | Push templates and lugs to target nodes |
-| `wai-learn.md` | Inbox processing protocol |
 | `wai-foundation.md` | Project identity, goals, boundaries |
 | `wai-lug-advisor.md` | Lug system — schema, lifecycle, authoring |
 | `wai-complexity-advisor.md` | Planning gate (2+ files OR 6+ steps) |
@@ -40,8 +38,6 @@ When in doubt: read the relevant skill file. Don't memorize rules.
 - `/wai` — Unified briefing
 - `/wai-closeout` — End session ceremony
 - `/wai-shipit` — Closeout + commit
-- `/wai-teach` — Push to hub/spokes
-- `/wai-learn` — Process inbox
 - `/wai-time` — Token usage
 - `/wai-rules` — Show boundaries
 - `/wai-status` — Quick health check

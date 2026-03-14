@@ -20,8 +20,6 @@ The hook at `.claude/hooks/user-prompt-submit.sh` injects this directive automat
 | `/wai` | Wakeup briefing |
 | `/wai-closeout` | End session, save state |
 | `/wai-shipit` | Quality gates + closeout + commit |
-| `/wai-teach` | Push to hub/spokes |
-| `/wai-learn` | Process inbox |
 | `/wai-time` | Token usage estimate |
 | `/wai-status` | Quick health check |
 | `/wai-red-light` | Inspect crash recovery |

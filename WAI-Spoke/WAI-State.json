@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.24",
+    "version": "2.0.25",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,21 +91,21 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260314-1012",
+    "last_session_id": "session-20260314-0959",
     "last_modified_by": "Claude Sonnet 4.6",
-    "last_modified_at": "2026-03-14T10:18:00Z",
-    "last_closeout": "2026-03-14T10:18:00Z",
-    "session_count": 20,
+    "last_modified_at": "2026-03-14T10:35:00Z",
+    "last_closeout": "2026-03-14T10:35:00Z",
+    "session_count": 21,
     "current_session": {
       "session_id": "session-20260314-0903",
       "started_at": "2026-03-14T09:03:00Z"
     },
-    "track_path": "WAI-Spoke/session-20260314-1012/",
+    "track_path": "WAI-Spoke/sessions/track_20260314-0959.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "PRIORITY 1: Resume epic-track-system-install-and-cleanup-v1 \u2014 per-file disposition for legacy WAI-Spoke root files (WAI-Ledger.jsonl, WAI-Manifest.yaml, WAI-Skills.jsonl, observations.jsonl, wai-cli-launch.sh, wai-shell.sh, WAI-Startup.json, WAI-Events.json, *.tmp). PRIORITY 2: /wai-teach to push outbox signals to hub.",
+    "next_session_recommendation": "PRIORITY 1: Execute epic-sessions-flat-storage-v1 (Green Light already given \u2014 restructure session tracks to WAI-Spoke/sessions/track_YYYYMMDD-HHMM.jsonl). PRIORITY 2: epic-track-system-install-and-cleanup-v1 \u2014 legacy WAI-Spoke root cleanup (per-file disposition). PRIORITY 3: Process spoke-wai-update-v1.md.teaching (1 new teaching in teachings/).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-14T10:24:33Z"
+    "protocol_last_run": "2026-03-14T10:35:00Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
