@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.22",
+    "version": "2.0.23",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,21 +91,21 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260314-0925",
+    "last_session_id": "session-20260314-0903",
     "last_modified_by": "Claude Sonnet 4.6",
-    "last_modified_at": "2026-03-14T09:50:00Z",
-    "last_closeout": "2026-03-14T09:50:00Z",
-    "session_count": 18,
+    "last_modified_at": "2026-03-14T10:00:00Z",
+    "last_closeout": "2026-03-14T10:00:00Z",
+    "session_count": 19,
     "current_session": {
-      "session_id": "session-20260314-0925",
-      "started_at": "2026-03-14T09:25:00Z"
+      "session_id": "session-20260314-0903",
+      "started_at": "2026-03-14T09:03:00Z"
     },
-    "track_path": "WAI-Spoke/session-20260314-0925/",
+    "track_path": "WAI-Spoke/session-20260314-0903/",
     "protocol_completed": true,
-    "next_session_recommendation": "PRIORITY 1: /wai-teach to push signal-no-wai-cli-v1 from WAI-Spoke/lugs/outbox/ to hub. PRIORITY 2: Continue epic-track-system-install-and-cleanup-v1 — legacy WAI-Spoke root cleanup still pending (per-file disposition). PRIORITY 3: Review Gemini session artifacts (teachings/spoke-wai-update-v1.md.teaching, templates/spoke/commands/wai.md, bootstrap/note) — understand what Gemini added.",
+    "next_session_recommendation": "PRIORITY 1: Continue epic-track-system-install-and-cleanup-v1 — per-file disposition for legacy WAI-Spoke root files (WAI-Ledger.jsonl, WAI-Manifest.yaml, WAI-Skills.jsonl, observations.jsonl, wai-cli-launch.sh, wai-shell.sh, WAI-Startup.json, WAI-Events.json, *.tmp). PRIORITY 2: Dogfood spoke-wai-update-v1.md.teaching on a real spoke. PRIORITY 3: /wai-teach to push signal-no-wai-cli-v1 to hub.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-14T09:50:00Z"
+    "protocol_last_run": "2026-03-14T10:00:00Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
