@@ -205,7 +205,34 @@ This versions the *session state*, not a release.
 - Update any documentation files affected by session work
 - Generate clear, descriptive commit message
 
-### 8. Summary Generation
+### 8. Lug Dogfooding (Before Commit)
+
+**Validate all lugs created or modified this session before they ship.**
+
+Any lug intended for another agent (including future-you in a new session) must pass validation. This step catches gaps that are invisible in the current conversation but fatal for a cold reader.
+
+1. **Identify lugs to validate** — all lugs created or modified this session (excluding session-summary and autosave types)
+2. **State what you'll test and how deep** — present to user:
+   ```
+   Dogfood check — N lugs created/modified this session:
+   - {lug i}: {lug title} — [schema + PEV + self-containment]
+   ...
+   Proceed? (yes / adjust scope)
+   ```
+3. **Wait for user approval** before running validation
+4. **Run validation** on each lug:
+   - Are PEV fields present and actionable? (required for task, bug, feature, review, epic)
+   - Does `perceive` point to real, findable files?
+   - Does `execute` describe concrete steps (not vague intentions)?
+   - Does `verify` define a concrete "done" state?
+   - Is the lug self-contained? (no "see above" or conversation-dependent references)
+   - Could a naive agent understand this without your current context?
+5. **Fix gaps found** — update lugs in WAI-Lugs.jsonl before proceeding
+6. **Report results** — "N lugs validated, M gaps filled" or "All lugs clean"
+
+**Skip conditions:** If no actionable lugs were created/modified this session, skip this step entirely.
+
+### 9. Summary Generation
 
 **Create and present session summary:**
 
@@ -219,7 +246,7 @@ This versions the *session state*, not a release.
 
 Present to user before commit.
 
-### 9. Git Commit + Push
+### 10. Git Commit + Push
 
 **Persist to repository and push — always.**
 
@@ -241,7 +268,7 @@ git push origin main
 
 Push is mandatory. Do not ask. P10: Trust is the default.
 
-### 10. Verification
+### 11. Verification
 
 **Confirm persistence:**
 
@@ -263,6 +290,7 @@ git log --oneline origin/main..HEAD  # Must show no commits ahead
 - [ ] Session track finalized (final point written, track NOT deleted)
 - [ ] Legacy session log cleared (if exists)
 - [ ] Documentation updated where applicable
+- [ ] Lugs dogfooded (PEV fields validated, gaps filled)
 - [ ] Changes committed with descriptive message (session directory included)
 - [ ] Changes pushed to origin/main
 

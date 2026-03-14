@@ -114,6 +114,55 @@ Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
 
 ---
 
+## PEV Fields (Required for Actionable Lugs)
+
+**Every `task`, `epic`, `bug`, `feature`, and `review` lug MUST include PEV fields.** These transform a lug from a decision record into a workable ticket that any agent can pick up cold.
+
+| Field | Purpose | Example |
+|-------|---------|---------|
+| `perceive` | What to read/examine before starting. File paths, current state, context. | `"Read templates/spoke/WAI-State.json for current schema. Check hub-registry.json for spoke list."` |
+| `execute` | Concrete steps to take. What to build, modify, or design. | `"1. Add wheel.framework_version to template. 2. Update spoke-upgrade.sh to set it."` |
+| `verify` | How to confirm the work is done correctly. | `"Run spoke-upgrade.sh on a test spoke. Confirm wheel.framework_version appears in WAI-State.json."` |
+
+```json
+{
+  "i": "4f1e687a652f",
+  "ty": "task",
+  "t": "Add framework_version to spoke template",
+  "s": "o",
+  "perceive": "Read templates/spoke/WAI-State.json — current wheel section has no framework_version field. Read bootstrap/spoke-upgrade.sh — it already sets this field on upgrade.",
+  "execute": "Add wheel.framework_version: null to the template WAI-State.json wheel section. This field gets populated by spoke-upgrade.sh or on first closeout.",
+  "verify": "Confirm field exists in template. Run spoke-upgrade.sh --dry-run on a test path. Verify new spokes created from template include the field."
+}
+```
+
+**Why this matters:** A lug without PEV forces the next agent to explore the codebase guessing where to start. PEV gives them a runway — `perceive` orients, `execute` directs, `verify` closes the loop.
+
+---
+
+## Dogfooding Lugs (Required Before Closeout)
+
+**Before finalizing any lug intended for another agent (including future-you), validate it:**
+
+1. **State what you'll test** — which lug(s), what aspects
+2. **State how deep** — schema check, self-containment review, sub-agent simulation
+3. **Wait for user approval** on scope
+4. **Run the validation** — at minimum, check:
+   - Can a naive agent understand this without conversation context?
+   - Are PEV fields present and actionable?
+   - Does `perceive` point to real, findable files?
+   - Does `verify` define a concrete "done" state?
+5. **Fix gaps found** before the lug ships
+
+**When to dogfood:**
+- Before closeout (batch-validate all lugs created this session)
+- Before sending cross-spoke lugs (higher stakes — misinterpretation risk)
+- When creating epics with children (validate the parent→child navigation works)
+
+**The naive agent test:** Send the lug to a sub-agent with only AGENTS.md and lug schema knowledge. Ask it to draft a plan. Where it gets stuck = where the lug needs more detail.
+
+---
+
 ## Lug Lifecycle
 
 ```

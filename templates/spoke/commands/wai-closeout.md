@@ -212,7 +212,34 @@ If the current project IS the Wheelwright framework (check `wheel.name` or repo 
 - Update any documentation files affected by session work
 - Generate clear, descriptive commit message
 
-### 8. Summary Generation (P2)
+### 8. Lug Dogfooding (Before Commit)
+
+**Validate all lugs created or modified this session before they ship.**
+
+Any lug intended for another agent (including future-you in a new session) must pass validation. This step catches gaps that are invisible in the current conversation but fatal for a cold reader.
+
+1. **Identify lugs to validate** — all lugs created or modified this session (excluding session-summary and autosave types)
+2. **State what you'll test and how deep** — present to user:
+   ```
+   Dogfood check — N lugs created/modified this session:
+   - {lug i}: {lug title} — [schema + PEV + self-containment]
+   ...
+   Proceed? (yes / adjust scope)
+   ```
+3. **Wait for user approval** before running validation
+4. **Run validation** on each lug:
+   - Are PEV fields present and actionable? (required for task, bug, feature, review, epic)
+   - Does `perceive` point to real, findable files?
+   - Does `execute` describe concrete steps (not vague intentions)?
+   - Does `verify` define a concrete "done" state?
+   - Is the lug self-contained? (no "see above" or conversation-dependent references)
+   - Could a naive agent understand this without your current context?
+5. **Fix gaps found** — update lugs in WAI-Lugs.jsonl before proceeding
+6. **Report results** — "N lugs validated, M gaps filled" or "All lugs clean"
+
+**Skip conditions:** If no actionable lugs were created/modified this session, skip this step entirely.
+
+### 9. Summary Generation (P2)
 
 **Create session summary:**
 
@@ -225,7 +252,7 @@ If the current project IS the Wheelwright framework (check `wheel.name` or repo 
 
 Present to user before commit.
 
-### 9. Git Commit (P7)
+### 10. Git Commit (P7)
 
 **Persist to repository:**
 
@@ -245,7 +272,7 @@ git commit -m "WAI Session [N]: [accomplishments] | Incomplete: [if any]"
 Push to origin/main? (yes/no)
 ```
 
-### 10. Verification
+### 11. Verification
 
 **Confirm persistence:**
 
@@ -257,7 +284,7 @@ git log origin/main --oneline -1  # If pushed, verify remote
 
 ---
 
-### Step 11: Intelligent Landing
+### Step 12: Intelligent Landing
 
 **Purpose:** Provide clear context for the next session and optionally compress context.
 
@@ -367,9 +394,10 @@ Do not invoke `/compact`, do not write compact lug, do not read further files.
 - [ ] WAI-State.json updated
 - [ ] Session log cleared
 - [ ] Documentation updated where applicable
+- [ ] Lugs dogfooded (PEV fields validated, gaps filled)
 - [ ] Changes committed with descriptive message
 - [ ] User prompted before push
-- [ ] Step 11 completed: Branch A (compact + token meter) OR Branch B (clean exit)
+- [ ] Step 12 completed: Branch A (compact + token meter) OR Branch B (clean exit)
 
 ---
 
