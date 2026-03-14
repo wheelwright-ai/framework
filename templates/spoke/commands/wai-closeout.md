@@ -183,10 +183,32 @@ Store in session-summary lug and/or `_session_state.next_session_recommendation`
 
 ### 7. Documentation Updates (P7, P8)
 
-**Document what's known and can be captured:**
+**Maintain project documentation so it reflects current reality.**
 
-- Update `README.md` if capabilities changed
-- Update `CHANGELOG.md` with session accomplishments
+This step is NOT optional — documentation rot is a real problem. At minimum:
+
+#### 7a. README.md (REQUIRED — every closeout)
+
+Review `README.md` against current project state. Update if any of these changed this session:
+- Project description or purpose
+- Architecture or key components
+- Setup/install instructions
+- Available commands or APIs
+- Dependencies or requirements
+
+If `README.md` doesn't exist, create a minimal one with project name and one-liner from `_project_foundation.identity`.
+
+#### 7b. Framework-only: llms-full.txt (if this is the framework repo)
+
+If the current project IS the Wheelwright framework (check `wheel.name` or repo path):
+- Regenerate `framework/docs/llms-full.txt` — a single-file concatenation of all framework documentation
+- Include: README.md, skill files (templates/commands/*.md), lug schema spec, skill contract spec
+- This file is consumed by LLMs for full-context framework understanding
+- Header format: `# Wheelwright AI Framework - Complete Documentation\n# Generated: {ISO-8601}\n# Version: {wheel.version}`
+
+#### 7c. Other documentation
+
+- Update `CHANGELOG.md` with session accomplishments (if the project maintains one)
 - Update any documentation files affected by session work
 - Generate clear, descriptive commit message
 

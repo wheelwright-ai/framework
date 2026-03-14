@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.18",
+    "version": "2.0.19",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,18 +91,18 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260313-0400",
-    "last_modified_by": "Gemini CLI",
-    "last_modified_at": "2026-03-13T18:21:27Z",
-    "last_closeout": "2026-03-13T18:21:27Z",
-    "session_count": 13,
+    "last_session_id": "session-20260314-fleet-upgrade",
+    "last_modified_by": "Claude Opus 4.6",
+    "last_modified_at": "2026-03-14T07:42:57Z",
+    "last_closeout": "2026-03-14T07:42:57Z",
+    "session_count": 15,
     "current_session": {
-      "session_id": "session-20260313-0400",
-      "started_at": "2026-03-13T03:30:00Z"
+      "session_id": "session-20260313-1845",
+      "started_at": "2026-03-13T18:45:00Z"
     },
-    "track_path": "WAI-Spoke/session-20260313-0400/",
+    "track_path": "WAI-Spoke/session-20260313-1845/",
     "protocol_completed": true,
-    "next_session_recommendation": "Track system live and self-taught. Next: distribute track-encapsulation teaching to spokes via /wai-teach, or accumulate track data for Historian.",
+    "next_session_recommendation": "Skills folder architecture epic (#7) is the priority \u2014 design spoke/hub skill namespacing before v1\u2192v2 migration. 16 decision lugs captured with full context. See WAI-Lugs.jsonl for the work queue.",
     "requires_review": false,
     "review_reason": null,
     "protocol_last_run": "2026-03-13T06:49:12Z"

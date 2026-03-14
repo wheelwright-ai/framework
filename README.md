@@ -76,19 +76,16 @@ Updates WAI-State.json with session metadata
 ```
 WAI-Spoke/
 ├── WAI-State.json          # Project identity, phase, session metadata
-├── WAI-State.md            # Strategic vision (human-readable)
 ├── WAI-Lugs.jsonl          # Work items, signals, decisions (append-only)
 ├── WAI-Signals.jsonl       # High-impact learnings (impact >= 8)
-├── templates/commands/     # Skills (same as framework templates/commands/)
+├── commands/               # Skills (.md files — behavioral protocols)
 ├── lugs/
 │   ├── inbox/              # Incoming lugs from hub (auto-processed on wakeup)
 │   └── outbox/             # Lugs staged for delivery to hub
 ├── seed/
 │   └── ingest/             # Teaching files (.teaching) staged for adoption
-├── sessions/               # Session logs
-└── reference/
-    ├── auto/               # Auto-generated reference files
-    └── manual/             # Files requiring user review before use
+│       └── processed/      # Adopted teachings (audit trail)
+└── session-*/              # Session tracks (turn-by-turn capture)
 ```
 
 ### Hub (`templates/HUB/`)
@@ -153,45 +150,39 @@ Lugs travel across sessions, models, and projects. They must be self-contained �
 
 ## Quick Start: New Spoke
 
-### Option A: Automatic Initialization (Recommended)
+### Option A: Upgrade Script (Recommended)
 
-From an existing spoke or framework, run `/wai-teach` with a target directory:
+Use the bootstrap upgrade script to initialize or upgrade any project:
 
 ```bash
-# From any spoke or framework
-/wai-teach /path/to/new-project
-
-# Automatically:
-# - Detects if target is a spoke
-# - If not, copies templates/spoke/ and initializes
-# - Configures WAI-State.json with smart defaults
-# - Registers spoke in hub registry
+bash /path/to/framework/bootstrap/spoke-upgrade.sh /path/to/your-project
 ```
 
-**Benefit**: No manual configuration needed. Use `/wai-teach` to initialize any project as a spoke.
+This automatically:
+- Creates `WAI-Spoke/` structure (commands, lugs/inbox, lugs/outbox, seed/ingest)
+- Copies latest skills, hooks, and AI bootstrap files (AGENTS.md, CLAUDE.md, GEMINI.md)
+- Sets `wheel.hub_path` and `wheel.framework_version`
+- Wires `.claude/hooks/user-prompt-submit.sh` into settings.json
+- Creates git safety snapshot before changes
+- Works on both new projects and existing spokes needing upgrade
 
-### Option B: Manual Initialization
+### Option B: Via /wai-teach
+
+From an existing spoke or framework:
+
+```bash
+/wai-teach /path/to/new-project
+```
+
+Auto-detects if target is a spoke. If not, initializes from `templates/spoke/` and registers in hub.
+
+### Option C: Manual
 
 ```bash
 cp -r /path/to/framework/templates/spoke/ your-project/WAI-Spoke/
 ```
 
-### 2. Initialize WAI-State.json (manual only)
-
-Edit `WAI-Spoke/WAI-State.json`:
-- Set `wheel.name`, `wheel.one_liner`, `wheel.spoke_id`
-- Set `foundation.scope.in_scope` and `out_of_scope`
-
-### 3. Set up IDE hooks (manual only)
-
-Follow the `/wai-ide-setup` skill (`templates/commands/wai-ide-setup.md`) to configure:
-- `.claude/hooks/user-prompt-submit.sh` (Claude Code)
-- `.claude/settings.json` hook registration
-
-### 4. Start your first session (manual only)
-
-Open Claude Code (or your AI tool) in the project directory.
-The hook runs automatically and the agent produces the WAI Point briefing.
+Then edit `WAI-Spoke/WAI-State.json` and follow `/wai-ide-setup` for hook configuration.
 
 ---
 
@@ -268,6 +259,18 @@ The inbox is a **mailroom** — lugs are routed and stored, never executed.
 
 ---
 
+## Multi-AI in Practice
+
+Wheelwright is AI-agnostic by design. Real-world usage confirms this:
+
+- **ezorg-email-website** — 35 sessions across 5 different AI models (Claude Opus, Claude Sonnet, Claude Sonnet 4.5, Gemini CLI, Antigravity). Any model picks up exactly where the last one left off.
+- **pathfinder** — sessions by both Claude ("Sparky") and Gemini CLI, with lugs created by both.
+- **basher** — sessions by Claude, Gemini, and a custom "code-puppy" persona.
+
+The framework doesn't care which AI runs the session. Skills and lugs are the protocol — the model is interchangeable.
+
+---
+
 ## No Python Required
 
 The framework is pure template assets:
@@ -286,15 +289,16 @@ There is no CLI, no runtime, no package to install.
 framework/
 ├── templates/
 │   ├── commands/       # Skills (distributed to hub and spokes)
-│   ├── spoke/          # Spoke template (copy to start a new spoke)
-│   ├── HUB/            # Hub template (copy to start a new hub)
-│   ├── claude/         # Claude Code IDE config templates
-│   ├── gemini/         # Gemini config templates
-│   ├── cursor/         # Cursor config templates
-│   └── ...
-├── WAI-Spoke/          # This framework's own spoke
-├── CLAUDE.md           # Thin pointer → wai.md
-├── GEMINI.md           # Thin pointer → wai.md
+│   └── spoke/          # Spoke template (copy to start a new spoke)
+├── bootstrap/
+│   └── spoke-upgrade.sh  # Fleet upgrade script (init or upgrade any spoke)
+├── framework/
+│   ├── skills/         # Framework-only skills (test-bench, historian, etc.)
+│   └── docs/           # llms-full.txt and reference docs
+├── WAI-Spoke/          # This framework's own spoke (dogfooding)
+├── AGENTS.md           # Universal AI onboarding
+├── CLAUDE.md           # Claude Code integration
+├── GEMINI.md           # Gemini CLI integration
 └── LICENSE
 ```
 
