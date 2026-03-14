@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.21",
+    "version": "2.0.22",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,21 +91,21 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260314-200000",
+    "last_session_id": "session-20260314-0925",
     "last_modified_by": "Claude Sonnet 4.6",
-    "last_modified_at": "2026-03-14T20:00:00Z",
-    "last_closeout": "2026-03-14T20:00:00Z",
-    "session_count": 17,
+    "last_modified_at": "2026-03-14T09:50:00Z",
+    "last_closeout": "2026-03-14T09:50:00Z",
+    "session_count": 18,
     "current_session": {
-      "session_id": "session-20260314-200000",
-      "started_at": "2026-03-14T18:45:00Z"
+      "session_id": "session-20260314-0925",
+      "started_at": "2026-03-14T09:25:00Z"
     },
-    "track_path": "WAI-Spoke/session-20260314-0903/",
+    "track_path": "WAI-Spoke/session-20260314-0925/",
     "protocol_completed": true,
-    "next_session_recommendation": "PRIORITY 1: Read decision-plan-dogfood-execute-protocol lug — new mandatory governance for multi-file changes. PRIORITY 2: Sync .claude/commands/ from templates/commands/ using plan→dogfood→execute. PRIORITY 3: /wai-teach to push signal-no-wai-cli-v1 to hub.",
+    "next_session_recommendation": "PRIORITY 1: /wai-teach to push signal-no-wai-cli-v1 from WAI-Spoke/lugs/outbox/ to hub. PRIORITY 2: Continue epic-track-system-install-and-cleanup-v1 — legacy WAI-Spoke root cleanup still pending (per-file disposition). PRIORITY 3: Review Gemini session artifacts (teachings/spoke-wai-update-v1.md.teaching, templates/spoke/commands/wai.md, bootstrap/note) — understand what Gemini added.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-14T09:23:16Z"
+    "protocol_last_run": "2026-03-14T09:50:00Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

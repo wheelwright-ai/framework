@@ -133,11 +133,15 @@ To see your task list: ask "what should I work on?"
 
 ## Reference File Routing
 
-When adopting `.teaching` files, route based on `safe_to_auto_adopt` flag:
+When adopting `.teaching` files, route based on `safe_to_auto_adopt` flag and file type:
 
-- **`safe_to_auto_adopt: true`** → `templates/commands/` (canonical location)
-- **`safe_to_auto_adopt: false`** → `reference/manual/` (requires review before use)
-- **Auto-generated reference files** → `reference/auto/` (generated, not hand-authored)
+- **`safe_to_auto_adopt: true`**
+  - `.md` in `commands/` → `templates/commands/`
+  - `.yaml` skill → `WAI-Spoke/skills/`
+  - `.yaml` advisor → `WAI-Spoke/advisors/`
+  - `.json` config → `WAI-Spoke/`
+- **`safe_to_auto_adopt: false`** → `WAI-Spoke/seed/ingest/manual/` (requires review)
+- **Auto-generated reference files** → `WAI-Spoke/reference/auto/`
 
 ---
 

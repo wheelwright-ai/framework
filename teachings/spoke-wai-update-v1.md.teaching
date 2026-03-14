@@ -1,3 +1,61 @@
+# Teaching: Update spoke wai.md to full session track protocol
+
+**Type:** Template upgrade
+**Target:** All spokes
+**Version:** 1.0
+**Created:** 2026-03-14
+**safe_to_auto_adopt:** false
+
+---
+
+## What This Teaching Does
+
+Replaces the spoke's `WAI-Spoke/commands/wai.md` with the full 10-step wakeup protocol, adding:
+
+- **Step 3a** — Auto-discovery of new teachings from hub (`{hub_path}/framework/`)
+- **Step 5a** — Session track resume/recovery (read previous `session-*/track.jsonl`)
+- **Step 5b** — Taste file loading (`taste.spoke.yaml`, `taste.user.yaml`)
+- **Step 5c** — Historian threshold check (30+ unreviewed points triggers review)
+- **Step 9** — Session track initialization (create `WAI-Spoke/session-YYYYMMDD-HHMM/` on every wakeup)
+
+The point schema is inlined in Step 9: fields `turn`, `ts`, `focus`, `action`, `thinking`, `activity`, `decisions`, `insights`, `open`, `phase`, `evolution`.
+
+**This is NOT:** A replacement for `WAI-State.json`, `WAI-Lugs.jsonl`, or any other spoke file. Only `WAI-Spoke/commands/wai.md` changes.
+
+---
+
+## Why This Exists
+
+The previous spoke `wai.md` was a 77-line stub that called a shell script (`wai-briefing.sh`). That script-based approach is superseded. The full prose protocol (10 steps) is now the standard. Without this update, spokes cannot create session tracks, load taste files, or auto-discover hub teachings on wakeup.
+
+---
+
+## Input: What You Have Now
+
+Check for these files:
+
+- `WAI-Spoke/commands/wai.md` — will be replaced
+- `WAI-Spoke/WAI-State.json` — must exist (not modified by this teaching)
+
+**Version check before applying:**
+
+Read the current `WAI-Spoke/commands/wai.md`. If it already contains the text "Step 9: Initialize Session Track" — this teaching has already been applied. Move to processed and stop.
+
+---
+
+## Transformation: What Changes
+
+### Step 1: Backup current wai.md (optional but recommended)
+
+If `WAI-Spoke/commands/wai.md` currently contains "wai-briefing.sh", it is the old script-based version. You may note this before replacing.
+
+### Step 2: Write new wai.md
+
+Replace `WAI-Spoke/commands/wai.md` with the following content verbatim:
+
+---
+
+```
 # WAI Wakeup
 
 Unified session start protocol — where are we, what's the status, what to work on.
@@ -41,14 +99,14 @@ Check `_session_state.last_compact` (if present):
 - Display token meter in header if available
 
 Output header:
-```
+---
 ## WAI Point — {wheel.name}
 
 **Phase:** {current_phase}
 **Last session:** {last_modified_at} by {last_modified_by}
 **Environment:** {tool} on {hostname} ({OS})
 **Last compact:** Session {N} — ~{before}K → ~{after}K tokens
-```
+---
 
 Note: If no `last_compact` in `_session_state`, omit the last line.
 
@@ -103,7 +161,7 @@ Count active lugs:
 Show top flagged priority item (i and t fields) if any exist.
 
 Output:
-```
+---
 ### Active Work (Prioritized)
 
 - 🚨 **Flagged Priority:** N items
@@ -112,34 +170,13 @@ Output:
 - ⏳ **In Progress:** N items
 - 📋 **Open Tasks:** N items
 - 🎪 **Epics (Blocked Until Above Clear):** N epics
-```
+---
 
 ### Step 5: Detect Autosave Checkpoints
 
-**De-duplicate by ID first** — WAI-Lugs.jsonl is append-only. Reconciliation records are appended as overrides (same ID, but with `reconciled: true`). Build a map of ID → latest entry, then check only the latest.
+De-duplicate by ID first — WAI-Lugs.jsonl is append-only. Build a map of ID → latest entry, then check only the latest for unreconciled autosaves (`ty == "autosave"` AND `reconciled` is false/absent).
 
-```python
-# Pseudocode for deduplication
-latest_by_id = {}
-for line in WAI-Lugs.jsonl:
-    lug = json.loads(line)
-    lid = lug.get('id') or lug.get('i')
-    latest_by_id[lid] = lug  # Overwrite with latest
-
-unreconciled = []
-for lug in latest_by_id.values():
-    if (lug.get('ty') == 'autosave' or lug.get('autosave') == True):
-        if not lug.get('reconciled', False):
-            unreconciled.append(lug)
-```
-
-If unreconciled autosaves found:
-```
-### ⚠️ Incomplete Work (N autosave checkpoints)
-- Task: {task_context}
-- Progress: {completion_estimate}
-- **Resume:** `Green Light` | **Inspect:** `Red Light` | **Discard:** reconciled on next Closeout
-```
+If unreconciled autosaves found, show task context, completion estimate, and offer: Resume (Green Light) / Inspect (Red Light) / Discard on next Closeout.
 
 ### Step 5a: Read Session Track (Resume / Recovery)
 
@@ -153,20 +190,12 @@ Check for previous session tracks in `WAI-Spoke/session-*/track.jsonl`:
    - If closeout timestamp > last point timestamp → **resume** (clean end)
    - If closeout timestamp < last point timestamp or missing → **recovery** (session interrupted)
 5. Read last 5 points and produce a catch-up brief:
+   - Arc: how focus shifted across turns (from `evolution` fields)
+   - Decisions: accumulated from all points
+   - Open threads: `open` fields from final points
+   - Recommend: what to do next based on track state
 
-```
-### Session Track (session-YYYYMMDD-HHMM)
-**Turns:** N | **Final phase:** {phase}
-**Status:** Clean closeout / ⚠️ Incomplete (no closeout detected)
-
-**Arc:** {evolution chain — how focus shifted across turns}
-**Decisions:** {accumulated decisions from all points}
-**Open threads:** {open questions from final points}
-
-**Resume recommendation:** {what to do next based on track state}
-```
-
-If recovery mode (no closeout), highlight incomplete work from the track and ask the user whether to resume that work or start fresh.
+If recovery mode, highlight incomplete work and ask user whether to resume or start fresh.
 
 ### Step 5b: Read Taste Files
 
@@ -178,174 +207,102 @@ Load user and project preferences:
 4. If either taste file has entries with `status: proposed`:
    - Present proposed entries: "Historian suggests: {preference}. Accept / Reject?"
    - Wait for user response before proceeding
-5. If no taste files exist → skip silently (they will be created when the Historian first runs)
+5. If no taste files exist → skip silently
 
 Note: `taste.spoke` overrides `taste.user` for project-specific matters. User's direct instructions override both.
 
 ### Step 5c: Check Historian Threshold
 
-Check if the Historian advisor should propose a review:
-
-1. If `WAI-Spoke/advisors/historian/` directory does not exist → skip silently
+1. If `WAI-Spoke/advisors/historian/` does not exist → skip silently
 2. Read `WAI-Spoke/advisors/historian/passes.jsonl` (if exists) to find last reviewed session and point count
 3. Count total unreviewed points across all session tracks since last pass
-4. If >= 30 unreviewed points: suggest review
-   - Output: "Historian: {N} unreviewed points across {M} sessions. Run `/wai-review` when ready."
+4. If >= 30 unreviewed points: "Historian: {N} unreviewed points across {M} sessions. Run `/wai-review` when ready."
 5. If < 30 → silent
 
 ### Step 6: Detect Pending Teachings (Local Inbox)
 
-Hub teaching detection was already handled in Step 3a. This step checks the local inbox only.
+Hub teaching detection was handled in Step 3a. This step checks the local inbox only.
 
 Check if `WAI-Spoke/seed/ingest/manifest.json` exists:
 - If yes: read `files_taught` count and `taught_at` timestamp
 - Output: "🎓 N file(s) awaiting review — taught {date}"
 - **Action required:** Prioritize review before other work
 
-Check `WAI-Spoke/seed/ingest/` for `.track.jsonl` files — session tracks captured externally (via bootstrap) waiting to be ingested. If present:
-- Output: "📋 N track file(s) awaiting ingest"
-- For each file: read the first JSON line and extract the `ts` field for the date portion (`YYYYMMDD-HHMM`)
-- Create `WAI-Spoke/session-{ts}/` and move the track file into it as `track.jsonl`
+Check `WAI-Spoke/seed/ingest/` for `.track.jsonl` files. If present:
+- Create `WAI-Spoke/session-{ts}/` (ts from first JSON line's `ts` field) and move file in as `track.jsonl`
 
 ### Step 7: Context Health
 
-Estimate token footprint of loaded files:
-- WAI-Spoke/WAI-State.json, WAI-State.md, WAI-Lugs.jsonl are typically loaded
-- 1 token ≈ 4 bytes; report approximate token count
-- Compare to 200K token budget
+Estimate token footprint (WAI-State.json + WAI-State.md + WAI-Lugs.jsonl). 1 token ≈ 4 bytes. Compare to 200K budget.
 
-**Threshold recommendations:**
-- Context > 70% → "Consider /wai-closeout before context fills"
-- Hub sync > 7 days → "Consider /wai-teach to sync with hub"
-- Turn count > 20 → "Run /wai-time for context health check"
+Thresholds: Context > 70% → recommend closeout. Hub sync > 7 days → recommend teach. Turn count > 20 → suggest /wai-time.
 
 ### Step 8: Show Next Actions
 
-Derive `Next Actions` from the de-duplicated map of active lugs (Step 4):
-1. **Wakeup Visibility:** Show up to 3 lugs with `wakeup_visibility: true`
-2. **Flagged Priority:** Show up to 3 items where `priority == "before_next_epic"`
-3. **In Progress:** Show up to 3 items where `s == "p"`
-4. **Bugs:** Show up to 3 items where `ty == "bug"`
-5. **Open Tasks:** If less than 5 total items, fill with `s == "o"` and `ty != "epic"` items
-6. Format as a prioritized list.
+From the de-duplicated lug map: show up to 3 wakeup_visibility lugs, then flagged priority, then in-progress, then bugs, then open tasks (fill to 5 total). Format as a prioritized list.
 
 ### Step 9: Initialize Session Track
-
-Create the session track directory and prepare for point capture:
 
 1. Generate session ID from current UTC time: `session-YYYYMMDD-HHMM`
 2. Create directory: `WAI-Spoke/session-{id}/`
 3. Update `_session_state.track_path` in WAI-State.json to point to the new track
 4. The first point will be written after this wakeup briefing completes (phase: `orientation`)
 
-Note: After each subsequent turn in this session, append a point to `WAI-Spoke/session-{id}/track.jsonl`. See `framework/skills/track-encapsulation.yaml` for the point schema and phase definitions.
+Note: After each subsequent turn in this session, append a point to `WAI-Spoke/session-{id}/track.jsonl`. Each point is a JSON object with fields: `turn` (integer), `ts` (ISO-8601 UTC), `focus` (short phrase), `action` (what happened), `thinking` (agent reasoning, 2-3 sentences), `activity` (list of actions taken), `decisions` (array), `insights` (array), `open` (unresolved questions), `phase` (one of: orientation/exploration/planning/execution/review/recovery), `evolution` (null on first point, else `"previous -> current: reason"`).
 
 ### Step 10: Show Available Skills
 
-```
-### Available Skills
+Available skills vary by spoke. Standard set:
 - **/wai** — Unified briefing (this skill)
 - **/wai-foundation** — Project identity, goals, boundaries
-- **/wai-status** — Quick health check (hub, sync, session)
+- **/wai-status** — Quick health check
 - **/wai-closeout** — Save session state, extract signals, commit
-- **/wai-shipit** — Quality gates + closeout (for releases)
-- **/wai-teach** — Push outbox to hub or spokes (auto-detects and initializes new spokes)
-- **/wai-learn** — Process inbox teachings on wakeup
-- **/wai-review** — Run Historian review of accumulated session tracks
-- **/wai-time** — Token usage estimate
-- **/wai-rules** — Project boundaries and guidelines
-- **/wai-principles** — WAI principles P1-P9
-```
-
----
-
-## Complete Briefing Format
-
-```
-## WAI Point — {project_name}
-
-**Phase:** {current_phase}
-**Last session:** {timestamp} by {agent}
-**Environment:** {tool} on {hostname} ({OS})
-
-### Active Work (Prioritized)
-- 🚨 **Flagged Priority:** N items
-- 🐛 **Bugs:** N open
-- ✓ **Verification Needed:** N items
-- ⏳ **In Progress:** N items
-- 📋 **Open Tasks:** N items
-- 🎪 **Epics (Blocked Until Above Clear):** N epics
-
-### Context Health
-- Hub: ✓ Connected / ⚠ Not connected
-- Last teach: {date} / never
-- Git: ✓ Clean / ⚠ N uncommitted
-- Track: session-YYYYMMDD-HHMM initialized / ⚠ Previous session incomplete
-- Taste: N accepted preferences loaded / none
-
-### Next Actions
-- {action 1}
-- {action 2}
-
-### Available Skills
-- **/wai** — Unified briefing
-- **/wai-closeout** — Save session state
 - **/wai-shipit** — Quality gates + closeout
-- **/wai-teach** — Push to hub/spokes
-- **/wai-learn** — Process inbox
+- **/wai-teach** — Push outbox to hub or spokes
+- **/wai-learn** — Process inbox teachings
 - **/wai-review** — Historian review of session tracks
-- **/wai-time** — Token usage
+- **/wai-time** — Token usage estimate
 - **/wai-rules** — Project boundaries
-
----
-*Ask "what should I work on?" for recommendations*
-```
-
----
-
-## Health Check (absorbs /wai-status)
-
-This logic runs inline during wakeup. `/wai-status` as a standalone command shows this section only.
-
-| Metric | How to Check | Threshold |
-|--------|-------------|-----------|
-| Hub connection | `wheel.hub_path` is a real directory | > 0 days disconnected → warn |
-| Hub sync age | Days since last teach | > 7 days → recommend teach |
-| Context usage | Estimated tokens / 200K | > 70% → recommend closeout |
-| Git status | `git status --short` line count | Any uncommitted → note |
-| Turn count | Current session turns | > 20 → suggest /wai-time |
-
-Output format for standalone `/wai-status`:
-```
-### WAI Status
-
-**Hub:** ✓ Connected / ⚠ Not connected
-**Last teach:** {date}
-**Git:** ✓ Clean / ⚠ N uncommitted
-**Context:** ~{K} tokens / 200K budget
-
-**Recommendations:**
-- {action if threshold crossed}
-```
-
----
-
-## Lug Type Reference
-
-When reading WAI-Lugs.jsonl:
-- `ty: "bug"` — Bugs requiring fixes
-- `ty: "epic"` — Large multi-session efforts (blocked until tasks clear)
-- `ty: "task"`, `ty: "feature"`, `ty: "review"` — Standard work items
-- `ty: "autosave"` — Session checkpoint (check `reconciled` field)
-- `ty: "session-summary"` — Completed session record (skip, already done)
-- `ty: "signal"` — High-impact decision captured for cross-session learning
-- `ty: "core-protocol"` — Framework protocol documentation lug
-
----
-
-## Related Skills
-
-- **/wai-closeout** — End session, reconcile autosaves, commit
-- **/wai-shipit** — Quality gates + closeout for releases
-- **/wai-rules** — Project boundaries and scope
 - **/wai-principles** — WAI principles P1-P9
+```
+
+---
+
+## Output: What You Should Have After
+
+- `WAI-Spoke/commands/wai.md` replaced with the 10-step protocol above
+- Agent creates `WAI-Spoke/session-YYYYMMDD-HHMM/` on every wakeup going forward
+- Agent reads previous track on wakeup for resume/recovery
+- Agent loads taste files on wakeup
+- Agent auto-discovers hub teachings via Step 3a
+
+---
+
+## Verification Checklist
+
+After processing this teaching, verify:
+
+- [ ] `WAI-Spoke/commands/wai.md` contains "Step 9: Initialize Session Track"
+- [ ] `WAI-Spoke/commands/wai.md` does NOT contain "wai-briefing.sh"
+- [ ] Agent can describe the 6 track point phases (orientation/exploration/planning/execution/review/recovery)
+- [ ] Agent knows session directory naming format: `session-YYYYMMDD-HHMM`
+- [ ] Agent knows the 11 point schema fields
+
+---
+
+## Embedded Lug
+
+After completing this teaching, check if `teaching-spoke-wai-update-v1` already exists in `WAI-Lugs.jsonl`. If not, append:
+
+```json
+{"i":"teaching-spoke-wai-update-v1","t":"Updated spoke wai.md to full 10-step session track protocol","ty":"signal","s":"c","ca":"2026-03-14T00:00:00Z","gb":"teaching-file","impact":8,"content":{"what":"Replaced 77-line script-based spoke wai.md with full 10-step prose protocol. Added Steps 3a, 5a, 5b, 5c, 9. Agent now creates session-YYYYMMDD-HHMM/ on every wakeup and captures points each turn.","source":"spoke-wai-update-v1.md.teaching v1.0"},"_behavior_directive":{"what_this_is":"Record that this spoke has the updated wai.md protocol installed.","what_this_is_NOT":"An instruction to re-process this teaching."}}
+```
+
+---
+
+## Post-Completion
+
+Move this file to the spoke's processed directory after successful processing:
+- `WAI-Spoke/seed/ingest/processed/` (v2 spokes — use if exists)
+- `WAI-Spoke/seed/processed/` (v1 spokes — use if `seed/ingest/processed/` does not exist)
+- If neither exists, create `WAI-Spoke/seed/ingest/processed/` and use it
