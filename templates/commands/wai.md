@@ -165,10 +165,10 @@ If unreconciled autosaves found:
 
 ### Step 5a: Read Session Track (Resume / Recovery)
 
-Check for previous session tracks in `WAI-Spoke/session-*/track.jsonl`:
+Check for previous session tracks in `WAI-Spoke/sessions/track_*.jsonl`:
 
-1. List `WAI-Spoke/session-*/` directories sorted by name (newest last)
-2. If no session directories exist → skip silently (legacy spoke, no tracks yet)
+1. List `WAI-Spoke/sessions/track_*.jsonl` files sorted by filename (newest last)
+2. If no track files exist → skip silently (legacy spoke, no tracks yet)
 3. Read the most recent `track.jsonl`
 4. Check if previous session had a clean closeout:
    - Compare `_session_state.last_closeout` against last point's `ts` field
@@ -227,7 +227,7 @@ Check if `WAI-Spoke/seed/ingest/manifest.json` exists:
 Check `WAI-Spoke/seed/ingest/` for `.track.jsonl` files — session tracks captured externally (via bootstrap) waiting to be ingested. If present:
 - Output: "📋 N track file(s) awaiting ingest"
 - For each file: read the first JSON line and extract the `ts` field for the date portion (`YYYYMMDD-HHMM`)
-- Create `WAI-Spoke/session-{ts}/` and move the track file into it as `track.jsonl`
+- Move track file to `WAI-Spoke/sessions/track_{ts}.jsonl`
 
 ### Step 7: Context Health
 
@@ -256,11 +256,11 @@ Derive `Next Actions` from the de-duplicated map of active lugs (Step 4):
 Create the session track directory and prepare for point capture:
 
 1. Generate session ID from current UTC time: `session-YYYYMMDD-HHMM`
-2. Create directory: `WAI-Spoke/session-{id}/`
-3. Update `_session_state.track_path` in WAI-State.json to point to the new track
+2. Ensure directory `WAI-Spoke/sessions/` exists (created once, shared across all sessions)
+3. Update `_session_state.track_path` in WAI-State.json to `WAI-Spoke/sessions/track_{id}.jsonl`
 4. The first point will be written after this wakeup briefing completes (phase: `orientation`)
 
-Note: After each subsequent turn in this session, append a point to `WAI-Spoke/session-{id}/track.jsonl`. See `framework/skills/track-encapsulation.yaml` for the point schema and phase definitions.
+Note: After each subsequent turn in this session, append a point to `WAI-Spoke/sessions/track_{id}.jsonl`. See `framework/skills/track-encapsulation.yaml` for the point schema and phase definitions.
 
 ### Step 10: Show Available Skills
 

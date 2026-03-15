@@ -13,10 +13,10 @@
 Replaces the spoke's `WAI-Spoke/commands/wai.md` with the full 10-step wakeup protocol, adding:
 
 - **Step 3a** — Auto-discovery of new teachings from hub (`{hub_path}/framework/`)
-- **Step 5a** — Session track resume/recovery (read previous `session-*/track.jsonl`)
+- **Step 5a** — Session track resume/recovery (read previous `sessions/track_*.jsonl`)
 - **Step 5b** — Taste file loading (`taste.spoke.yaml`, `taste.user.yaml`)
 - **Step 5c** — Historian threshold check (30+ unreviewed points triggers review)
-- **Step 9** — Session track initialization (create `WAI-Spoke/session-YYYYMMDD-HHMM/` on every wakeup)
+- **Step 9** — Session track initialization (ensure `WAI-Spoke/sessions/` exists, initialize `track_YYYYMMDD-HHMM.jsonl` on every wakeup)
 
 The point schema is inlined in Step 9: fields `turn`, `ts`, `focus`, `action`, `thinking`, `activity`, `decisions`, `insights`, `open`, `phase`, `evolution`.
 
@@ -180,10 +180,10 @@ If unreconciled autosaves found, show task context, completion estimate, and off
 
 ### Step 5a: Read Session Track (Resume / Recovery)
 
-Check for previous session tracks in `WAI-Spoke/session-*/track.jsonl`:
+Check for previous session tracks in `WAI-Spoke/sessions/track_*.jsonl`:
 
-1. List `WAI-Spoke/session-*/` directories sorted by name (newest last)
-2. If no session directories exist → skip silently (legacy spoke, no tracks yet)
+1. List `WAI-Spoke/sessions/track_*.jsonl` files sorted by filename (newest last)
+2. If no track files exist → skip silently (legacy spoke, no tracks yet)
 3. Read the most recent `track.jsonl`
 4. Check if previous session had a clean closeout:
    - Compare `_session_state.last_closeout` against last point's `ts` field
@@ -229,7 +229,7 @@ Check if `WAI-Spoke/seed/ingest/manifest.json` exists:
 - **Action required:** Prioritize review before other work
 
 Check `WAI-Spoke/seed/ingest/` for `.track.jsonl` files. If present:
-- Create `WAI-Spoke/session-{ts}/` (ts from first JSON line's `ts` field) and move file in as `track.jsonl`
+- Move track file to `WAI-Spoke/sessions/track_{ts}.jsonl` (ts from first JSON line's `ts` field)
 
 ### Step 7: Context Health
 
@@ -244,11 +244,11 @@ From the de-duplicated lug map: show up to 3 wakeup_visibility lugs, then flagge
 ### Step 9: Initialize Session Track
 
 1. Generate session ID from current UTC time: `session-YYYYMMDD-HHMM`
-2. Create directory: `WAI-Spoke/session-{id}/`
-3. Update `_session_state.track_path` in WAI-State.json to point to the new track
+2. Ensure directory `WAI-Spoke/sessions/` exists (created once, shared across all sessions)
+3. Update `_session_state.track_path` in WAI-State.json to `WAI-Spoke/sessions/track_{id}.jsonl`
 4. The first point will be written after this wakeup briefing completes (phase: `orientation`)
 
-Note: After each subsequent turn in this session, append a point to `WAI-Spoke/session-{id}/track.jsonl`. Each point is a JSON object with fields: `turn` (integer), `ts` (ISO-8601 UTC), `focus` (short phrase), `action` (what happened), `thinking` (agent reasoning, 2-3 sentences), `activity` (list of actions taken), `decisions` (array), `insights` (array), `open` (unresolved questions), `phase` (one of: orientation/exploration/planning/execution/review/recovery), `evolution` (null on first point, else `"previous -> current: reason"`).
+Note: After each subsequent turn in this session, append a point to `WAI-Spoke/sessions/track_{id}.jsonl`. Each point is a JSON object with fields: `turn` (integer), `ts` (ISO-8601 UTC), `focus` (short phrase), `action` (what happened), `thinking` (agent reasoning, 2-3 sentences), `activity` (list of actions taken), `decisions` (array), `insights` (array), `open` (unresolved questions), `phase` (one of: orientation/exploration/planning/execution/review/recovery), `evolution` (null on first point, else `"previous -> current: reason"`).
 
 ### Step 10: Show Available Skills
 
@@ -271,7 +271,7 @@ Available skills vary by spoke. Standard set:
 ## Output: What You Should Have After
 
 - `WAI-Spoke/commands/wai.md` replaced with the 10-step protocol above
-- Agent creates `WAI-Spoke/session-YYYYMMDD-HHMM/` on every wakeup going forward
+- Agent initializes `WAI-Spoke/sessions/track_YYYYMMDD-HHMM.jsonl` on every wakeup going forward
 - Agent reads previous track on wakeup for resume/recovery
 - Agent loads taste files on wakeup
 - Agent auto-discovers hub teachings via Step 3a
@@ -285,7 +285,7 @@ After processing this teaching, verify:
 - [ ] `WAI-Spoke/commands/wai.md` contains "Step 9: Initialize Session Track"
 - [ ] `WAI-Spoke/commands/wai.md` does NOT contain "wai-briefing.sh"
 - [ ] Agent can describe the 6 track point phases (orientation/exploration/planning/execution/review/recovery)
-- [ ] Agent knows session directory naming format: `session-YYYYMMDD-HHMM`
+- [ ] Agent knows track file naming format: `WAI-Spoke/sessions/track_YYYYMMDD-HHMM.jsonl`
 - [ ] Agent knows the 11 point schema fields
 
 ---
@@ -295,7 +295,7 @@ After processing this teaching, verify:
 After completing this teaching, check if `teaching-spoke-wai-update-v1` already exists in `WAI-Lugs.jsonl`. If not, append:
 
 ```json
-{"i":"teaching-spoke-wai-update-v1","t":"Updated spoke wai.md to full 10-step session track protocol","ty":"signal","s":"c","ca":"2026-03-14T00:00:00Z","gb":"teaching-file","impact":8,"content":{"what":"Replaced 77-line script-based spoke wai.md with full 10-step prose protocol. Added Steps 3a, 5a, 5b, 5c, 9. Agent now creates session-YYYYMMDD-HHMM/ on every wakeup and captures points each turn.","source":"spoke-wai-update-v1.md.teaching v1.0"},"_behavior_directive":{"what_this_is":"Record that this spoke has the updated wai.md protocol installed.","what_this_is_NOT":"An instruction to re-process this teaching."}}
+{"i":"teaching-spoke-wai-update-v1","t":"Updated spoke wai.md to full 10-step session track protocol","ty":"signal","s":"c","ca":"2026-03-14T00:00:00Z","gb":"teaching-file","impact":8,"content":{"what":"Replaced 77-line script-based spoke wai.md with full 10-step prose protocol. Added Steps 3a, 5a, 5b, 5c, 9. Agent now initializes WAI-Spoke/sessions/track_YYYYMMDD-HHMM.jsonl on every wakeup and captures points each turn.","source":"spoke-wai-update-v1.md.teaching v1.0"},"_behavior_directive":{"what_this_is":"Record that this spoke has the updated wai.md protocol installed.","what_this_is_NOT":"An instruction to re-process this teaching."}}
 ```
 
 ---

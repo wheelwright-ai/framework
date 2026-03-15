@@ -183,7 +183,7 @@ This versions the *session state*, not a release.
 - `_session_state.last_modified_by` = current AI model name
 - `_session_state.last_modified_at` = current UTC timestamp
 - `_session_state.next_session_recommendation` = summary of what to do next
-- `_session_state.track_path` = path to current session's track directory (e.g., `WAI-Spoke/session-20260312-2100/`)
+- `_session_state.track_path` = path to current session's track file (e.g., `WAI-Spoke/sessions/track_20260312-2100.jsonl`)
 
 ### 6. Finalize Session Track
 
@@ -191,7 +191,7 @@ This versions the *session state*, not a release.
 
 - Write a final point to `track.jsonl` recording the closeout activity (phase: `review`)
 - The track file is the permanent session record — do NOT delete or truncate it
-- The session directory is committed to git with other WAI-Spoke files
+- The session track file is committed to git with other WAI-Spoke files
 
 **Legacy cleanup:**
 
@@ -348,7 +348,7 @@ git log --oneline origin/main..HEAD  # Must show no commits ahead
 - [ ] Lugs dogfooded (PEV fields validated, gaps filled)
 - [ ] Outbox delivered (or deferred with note if hub unreachable)
 - [ ] Signal teachings written to teachings/ (or skipped — hub disconnected or no new signals)
-- [ ] Changes committed with descriptive message (session directory included)
+- [ ] Changes committed with descriptive message (sessions/track file included)
 - [ ] Changes pushed to origin/main
 
 ---

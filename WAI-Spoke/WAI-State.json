@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.30",
+    "version": "2.0.31",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,17 +91,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260315-0151",
+    "last_session_id": "session-20260315-0527",
     "last_modified_by": "Claude Sonnet 4.6",
-    "last_modified_at": "2026-03-15T05:24:00Z",
-    "last_closeout": "2026-03-15T05:24:00Z",
-    "session_count": 25,
-    "track_path": "WAI-Spoke/session-20260315-0506/",
+    "last_modified_at": "2026-03-15T05:34:00Z",
+    "last_closeout": "2026-03-15T05:34:00Z",
+    "session_count": 26,
+    "track_path": "WAI-Spoke/sessions/track_20260315-0527.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "PRIORITY 1: epic-sessions-flat-storage-v1 (Green Light given, not executed — restructure session-*/track.jsonl to sessions/track_*.jsonl). PRIORITY 2: Create epic for idea-agent-friction-detector-v1 (Historian pattern-scan mode). PRIORITY 3: Create epic for idea-challenge-registry-v1 (WAI-Challenges.jsonl).",
+    "next_session_recommendation": "PRIORITY 1: Create epic for idea-agent-friction-detector-v1 (Historian pattern-scan mode — P1, base P1). PRIORITY 2: Create epic for idea-challenge-registry-v1 (WAI-Challenges.jsonl — P2, schema addition).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-15T05:23:57Z"
+    "protocol_last_run": "2026-03-15T05:44:11Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

@@ -18,11 +18,11 @@ scope:
     - "Previous session tracks (for resume/recovery on wakeup)"
 
   writes:
-    - "WAI-Spoke/session-YYYYMMDD-HHMM/track.jsonl (append-only, one point per turn)"
+    - "WAI-Spoke/sessions/track_YYYYMMDD-HHMM.jsonl (append-only, one point per turn)"
     - "WAI-Spoke/WAI-State.json (_session_state.track_path)"
 
   creates:
-    - "WAI-Spoke/session-YYYYMMDD-HHMM/ (directory, on session start)"
+    - "WAI-Spoke/sessions/ (directory, created once on first use)"
 
 prerequisites:
   - "WAI-Spoke/ directory exists"
@@ -30,7 +30,7 @@ prerequisites:
 
 output:
   per_turn: "One JSONL line appended to track.jsonl"
-  on_session_start: "Session directory created, track_path set in WAI-State.json"
+  on_session_start: "sessions/ ensured, track file initialized, track_path set in WAI-State.json"
 
 # ---------------------------------------------------------------------------
 # POINT SCHEMA
@@ -145,11 +145,11 @@ phase_definitions:
 
 session_lifecycle:
   on_wakeup:
-    description: "Create session directory and initialize track"
+    description: "Ensure sessions/ directory exists and initialize track file"
     steps:
       - "Generate session ID from current UTC time: session-YYYYMMDD-HHMM"
-      - "Create directory: WAI-Spoke/session-{id}/"
-      - "Set _session_state.track_path in WAI-State.json"
+      - "Ensure WAI-Spoke/sessions/ directory exists"
+      - "Set _session_state.track_path to WAI-Spoke/sessions/track_{id}.jsonl in WAI-State.json"
       - "First point written after wakeup briefing completes (phase: orientation)"
 
   on_turn:
@@ -165,7 +165,7 @@ session_lifecycle:
     steps:
       - "Final point records closeout activity (phase: review)"
       - "Track file is the permanent session record"
-      - "Session directory is committed to git with other WAI-Spoke files"
+      - "Session track file is committed to git with other WAI-Spoke files"
       - "_session_state.track_path preserved for next session's resume"
 
   fallback:
@@ -186,7 +186,7 @@ resume:
     This runs as part of wakeup (Step 5a), not as a separate command.
 
   algorithm:
-    - "Find most recent session-*/track.jsonl by folder name (date-sorted)"
+    - "List WAI-Spoke/sessions/track_*.jsonl sorted by filename (date-sorted)"
     - "Read all points"
     - "Extract: focus threads (unique focus values), decision chain, open threads from last point"
     - "Detect phase at last turn"
@@ -222,7 +222,7 @@ backward_compatibility:
     handle both states gracefully.
 
   rules:
-    - "If no session-*/ directories exist, skip track reading silently"
+    - "If no WAI-Spoke/sessions/ directory or no track_*.jsonl files exist, skip track reading silently"
     - "Autosave lug detection (wakeup Step 5) remains active alongside track"
     - "Closeout writes both track AND legacy session-summary lug until all spokes upgraded"
     - "Teaching file for this skill handles both v1 and v2 spoke structures"
@@ -285,13 +285,13 @@ tests:
     action: "Agent completes a turn"
     expected: "New JSONL line appended with all required fields"
 
-  - name: "Session directory created on wakeup"
-    setup: "New session, no current session directory"
+  - name: "Session track initialized on wakeup"
+    setup: "New session, sessions/ exists"
     action: "Wakeup protocol runs"
-    expected: "session-YYYYMMDD-HHMM/ created, track_path set in WAI-State.json"
+    expected: "sessions/track_YYYYMMDD-HHMM.jsonl initialized, track_path set in WAI-State.json"
 
   - name: "Resume reads previous track"
-    setup: "Previous session-*/track.jsonl exists with 5 points"
+    setup: "Previous WAI-Spoke/sessions/track_*.jsonl exists with 5 points"
     action: "New session wakeup"
     expected: "Catch-up brief presented with focus arc, decisions, open threads"
 
@@ -301,7 +301,7 @@ tests:
     expected: "Recovery mode flagged, incomplete work highlighted"
 
   - name: "Graceful fallback on legacy spoke"
-    setup: "Spoke with no session-*/ directories"
+    setup: "Spoke with no WAI-Spoke/sessions/ directory"
     action: "Wakeup protocol runs"
     expected: "Track reading skipped silently, no error"
 
@@ -314,7 +314,7 @@ notes:
   - "Track is the core data layer. Historian and taste files are consumers of track data."
   - "Points are cheap to write — one JSONL line. Never block the user response for a track write."
   - "The thinking field is the agent's best effort at self-reporting reasoning. It will improve over time."
-  - "Session folders are never deleted — they are the permanent record. Historian handles relevance."
+  - "Track files are never deleted — WAI-Spoke/sessions/ is the permanent record. Historian handles relevance."
   - "This skill ships to all spokes as a teaching file after test bench validation."
 
 origin:
