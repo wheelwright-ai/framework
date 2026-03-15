@@ -101,7 +101,7 @@
     "next_session_recommendation": "PRIORITY 1: Add activity_filter_exclude to historian.yaml pattern_scan (fixes calibration gap found in first Historian pass). PRIORITY 2: Investigate vector-20260315-0601-01 (was legacy root cleanup done?). PRIORITY 3: Create epic for idea-challenge-registry-v1.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-15T06:51:42Z"
+    "protocol_last_run": "2026-03-15T06:56:02Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -121,7 +121,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
@@ -161,7 +161,7 @@
     },
     "create_hub": {
       "requires": "framework_path must be set",
-      "note": "Hub creation is manual \u2014 copy templates/HUB/ to your desired hub path and configure hub-profile.json",
+      "note": "Hub creation is manual — copy templates/HUB/ to your desired hub path and configure hub-profile.json",
       "what_it_creates": [
         "~/wheelwright-hub/ (or user-chosen path)",
         "hub-profile.json (user preferences)",
