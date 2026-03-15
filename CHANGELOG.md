@@ -1,4 +1,19 @@
 
+## [2.0.32] - 2026-03-15
+
+### Added
+- **Historian pattern-scan sub-mode** — `historian.yaml` extended with `pattern_scan:` section. Runs every wakeup (incremental — only new sessions). Detects `open_recurrence` (3+ sessions), `workaround_churn` (4+ turns or 2+ sessions), `reopened_decision` (2+ sessions) using token-normalized Jaccard similarity (threshold: 0.3). Stores results in `vectors.jsonl`. Surfaces up to 3 patterns at wakeup Step 5c with investigation prompts.
+- **`scan_state.json`** — new historian advisor file tracking `last_scan_session` for incremental scanning
+- **vectors schema** expanded with 7 new fields: `pattern_type`, `first_seen`, `last_seen`, `occurrences`, `sample_text`, `similarity_scores`, `investigation_prompt`
+- **passes_record schema** expanded with `patterns_detected` and `patterns_surfaced`
+- 3 new pattern-scan tests in `historian.yaml`
+
+### Changed
+- `templates/commands/wai.md`, `.claude/commands/wai.md`, `templates/spoke/commands/wai.md`: Step 5c now includes pattern-scan run after narrative-review threshold check
+- `historian.yaml`: `scope.reads` and `never_modifies` updated to flat track storage path (`sessions/track_*.jsonl`)
+
+---
+
 ## [2.0.31] - 2026-03-15
 
 ### Changed

@@ -215,6 +215,13 @@ Check if the Historian advisor should propose a review:
    - Output: "Historian: {N} unreviewed points across {M} sessions. Run `/wai-review` when ready."
 5. If < 30 → silent
 
+After the threshold check, run pattern-scan:
+1. If `WAI-Spoke/advisors/historian/` does not exist → skip silently
+2. Check `WAI-Spoke/advisors/historian/scan_state.json` for `last_scan_session`. Load only sessions with filename > `last_scan_session` (all sessions if no scan_state).
+3. Run token-normalized Jaccard scan across `open`, `activity`, `decisions` fields per `historian.yaml` `pattern_scan.algorithm`. Update `vectors.jsonl` and `scan_state.json`.
+4. Surface vectors where `status=watching` AND `occurrences >= threshold` (open_recurrence: 3, workaround_churn: 4, reopened_decision: 2). Output up to 3: `Pattern: {description} — {occurrences}x. Investigate: {investigation_prompt}`
+5. If no qualifying patterns → silent
+
 ### Step 6: Detect Pending Teachings (Local Inbox)
 
 Hub teaching detection was already handled in Step 3a. This step checks the local inbox only.

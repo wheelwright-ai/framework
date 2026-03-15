@@ -1,0 +1,6 @@
+{
+  "last_scan_session": "track_20260315-0545",
+  "last_scan_at": "2026-03-15T06:01:00Z",
+  "total_sessions_scanned": 12,
+  "note": "First pass — all sessions scanned. Subsequent runs will only scan sessions newer than last_scan_session."
+}

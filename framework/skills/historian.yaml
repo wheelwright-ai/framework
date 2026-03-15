@@ -16,7 +16,7 @@ location: "WAI-Spoke/advisors/historian/"
 
 scope:
   reads:
-    - "WAI-Spoke/session-*/track.jsonl (accumulated session tracks)"
+    - "WAI-Spoke/sessions/track_*.jsonl (accumulated session tracks)"
     - "WAI-Spoke/taste.spoke (project preferences, if exists)"
     - "Hub taste.user (user preferences, if hub connected)"
     - "WAI-Spoke/WAI-State.json (session history, model_log)"
@@ -35,7 +35,7 @@ scope:
     - "Outside suggestions (in review file only)"
 
   never_modifies:
-    - "session-*/track.jsonl — tracks are immutable records"
+    - "sessions/track_*.jsonl — tracks are immutable records"
     - "WAI-Lugs.jsonl — historian tracks its own work in its own directory"
     - "Any skill or template file — proposes changes, never applies them"
 
@@ -56,10 +56,40 @@ trigger_logic:
       - "If >= 30 unreviewed points: suggest review to user"
       - "Suggestion format: 'Historian: {N} unreviewed points across {M} sessions. Run /wai-review?'"
       - "If < 30: silent"
+      - "After threshold check, run pattern-scan (see pattern_scan section)"
 
   on_demand:
     description: "User explicitly requests /wai-review"
     action: "Run review immediately regardless of point count"
+
+# ---------------------------------------------------------------------------
+# PATTERN SCAN (AUTO-DETECT MODE)
+# ---------------------------------------------------------------------------
+
+pattern_scan:
+  description: >
+    Lightweight automated mode. Runs every wakeup to detect recurring patterns
+    across sessions. Complements narrative-review (periodic/deep). Pattern-scan
+    is continuous and incremental — only new sessions are scanned each wakeup.
+  trigger: "on_wakeup — always, runs after narrative-review threshold check"
+  fields_scanned: ["open", "activity", "decisions"]
+  algorithm:
+    - "Read WAI-Spoke/advisors/historian/scan_state.json (if exists) to get last_scan_session"
+    - "List WAI-Spoke/sessions/track_*.jsonl sorted by filename"
+    - "Load sessions with filename > last_scan_session (all sessions if no scan_state)"
+    - "For each loaded session: extract all items from open[], activity[], decisions[] fields across all points. Record (text, session_id, turn, field) for each item."
+    - "Token-normalize each text item: lowercase, strip punctuation, split on whitespace, remove stop words [a, an, the, is, was, were, has, have, had, be, been, to, of, in, on, at, for, with, from, as, this, that, not, but]"
+    - "Compare each new item against items from prior sessions using Jaccard similarity: |tokens(A) ∩ tokens(B)| / |tokens(A) ∪ tokens(B)|. Similarity threshold: 0.3"
+    - "Group item-pairs with similarity >= 0.3 into clusters"
+    - "For each cluster, classify pattern_type by source field and count: open_recurrence (open[] field, 3+ distinct sessions), workaround_churn (activity[] field, 4+ total occurrences OR 2+ distinct sessions), reopened_decision (decisions[] field, 2+ distinct sessions)"
+    - "For each cluster meeting its threshold: search vectors.jsonl for existing vector where Jaccard(cluster sample text, vector.sample_text) >= 0.3. If found: update last_seen, increment occurrences, append score to similarity_scores. If new: append entry to vectors.jsonl with status=watching."
+    - "Write scan_state.json: { last_scan_session: newest session filename just processed }"
+  surfacing:
+    condition: "vectors.jsonl has entries with status=watching AND occurrences >= threshold (open_recurrence: 3, workaround_churn: 4, reopened_decision: 2)"
+    output_format: "Pattern: {description} — {occurrences}x across {N} sessions. Investigate: {investigation_prompt}"
+    max_shown: 3
+    location: "wakeup Step 5c, after narrative-review threshold suggestion"
+    silent_when: "No qualifying vectors or no advisors/historian/ directory"
 
 # ---------------------------------------------------------------------------
 # THREE PERSPECTIVES
@@ -165,6 +195,13 @@ vectors:
     evidence: ["point references where pattern was observed"]
     status: "watching | confirmed | dismissed"
     threshold: "How many more observations before action warranted"
+    pattern_type: "open_recurrence | workaround_churn | reopened_decision"
+    first_seen: "track_YYYYMMDD-HHMM — session ID of first occurrence"
+    last_seen: "track_YYYYMMDD-HHMM — session ID of most recent occurrence"
+    occurrences: "integer — total count across all sessions"
+    sample_text: "string — representative text from most recent occurrence"
+    similarity_scores: "[float] — Jaccard scores between matched occurrences"
+    investigation_prompt: "string — suggested question to surface to user at wakeup"
 
   lifecycle: >
     Created during review when a potential pattern is noticed but not yet
@@ -214,6 +251,8 @@ outputs:
       vectors_confirmed: "count"
       nudges_proposed: "count"
       protocol_proposals: "count"
+      patterns_detected: "integer — new vectors created during this pass"
+      patterns_surfaced: "integer — patterns surfaced at wakeup this pass"
 
 # ---------------------------------------------------------------------------
 # MODEL TIER TESTING
@@ -273,6 +312,21 @@ tests:
     setup: "Historian identifies protocol gap"
     action: "Historian proposes improvement"
     expected: "Lug placed in outbox, NOT applied directly. Requires teaching approval."
+
+  - name: "Pattern-scan detects open_recurrence"
+    setup: "3 session tracks each contain an open[] item with Jaccard similarity >= 0.3 to each other. No scan_state.json exists."
+    action: "Wakeup runs pattern-scan"
+    expected: "vectors.jsonl has a new entry with pattern_type=open_recurrence, occurrences=3, status=watching. scan_state.json created with last_scan_session set."
+
+  - name: "Pattern-scan surfaces at wakeup Step 5c"
+    setup: "vectors.jsonl has entry with status=watching, occurrences=3, pattern_type=open_recurrence, investigation_prompt set"
+    action: "Wakeup protocol Step 5c runs"
+    expected: "Output includes 'Pattern: {description} — 3x across N sessions. Investigate: {investigation_prompt}'"
+
+  - name: "Pattern-scan is incremental"
+    setup: "scan_state.json has last_scan_session=track_20260313-0400. 3 older sessions + 1 newer session exist."
+    action: "Wakeup runs pattern-scan"
+    expected: "Only the 1 newer session is scanned. Existing vectors updated if new evidence meets similarity threshold. scan_state.json updated to newest session."
 
 notes:
   - "The Historian is an interpreter, not an editor. It observes and proposes."
