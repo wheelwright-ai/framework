@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.28",
+    "version": "2.0.29",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,17 +91,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260315-0029",
+    "last_session_id": "session-20260315-0151",
     "last_modified_by": "Claude Sonnet 4.6",
-    "last_modified_at": "2026-03-15T01:35:00Z",
-    "last_closeout": "2026-03-15T01:35:00Z",
-    "session_count": 23,
-    "track_path": "WAI-Spoke/session-20260315-0029/",
+    "last_modified_at": "2026-03-15T02:30:00Z",
+    "last_closeout": "2026-03-15T02:30:00Z",
+    "session_count": 24,
+    "track_path": "WAI-Spoke/session-20260315-0151/",
     "protocol_completed": true,
-    "next_session_recommendation": "PRIORITY 1: /wai-teach to distribute updated closeout + other templates. PRIORITY 2: /wai-improve on idea backlog (Challenge Registry, dogfood skill, friction detector, fit caching). PRIORITY 3: Resume epic-track-system-install-and-cleanup-v1 (legacy WAI-Spoke root cleanup).",
+    "next_session_recommendation": "PRIORITY 1: epic-sessions-flat-storage-v1 (Green Light given, restructure session-*/track.jsonl to sessions/track_*.jsonl). PRIORITY 2: Create epic for idea-agent-friction-detector-v1 (Historian pattern-scan mode). PRIORITY 3: Update wai-improve.md.teaching to reflect new Step 6c structured audit and redistribute to spokes.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-15T02:18:55Z"
+    "protocol_last_run": "2026-03-15T05:01:25Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

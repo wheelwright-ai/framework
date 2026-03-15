@@ -425,21 +425,34 @@ If any are open, surface them now. Do not promote with open questions — they b
 
 ### 6c. Dogfood Check
 
-This is the most important gate. Present the drafted lug fields (challenge, hypothesis, perceive, execute, verify) as if handing them to an agent with no context from this conversation. Ask:
+The most important gate. Read the drafted PEV fields as a naive agent would — no chat history, no prior sessions, only the lug.
 
-> "If a new agent read only this lug — no chat history, no prior sessions — could they implement it without guessing anything?"
+Run three audits:
 
-Work through the lug with the user as that naive agent would. For each field, ask:
-- Perceive: "Would they know exactly where to look?" If not — add specificity
-- Execute: "Would they know exactly what to do at each step?" If not — rewrite the vague step
-- Verify: "Would they know unambiguously when they're done?" If not — add a concrete check
+**Perceive audit**
+- Does each item name a specific file or directory? (not "relevant files")
+- Does each item name a specific field, line, or condition? (not "check the state")
+- Could an agent locate the starting point cold, with no prior context?
+→ **Pass:** all items are unambiguously locatable.
+→ **Fail:** any item requires guessing or inference. Rewrite that item.
 
-Common gaps that surface here:
-- "The lug says to update X but doesn't say what the new value should be"
-- "Step 3 says 'check for conflicts' but doesn't say where to look or what a conflict looks like"
-- "The verify step says 'confirm it works' — that's not checkable"
+**Execute audit**
+- Are steps numbered and ordered?
+- Does each step contain exactly one action? (not "update and verify" in one step)
+- Are all file paths explicit — absolute or relative to a named root?
+- Are vague verbs absent? ("update" → "replace line N with X", "handle" → specific action)
+- Does each step that depends on a prior step say so explicitly?
+→ **Pass:** an agent can execute step N knowing only steps 1..N-1 and the lug.
+→ **Fail:** any step requires guessing a value, path, or action. Rewrite that step.
 
-Fix each gap before proceeding. The dogfood check is not optional — it is the test of whether the lug is actually ready.
+**Verify audit**
+- Is each item a checkable condition, not a feeling?
+- Does each item specify what to check and what the expected result is?
+- Are "works correctly", "looks right", "seems complete" absent?
+→ **Pass:** all items can be confirmed true/false with no prior context.
+→ **Fail:** any item requires judgment or context not in the lug. Replace it.
+
+**Outcome:** All three pass → proceed to 6d. Any fail → fix and re-audit that section only.
 
 ### 6d. Complexity Check
 
