@@ -206,3 +206,5 @@ Available skills vary by spoke. Standard set:
 - **/wai-time** — Token usage estimate
 - **/wai-rules** — Project boundaries
 - **/wai-principles** — WAI principles P1-P9
+
+<\!-- pipeline-verified-2026-03-14: teach/learn round-trip confirmed -->
