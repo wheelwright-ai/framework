@@ -1,4 +1,13 @@
 
+## [2.0.33] - 2026-03-15
+
+### Fixed
+- **CI: CRLF line endings** — 18 shell scripts converted to LF; `.gitattributes` added to enforce LF on all text files permanently
+- **CI: Missing test infrastructure** — added `run-integration-tests.sh`, `tests/integration/runner.py`, `requirements.txt`, `requirements-test.txt`
+- **E2E test suite drift** — `benchmarks/e2e/test_skills.py` updated to match current codebase: `idea`/`response` types, `proposed` status, `wai-teach`/`wai-learn` absorbed commands, title field optional on closed/reconciled records
+
+---
+
 ## [2.0.32] - 2026-03-15
 
 ### Added
