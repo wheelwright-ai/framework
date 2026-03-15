@@ -305,49 +305,22 @@ If you need to find or interact with other Wheelwright components:
 
 ### Finding the Framework
 Check `wheelwright.framework_path` in WAI-State.json, or:
-1. Check if `WAI` command is in PATH
-2. Look for `~/projects/wheelwright`
-3. Look for `~/.wheelwright`
-4. Ask user: "Where is your Wheelwright framework installed?"
+1. Look for `~/projects/wheelwright`
+2. Look for `~/.wheelwright`
+3. Ask user: "Where is your Wheelwright framework installed?"
 
 ### Finding the Hub
 Check `wheelwright.hub_path` in WAI-State.json, or:
 1. Look for `~/wheelwright-hub`
 2. Look for `~/.wheelwright-hub`
-3. Ask user or create one: `cd <framework> && ./WAI hub create`
+3. Ask user where the hub is located
 
 ### Creating a Hub (if none exists)
-```bash
-cd <framework_path>
-./WAI hub create --guided
-```
-
-This creates your personal hub for cross-project learnings.
-
-### Useful Commands
-```bash
-# From framework directory:
-./WAI hub status          # Check hub health
-./WAI sync --all          # Sync all wheels
-./WAI init <path>         # Add new wheel
-./WAI hub locate          # Find hub location
-```
+Copy `templates/HUB/` from the framework to your desired hub path and configure `hub-profile.json`. Hub creation is a manual setup step — ask the user for the hub path if unknown.
 
 ---
 
 ## Quick Reference
-
-### Commands for Users
-```
-WAI init [name]           # Initialize new wheel
-WAI status                # Show wheel state summary
-WAI spoke add [name]      # Add spoke to wheel
-WAI spoke list            # List available spokes
-WAI sync                  # Sync state files
-WAI closeout              # Generate closeout files
-WAI context               # Output context for LLM paste
-WAI version               # Show version info
-```
 
 ### Your Checklist
 

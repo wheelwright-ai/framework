@@ -1,0 +1,29 @@
+# Teaching: Signal — PEV fields (perceive/execute/verify) and pre-closeout dogfoo...
+
+**Type:** signal
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+
+Before appending: check if a signal with the same `timestamp` and `signal` text already exists in `WAI-Signals.jsonl`. If it does, skip — do not duplicate.
+
+## Embedded Signal
+
+```json
+{
+  "timestamp": "2026-03-14T19:00:00Z",
+  "session_id": "session-20260314-fleet-upgrade",
+  "signal": "PEV fields (perceive/execute/verify) and pre-closeout dogfooding driven into framework lug advisor and closeout skills. PEV required on all actionable lugs. Dogfooding validates lugs for self-containment before commit. Both propagate to spokes via upgrade.",
+  "impact": 9,
+  "rationale": "Sub-agent dogfood test revealed 8/17 lugs were unworkable without conversation context. PEV gives cold agents a runway. Dogfooding catches gaps before they ship. Together they close the quality loop on the lug system.",
+  "by": "claude-opus-4-6"
+}
+```
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

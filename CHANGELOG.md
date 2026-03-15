@@ -1,4 +1,23 @@
 
+## [2.0.28] - 2026-03-15
+
+### Added
+- **Step 9b: Signal Teach** — `wai-closeout.md` now automatically distributes new signals as teaching files at every closeout when hub is connected. No separate `/wai-teach` needed for signals.
+- **`teachings/closeout-absorbs-signal-teach-v1.md.teaching`** — distributes updated closeout to all spokes
+- **5 signal teachings** written to `teachings/` this session (impacts 8-9)
+- **`/wai-improve` installed** on framework spoke from `wai-improve.md.teaching`
+
+### Changed
+- `templates/commands/wai-closeout.md`: preamble (capture `old_last_closeout`), Step 9b inserted, success criteria updated
+- `decision-plan-dogfood-execute-protocol` lug: type → `core-protocol`, dogfood inputs clarified (full file content required), rejection loop added, exception clause expanded, `review_log` pattern introduced
+- `taste.spoke.yaml`: Green Light asks must include challenge + value
+- `WAI-Spoke/WAI-Guide.md`, `WAI-Spoke/WAI-State.md`, `examples/demo-wheel/`: WAI CLI references removed
+
+### Fixed
+- Signal distribution no longer requires a manual step after closeout
+
+---
+
 ## [2.0.11] - 2026-03-03
 
 ### Added

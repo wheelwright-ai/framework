@@ -18,7 +18,7 @@
 > These are the wheel files for Wheelwright's own development - we eat our own dog food.
 > When you fork or clone this repo, you have options:
 > - **Keep as reference**: See how Wheelwright tracks itself as a living example
-> - **Reset for your fork**: Run `WAI init --fresh` to start with your own context
+> - **Reset for your fork**: Clear `WAI-Spoke/` and copy `templates/spoke/WAI-Spoke/` to start with your own context
 > - **Build on it**: Your changes to `.WAI/` won't conflict with framework updates
 >
 > This is intentional - the framework's own development serves as documentation.
@@ -220,18 +220,6 @@ ADAPTIVE mode maintains intentionality:
 'Time'      Check token usage with capacity warnings
 'Rules'     List active behavioral guidelines
 'Closeout'  Generate updated WAI-State files for session end
-```
-
-**CLI Commands:**
-```
-WAI init           Initialize new wheel
-WAI status         Show wheel status
-WAI hub create     Create personal hub
-WAI hub status     Show hub health
-WAI sync           Sync wheel with hub
-WAI spoke list     List available spokes
-WAI spoke add      Add spoke to wheel
-WAI context        Output context for LLM paste
 ```
 
 ---

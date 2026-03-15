@@ -29,12 +29,12 @@
         "3. Look for ~/.wheelwright-hub",
         "4. Check framework's connected_wheels for this project"
       ],
-      "if_not_found": "Run: cd <framework_path> && ./WAI hub create"
+      "if_not_found": "Ask user where the hub is, or copy templates/HUB/ to initialize one"
     },
 
     "create_hub": {
       "requires": "framework_path must be set",
-      "command": "cd <framework_path> && ./WAI hub create --guided",
+      "note": "Hub creation is manual — copy templates/HUB/ to your desired hub path and configure hub-profile.json",
       "what_it_creates": [
         "~/wheelwright-hub/ (or user-chosen path)",
         "hub-profile.json (user preferences)",

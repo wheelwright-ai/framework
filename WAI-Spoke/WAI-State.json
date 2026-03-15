@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.27",
+    "version": "2.0.28",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -32,7 +32,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-13T07:28:46Z",
+    "last_modified_at": "2026-03-15T01:35:00Z",
     "last_modified_by": "Gemini CLI"
   },
   "_project_foundation": {
@@ -91,18 +91,14 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260314-1012",
+    "last_session_id": "session-20260315-0029",
     "last_modified_by": "Claude Sonnet 4.6",
-    "last_modified_at": "2026-03-14T11:20:00Z",
-    "last_closeout": "2026-03-14T11:20:00Z",
-    "session_count": 22,
-    "current_session": {
-      "session_id": "session-20260314-0903",
-      "started_at": "2026-03-14T09:03:00Z"
-    },
-    "track_path": "WAI-Spoke/session-20260314-1012/",
+    "last_modified_at": "2026-03-15T01:35:00Z",
+    "last_closeout": "2026-03-15T01:35:00Z",
+    "session_count": 23,
+    "track_path": "WAI-Spoke/session-20260315-0029/",
     "protocol_completed": true,
-    "next_session_recommendation": "PRIORITY 1: Run /wai-improve on your idea backlog \u2014 skill is live. PRIORITY 2: /wai-teach to distribute wai-improve.md.teaching to all spokes. PRIORITY 3: Resume epic-track-system-install-and-cleanup-v1 (legacy WAI-Spoke root cleanup).",
+    "next_session_recommendation": "PRIORITY 1: /wai-teach to distribute updated closeout + other templates. PRIORITY 2: /wai-improve on idea backlog (Challenge Registry, dogfood skill, friction detector, fit caching). PRIORITY 3: Resume epic-track-system-install-and-cleanup-v1 (legacy WAI-Spoke root cleanup).",
     "requires_review": false,
     "review_reason": null,
     "protocol_last_run": "2026-03-14T10:35:00Z"

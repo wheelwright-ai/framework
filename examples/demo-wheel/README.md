@@ -30,10 +30,7 @@ demo-wheel/
 
 ## Creating Your Own Wheel
 
-```bash
-cd your-project
-WAI init
-```
+Copy `templates/spoke/WAI-Spoke/` from the framework into your project root. See the [Quickstart Guide](../../docs/QUICKSTART.md) for setup instructions.
 
 ## Learn More
 

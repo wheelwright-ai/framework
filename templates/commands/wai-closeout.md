@@ -68,6 +68,8 @@ Persist session state with enough detail that a new agent/session can:
 
 ## Closeout Procedure
 
+**Before beginning:** Read `_session_state.last_closeout` from `WAI-State.json` and store it as `old_last_closeout`. This value is used in Step 9b to identify new signals written this session. It must be captured now — Step 5 will overwrite it.
+
 ### 1. Lug Reconciliation
 
 **Purpose:** Consolidate autosave checkpoints into permanent record.
@@ -242,6 +244,49 @@ Any lug intended for another agent (including future-you in a new session) must 
    - Report: "N lugs delivered to hub"
 4. If hub unreachable: note in `_session_state.next_session_recommendation`, continue — do not block commit
 
+### 9b. Signal Teach (Conditional)
+
+**Automatically distribute new signals to the hub — no separate /wai-teach needed.**
+
+**Conditions (both must be true):**
+- `wheel.hub_path` is set and the directory exists
+- `WAI-Signals.jsonl` contains entries with `timestamp > old_last_closeout` (captured before Step 5)
+
+**If either condition is false:** Skip silently. Note "No new signals to teach" in summary.
+
+**If both conditions are true:**
+1. Collect all signal entries from `WAI-Signals.jsonl` where `timestamp > old_last_closeout`
+2. For each signal, derive a filename: sanitize `timestamp` to `YYYYMMDD-HHMM` → `teachings/signal-YYYYMMDD-HHMM.md.teaching`. If that filename already exists, append `-2`, `-3`, etc. until unique.
+3. Write the teaching file — substitute the actual signal JSON verbatim (one file per signal, not a placeholder):
+
+```markdown
+# Teaching: Signal — {signal content summary}
+
+**Type:** signal
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+
+## Embedded Signal
+
+```json
+{actual signal JSON object here}
+```
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.
+```
+
+4. **Idempotency:** Receiving spokes may see the same signal teaching more than once (re-teach, restore). Before appending, check if a signal with the same `timestamp` and `signal` text already exists in `WAI-Signals.jsonl`. If it does, skip — do not duplicate.
+5. Report: "N signal teaching(s) written to teachings/"
+
+**Note:** The hub symlink (`hub/framework → ../framework/teachings/`) means these files are immediately visible to all connected spokes on their next wakeup. No further distribution step required.
+
 ### 10. Summary Generation
 
 **Create and present session summary:**
@@ -302,6 +347,7 @@ git log --oneline origin/main..HEAD  # Must show no commits ahead
 - [ ] Documentation updated where applicable
 - [ ] Lugs dogfooded (PEV fields validated, gaps filled)
 - [ ] Outbox delivered (or deferred with note if hub unreachable)
+- [ ] Signal teachings written to teachings/ (or skipped — hub disconnected or no new signals)
 - [ ] Changes committed with descriptive message (session directory included)
 - [ ] Changes pushed to origin/main
 

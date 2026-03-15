@@ -412,8 +412,6 @@ Update `_session_state`:
 }
 ```
 
-**CLI menu parity rule:** When adding or extending WAI-CLI commands, update the interactive menus and help text to match.
-
 ### Before Closing Session
 
 If you made significant changes:
@@ -595,18 +593,6 @@ Copy `templates/HUB/` from the framework to your desired hub path and configure 
 ---
 
 ## Quick Reference
-
-### Commands for Users
-```
-WAI init [name]           # Initialize new wheel
-WAI status                # Show wheel state summary
-WAI spoke add [name]      # Add spoke to wheel
-WAI spoke list            # List available spokes
-WAI sync                  # Sync state files
-WAI closeout              # Generate closeout files
-WAI context               # Output context for LLM paste
-WAI version               # Show version info
-```
 
 ### Your Checklist
 
