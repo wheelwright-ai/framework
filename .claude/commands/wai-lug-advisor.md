@@ -68,6 +68,7 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `phone-home` | Hub requests status report from spoke | Auto-handled by learn |
 | `config` | Configuration update for node | Applied during learn |
 | `session` | Historical session record (legacy) | No — archive only |
+| `challenge` | Problem-centric anchor for idea lugs — stable problem statement with linked hypotheses | No — append-only record in WAI-Challenges.jsonl |
 
 ---
 
@@ -177,6 +178,35 @@ CREATE → TRACK → WORK → COMPLETE → RECONCILE → ARCHIVE
 6. **ARCHIVE** — Closed lugs remain in WAI-Lugs.jsonl for history
 
 WAI-Lugs.jsonl is **append-only**. Do not delete or modify past entries — append new versions.
+
+---
+
+## WAI-Challenges.jsonl
+
+First-class append-only file alongside `WAI-Lugs.jsonl`. Stores stable problem statements independently of the hypotheses (idea lugs) that address them.
+
+**Schema:**
+```json
+{
+  "i": "chal-{3-5-word-slug}",
+  "ty": "challenge",
+  "statement": "The stable problem text — refined after wai-improve Step 3",
+  "first_seen": "ISO-8601 — when this challenge was first articulated",
+  "first_seen_in": "idea lug ID of the first idea that identified this challenge",
+  "status": "open | resolved | deferred",
+  "related_lugs": ["idea and epic IDs addressing this challenge"],
+  "resolution_notes": "How it was resolved (if status=resolved)"
+}
+```
+
+**Append-only:** Override entries follow the same convention as `WAI-Lugs.jsonl` — append a new line with the same `i` and updated fields. Latest entry per `i` wins.
+
+**Lifecycle:** Created by `/wai-improve` Step 3b on first intake of a challenge. Updated (override entry) each time a new idea links to it. Resolved when the challenge is addressed.
+
+**Relationship to ideas:** Challenge = stable problem. Idea = one hypothesis. One challenge can have many ideas across sessions and models. The `challenge_id` field on an idea lug is the link back.
+
+**Slug generation:** Take 3–5 most meaningful words (nouns, verbs — skip stopwords). Join with hyphens, lowercase.
+Example: `"Recurring friction across sessions is invisible"` → `chal-recurring-friction-invisible`
 
 ---
 

@@ -45,9 +45,11 @@ Step 0: Load spoke context (foundation, boundaries, phase)
    ↓
 Step 1: Intake (challenge, hypothesis, origin, scope)
    ↓
-Step 2: Similarity and fit check ← NEW — must complete before refinement or scoring
+Step 2: Similarity and fit check ← must complete before refinement or scoring
    ↓
 Step 3: Refinement questions (informed by Steps 0 + 2)
+   ↓
+Step 3b: Challenge matching (link refined statement → WAI-Challenges.jsonl)
    ↓
 Step 4: Evaluation and scoring
    ↓
@@ -249,6 +251,74 @@ Ask at most 3 questions at a time. Wait for answers. The answers may change the 
 
 ---
 
+## Step 3b: Challenge Matching
+
+After Step 3, the challenge statement is in its canonical (refined) form. Match it against `WAI-Spoke/WAI-Challenges.jsonl` to link this idea to an existing problem or create a new one.
+
+If `WAI-Spoke/WAI-Challenges.jsonl` does not exist, create it as an empty file before proceeding.
+
+### Normalization pipeline
+
+Apply this pipeline to the challenge statement before comparison:
+
+1. Lowercase
+2. Strip punctuation
+3. Tokenize on whitespace
+4. Remove stopwords (same list as `historian.yaml` → `pattern_scan.algorithm`)
+5. Apply Porter stemming (`detect`, `detecting`, `detection` → `detect`)
+
+### Matching
+
+Compute Jaccard similarity between normalized tokens of the intake challenge and each existing challenge entry:
+
+```
+similarity = |tokens(A) ∩ tokens(B)| / |tokens(A) ∪ tokens(B)|
+```
+
+Threshold: **0.5**
+
+### If match found (similarity >= 0.5)
+
+Present to user:
+> This challenge overlaps with existing challenge `{i}`: "{statement}" (similarity: {score}). Same problem? [enter=yes / type correction]
+
+On confirmation: set `challenge_id` = existing challenge `i`. Append an override entry to `WAI-Challenges.jsonl` adding the new idea ID to `related_lugs` (same `i`, updated fields — latest entry per `i` wins, same convention as `WAI-Lugs.jsonl`).
+
+### If no match
+
+Propose a new challenge entry:
+> No existing challenge found. Proposed:
+> `chal-{3-5-word-slug}`
+> statement: "{refined challenge text}"
+> [enter=accept / edit]
+
+On accept (or no response): append new entry to `WAI-Challenges.jsonl`:
+
+```json
+{
+  "i": "chal-{slug}",
+  "ty": "challenge",
+  "statement": "{refined challenge text}",
+  "first_seen": "ISO-8601",
+  "first_seen_in": "{idea lug id — update at Step 5 after lug is written}",
+  "status": "open",
+  "related_lugs": [],
+  "resolution_notes": null
+}
+```
+
+Set `challenge_id` to this new `i`.
+
+**Sequencing note:** `first_seen_in` references the idea lug ID that will be written at Step 5. After writing the idea lug, append one more override entry to `WAI-Challenges.jsonl` to set `first_seen_in` and add the idea ID to `related_lugs`.
+
+### Slug generation
+
+Take 3–5 most meaningful words from the challenge statement (nouns and verbs — skip stopwords and filler). Join with hyphens, lowercase.
+
+Example: `"Recurring friction across sessions is invisible"` → `chal-recurring-friction-invisible`
+
+---
+
 ## Step 4: Evaluation and Scoring
 
 After Steps 0–3, score on four dimensions using the spoke-specific translations from Step 0c.
@@ -342,6 +412,7 @@ Every fully-processed idea becomes a lug in `WAI-Lugs.jsonl`. "Fully processed" 
   "prior_hypothesis": "Original hypothesis if reframed (omit if not reframed)",
   "reframe_notes": "Why hypothesis changed (omit if not reframed)",
   "origin": "user | agent | signal | backlog",
+  "challenge_id": "chal-{slug} — ID from WAI-Challenges.jsonl. Set in Step 3b. Required on fully-processed ideas.",
   "scope": "skill | protocol | schema | tooling | multi",
   "spoke_context_loaded": true,
   "fit_classification": "net_new | extends | supersedes | conflicts | duplicate",
@@ -367,6 +438,7 @@ Every fully-processed idea becomes a lug in `WAI-Lugs.jsonl`. "Fully processed" 
 - `spoke_context_loaded: true` — Step 0 completed
 - `fit_classification` — Step 2 completed
 - `challenge` and `hypothesis` — Step 1 completed
+- `challenge_id` — Step 3b completed
 - `priority` — Step 4 completed
 
 A lug missing any of these was not fully processed. Treat it as `s: raw` regardless of what it says.
