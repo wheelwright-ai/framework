@@ -76,6 +76,19 @@ Confirm the current state meets quality standards before release:
 
 ## Shipit Procedure
 
+### 0. Production Release Intent
+
+**First: clarify what this shipit is for.**
+
+> Is this a production release? (y/n)
+
+- **Yes (release):** All steps run. After closeout, a git tag `v{version}` is applied and pushed. This marks the commit as stable — anyone cloning or targeting tags gets a known-good state.
+- **No (progress save):** All steps run identically. No tag is applied. Commit is pushed but not marked as a release.
+
+Record the answer. It determines whether Step 9b runs.
+
+---
+
 ### 1. Sync `.claude/commands/` (FRAMEWORK ONLY)
 
 **If running from the framework repo: keep IDE skills in sync with canonical templates.**
@@ -342,6 +355,28 @@ Run full `/wai-closeout` protocol:
 
 ---
 
+### 9b. Apply Release Tag (Production Release Only)
+
+**Skip this step if production release = no.**
+
+After the closeout commit is confirmed, read the version from `WAI-State.json` → `wheel.version` (updated by closeout):
+
+```bash
+git tag v{version}
+git push origin v{version}
+```
+
+**Report:**
+```
+Release Tag:
+- Tag: v{version}
+- Pushed: ✓
+```
+
+**If tag already exists:** Stop. Report the conflict — do not force-overwrite an existing tag. Resolve manually.
+
+---
+
 ### 10. Teach All Spokes (Auto)
 
 **After successful closeout, distribute updates to all spokes.**
@@ -399,6 +434,7 @@ Teach Distribution:
 - [ ] Documentation updated
 - [ ] User confirmed ready to ship
 - [ ] Closeout executed successfully
+- [ ] Release tag applied and pushed: `v{version}` (production release only — skip if progress save)
 - [ ] All spokes taught (if framework/hub)
 
 ---
@@ -423,6 +459,7 @@ Teach Distribution:
 - Version: [X.Y.Z]
 - Commit: [hash]
 - Push: [status]
+- Release tag: v[X.Y.Z] pushed ✓  *(or "n/a — progress save")*
 
 ### Teach (auto)
 - Spokes: [N]/[M] taught
