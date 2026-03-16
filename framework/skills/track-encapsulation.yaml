@@ -85,8 +85,26 @@ point_schema:
 
     open:
       type: array
-      items: string
       description: "Unresolved threads or questions. Empty array if none."
+      items:
+        oneOf:
+          - type: string
+            description: "Legacy format — treated as {text: item, type: unknown} by pattern-scan."
+          - type: object
+            properties:
+              text:
+                type: string
+                description: "The open thread or question."
+              type:
+                type: string
+                enum: [unknown, deferred, intentional, blocked]
+                description: >-
+                  unknown: default, no annotation.
+                  deferred: known future work, skip pattern-scan unless 6+ distinct sessions.
+                  intentional: deliberate open question (design choice), skip unless 6+ distinct sessions.
+                  blocked: waiting on external dependency, process normally.
+            required: [text, type]
+      note: "Prefer object format for new items. Both string and object formats are legal. Historian handles both."
 
     phase:
       type: string
@@ -107,7 +125,7 @@ point_schema:
       description: "High-impact items worth elevating to WAI-Signals.jsonl. Usually empty."
 
   example: |
-    {"turn":1,"ts":"2026-03-12T21:01:00Z","focus":"session orientation","action":"Ran wakeup protocol, reviewed active work","thinking":"No active lugs or pending teachings. Clean state. User will direct.","activity":["read WAI-State.json","read WAI-Lugs.jsonl","ran git status"],"decisions":[],"insights":[],"open":["What should we work on?"],"phase":"orientation","evolution":null}
+    {"turn":1,"ts":"2026-03-12T21:01:00Z","focus":"session orientation","action":"Ran wakeup protocol, reviewed active work","thinking":"No active lugs or pending teachings. Clean state. User will direct.","activity":["read WAI-State.json","read WAI-Lugs.jsonl","ran git status"],"decisions":[],"insights":[],"open":[{"text": "What should we work on?", "type": "unknown"}],"phase":"orientation","evolution":null}
     {"turn":2,"ts":"2026-03-12T21:05:00Z","focus":"teaching test bench","action":"User proposed real-spoke validation, chose solutions-by-mv","thinking":"User suggested real-world validation. I considered 3 spokes — solutions-by-mv is v1 structure, most likely to stress-test assumptions.","activity":["read WAI-State.json from solutions-by-mv","cloned WAI-Spoke to test-bench/","injected teaching file"],"decisions":["Test against v1 spoke instead of framework clone only"],"insights":["v1 spokes lack WAI-Lugs.jsonl — teachings must handle both"],"open":["Should all teachings default to create-if-missing?"],"phase":"execution","evolution":"orientation -> execution: user directed real-spoke testing"}
 
 # ---------------------------------------------------------------------------
@@ -309,6 +327,16 @@ tests:
     setup: "Agent has complex turn with many actions"
     action: "Point written"
     expected: "Point is concise — thinking is 2-3 sentences, activity is a short list"
+
+  - name: "open_type object items are schema-valid"
+    setup: 'Track point written with open: [{text: "blocked on API design", type: "blocked"}]'
+    action: "Point appended to track.jsonl"
+    expected: "Valid JSONL line. Object format accepted alongside string format."
+
+  - name: "Legacy string open items remain valid"
+    setup: 'Existing track.jsonl with open: ["What should we work on?"]'
+    action: "historian.yaml pattern-scan reads track"
+    expected: "String item treated as {text: item, type: unknown}. No parse error."
 
 notes:
   - "Track is the core data layer. Historian and taste files are consumers of track data."

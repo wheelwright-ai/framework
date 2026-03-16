@@ -1,5 +1,14 @@
 
 
+## [2.0.38] - 2026-03-16
+
+### Added
+- **`open_type` field on track points** (`epic-open-type-field-v1`) — `open[]` items in track-encapsulation.yaml now support both string (legacy) and object `{text, type}` formats via `oneOf` schema. Types: `unknown`, `deferred`, `intentional`, `blocked`. Historian pattern-scan filters `intentional`/`deferred` items unless they recur in 6+ distinct sessions.
+- **`open_type_overrides` config** in historian.yaml — declarative config block for filtered types, override threshold, and passthrough types.
+- 3 new tests across both skill files (2 in track-encapsulation, 1 in historian)
+
+---
+
 ## [2.0.37] - 2026-03-16
 
 ### Added

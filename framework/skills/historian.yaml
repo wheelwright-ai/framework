@@ -109,6 +109,7 @@ pattern_scan:
     - "List WAI-Spoke/sessions/track_*.jsonl sorted by filename"
     - "Load sessions with filename > last_scan_session (all sessions if no scan_state)"
     - "For each loaded session: extract all items from open[], activity[], decisions[] fields across all points. Record (text, session_id, turn, field) for each item."
+    - "For each open[] item: if item is a JSON object with {text, type} fields, extract text=item.text and open_type=item.type. If item is a plain string, treat as text=item and open_type=unknown. For open_type in [intentional, deferred]: skip this item unless it has appeared in 6+ distinct sessions (high-recurrence override — surfaces persistent intentional deferrals). For open_type in [blocked, unknown]: process normally through remaining steps."
     - "Filter activity[] items: lowercase each item, split on whitespace, take the first token. If it matches any entry in activity_filter_exclude.tokens, skip this item. open[] and decisions[] items are never filtered."
     - "Token-normalize each remaining text item: lowercase, strip punctuation, split on whitespace, remove stop words [a, an, the, is, was, were, has, have, had, be, been, to, of, in, on, at, for, with, from, as, this, that, not, but]"
     - "Compare each new item against items from prior sessions using Jaccard similarity: |tokens(A) ∩ tokens(B)| / |tokens(A) ∪ tokens(B)|. Similarity threshold: 0.3"
@@ -122,6 +123,18 @@ pattern_scan:
     max_shown: 3
     location: "wakeup Step 5c, after narrative-review threshold suggestion"
     silent_when: "No qualifying vectors or no advisors/historian/ directory"
+
+  open_type_overrides:
+    description: >-
+      open[] items with type=intentional or type=deferred are filtered from
+      pattern-scan by default. They are only re-admitted if they appear in
+      6+ distinct sessions — indicating the item is not merely planned but
+      persistently unaddressed. This override ensures genuinely stuck items
+      surface even when originally marked as known deferrals.
+    filtered_types: [intentional, deferred]
+    override_threshold: 6
+    override_unit: distinct_sessions
+    passthrough_types: [unknown, blocked]
 
 # ---------------------------------------------------------------------------
 # THREE PERSPECTIVES
@@ -369,6 +382,11 @@ tests:
     setup: "Track has open[] item 'updated approach to lug authoring — decision deferred' and decisions[] item 'updated schema to v2'. Both start with filtered token 'updated'."
     action: "Wakeup runs pattern-scan"
     expected: "Both items are processed normally. Filter only applies to activity[] field."
+
+  - name: "Pattern-scan skips intentional and deferred open items below override threshold"
+    setup: "5 session tracks each contain an open[] item with type=deferred and Jaccard similarity >= 0.3. scan_state.json does not exist."
+    action: "Wakeup runs pattern-scan"
+    expected: "No vector created (5 sessions < 6-session override threshold). Items skipped."
 
 notes:
   - "The Historian is an interpreter, not an editor. It observes and proposes."
