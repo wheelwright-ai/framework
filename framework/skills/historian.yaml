@@ -73,12 +73,44 @@ pattern_scan:
     is continuous and incremental — only new sessions are scanned each wakeup.
   trigger: "on_wakeup — always, runs after narrative-review threshold check"
   fields_scanned: ["open", "activity", "decisions"]
+
+  activity_filter_exclude:
+    description: >
+      Activity items whose first normalized token matches any of these are
+      skipped before similarity scan. Prevents protocol-routine maintenance
+      phrases from generating noise clusters. Only applies to the activity[]
+      field — open[] and decisions[] are not filtered.
+    tokens:
+      - "added"
+      - "adopted"
+      - "appended"
+      - "applied"
+      - "bumped"
+      - "closed"
+      - "committed"
+      - "converted"
+      - "copied"
+      - "created"
+      - "deleted"
+      - "fixed"
+      - "initialized"
+      - "installed"
+      - "merged"
+      - "moved"
+      - "pushed"
+      - "reconciled"
+      - "removed"
+      - "replaced"
+      - "staged"
+      - "updated"
+
   algorithm:
     - "Read WAI-Spoke/advisors/historian/scan_state.json (if exists) to get last_scan_session"
     - "List WAI-Spoke/sessions/track_*.jsonl sorted by filename"
     - "Load sessions with filename > last_scan_session (all sessions if no scan_state)"
     - "For each loaded session: extract all items from open[], activity[], decisions[] fields across all points. Record (text, session_id, turn, field) for each item."
-    - "Token-normalize each text item: lowercase, strip punctuation, split on whitespace, remove stop words [a, an, the, is, was, were, has, have, had, be, been, to, of, in, on, at, for, with, from, as, this, that, not, but]"
+    - "Filter activity[] items: lowercase each item, split on whitespace, take the first token. If it matches any entry in activity_filter_exclude.tokens, skip this item. open[] and decisions[] items are never filtered."
+    - "Token-normalize each remaining text item: lowercase, strip punctuation, split on whitespace, remove stop words [a, an, the, is, was, were, has, have, had, be, been, to, of, in, on, at, for, with, from, as, this, that, not, but]"
     - "Compare each new item against items from prior sessions using Jaccard similarity: |tokens(A) ∩ tokens(B)| / |tokens(A) ∪ tokens(B)|. Similarity threshold: 0.3"
     - "Group item-pairs with similarity >= 0.3 into clusters"
     - "For each cluster, classify pattern_type by source field and count: open_recurrence (open[] field, 3+ distinct sessions), workaround_churn (activity[] field, 4+ total occurrences OR 2+ distinct sessions), reopened_decision (decisions[] field, 2+ distinct sessions)"
@@ -327,6 +359,16 @@ tests:
     setup: "scan_state.json has last_scan_session=track_20260313-0400. 3 older sessions + 1 newer session exist."
     action: "Wakeup runs pattern-scan"
     expected: "Only the 1 newer session is scanned. Existing vectors updated if new evidence meets similarity threshold. scan_state.json updated to newest session."
+
+  - name: "Pattern-scan filters protocol-routine activity items"
+    setup: "Session tracks contain only activity[] items: 'committed WAI-State.json', 'updated wai.md', 'copied teaching to processed/', 'created sessions/ directory'. No open[] or decisions[] items."
+    action: "Wakeup runs pattern-scan"
+    expected: "No new vectors created. All activity items matched activity_filter_exclude first-token check and were skipped before similarity scan."
+
+  - name: "activity_filter_exclude does not suppress open[] or decisions[]"
+    setup: "Track has open[] item 'updated approach to lug authoring — decision deferred' and decisions[] item 'updated schema to v2'. Both start with filtered token 'updated'."
+    action: "Wakeup runs pattern-scan"
+    expected: "Both items are processed normally. Filter only applies to activity[] field."
 
 notes:
   - "The Historian is an interpreter, not an editor. It observes and proposes."
