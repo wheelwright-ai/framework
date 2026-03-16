@@ -95,9 +95,10 @@ Record the answer. It determines whether Step 9b runs.
 
 ```bash
 yes | cp templates/commands/wai*.md .claude/commands/
+for f in templates/spoke/commands/wai*.md; do \cp templates/commands/$(basename "$f") "$f" 2>/dev/null || true; done
 ```
 
-This prevents the two-copy problem: `templates/commands/` is canonical; `.claude/commands/` is what Claude Code reads. They must match.
+This prevents the three-copy problem: `templates/commands/` is canonical; `.claude/commands/` is what Claude Code reads; `templates/spoke/commands/` is the spoke template. All must match.
 
 **Skip this step** if not running from the framework repo (spokes have no `.claude/commands/`).
 

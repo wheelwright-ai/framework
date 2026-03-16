@@ -1,3 +1,50 @@
+# Teaching: Update wai-closeout.md — Step 9b sender filename + idempotency
+
+**Type:** Protocol upgrade
+**Target:** All spokes
+**Version:** 1.0
+**Created:** 2026-03-16
+**safe_to_auto_adopt:** false
+
+---
+
+## What This Teaching Does
+
+Updates the spoke's `WAI-Spoke/commands/wai-closeout.md` with the current version, which includes:
+
+- **"Before beginning" directive** — capture `old_last_closeout` before Step 5 overwrites it (required for Step 9b signal detection window)
+- **Step 9b sender filename** — signal teaching files now include the sender spoke ID: `signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching`
+- **Step 9b idempotency** — before appending a signal, check if a matching `timestamp` already exists in `WAI-Signals.jsonl`
+
+**This is NOT:** A replacement for any WAI-Spoke data files. Only `WAI-Spoke/commands/wai-closeout.md` changes.
+
+---
+
+## Why This Exists
+
+Step 9b previously used a plain timestamp filename. Multiple spokes publishing signals for the same session now include their spoke ID, enabling at-a-glance provenance. The idempotency check prevents duplicate signal appends when the same teaching is received more than once.
+
+---
+
+## Version Check Before Applying
+
+Read `WAI-Spoke/commands/wai-closeout.md`. If it already contains the text:
+
+```
+sender spoke ID
+```
+
+— this teaching has already been applied. Move to `processed/` and stop.
+
+---
+
+## Transformation: What Changes
+
+Replace `WAI-Spoke/commands/wai-closeout.md` with the following content verbatim:
+
+---
+
+```
 # WAI Closeout
 
 **Session State Preservation Protocol**
@@ -375,3 +422,26 @@ git log --oneline origin/main..HEAD  # Must show no commits ahead
 ---
 
 *Closeout = Save game. Capture enough detail to continue the adventure.*
+```
+
+---
+
+## Output: What You Should Have After
+
+- `WAI-Spoke/commands/wai-closeout.md` contains the "Before beginning" `old_last_closeout` directive
+- Step 9b filename includes sender spoke ID
+- Step 9b has idempotency check before appending signals
+
+---
+
+## Verification Checklist
+
+- [ ] `WAI-Spoke/commands/wai-closeout.md` contains "old_last_closeout"
+- [ ] `WAI-Spoke/commands/wai-closeout.md` Step 9b contains "sender spoke ID"
+- [ ] `WAI-Spoke/commands/wai-closeout.md` Step 9b contains "Idempotency"
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.
