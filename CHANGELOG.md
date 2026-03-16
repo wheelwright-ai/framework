@@ -1,4 +1,22 @@
 
+## [2.0.35] - 2026-03-16
+
+### Added
+- **WAI-Challenges.jsonl** — new first-class append-only file for problem-centric backlog. Stores stable challenge statements independently of idea lugs. Schema: `i`, `ty`, `statement`, `first_seen`, `first_seen_in`, `status`, `related_lugs`, `resolution_notes`. First entry: `chal-shipit-release-vs-checkpoint`.
+- **`/wai-improve` Step 3b: Challenge Matching** — after refinement, matches intake challenge against `WAI-Challenges.jsonl` using Jaccard similarity (threshold 0.5, Porter stemming). Proposes new challenge with implicit consent or links to existing. Sets `challenge_id` on idea lug.
+- **`challenge_id` field** on idea lug schema (Step 5) and required fields list. Links ideas to their stable challenge anchor.
+- **`WAI-Challenges.jsonl` documented** in `wai-lug-advisor.md` — schema, lifecycle, relationship to ideas, type catalog row.
+- **Shipit Step 0: Production Release Intent** — asks "Is this a production release?" before any other step. Records intent for Step 9b.
+- **Shipit Step 9b: Apply Release Tag** — conditional on Step 0 answer. Applies `git tag v{version}` + push after closeout. Skipped for progress saves. Conflict guard: stops if tag already exists.
+- **`activity_filter_exclude`** in `historian.yaml` `pattern_scan` — 22-token blocklist filters protocol-routine activity phrases (`committed`, `updated`, `copied`, etc.) before Jaccard similarity scan. Fixes first-pass noise (30/40 clusters were maintenance phrases). Two new tests.
+
+### Changed
+- `wai-improve.md` execution flow diagram updated to include Step 3b.
+- `wai-shipit.md` success criteria and output format updated for release tag.
+- Historian vectors `vector-01` (legacy root cleanup) and `vector-02` (wai-teach outbox) resolved after investigation.
+
+---
+
 ## [2.0.33] - 2026-03-15
 
 ### Fixed
