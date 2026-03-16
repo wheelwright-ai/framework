@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.35",
+    "version": "2.0.36",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,17 +91,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260316-0011",
+    "last_session_id": "session-20260316-0510",
     "last_modified_by": "Claude Sonnet 4.6",
-    "last_modified_at": "2026-03-16T00:45:00Z",
-    "last_closeout": "2026-03-16T00:45:00Z",
-    "session_count": 30,
-    "track_path": "WAI-Spoke/sessions/track_20260316-0011.jsonl",
+    "last_modified_at": "2026-03-16T05:40:00Z",
+    "last_closeout": "2026-03-16T05:40:00Z",
+    "session_count": 31,
+    "track_path": "WAI-Spoke/sessions/track_20260316-0510.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "PRIORITY 1: Sync templates/spoke/commands/wai-shipit.md with production release tag change, then distribute via teach pipeline. PRIORITY 2: Run /wai-improve on remaining idea backlog (idea-open-type-field-v1, idea-fit-check-caching-v1). PRIORITY 3: vector-03 (wai.md 3-file sync workaround) — consider single-source solution.",
+    "next_session_recommendation": "PRIORITY 1: Propagate wai.md + wai-closeout.md + templates/spoke/commands/wai-shipit.md via teach pipeline (batch all three). PRIORITY 2: Run /wai-improve on remaining idea backlog (idea-open-type-field-v1, idea-fit-check-caching-v1). PRIORITY 3: vector-03 (wai.md 3-file sync workaround) — consider single-source solution.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-16T05:03:46Z"
+    "protocol_last_run": "2026-03-16T05:36:10Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

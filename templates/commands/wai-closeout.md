@@ -256,7 +256,7 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 **If both conditions are true:**
 1. Collect all signal entries from `WAI-Signals.jsonl` where `timestamp > old_last_closeout`
-2. For each signal, derive a filename: sanitize `timestamp` to `YYYYMMDD-HHMM` → `teachings/signal-YYYYMMDD-HHMM.md.teaching`. If that filename already exists, append `-2`, `-3`, etc. until unique.
+2. For each signal, derive a filename: sanitize `timestamp` to `YYYYMMDD-HHMM`, then append the sender spoke ID (from `wheel.name`, lowercased, spaces → hyphens) → `teachings/signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching`. Example: `signal-20260316-0045-from-wheelwright.md.teaching`. If that filename already exists, append `-2`, `-3`, etc. until unique.
 3. Write the teaching file — substitute the actual signal JSON verbatim (one file per signal, not a placeholder):
 
 ```markdown

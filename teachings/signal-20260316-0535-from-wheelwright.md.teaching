@@ -1,0 +1,24 @@
+# Teaching: Signal — Teaching adoption protocol Path A/B split + sender filename + duplicate check
+
+**Type:** signal
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+
+**Affects:** `wai.md` Step 3a (teaching adoption flow), `wai-closeout.md` Step 9b (signal filename)
+**Implication:** `safe_to_auto_adopt: true` teachings no longer go through full mailroom ceremony — brief table prompt + direct adopt. Signal filenames include sender spoke ID.
+**Challenge Solved:** Mailroom ceremony was too heavy for trusted auto-adopt teachings; duplicate appends occurred on repeated wakeups; filenames gave no provenance.
+
+## Embedded Signal
+
+```json
+{"timestamp":"2026-03-16T05:35:00Z","session_id":"session-20260316-0510","signal":"Teaching adoption protocol: safe_to_auto_adopt:true now uses Path A (brief compact table + duplicate check + direct adopt, no ceremony). safe_to_auto_adopt:false retains full mailroom ceremony (Path B). Signal filenames now include sender: signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching. Duplicate check on signal type: compare timestamp against existing WAI-Signals.jsonl entries before appending — validated live (both session-31 teachings already present, correctly skipped).","impact":8,"rationale":"The mailroom ceremony was too heavy for trusted auto-adopt teachings. Path A reduces friction while keeping user awareness. Sender in filename provides at-a-glance provenance. Duplicate check prevents re-append on repeated wakeups.","by":"Claude Sonnet 4.6"}
+```
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

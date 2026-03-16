@@ -1,4 +1,14 @@
 
+
+## [2.0.36] - 2026-03-16
+
+### Added
+- **Teaching adoption Path A/B split** in `wai.md` Step 3a — `safe_to_auto_adopt: true` teachings now use Path A: compact table (Affects / Implication / Challenge Solved) + direct adopt + duplicate check. `safe_to_auto_adopt: false` retains full mailroom ceremony (Path B).
+- **Duplicate check** in `wai.md` Step 3a Path A — before appending a signal teaching, checks for existing entry by `timestamp` in `WAI-Signals.jsonl`. Validated live: correctly skipped two already-present signals.
+- **Sender in signal filename** — `wai-closeout.md` Step 9b now generates `signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching`. Sender spoke_id derived from `wheel.name` (lowercased, spaces → hyphens).
+
+---
+
 ## [2.0.35] - 2026-03-16
 
 ### Added
