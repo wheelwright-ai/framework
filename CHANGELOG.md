@@ -1,5 +1,14 @@
 
 
+## [2.0.37] - 2026-03-16
+
+### Added
+- **3 teaching files** for hub distribution: `wai-step3a-path-split-v1` (Path A/B + duplicate check in Step 3a), `wai-closeout-step9b-sender-v1` (sender filename + idempotency in Step 9b), `wai-shipit-release-tag-v1` (Step 0 production intent + Step 9b release tag)
+- **Shipit Step 1 auto-syncs `templates/spoke/commands/`** alongside `.claude/commands/` — resolves vector-03 (3-file manual sync workaround, 7 of 12 sessions). Single source in `templates/commands/` now propagates to all 3 destinations automatically on every shipit.
+- Spoke templates (`templates/spoke/commands/`) and `.claude/commands/` synced to current framework versions
+
+---
+
 ## [2.0.36] - 2026-03-16
 
 ### Added
