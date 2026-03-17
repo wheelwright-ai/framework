@@ -1,0 +1,28 @@
+# Teaching: Signal — Always run naive agent test before finalizing lugs - send BR...
+
+**Type:** signal
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+
+## Embedded Signal
+
+```json
+{
+  "timestamp": "2026-03-17T03:59:09Z",
+  "session_id": "session-20260316-1945",
+  "signal": "Always run naive agent test before finalizing lugs - send BRIEF.md to planning-agent with no context, fix every STUCK point",
+  "impact": 9,
+  "rationale": "Manual dogfood audits catch wording issues but miss structural bugs. Naive agent test caught 3 critical bugs (ASCII sort breaks watermarks, divergent file destruction, drifting copies) and 5 medium issues that would have shipped to other agents.",
+  "by": "code-puppy-f16663",
+  "lug_id": "395fea9e1f1d"
+}
+```
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

@@ -91,6 +91,31 @@ cat WAI-Spoke/WAI-Signals.jsonl
 
 ---
 
+## Step 4.1: Detect External Tracks (Ported from template)
+
+Check `WAI-Spoke/seed/ingest/` for `WAI_Track-*.jsonl` files — external session tracks captured via the Chat-to-Track prompt. If present:
+- Output: "📡 N external track file(s) awaiting ingest"
+- For each file:
+  1. Read the first line. Validate it is valid JSON containing `"event":"session_start"` with `provider` and `model` fields.
+  2. If valid: copy file to `WAI-Spoke/sessions/` preserving the original filename. Move the original to `seed/ingest/processed/`.
+     Output:
+     ```
+     📡 Absorbed: {filename}
+        Source: {provider} / {model}
+        Events: {total line count}
+        Decisions: {count of lines containing "decision_made"}
+        Concepts: {count of lines containing "concept_update"}
+     ```
+  3. If invalid (missing session_start, missing provider/model, or malformed JSON on first line): output:
+     ```
+     ⚠️ Could not absorb: {filename}
+        Issue: {specific problem}
+        File left in seed/ingest/ — fix and retry.
+     ```
+     Do not move the file.
+
+---
+
 ## Step 5: Display Briefing
 
 Show unified WAI Point briefing:
