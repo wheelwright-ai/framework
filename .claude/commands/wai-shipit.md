@@ -210,68 +210,190 @@ Dependency Audit:
 
 ---
 
-### 5. Quality Gates (P3, P4)
+### 5. Quality Gates (P3, P4) — MANDATORY ENFORCEMENT
 
-**All quality checks must pass.**
+**🔒 All quality checks must pass. Failure aborts shipit.**
 
-#### 5a. Test Execution
+#### 5a. Test Execution (REQUIRED)
+
+Detect and run the test suite:
+
 ```bash
-pytest -v  # or project test command
+# Auto-detect test command
+if [ -f "pytest.ini" ] || [ -f "pyproject.toml" ]; then
+    pytest -v
+elif [ -f "package.json" ]; then
+    npm test
+elif [ -f "Makefile" ]; then
+    make test
+else
+    echo "⚠️ No test suite detected - SKIP (warn user)"
+fi
 ```
-- **100% of tests must pass**
-- Report any failures with details
 
-#### 5b. Coverage Check
+**Exit codes:**
+- `0` = All tests passed → CONTINUE
+- `non-zero` = Tests failed → **ABORT SHIPIT**
+
+**On failure:**
+```
+❌ QUALITY GATE FAILED: Tests
+   [X] tests failed out of [Y] total
+   
+   First 5 failures:
+   [failure details]
+   
+   ⛔ SHIPIT ABORTED
+   Fix failing tests and run shipit again.
+```
+
+#### 5b. Linting (REQUIRED if linter exists)
+
+Detect and run linter:
+
 ```bash
-pytest --cov=. --cov-report=term-missing
+# Auto-detect linter
+if command -v ruff &> /dev/null; then
+    ruff check .
+elif command -v flake8 &> /dev/null; then
+    flake8 .
+elif command -v pylint &> /dev/null; then
+    pylint $(find . -name "*.py")
+elif command -v eslint &> /dev/null; then
+    eslint .
+else
+    echo "⚠️ No linter detected - SKIP (warn user)"
+fi
 ```
-- Check against coverage threshold (if defined)
-- Report uncovered critical paths
 
-#### 5c. Linting & Type Checking
+**Exit codes:**
+- `0` = Clean → CONTINUE
+- `non-zero` = Linting errors → **ABORT SHIPIT**
+
+**On failure:**
+```
+❌ QUALITY GATE FAILED: Linting
+   [N] linting errors found
+   
+   Fix linting errors and run shipit again.
+   Override: Set SHIPIT_SKIP_LINT=1 to bypass (NOT RECOMMENDED)
+```
+
+#### 5c. Type Checking (OPTIONAL)
+
+If type checker is configured, run it:
+
 ```bash
-ruff check .  # or flake8, pylint
-mypy .        # if using type hints
-```
-- Must be clean (no errors)
-- Warnings acceptable but report them
-
-**Report:**
-```
-Quality Gates:
-- Tests: [passed/failed] ([X]/[Y] tests)
-- Coverage: [X]% (threshold: [Y]%)
-- Linting: [clean/N issues]
-- Type checking: [clean/N issues]
+if [ -f "mypy.ini" ] || grep -q "mypy" pyproject.toml 2>/dev/null; then
+    mypy .
+    # Type errors are WARNINGS only (don't abort)
+fi
 ```
 
-**If any gate fails:** Stop. Fix issues before proceeding.
+**Type errors are non-blocking** but should be reported.
+
+#### Quality Gate Summary Report
+
+After all gates:
+
+```
+✅ QUALITY GATES PASSED
+   Tests:        ✓ [X] passed / [Y] total
+   Linting:      ✓ Clean
+   Type Check:   ⚠️ [N] warnings (non-blocking)
+   
+   → Safe to proceed with shipit
+```
+
+**Override Mechanism:**
+
+To bypass failing gates (emergency use only):
+```bash
+export SHIPIT_SKIP_TESTS=1      # Skip test execution
+export SHIPIT_SKIP_LINT=1       # Skip linting
+export SHIPIT_FORCE=1           # Skip ALL quality gates
+```
+
+**⚠️ WARNING:** Overrides should be logged to WAI-Signals.jsonl as technical debt.
 
 ---
 
-### 6. Benchmark Execution (P5)
+### 6. Benchmark Execution (P5) — REGRESSION DETECTION
 
-**Run performance benchmarks (if available).**
+**Run performance benchmarks if available. Regressions require user acknowledgment.**
+
+#### Benchmark Detection and Execution
 
 ```bash
-# Run project benchmarks
-pytest benchmarks/ -v  # or custom benchmark command
+# Auto-detect benchmarks
+if [ -f "benchmark.py" ]; then
+    python3 benchmark.py --profile=all
+elif [ -d "benchmarks/" ] && [ -f "benchmarks/pytest" ]; then
+    pytest benchmarks/ -v
+elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
+    npm run benchmark
+else
+    echo "ℹ️ No benchmarks detected - SKIP"
+fi
 ```
 
-**Record results:**
-- Append to `benchmarks/results.md` (or project equivalent)
-- Compare against previous run
-- Flag significant regressions
+#### Regression Analysis
+
+Compare against baseline:
+
+```bash
+# If benchmarks/baseline.json exists, compare
+if [ -f "benchmarks/baseline.json" ]; then
+    # Calculate % change for each metric
+    # Flag regressions > 10% degradation
+fi
+```
 
 **Report:**
 ```
-Benchmarks:
-- Executed: [N] benchmarks
-- Regressions: [none / list]
-- Results logged to: [path]
+📊 BENCHMARKS
+   Executed: [N] benchmarks
+   
+   Performance vs Baseline:
+   ✓ Token efficiency:    2000x (no change)
+   ⚠️ Context loading:    -15% (REGRESSION)
+   ✓ Resumption speed:    600x (+5% improvement)
+   
+   Regressions detected: 1
 ```
 
-**If significant regression:** Alert user, get acknowledgment before proceeding.
+**On Regression:**
+
+```
+⚠️ PERFORMANCE REGRESSION DETECTED
+   Context loading: 1.2s → 1.4s (-15%)
+   
+   Options:
+   [1] Abort shipit - fix regression first
+   [2] Continue with acknowledgment (log as technical debt)
+   [3] Update baseline (accept new performance level)
+   
+   Choice: _
+```
+
+- **Option 1:** Abort shipit, user fixes regression
+- **Option 2:** Continue but log regression to WAI-Signals.jsonl (impact: 7+)
+- **Option 3:** Update baseline if regression is intentional tradeoff
+
+**Benchmark Results Storage:**
+
+```bash
+# Append results with timestamp
+echo "{\"timestamp\": \"$(date -Iseconds)\", \"results\": {...}}" >> benchmarks/history.jsonl
+
+# Update baseline if user chose option 3
+cp benchmarks/latest.json benchmarks/baseline.json
+```
+
+**Override:**
+```bash
+export SHIPIT_SKIP_BENCHMARKS=1  # Skip benchmark execution entirely
+```
 
 ---
 

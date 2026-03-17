@@ -75,6 +75,32 @@ print(f"Days since sync: {wai_meta.get('development_health', {}).get('days_since
 
 ---
 
+### Lazy-Loading Philosophy
+
+**Token Efficiency Through Intelligent Loading**
+
+Wheelwright optimizes context usage by categorizing files into load policies:
+
+| Policy | Description | Token Impact | When to Use |
+|--------|-------------|--------------|-------------|
+| **always** | Load on every session start | ~13K tokens | Core context (WAI-State.json, WAI-State.md, WAI-AI-ONBOARDING.md) |
+| **summary_only** | Load metadata/stats, not full content | ~5K tokens | Working files (WAI-Lugs.jsonl IDs+titles, WAI-Signals.jsonl recent 10) |
+| **on_request** | Load only when explicitly needed | 0 tokens (until requested) | Reference docs, full protocols, detailed guides |
+| **never** | Load for debugging/special cases only | 0 tokens (unless debugging) | Session tracks, archived teachings, historical snapshots |
+
+**Key Files:**
+- `WAI-File-Index.json` - Complete file catalog with load policies
+- `reference/README.md` - Detailed explanation of reference folder organization
+
+**For AI Agents:**
+1. **On session start:** Only `always` and `summary_only` files are loaded (~18K tokens total)
+2. **During work:** Request `on_request` files as needed for specific tasks
+3. **Efficiency gain:** 120K+ tokens saved per session (6.7x improvement)
+
+**Pattern:** Don't load files "just in case." Load them when you have a specific need. Check `WAI-File-Index.json` to see what's available.
+
+---
+
 ## File Naming Conventions
 
 WAI uses consistent prefixes to organize files and enable automation:

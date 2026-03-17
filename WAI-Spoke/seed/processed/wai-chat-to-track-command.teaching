@@ -1,0 +1,50 @@
+# Teaching: WAI Chat-to-Track — External Session Capture v1.0
+
+**Type:** Skill (new command)
+**Target:** All spokes
+**Version:** 1.0
+**Created:** 2026-03-17
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Installs `WAI-Spoke/commands/wai-chat-to-track.md` — the command for capturing external session tracks.
+
+Enables `/wai-chat-to-track` on this spoke. This command:
+- Copies the **Chat-to-Track Capture Prompt** to your clipboard.
+- Provides a workflow for pasting the prompt into external AI chats (ChatGPT, Gemini, etc.).
+- Explains how to save the resulting JSONL track file to `WAI-Spoke/seed/ingest/` for wakeup absorption.
+
+**This is NOT:** A modification to the historian or wakeup protocol. Those propagate via the hub framework symlink.
+
+---
+
+## Version Check
+
+If `WAI-Spoke/commands/wai-chat-to-track.md` already exists — already at v1.0+. Move to processed and stop.
+
+---
+
+## Transformation
+
+Copy `templates/commands/wai-chat-to-track.md` verbatim to `WAI-Spoke/commands/wai-chat-to-track.md`.
+
+No other files are modified.
+
+---
+
+## Embedded Lug
+
+Append to `WAI-Lugs.jsonl` if `teaching-chat-to-track-v1` does not already exist:
+
+```json
+{"i":"teaching-chat-to-track-v1","t":"Installed wai-chat-to-track v1.0 — external session capture command","ty":"signal","s":"c","ca":"2026-03-17T00:00:00Z","gb":"teaching-file","impact":7,"content":{"what":"Spoke now has /wai-chat-to-track. Command copies portable capture prompt to clipboard and explains external chat ingest workflow."},"_behavior_directive":{"what_this_is":"Record that this spoke has wai-chat-to-track v1.0 installed.","what_this_is_NOT":"An instruction to run /wai-chat-to-track."}}
+```
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.
