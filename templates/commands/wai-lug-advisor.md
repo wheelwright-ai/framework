@@ -147,37 +147,60 @@ Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
 
 1. **State what you'll test** — which lug(s), what aspects
 2. **State how deep** — schema check, self-containment review, sub-agent simulation
-3. **Wait for user approval** on scope
-4. **Run the validation** — at minimum, check:
-   - Can a naive agent understand this without conversation context?
-   - Are PEV fields present and actionable?
-   - Does `perceive` point to real, findable files?
-   - Does `verify` define a concrete "done" state?
-5. **Fix gaps found** before the lug ships
-
-**When to dogfood:**
-- Before closeout (batch-validate all lugs created this session)
-- Before sending cross-spoke lugs (higher stakes — misinterpretation risk)
-- When creating epics with children (validate the parent→child navigation works)
-
-**The naive agent test:** Send the lug to a sub-agent with only AGENTS.md and lug schema knowledge. Ask it to draft a plan. Where it gets stuck = where the lug needs more detail.
-
----
-
 ## Lug Lifecycle
 
 ```
-CREATE → TRACK → WORK → COMPLETE → RECONCILE → ARCHIVE
+CREATE → DOGFOOD → DISCUSS → IMPLEMENT → VERIFY → CELEBRATE → ARCHIVE
 ```
 
-1. **CREATE** — Append new lug to WAI-Lugs.jsonl with `s: "o"`
-2. **TRACK** — Visible in wakeup briefing; user selects for work
-3. **WORK** — Update `s: "p"` when starting; update description with progress
-4. **COMPLETE** — Set `s: "c"` when done; add `resolution` field
-5. **RECONCILE** — Autosave lugs consolidated into session-summary at closeout
-6. **ARCHIVE** — Closed lugs remain in WAI-Lugs.jsonl for history
+1. **CREATE** — Append new lug to `WAI-Lugs.jsonl` with `s: "o"`. Ensure PEV fields are present.
+2. **DOGFOOD** — Run the naive agent test. Fix gaps before work begins.
+3. **DISCUSS** — (Optional) For high-impact lugs (impact >= 8), present the implementation strategy to the user. Refine based on feedback.
+4. **IMPLEMENT** — Set `s: "p"`. Follow the `execute` steps in the lug. If reality diverges from the lug's plan, update the lug first.
+5. **VERIFY** — Execute every step in the `verify` field. Run regression tests. Ensure no `TODO` or `FIXME` comments remain in the code.
+6. **CELEBRATE** — Present the **Victory Briefing** (see below). Set `s: "c"`.
+7. **ARCHIVE** — Closed lugs remain in `WAI-Lugs.jsonl` for history. Reconcile in session-summary at closeout.
 
-WAI-Lugs.jsonl is **append-only**. Do not delete or modify past entries — append new versions.
+---
+
+## Dogfooding Lugs (Naive Agent Test)
+
+**Before finalizing any lug intended for another agent (including future-you), validate it:**
+
+1. **State what you'll test** — which lug(s), what aspects.
+2. **Invoke the Naive Agent Test** — Send the lug's `perceive`, `execute`, and `verify` fields to a sub-agent (e.g., `planning-agent` or `generalist`) with **zero project context**. 
+3. **Analyze the Plan** — Ask the sub-agent to draft an implementation plan based *only* on the lug.
+4. **Identify "STUCK" Points** — Anywhere the sub-agent needs clarification or makes an assumption is a gap in the lug.
+5. **Fix Gaps** — Update the lug with missing file paths, specific line numbers, or clearer logic until a naive agent can draft a perfect plan.
+
+**The Golden Rule:** A lug is only `dogfood_pass: true` when a "cold" agent can implement it correctly without asking a single question.
+
+---
+
+## Implementation & Verification Protocol
+
+When implementing a lug:
+- **Set Focus:** Declare the lug ID you are working on.
+- **Follow PEV:** Do not improvise. If the `execute` steps are wrong, backtrack to the "Discuss" phase and update the lug.
+- **Surgical Edits:** Keep changes focused on the lug's goals. Avoid unrelated refactoring.
+- **Mandatory Verification:** You MUST run the commands specified in the `verify` field. If no commands are specified, you must invent and run a test case that proves behavioral correctness.
+
+---
+
+## The Victory Briefing (Announcing Completion)
+
+After a lug or epic is implemented and verified, present a celebratory briefing to the user. This "shares the win" and provides a human-readable record of the accomplishment.
+
+### **Briefing Format:**
+
+1. **Header:** `### 🎉 EPIC WIN: {Title}` or `### 🎉 LUG CLOSED: {Title}`
+2. **The Human Why:** 1-2 concise paragraphs explaining what was built and *why it matters* for the project or the user. Focus on value, not just code.
+3. **The Stats:**
+   - **Complexity:** [Low | Medium | High] (How much cognitive load/risk?)
+   - **Impact:** [1-10] (How much did this move the needle?)
+   - **Files Touched:** [Count]
+   - **Verification:** [Brief summary of tests passed]
+4. **The "Check it Out":** A specific command or file the user can look at to see the result.
 
 ---
 

@@ -17,6 +17,7 @@ location: "WAI-Spoke/advisors/historian/"
 scope:
   reads:
     - "WAI-Spoke/sessions/track_*.jsonl (accumulated session tracks)"
+    - "WAI-Spoke/sessions/WAI_Track-*.jsonl (event-based external tracks)"
     - "WAI-Spoke/taste.spoke (project preferences, if exists)"
     - "Hub taste.user (user preferences, if hub connected)"
     - "WAI-Spoke/WAI-State.json (session history, model_log)"
@@ -36,6 +37,7 @@ scope:
 
   never_modifies:
     - "sessions/track_*.jsonl — tracks are immutable records"
+    - "sessions/WAI_Track-*.jsonl — external tracks are immutable records"
     - "WAI-Lugs.jsonl — historian tracks its own work in its own directory"
     - "Any skill or template file — proposes changes, never applies them"
 
@@ -104,11 +106,19 @@ pattern_scan:
       - "staged"
       - "updated"
 
+  # Dual-format support (added by epic-chat-to-track-v1):
+  # - Turn-based: track_*.jsonl with {open[], activity[], decisions[]} per point
+  # - Event-based: WAI_Track-*.jsonl from external AI chats (Chat-to-Track)
+  #   Format detected by first line containing "event":"session_start"
+  #   Event types mapped to historian fields — see extraction step
+  #   Two independent watermarks used (ASCII sort order issue — see step 3)
   algorithm:
-    - "Read WAI-Spoke/advisors/historian/scan_state.json (if exists) to get last_scan_session"
-    - "List WAI-Spoke/sessions/track_*.jsonl sorted by filename"
-    - "Load sessions with filename > last_scan_session (all sessions if no scan_state)"
+    - "Read WAI-Spoke/advisors/historian/scan_state.json (if exists) to get last_scan_session_internal and last_scan_session_external. Backward compat: if only last_scan_session exists (old format), treat it as last_scan_session_internal and start last_scan_session_external from null."
+    - "List WAI-Spoke/sessions/track_*.jsonl AND WAI-Spoke/sessions/WAI_Track-*.jsonl. Sort each glob independently by filename. Process as two separate streams — do NOT merge into a single sorted sequence (ASCII sort puts uppercase WAI_Track before lowercase track_, which breaks incremental watermarking)."
+    - "Load sessions using two independent watermarks: (a) For track_*.jsonl files: load where filename > last_scan_session_internal. (b) For WAI_Track-*.jsonl files: load where filename > last_scan_session_external."
+    - "Format detection: For each loaded file, read the first line. If it contains '\"event\":\"session_start\"', mark as event-based format. Otherwise, treat as turn-based format (existing behavior). Use the filename (without path and extension) as the session_id for event-based files."
     - "For each loaded session: extract all items from open[], activity[], decisions[] fields across all points. Record (text, session_id, turn, field) for each item."
+    - "Event-based extraction: For files marked as event-based format, extract items using this mapping: (a) Lines with '\"event\":\"decision_made\"' — extract the 'decision' field text, record with field=decisions. (b) Lines with '\"event\":\"concept_update\"' — extract 'concept' + ': ' + 'action' as text, record with field=activity. (c) Lines with '\"event\":\"concept_fossil\"' — extract 'concept' + ' ' + 'status' as text, record with field=open. (d) Lines with '\"event\":\"turn_marker\"' — extract 'focus' field text, record with field=activity. (e) Lines with '\"event\":\"context_canary\"' — extract 'warning' field text, record with field=open. (f) Lines with '\"event\":\"architecture_signal\"' — extract 'description' field text, record with field=activity. Skip session_start, session_end, artifact_reference, and asset_created events (no historian-relevant text). After extraction, proceed to the same normalization and similarity pipeline as turn-based items."
     - "For each open[] item: if item is a JSON object with {text, type} fields, extract text=item.text and open_type=item.type. If item is a plain string, treat as text=item and open_type=unknown. For open_type in [intentional, deferred]: skip this item unless it has appeared in 6+ distinct sessions (high-recurrence override — surfaces persistent intentional deferrals). For open_type in [blocked, unknown]: process normally through remaining steps."
     - "Filter activity[] items: lowercase each item, split on whitespace, take the first token. If it matches any entry in activity_filter_exclude.tokens, skip this item. open[] and decisions[] items are never filtered."
     - "Token-normalize each remaining text item: lowercase, strip punctuation, split on whitespace, remove stop words [a, an, the, is, was, were, has, have, had, be, been, to, of, in, on, at, for, with, from, as, this, that, not, but]"
@@ -116,7 +126,7 @@ pattern_scan:
     - "Group item-pairs with similarity >= 0.3 into clusters"
     - "For each cluster, classify pattern_type by source field and count: open_recurrence (open[] field, 3+ distinct sessions), workaround_churn (activity[] field, 4+ total occurrences OR 2+ distinct sessions), reopened_decision (decisions[] field, 2+ distinct sessions)"
     - "For each cluster meeting its threshold: search vectors.jsonl for existing vector where Jaccard(cluster sample text, vector.sample_text) >= 0.3. If found: update last_seen, increment occurrences, append score to similarity_scores. If new: append entry to vectors.jsonl with status=watching."
-    - "Write scan_state.json: { last_scan_session: newest session filename just processed }"
+    - "Write scan_state.json: { last_scan_session_internal: newest track_* filename just processed, last_scan_session_external: newest WAI_Track-* filename just processed }"
   surfacing:
     condition: "vectors.jsonl has entries with status=watching AND occurrences >= threshold (open_recurrence: 3, workaround_churn: 4, reopened_decision: 2)"
     output_format: "Pattern: {description} — {occurrences}x across {N} sessions. Investigate: {investigation_prompt}"

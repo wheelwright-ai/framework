@@ -59,7 +59,9 @@
       "Read(//home/mario/projects/wheelwright/framework/**)",
       "Bash(for f in /home/mario/projects/wheelwright/framework/examples/demo-wheel/WAI-Spoke/WAI-Signals.jsonl /home/mario/projects/wheelwright/framework/reference/v1-data/WAI-Signals.jsonl /home/mario/projects/wheelwright/framework/templates/spoke/WAI-Signals.jsonl /home/mario/projects/wheelwright/framework/verification_copilot_script/WAI-Spoke/WAI-Signals.jsonl)",
       "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/session-20260314-0903/track.jsonl:*)",
-      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/WAI-Signals.jsonl:*)"
+      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/WAI-Signals.jsonl:*)",
+      "Bash(grep:*)",
+      "Bash(/tmp/track_init.json:*)"
     ]
   }
 }
