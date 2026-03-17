@@ -61,7 +61,9 @@
       "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/session-20260314-0903/track.jsonl:*)",
       "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/WAI-Signals.jsonl:*)",
       "Bash(grep:*)",
-      "Bash(/tmp/track_init.json:*)"
+      "Bash(/tmp/track_init.json:*)",
+      "Bash(WAI-Spoke/WAI-Lugs.jsonl:*)",
+      "Bash(WAI-Spoke/sessions/track_20260317-0444.jsonl:*)"
     ]
   }
 }

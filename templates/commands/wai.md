@@ -116,6 +116,32 @@ If `hub_path` is connected, check for new teachings available from the hub:
 
      **Never delete inbox items** — always move to `processed/` for audit trail.
 
+### Step 3b: Read Hub Spoke Fleet
+
+If hub is connected, build a session-scoped fleet map for spoke awareness and mail delivery.
+
+See `framework/skills/hub-spoke-registry.yaml` for the full algorithm. Summary:
+
+1. Read `{hub_path}/hub-registry.json` → `wheels` array (list of spoke paths)
+2. For each path that exists on disk AND has `WAI-Spoke/WAI-State.json`:
+   - Extract `wheel.name`, `wheel.version`, `wheel.status`, `_session_state.session_count`
+   - Record delivery addresses: `{path}/WAI-Spoke/seed/ingest/` and `{path}/WAI-Spoke/lugs/inbox/`
+   - Check if those directories exist → mark `can_receive_teachings` / `can_receive_lugs`
+3. Skip: hub itself, placeholder paths (`/path/to/project`), non-existent directories
+4. Hold fleet map in session memory (do NOT write to disk)
+
+**Output in briefing:**
+```
+### Fleet (N WAI spokes)
+| Spoke | Version | Sessions | Delivery |
+|-------|---------|----------|----------|
+| pathfinder | v0.4.0 | 18 | teachings + lugs |
+| tracks | v0.1.0 | 0 | teachings |
+```
+
+**When delivering mail to a spoke**, look up from the fleet map rather than guessing paths.
+If a spoke is not in the fleet map, ask the user where it lives before attempting delivery.
+
 ### Step 4: Query Active Work
 
 Read `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line). Note: some entries use shorthand keys (`i`=id, `t`=title, `ty`=type, `s`=status).

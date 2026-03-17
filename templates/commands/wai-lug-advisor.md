@@ -115,6 +115,39 @@ Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
 
 ---
 
+## Required Field Defaults
+
+When authoring a lug and a field is not explicitly specified, use these defaults:
+
+| Field | Default | Notes |
+|-------|---------|-------|
+| `s` | `"o"` | Open — not started |
+| `ca` | current UTC timestamp | ISO-8601, e.g. `"2026-03-17T04:44:00Z"` |
+| `impact` | `5` | Medium. Adjust up/down based on scope. |
+| `priority` | `"medium"` | Use `"before_next_epic"` only when truly blocking |
+| `blocks` | `[]` | Empty array |
+| `blocked_by` | `[]` | Empty array |
+| `tags` | `[]` | Empty array |
+
+### `gb` (gathered_by) — Model ID Required
+
+`gb` MUST be the **actual model identifier** of the AI that authored the lug.
+
+```
+CORRECT:  "gb": "claude-sonnet-4-6"
+CORRECT:  "gb": "claude-opus-4-6"
+CORRECT:  "gb": "gemini-1.5-pro"
+WRONG:    "gb": "Sparky"
+WRONG:    "gb": "Assistant"
+WRONG:    "gb": "AI"
+```
+
+**Why this matters:** Self-chosen names (Sparky, Max, etc.) create ambiguity. `gb` is an audit field — it must answer "which model wrote this?" unambiguously across sessions, tools, and time. If you are working in a v1 spoke that has `current_ai: "Sparky"` in WAI-State.json, ignore that field for `gb` — use your model ID.
+
+Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (session-20260317-0444)"`
+
+---
+
 ## PEV Fields (Required for Actionable Lugs)
 
 **Every `task`, `epic`, `bug`, `feature`, and `review` lug MUST include PEV fields.** These transform a lug from a decision record into a workable ticket that any agent can pick up cold.

@@ -1,5 +1,17 @@
 
 
+## [2.0.41] - 2026-03-17
+
+### Added
+- `framework/skills/hub-spoke-registry.yaml` — fleet awareness: reads hub-registry.json, resolves each spoke's WAI-State.json, builds session-scoped delivery map with can_receive flags
+- `wai.md` Step 3b — hub fleet read on wakeup, surfaces spoke table, delivery map held in memory for mail routing
+
+### Changed
+- `wai-lug-advisor.md` — Required Field Defaults: `gb` must be model ID (never a persona name); defaults for `s`, `ca`, `impact`, `priority`
+
+### Delivered
+- Tracks spoke inception lug v2.0.0 written and delivered to Tracks inbox via hub registry
+
 ## [2.0.38] - 2026-03-16
 
 ### Added
