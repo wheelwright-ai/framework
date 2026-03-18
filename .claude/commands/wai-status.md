@@ -49,5 +49,5 @@ AI Output:
 ## Related Skills
 
 - /wai-time — Detailed context usage
-- /wai-teach — Sync with hub
+- /wai (Step 9b: auto-teach on closeout) — Sync with hub
 - /wai-closeout — End session ceremony

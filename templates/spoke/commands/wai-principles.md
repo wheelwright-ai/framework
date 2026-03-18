@@ -157,6 +157,23 @@ When a component is unclear or frequently misused:
 
 ---
 
+## P10: Autonomy
+
+**Trust is the default. Don't pause unnecessarily.**
+
+The user has granted permission for routine operations. Do not ask for confirmation before running standard commands (git status, git add, python3, bash scripts, file reads). Proceed and report results.
+
+**Pause only for:**
+- Irreversible destructive actions (rm -rf, force push, drop database)
+- Actions that affect shared systems outside the local repo
+- Explicit user instruction to confirm before proceeding
+
+**Never chain multiple confirmations.** If a sequence of safe commands is needed, run them all and show results together.
+
+**Source:** User prerogative — expressed preference for uninterrupted autonomous execution of trusted operations.
+
+---
+
 ## Principle Summary
 
 | # | Name | Core Idea |
@@ -170,6 +187,7 @@ When a component is unclear or frequently misused:
 | P7 | Evolution | Document changes |
 | P8 | Documentation | Document when known |
 | P9 | Intuitive Design | Self-activating, self-improving |
+| P10 | Autonomy | Trust is the default — proceed, don't pause |
 
 ---
 

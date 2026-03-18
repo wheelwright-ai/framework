@@ -44,16 +44,16 @@ AI: (Runs closeout, then commits WAI files with session summary)
 
 ## Hub Synchronization
 
-### /wai-teach (Teach)
+### /wai (Step 9b: auto-teach on closeout) (Teach)
 **When:** Hub updated, want to pull new learnings/skills
 **Example:**
 User: Teach
 AI: Hub has 3 new skill updates. Import? (yes/no)
 
-### /wai-learn (Learn)
+### /wai (Step 3a: auto-discovery) (Learn)
 **When:** Made high-impact decision (impact >= 8), want to push to hub
 **Example:**
-User: /wai-learn
+User: /wai (Step 3a: auto-discovery)
 AI: Found 2 high-impact signals from session. Push to hub? (yes/no)
 
 ## Recovery & Checkpoints
@@ -117,7 +117,7 @@ AI: Use lugs (task graph). Create with: /wai-lug create [task-name]
 ### Make Decision (Impact >= 8)
 1. Make decision
 2. Signal Advisor auto-logs to WAI-Signals.jsonl
-3. At closeout, decision flows to hub via /wai-learn
+3. At closeout, decision flows to hub via /wai (Step 3a: auto-discovery)
 
 ### End Session
 1. Run /wai-closeout (extract signals, update state)
@@ -129,9 +129,9 @@ AI: Use lugs (task graph). Create with: /wai-lug create [task-name]
 3. Run /wai (get reoriented)
 
 ### Sync with Hub
-1. Run /wai-teach (pull new learnings/skills)
+1. Run /wai (Step 9b: auto-teach on closeout) (pull new learnings/skills)
 2. Do work
-3. Run /wai-learn (push signals back)
+3. Run /wai (Step 3a: auto-discovery) (push signals back)
 
 ---
 

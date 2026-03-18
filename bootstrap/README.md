@@ -1,6 +1,6 @@
 # WAI Bootstrap (GPT Single-File Mode)
 
-Use this folder when you are in a GPT session without the WAI CLI.
+Use this folder when you are in a GPT session without the WAI framework.
 Goal: produce ONE minimal file that captures the benefits of WAI tracking.
 
 ## What WAI Is (Short)

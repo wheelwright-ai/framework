@@ -18,8 +18,8 @@ Read `AGENTS.md` for universal WAI instructions. This file covers Gemini specifi
 | `/wai` | Wakeup briefing |
 | `/wai-closeout` | End session, save state |
 | `/wai-shipit` | Quality gates + closeout + commit |
-| `/wai-teach` | Push to hub/spokes |
-| `/wai-learn` | Process inbox |
+| `(deprecated - auto-teaching on closeout)` | Push to hub/spokes |
+| `(deprecated - auto-discovery on wakeup)` | Process inbox |
 | `/wai-status` | Quick health check |
 | `/wai-red-light` | Inspect crash recovery |
 | `/wai-green-light` | Resume from checkpoint |

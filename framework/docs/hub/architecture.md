@@ -83,7 +83,7 @@ On hub session start:
 4. Checks spoke health from `hub/registry.yaml`
 5. Updates `hub/health.yaml`
 6. Reports: "{N} signals processed, {P} patterns detected"
-7. Suggests: "Use /wai-teach to consolidate learnings"
+7. Suggests: "Use /wai (Step 9b: auto-teach on closeout) to consolidate learnings"
 
 ## Registry
 

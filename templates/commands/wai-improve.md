@@ -176,10 +176,10 @@ The most common fitting problem is terminology drift — the user uses one word,
 
 | User's term | System's existing term | Relationship |
 |-------------|----------------------|--------------|
-| "inbox processing" | `wai-learn` / inbox protocol | Same concept |
+| "inbox processing" | `wai` (Step 3a: teaching discovery) / inbox protocol | Same concept |
 | "idea queue" | `ty: "idea"` lugs | Same concept |
 | "project memory" | foundation lug + WAI-State.json | Partial — foundation is the structured part |
-| "send to another project" | `/wai-teach` outbox delivery | Same concept |
+| "send to another project" | `/wai (Step 9b: auto-teach on closeout)` outbox delivery | Same concept |
 
 If terminology mismatches are found, name them before proceeding:
 > "You called this [user term] — the system already uses [system term] for this. Are you extending that, or describing something different?"
@@ -639,7 +639,7 @@ Agent does NOT create the lug without user acknowledgment. User steers whether t
 
 ## Distribution Note
 
-This skill is distributed to all spokes via `/wai-teach`. When it runs on a spoke, it reads **that spoke's** foundation, open lugs, skills, and signals. It does not carry framework-specific assumptions. The fit check in Step 2 runs against the receiving spoke's own state.
+This skill is distributed to all spokes via `/wai (Step 9b: auto-teach on closeout)`. When it runs on a spoke, it reads **that spoke's** foundation, open lugs, skills, and signals. It does not carry framework-specific assumptions. The fit check in Step 2 runs against the receiving spoke's own state.
 
 Quality of output scales with quality of foundation. A spoke with a thin foundation and stale lugs will produce less useful fit reports. The skill surfaces this rather than hiding it.
 

@@ -25,7 +25,7 @@
         "3. Look for ~/.wheelwright-hub",
         "4. Check framework's connected_wheels for this project"
       ],
-      "if_not_found": "Ask user where the hub is, or run /wai-teach to initialize one"
+      "if_not_found": "Ask user where the hub is, or run (deprecated - auto-teaching on closeout) to initialize one"
     },
     "create_hub": {
       "requires": "framework_path must be set",

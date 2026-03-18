@@ -24,12 +24,18 @@ A lug is a JSON object stored in `WAI-Spoke/WAI-Lugs.jsonl` (one per line). Lugs
 | Short | Full | Purpose |
 |-------|------|---------|
 | `i` | `id` | Unique identifier |
-| `t` | `title` | Brief imperative title |
+| `t` | `title` | **Indicative, descriptive title (5+ words)**. Explain the *intent* or *impact* (e.g., "Implement dual-watermark fix for historian ASCII sort bug" NOT "Fix bug"). |
 | `ty` | `type` | Lug type (see catalog below) |
 | `s` | `status` | Current status |
 | `ca` | `created_at` | ISO-8601 creation timestamp |
 | `gb` | `gathered_by` | Agent or session that created it |
 | `v` | `version` | Version number (foundation, core-protocol lugs) |
+
+**Title Policy:**
+- **No generic session summaries:** "Session 35 summary" is BANNED.
+- **Good:** "Session 35: Successfully implemented chat-to-track epic and historian dual-watermark"
+- **Good:** "Task: Update WAI-State.json schema to include hub_fingerprint"
+- **Bad:** "Task: Update state"
 
 Both short and full key forms are valid. Prefer short keys for storage efficiency.
 
@@ -68,6 +74,7 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `phone-home` | Hub requests status report from spoke | Auto-handled by learn |
 | `config` | Configuration update for node | Applied during learn |
 | `session` | Historical session record (legacy) | No — archive only |
+| `challenge` | Problem-centric anchor for idea lugs — stable problem statement with linked hypotheses | No — append-only record in WAI-Challenges.jsonl |
 
 ---
 
@@ -114,6 +121,39 @@ Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
 
 ---
 
+## Required Field Defaults
+
+When authoring a lug and a field is not explicitly specified, use these defaults:
+
+| Field | Default | Notes |
+|-------|---------|-------|
+| `s` | `"o"` | Open — not started |
+| `ca` | current UTC timestamp | ISO-8601, e.g. `"2026-03-17T04:44:00Z"` |
+| `impact` | `5` | Medium. Adjust up/down based on scope. |
+| `priority` | `"medium"` | Use `"before_next_epic"` only when truly blocking |
+| `blocks` | `[]` | Empty array |
+| `blocked_by` | `[]` | Empty array |
+| `tags` | `[]` | Empty array |
+
+### `gb` (gathered_by) — Model ID Required
+
+`gb` MUST be the **actual model identifier** of the AI that authored the lug.
+
+```
+CORRECT:  "gb": "claude-sonnet-4-6"
+CORRECT:  "gb": "claude-opus-4-6"
+CORRECT:  "gb": "gemini-1.5-pro"
+WRONG:    "gb": "Sparky"
+WRONG:    "gb": "Assistant"
+WRONG:    "gb": "AI"
+```
+
+**Why this matters:** Self-chosen names (Sparky, Max, etc.) create ambiguity. `gb` is an audit field — it must answer "which model wrote this?" unambiguously across sessions, tools, and time. If you are working in a v1 spoke that has `current_ai: "Sparky"` in WAI-State.json, ignore that field for `gb` — use your model ID.
+
+Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (session-20260317-0444)"`
+
+---
+
 ## PEV Fields (Required for Actionable Lugs)
 
 **Every `task`, `epic`, `bug`, `feature`, and `review` lug MUST include PEV fields.** These transform a lug from a decision record into a workable ticket that any agent can pick up cold.
@@ -146,37 +186,89 @@ Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
 
 1. **State what you'll test** — which lug(s), what aspects
 2. **State how deep** — schema check, self-containment review, sub-agent simulation
-3. **Wait for user approval** on scope
-4. **Run the validation** — at minimum, check:
-   - Can a naive agent understand this without conversation context?
-   - Are PEV fields present and actionable?
-   - Does `perceive` point to real, findable files?
-   - Does `verify` define a concrete "done" state?
-5. **Fix gaps found** before the lug ships
-
-**When to dogfood:**
-- Before closeout (batch-validate all lugs created this session)
-- Before sending cross-spoke lugs (higher stakes — misinterpretation risk)
-- When creating epics with children (validate the parent→child navigation works)
-
-**The naive agent test:** Send the lug to a sub-agent with only AGENTS.md and lug schema knowledge. Ask it to draft a plan. Where it gets stuck = where the lug needs more detail.
-
----
-
 ## Lug Lifecycle
 
 ```
-CREATE → TRACK → WORK → COMPLETE → RECONCILE → ARCHIVE
+CREATE → DOGFOOD → DISCUSS → IMPLEMENT → VERIFY → CELEBRATE → ARCHIVE
 ```
 
-1. **CREATE** — Append new lug to WAI-Lugs.jsonl with `s: "o"`
-2. **TRACK** — Visible in wakeup briefing; user selects for work
-3. **WORK** — Update `s: "p"` when starting; update description with progress
-4. **COMPLETE** — Set `s: "c"` when done; add `resolution` field
-5. **RECONCILE** — Autosave lugs consolidated into session-summary at closeout
-6. **ARCHIVE** — Closed lugs remain in WAI-Lugs.jsonl for history
+1. **CREATE** — Append new lug to `WAI-Lugs.jsonl` with `s: "o"`. Ensure PEV fields are present.
+2. **DOGFOOD** — Run the naive agent test. Fix gaps before work begins.
+3. **DISCUSS** — (Optional) For high-impact lugs (impact >= 8), present the implementation strategy to the user. Refine based on feedback.
+4. **IMPLEMENT** — Set `s: "p"`. Follow the `execute` steps in the lug. If reality diverges from the lug's plan, update the lug first.
+5. **VERIFY** — Execute every step in the `verify` field. Run regression tests. Ensure no `TODO` or `FIXME` comments remain in the code.
+6. **CELEBRATE** — Present the **Victory Briefing** (see below). Set `s: "c"`.
+7. **ARCHIVE** — Closed lugs remain in `WAI-Lugs.jsonl` for history. Reconcile in session-summary at closeout.
 
-WAI-Lugs.jsonl is **append-only**. Do not delete or modify past entries — append new versions.
+---
+
+## Dogfooding Lugs (Naive Agent Test)
+
+**Before finalizing any lug intended for another agent (including future-you), validate it:**
+
+1. **State what you'll test** — which lug(s), what aspects.
+2. **Invoke the Naive Agent Test** — Send the lug's `perceive`, `execute`, and `verify` fields to a sub-agent (e.g., `planning-agent` or `generalist`) with **zero project context**. 
+3. **Analyze the Plan** — Ask the sub-agent to draft an implementation plan based *only* on the lug.
+4. **Identify "STUCK" Points** — Anywhere the sub-agent needs clarification or makes an assumption is a gap in the lug.
+5. **Fix Gaps** — Update the lug with missing file paths, specific line numbers, or clearer logic until a naive agent can draft a perfect plan.
+
+**The Golden Rule:** A lug is only `dogfood_pass: true` when a "cold" agent can implement it correctly without asking a single question.
+
+---
+
+## Implementation & Verification Protocol
+
+When implementing a lug:
+- **Set Focus:** Declare the lug ID you are working on.
+- **Follow PEV:** Do not improvise. If the `execute` steps are wrong, backtrack to the "Discuss" phase and update the lug.
+- **Surgical Edits:** Keep changes focused on the lug's goals. Avoid unrelated refactoring.
+- **Mandatory Verification:** You MUST run the commands specified in the `verify` field. If no commands are specified, you must invent and run a test case that proves behavioral correctness.
+
+---
+
+## The Victory Briefing (Announcing Completion)
+
+After a lug or epic is implemented and verified, present a celebratory briefing to the user. This "shares the win" and provides a human-readable record of the accomplishment.
+
+### **Briefing Format:**
+
+1. **Header:** `### 🎉 EPIC WIN: {Title}` or `### 🎉 LUG CLOSED: {Title}`
+2. **The Human Why:** 1-2 concise paragraphs explaining what was built and *why it matters* for the project or the user. Focus on value, not just code.
+3. **The Stats:**
+   - **Complexity:** [Low | Medium | High] (How much cognitive load/risk?)
+   - **Impact:** [1-10] (How much did this move the needle?)
+   - **Files Touched:** [Count]
+   - **Verification:** [Brief summary of tests passed]
+4. **The "Check it Out":** A specific command or file the user can look at to see the result.
+
+---
+
+## WAI-Challenges.jsonl
+
+First-class append-only file alongside `WAI-Lugs.jsonl`. Stores stable problem statements independently of the hypotheses (idea lugs) that address them.
+
+**Schema:**
+```json
+{
+  "i": "chal-{3-5-word-slug}",
+  "ty": "challenge",
+  "statement": "The stable problem text — refined after wai-improve Step 3",
+  "first_seen": "ISO-8601 — when this challenge was first articulated",
+  "first_seen_in": "idea lug ID of the first idea that identified this challenge",
+  "status": "open | resolved | deferred",
+  "related_lugs": ["idea and epic IDs addressing this challenge"],
+  "resolution_notes": "How it was resolved (if status=resolved)"
+}
+```
+
+**Append-only:** Override entries follow the same convention as `WAI-Lugs.jsonl` — append a new line with the same `i` and updated fields. Latest entry per `i` wins.
+
+**Lifecycle:** Created by `/wai-improve` Step 3b on first intake of a challenge. Updated (override entry) each time a new idea links to it. Resolved when the challenge is addressed.
+
+**Relationship to ideas:** Challenge = stable problem. Idea = one hypothesis. One challenge can have many ideas across sessions and models. The `challenge_id` field on an idea lug is the link back.
+
+**Slug generation:** Take 3–5 most meaningful words (nouns, verbs — skip stopwords). Join with hyphens, lowercase.
+Example: `"Recurring friction across sessions is invisible"` → `chal-recurring-friction-invisible`
 
 ---
 
@@ -289,8 +381,8 @@ If any answer is "yes or maybe" → add more clarity.
 ## Related Skills
 
 - `/wai-closeout` — Reconciles autosaves, creates session-summary
-- `/wai-learn` — Processes incoming lugs from inbox
-- `/wai-teach` — Delivers outbox lugs to target nodes
+- `/wai (Step 3a: auto-discovery)` — Processes incoming lugs from inbox
+- `/wai (Step 9b: auto-teach on closeout)` — Delivers outbox lugs to target nodes
 
 ---
 

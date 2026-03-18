@@ -30,7 +30,7 @@
 
 - Work can begin once foundation established
 - `/wai-closeout` — Captures foundation evolution in session
-- `/wai-learn` — High-impact foundation changes shared to hub
+- `/wai (Step 3a: auto-discovery)` — High-impact foundation changes shared to hub
 
 ## Use Cases
 
@@ -246,14 +246,14 @@ Foundation changes are **always high-impact (impact >= 8)** because they affect 
 - Pivot/major change: impact = 10
 - Minor constraint update: impact = 8
 
-These automatically become signals for `/wai-learn`.
+These automatically become signals for `/wai (Step 3a: auto-discovery)`.
 
 ---
 
 ## Related Skills
 
 - `/wai-closeout` — Captures foundation evolution in session summary
-- `/wai-learn` — Shares foundation patterns to hub
+- `/wai (Step 3a: auto-discovery)` — Shares foundation patterns to hub
 - `/wai-status` — Shows current foundation summary
 
 ---

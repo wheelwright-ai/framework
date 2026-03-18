@@ -58,13 +58,13 @@
       "brief": "Production readiness - file hygiene, tests, deps, then closeout",
       "nodes": ["spoke", "hub"]
     },
-    "wai-teach": {
+    "deprecated-wai-teach": {
       "triggers": ["framework updated", "user says 'teach'", "after shipit on framework", "outbox has items"],
       "brief": "Push outbox to target's inbox - templates, lugs, signals",
       "nodes": ["spoke", "hub", "framework"],
       "paths_required": ["spoke_path", "hub_path"]
     },
-    "wai-learn": {
+    "deprecated-wai-learn": {
       "triggers": ["session.start"],
       "brief": "Automatic inbox processing on wakeup - no manual invocation",
       "nodes": ["spoke", "hub"],

@@ -185,7 +185,7 @@ WAI includes built-in skills for common agent operations. All skills follow the 
 - "{N} signals processed from {M} spokes"
 - "{P} patterns detected across spokes"
 - "{S} spokes need framework updates"
-- "Use /wai-teach to consolidate learnings into framework"
+- "Use /wai (Step 9b: auto-teach on closeout) to consolidate learnings into framework"
 
 **Pattern detection examples:**
 - **Recurring diagnosis:** 3 spokes found same SQL injection → recommend framework guidance

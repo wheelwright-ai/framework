@@ -1,42 +1,53 @@
 # WAI Status
 
-Health check with recommendations.
+Health check with hub connection, sync age, session health, recommendations.
 
-## Instructions
+## What It Does
 
-1. Read `WAI-Spoke/WAI-State.json` for current state
-2. Check the session log size: `WAI-Spoke/WAI-Session-Log.jsonl` (count lines)
-3. Check git status for uncommitted changes
-4. Check hub sync status from `wheelwright.development_health`
-5. Scan `WAI-Spoke/sessions/` for environment session files
+Quick snapshot of project health:
 
-6. Output a status table:
-   ```
-   **Wheelwright Status**
+1. **Hub connection** — Connected? Last sync when?
+2. **Session health** — Current turn count, context usage
+3. **Recommendations** — What action to take (closeout? teach? sync?)
 
-   | Check | State |
-   |-------|-------|
-   | Hub connected | Yes/No |
-   | Last sync | X days ago |
-   | Session log | X turns |
-   | Uncommitted | X files |
-   | Foundation | Complete/Incomplete |
-   | Environments | X active |
-   ```
+Lightweight check, complements full /wai briefing.
 
-7. If multiple environments exist, show environment table:
-   ```
-   **Active Environments**
+## When to Use
 
-   | Environment | Last Active | Entries | Hub |
-   |-------------|-------------|---------|-----|
-   | claude-code on laptop | today | 15 | Yes |
-   | cursor on desktop | 2 days ago | 8 | No |
-   ```
+- **Quick check:** After 10+ turns
+- **Uncertain sync:** Hub out of date?
+- **Decision point:** Should I closeout or continue?
+- **Health monitoring:** Periodic during long sessions
 
-8. Provide recommendations based on findings:
-   - Session log > 10 turns: "Consider `Closeout` soon"
-   - Days since sync > 7: "Hub may have new learnings - run `Teach`"
-   - Uncommitted changes: "Uncommitted work detected"
-   - High-impact decisions logged: "Signals ready to share - run `Learn`"
-   - Unreconciled entries > 20: "Run `Closeout` to reconcile environment sessions"
+## How It Works
+
+1. Check hub connection status from WAI-State.json
+2. Calculate sync age (now - last_sync)
+3. Check session metrics:
+   - Current turn count
+   - Context usage percentage
+   - Files modified in this session
+4. Generate recommendations based on thresholds:
+   - context > 70% → recommend closeout
+   - hub_sync > 7 days → recommend teach
+   - turn_count > 20 → recommend context check
+
+## Example
+
+User: /wai-status
+
+AI Output:
+
+
+Another Example (Needs Action):
+
+User: /wai-status
+
+AI Output:
+
+
+## Related Skills
+
+- /wai-time — Detailed context usage
+- /wai (Step 9b: auto-teach on closeout) — Sync with hub
+- /wai-closeout — End session ceremony

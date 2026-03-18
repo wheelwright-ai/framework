@@ -234,6 +234,6 @@
 
 **User feedback:** "Too verbose, just give me bullets"
 **Agent creates:** preference Lug documenting this
-**Later:** Preference consolidated into hub/BRIEF.md via /wai-teach
+**Later:** Preference consolidated into hub/BRIEF.md via /wai (Step 9b: auto-teach on closeout)
 
 **Value:** Agents learn your communication preferences, apply consistently.

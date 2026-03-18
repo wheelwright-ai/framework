@@ -2,7 +2,7 @@
 
 **Version:** 2.0
 **Created:** 2026-03-12
-**Purpose:** Standard format for teaching files that AI assistants ingest via `/wai-learn`
+**Purpose:** Standard format for teaching files that AI assistants ingest via `/wai (Step 3a: auto-discovery)`
 
 ---
 

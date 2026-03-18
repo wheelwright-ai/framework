@@ -1,8 +1,0 @@
-#!/bin/bash
-# This script runs the new WAI CLI.
-
-# Add the src directory to PYTHONPATH
-export PYTHONPATH="$(pwd)/src:$PYTHONPATH"
-
-# Execute the main CLI module
-python3 -m cli.main

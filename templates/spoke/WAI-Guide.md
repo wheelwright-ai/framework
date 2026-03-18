@@ -111,7 +111,7 @@ Each skill that needs persistent state has a corresponding lug type:
 | `/wai-closeout` | `ty: "session-summary"` | Session work and decisions |
 | `/wai-closeout` | `ty: "signal"` | High-impact patterns (impact >= 8) |
 | (auto) | `ty: "autosave"` | Crash recovery checkpoints |
-| `/wai-teach` | `ty: "task"`, `ty: "task-result"` | Tasks and completions between nodes |
+| `(deprecated - auto-teaching on closeout)` | `ty: "task"`, `ty: "task-result"` | Tasks and completions between nodes |
 
 ### Lug Evolution
 
@@ -169,7 +169,7 @@ NODE A                              NODE B
 
 | Verb | Direction | Action | When |
 |------|-----------|--------|------|
-| **teach** | push | Send your outbox → target's inbox | Manual: `/wai-teach [target]` |
+| **teach** | push | Send your outbox → target's inbox | Manual: `(deprecated - auto-teaching on closeout) [target]` |
 | **learn** | pull | Process your inbox | Automatic on `/wai` wakeup |
 
 ### Lug Routing

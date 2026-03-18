@@ -5,7 +5,7 @@
   "groups": {},
   "last_scan": null,
   "_instructions": {
-    "for_llms": "This file tracks all wheel projects and groups. Updated by the AI during /wai-teach and /wai-learn.",
+    "for_llms": "This file tracks all wheel projects and groups. Updated by the AI during (deprecated - auto-teaching on closeout) and (deprecated - auto-discovery on wakeup).",
     "structure": {
       "projects": [
         {

@@ -64,8 +64,8 @@ Commands work with or without `WAI` prefix. Use `/wai-*` slash commands or just 
 | Closeout | `/wai-closeout` | Extract session signals, update state files, clear session log |
 | Compact | `/wai-compact` | Summarize resolved discussions to reduce token usage mid-session |
 | Shipit | `/wai-shipit` | Run closeout then commit WAI files with session summary |
-| Teach | `/wai-teach` | Pull new learnings from hub into this spoke |
-| Learn | `/wai-learn` | Push high-impact signals from this session to hub |
+| Teach | `(deprecated - auto-teaching on closeout)` | Pull new learnings from hub into this spoke |
+| Learn | `(deprecated - auto-discovery on wakeup)` | Push high-impact signals from this session to hub |
 | Red Light | `/wai-red-light` | Inspect autosave checkpoints, assess crash recovery |
 | Green Light | `/wai-green-light` | Resume from last autosave checkpoint |
 

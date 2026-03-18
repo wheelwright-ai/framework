@@ -37,7 +37,7 @@ AI: (Proceeds autonomously, no planning gate)
 
 ## Example Session
 
-User: I want to refactor the skill system to add versioning (touches: WAI-Skills.jsonl, 8 skill files, wai-teach.md, manifest.json, tests). Should take 10+ steps.
+User: I want to refactor the skill system to add versioning (touches: WAI-Skills.jsonl, 8 skill files, auto-teaching (closeout Step 9b).md, manifest.json, tests). Should take 10+ steps.
 
 AI: Complex task detected (9 files, 10+ steps).
 
@@ -46,7 +46,7 @@ AI: Complex task detected (9 files, 10+ steps).
 Step 1: Add version field to skill schema
 Step 2: Update WAI-Skills.jsonl schema docs
 Step 3-10: Add version to each skill file
-Step 11: Update wai-teach.md to compare versions
+Step 11: Update auto-teaching (closeout Step 9b).md to compare versions
 Step 12: Write tests
 Step 13: Update manifest.json
 

@@ -108,7 +108,7 @@ WAI-Spoke/
 **Purpose:** Workspace compatibility format for CLI tools and IDE integrations.
 
 ### When to Check:
-- Validating workspace compatibility with WAI CLI
+- Validating workspace compatibility with WAI framework
 - Checking if workspace format is current
 - Determining if CLI upgrade needed
 
@@ -359,7 +359,7 @@ teaching = upgrade_plan_version              # 3.1.0
 |----------|------------|---------------|
 | Does this spoke support feature X? | `wheelwright.version` | "3.1.0" |
 | Where are the WAI files located? | `structure_version` | "v2" |
-| Is the WAI CLI compatible? | `WAI_WORKSPACE_VERSION` | "1.0" |
+| Is the WAI framework compatible? | `WAI_WORKSPACE_VERSION` | "1.0" |
 | What teaching schema to parse? | `upgrade_plan_version` | "3.1.0" |
 | When was hub knowledge last synced? | `wheelwright.last_sync_date` | "2026-02-06T10:00:00Z" |
 | What git commit is hub at? | `wheelwright.hub_reference.current_hash` | "abc123..." |

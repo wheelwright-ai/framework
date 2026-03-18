@@ -42,7 +42,7 @@ CRITICAL: This is your first turn in a new session. Before responding to the use
    Ask: Resume [task]? (Green Light to resume / Red Light to inspect / skip)
 
 3. If briefing shows pending teachings in seed/ingest/:
-   Prioritize review before other work. Follow /wai-learn skill.
+   Prioritize review before other work. Follow (deprecated - auto-discovery on wakeup) skill.
 
 4. Then respond to the user's message.
 </wai-session-start>

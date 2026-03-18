@@ -172,3 +172,68 @@
 - Signals extracted: 2 (impact 9-10)
 
 \n## 2026-03-17: Session 35\n- **Epic Complete:** Implemented the full  pipeline for ingesting external AI conversations.\n- **Protocol Update:** Enhanced the  skill with a complete lifecycle and the 'Victory Briefing' announcement format.
+
+## Session 42 - 2026-03-18
+
+### Teaching Reconciliation + Test Coverage Prep
+
+**Implemented:**
+- Teaching Discovery Reconciliation (lug 6ed194b4add6)
+  - Enhanced Step 3a with 3-tier verification (filename/signals/files)
+  - Auto-reconciles already-implemented teachings to processed/ folder
+  - Eliminates false-positive "new teachings" on every wakeup
+  - 5 teachings reconciled: skill-system, track-chain, closeout, shipit, step3a
+
+**Fixed:**
+- Website image links (wheelwright-ai-website repo)
+  - Changed relative to absolute paths in preview HTML files
+  - Images now load correctly at http://localhost:8000/preview/
+
+**Prepared:**
+- Test Coverage Review lug (f8e2c5a3d9b1) enhanced with full P/E/V fields
+  - 4-phase implementation plan documented
+  - Ready for 5-8 hour execution session
+
+**Files Modified:**
+- templates/commands/wai.md
+- .claude/commands/wai.md
+- templates/spoke/commands/wai.md
+- WAI-Spoke/WAI-Lugs.jsonl (2 lugs updated)
+- WAI-Spoke/seed/processed/ (+5 teaching files)
+
+**Impact:** All spokes will benefit from automatic teaching reconciliation on next hub distribution.
+
+
+## Session 43 - 2026-03-18
+
+### Wakeup + Uncommitted Changes Review
+
+**Executed:**
+- 10-step WAI wakeup protocol
+  - Teaching discovery: 0 new teachings found
+  - Skills loaded: 24 skills (2 core, 6 advisory, 10 utility, 6 governance)
+  - Active lugs: 6 pending tasks
+  - Context health: 60K/200K tokens (30% used)
+
+**Reviewed:**
+- Uncommitted changes from Sessions 41-42 (64 modified files)
+  - Teaching reconciliation protocol (Step 3a enhancement)
+  - Lug cleanup (10+ completed lugs marked)
+  - Test artifact cleanup (TestSpoke, test-bench-v1, verification_copilot_script)
+  - Architecture review + Security audit + Test coverage reports
+  - Command template syncs
+
+**Analysis:**
+- All changes verified as legitimate Session 41-42 work
+- Safe to commit: teaching reconciliation, lug hygiene, documentation
+- Next: User decision on commit vs continue Phase 4
+
+**Files Reviewed:**
+- WAI-Spoke/WAI-Lugs.jsonl (295 line changes)
+- templates/commands/wai.md (Step 3a enhancement)
+- CHANGELOG.md, ARCHITECTURE-REVIEW.md, SECURITY-AUDIT.md
+- 9 command template files synced
+- Session track: WAI-Spoke/sessions/track_20260318-wakeup.jsonl
+
+**Impact:** Comprehensive review provided, ready for next action.
+

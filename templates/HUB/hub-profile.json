@@ -12,10 +12,10 @@
       "after_found": "Update framework_path in hub_config"
     },
     "update_hub": {
-      "note": "Hub sync is managed via /wai-teach from spokes and /wai-learn on wakeup — no CLI required"
+      "note": "Hub sync is managed via (deprecated - auto-teaching on closeout) from spokes and (deprecated - auto-discovery on wakeup) on wakeup — no CLI required"
     },
     "add_wheel": {
-      "note": "Run /wai-teach from the new project to register it with the hub"
+      "note": "Run (deprecated - auto-teaching on closeout) from the new project to register it with the hub"
     }
   },
   "user": {

@@ -381,8 +381,8 @@ If any answer is "yes or maybe" → add more clarity.
 ## Related Skills
 
 - `/wai-closeout` — Reconciles autosaves, creates session-summary
-- `/wai-learn` — Processes incoming lugs from inbox
-- `/wai-teach` — Delivers outbox lugs to target nodes
+- `/wai (Step 3a: auto-discovery)` — Processes incoming lugs from inbox
+- `/wai (Step 9b: auto-teach on closeout)` — Delivers outbox lugs to target nodes
 
 ---
 

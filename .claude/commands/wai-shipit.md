@@ -33,7 +33,7 @@ Verify this version is ready to ship to users.
 ## Follow-ons
 
 - Push to remote (always — closeout handles this automatically)
-- `/wai-teach` — Distribute to spokes (if framework)
+- `/wai (Step 9b: auto-teach on closeout)` — Distribute to spokes (if framework)
 - Deploy to production (if applicable)
 - Announce release (if public)
 

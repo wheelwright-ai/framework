@@ -35,35 +35,87 @@ This complements the technical spec in WAI-State.json.
 
 ## Step 3a: Auto-Discovery of New Hub Teachings ⭐ NEW!
 
-Poll the hub's teachings folder to discover new framework updates:
+Poll the hub's teachings folder and reconcile with local implementation state:
 
 ```bash
-# Scan hub/framework/*.teaching
-ls -1 /home/mario/projects/wheelwright/hub/framework/*.teaching 2>/dev/null | wc -l
+# Scan hub/framework/*.teaching and reconcile
+HUB_PATH=$(jq -r '.hub.path // "/home/mario/projects/wheelwright/hub"' WAI-Spoke/WAI-State.json 2>/dev/null)
+TEACHINGS=("$HUB_PATH"/framework/*.teaching)
+TOTAL=${#TEACHINGS[@]}
+RECONCILED=0
+NEW_COUNT=0
+
+mkdir -p WAI-Spoke/seed/processed
+
+for teaching in "${TEACHINGS[@]}"; do
+    [ ! -f "$teaching" ] && continue
+    BASENAME=$(basename "$teaching")
+    
+    # Already processed? Skip
+    if [ -f "WAI-Spoke/seed/processed/$BASENAME" ]; then
+        continue
+    fi
+    
+    # Check if already implemented (light verification)
+    TEACHING_NAME=$(head -1 "$teaching" | sed 's/# Teaching: //;s/^# //')
+    IS_IMPLEMENTED=false
+    
+    # Check 1: Filename mentioned in signals (most reliable)
+    if grep -q "$BASENAME" WAI-Spoke/WAI-Signals.jsonl 2>/dev/null; then
+        IS_IMPLEMENTED=true
+    fi
+    
+    # Check 2: Teaching name in signals (case-insensitive, partial match)
+    if [ "$IS_IMPLEMENTED" = false ]; then
+        if grep -qi "$(echo "$TEACHING_NAME" | cut -d' ' -f1-3)" WAI-Spoke/WAI-Signals.jsonl 2>/dev/null; then
+            IS_IMPLEMENTED=true
+        fi
+    fi
+    
+    # Check 3: Verification files exist
+    if [ "$IS_IMPLEMENTED" = false ]; then
+        VERIF_FILES=$(grep -A 20 "## Verification" "$teaching" 2>/dev/null | grep -oP '`[^`]+\.(yaml|json|jsonl|md|py|sh)`' | tr -d '`' || true)
+        for vfile in $VERIF_FILES; do
+            if [ -f "$vfile" ] || [ -d "$vfile" ]; then
+                IS_IMPLEMENTED=true
+                break
+            fi
+        done
+    fi
+    
+    # Auto-reconcile if implemented
+    if $IS_IMPLEMENTED; then
+        cp "$teaching" "WAI-Spoke/seed/processed/"
+        RECONCILED=$((RECONCILED + 1))
+    else
+        NEW_COUNT=$((NEW_COUNT + 1))
+    fi
+done
 ```
 
-For each teaching in hub/framework/:
-1. Check if already adopted (exists in WAI-Spoke/seed/processed/)
-2. If new, add to discovery queue
-3. If `safe_to_auto_adopt: true`, mark for auto-adopt
-4. If `safe_to_auto_adopt: false` or not set, prompt for approval
-
-**Display discovery queue:**
+**Display discovery result:**
 ```
-### Teaching Discovery from Hub
-🎯 {count} new teachings found
-🔒 Auto-Adopt: {enabled|disabled}
+### 📚 Teaching Discovery from Hub
+🎯 {TOTAL} teachings scanned
+✅ {RECONCILED} already implemented (reconciled)
+🆕 {NEW_COUNT} new teachings found
 
-Queue:
-- ✅ teaching-1 - {title} (safe: true)
-- ✅ teaching-2 - {title} (safe: true)
-- ⚠️  teaching-3 - {title} (safe: false)
+{if NEW_COUNT > 0}
+New Queue:
+- ⚠️  teaching-X - {title} (safe: false)
+- ✅ teaching-Y - {title} (safe: true)
+{endif}
 ```
 
-If `auto_adopt_teachings: true` and confirmation received:
+**Reconciliation behavior:**
+- Already in processed/ → skip (no action)
+- Implemented but not in processed/ → auto-copy to processed/ (reconcile gap)
+- Not implemented → add to new teachings queue
+
+If `auto_adopt_teachings: true` and new teachings found with confirmation:
 - Auto-adopt all safe teachings
 - Apply transformations
-- Move to WAI-Spoke/seed/processed/
+- Copy to WAI-Spoke/seed/processed/
 - Log adoption
 
 ---

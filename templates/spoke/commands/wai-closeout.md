@@ -246,7 +246,7 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 ### 9b. Signal Teach (Conditional)
 
-**Automatically distribute new signals to the hub — no separate /wai-teach needed.**
+**Automatically distribute new signals to the hub — no separate /wai (Step 9b: auto-teach on closeout) needed.**
 
 **Conditions (both must be true):**
 - `wheel.hub_path` is set and the directory exists

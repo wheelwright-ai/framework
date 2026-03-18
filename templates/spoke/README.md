@@ -25,7 +25,7 @@ Cleared at closeout. Used for session continuity.
 
 ## WAI-Signals.jsonl
 High-impact decisions log (impact >= 8)
-Created by signal_advisor. Pushed to hub via /wai-learn.
+Created by signal_advisor. Pushed to hub via (deprecated - auto-discovery on wakeup).
 
 ## WAI-File-Index.json
 Index of files modified. Read by AI orientation.

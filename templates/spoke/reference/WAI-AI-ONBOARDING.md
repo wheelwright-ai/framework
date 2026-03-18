@@ -127,14 +127,14 @@ When you first receive a message in a Wheelwright project:
 3. Commit with session summary message
 4. Ask before pushing to remote
 
-#### `Teach` or `/wai-teach`
+#### `Teach` or `(deprecated - auto-teaching on closeout)`
 **Directive:** Pull new learnings from hub into this spoke
 **Action:**
 - Hub distributes teaching files to spoke's seed/ingest/
 - AI proposes adoption plan
 - User approves/defers teachings
 
-#### `Learn` or `/wai-learn`
+#### `Learn` or `(deprecated - auto-discovery on wakeup)`
 **Directive:** Push high-impact signals to hub
 **Action:**
 - Extract signals from closed lugs (impact >= 8)
