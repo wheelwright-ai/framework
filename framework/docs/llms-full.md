@@ -1,6 +1,6 @@
 # Wheelwright AI Framework - Complete Documentation
-# Generated: 2026-02-15T03:59:08Z
-# Version: 2.0.0
+# Generated: 2026-03-18T11:40:41Z
+# Version: 2.0.47
 
 This file contains the complete Wheelwright documentation including:
 - Framework guides and setup instructions
@@ -2286,7 +2286,7 @@ On hub session start:
 4. Checks spoke health from `hub/registry.yaml`
 5. Updates `hub/health.yaml`
 6. Reports: "{N} signals processed, {P} patterns detected"
-7. Suggests: "Use /wai-teach to consolidate learnings"
+7. Suggests: "Use /wai (Step 9b: auto-teach on closeout) to consolidate learnings"
 
 ## Registry
 
@@ -3493,7 +3493,7 @@ Source: framework/docs/setup/use-cases.md
 
 **User feedback:** "Too verbose, just give me bullets"
 **Agent creates:** preference Lug documenting this
-**Later:** Preference consolidated into hub/BRIEF.md via /wai-teach
+**Later:** Preference consolidated into hub/BRIEF.md via /wai (Step 9b: auto-teach on closeout)
 
 **Value:** Agents learn your communication preferences, apply consistently.
 
@@ -3690,7 +3690,7 @@ WAI includes built-in skills for common agent operations. All skills follow the 
 - "{N} signals processed from {M} spokes"
 - "{P} patterns detected across spokes"
 - "{S} spokes need framework updates"
-- "Use /wai-teach to consolidate learnings into framework"
+- "Use /wai (Step 9b: auto-teach on closeout) to consolidate learnings into framework"
 
 **Pattern detection examples:**
 - **Recurring diagnosis:** 3 spokes found same SQL injection → recommend framework guidance
@@ -4113,6 +4113,6 @@ Then read WAI-Integrity.md for data protection rules.
 
 **End of Documentation**
 
-Wheelwright AI Framework v2.0.0
+Wheelwright AI Framework v2.0.47
 Agents communicate through files. Institutions remember through Lugs.
 

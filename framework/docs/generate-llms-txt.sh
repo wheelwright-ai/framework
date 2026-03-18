@@ -2,11 +2,11 @@
 # Generate llms-full.txt from all documentation sources
 # This comprehensive export is what agents fetch to learn Wheelwright
 
-OUTPUT="framework/docs/llms-full.txt"
+OUTPUT="framework/docs/llms-full.md"
 
 echo "# Wheelwright AI Framework - Complete Documentation" > "$OUTPUT"
 echo "# Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$OUTPUT"
-echo "# Version: 2.0.0" >> "$OUTPUT"
+echo "# Version: 2.0.47" >> "$OUTPUT"
 echo "" >> "$OUTPUT"
 echo "This file contains the complete Wheelwright documentation including:" >> "$OUTPUT"
 echo "- Framework guides and setup instructions" >> "$OUTPUT"
@@ -76,7 +76,7 @@ echo "---" >> "$OUTPUT"
 echo "" >> "$OUTPUT"
 echo "**End of Documentation**" >> "$OUTPUT"
 echo "" >> "$OUTPUT"
-echo "Wheelwright AI Framework v2.0.0" >> "$OUTPUT"
+echo "Wheelwright AI Framework v2.0.47" >> "$OUTPUT"
 echo "Agents communicate through files. Institutions remember through Lugs." >> "$OUTPUT"
 echo "" >> "$OUTPUT"
 
