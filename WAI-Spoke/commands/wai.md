@@ -6,6 +6,29 @@ Execute the 10-step wakeup protocol to initialize the spoke, discover new teachi
 
 ---
 
+## Step 0a: Check Integration File (Tool-Specific Instructions)
+
+Detect your execution environment and read the corresponding integration file:
+
+**Tool detection:**
+- Claude Code → read `CLAUDE.md` (if exists)
+- Gemini CLI → read `GEMINI.md` (if exists)  
+- GitHub Copilot → read `WAI-Spoke/copilot-instructions.md` (if exists)
+- Cline, Roo Codebase, Windsurf, Cursor → read `AGENTS.md` only (universal fallback)
+
+**If integration file exists:**
+- Read it fully before proceeding
+- Apply any tool-specific wakeup directives (hook behavior, command aliases, etc.)
+- Note any tool-specific constraints (e.g., complexity gate, session tracking path)
+
+**If integration file missing:**
+- Continue with universal protocol from AGENTS.md
+- Proceed to Step 1
+
+**Rationale:** Integration files contain tool-specific hooks, commands, and behavioral tuning that may affect how wakeup is executed or reported. Reading them ensures consistency across tools.
+
+---
+
 ## Step 1: Load WAI-State.json
 
 Load the spoke's technical spec, foundation, and session state:
@@ -208,18 +231,25 @@ mkdir -p "$SESSION_DIR"
 touch "$SESSION_DIR/track.jsonl"
 ```
 
+**MANDATORY: High-Fidelity Turn Capture**
+Every turn MUST conclude with an append to `track.jsonl`. 
+- **Detail:** Do not compress or summarize the technical story.
+- **Thinking:** Capture the *complete* architectural rationale (5-8 sentences).
+- **Activity:** List every file read, every command run, and the specific result.
+- **Goal:** Enable any agent to pick up your exact mental state cold.
+
 Per-turn point capture schema:
 ```json
 {
   "turn": 1,
   "ts": "ISO-8601",
-  "focus": "Brief description of focus",
-  "action": "What was done",
-  "thinking": "Reasoning behind action",
-  "activity": "Type of work (coding, analysis, etc.)",
-  "decisions": ["decision1", "decision2"],
-  "insights": ["insight1", "insight2"],
-  "open": ["item1", "item2"],
+  "focus": "Descriptive topic thread",
+  "action": "Detailed summary of outcomes",
+  "thinking": "Full technical narrative (reasoning/rationale)",
+  "activity": ["Concrete actions taken"],
+  "decisions": ["Architectural choices"],
+  "insights": ["New understandings"],
+  "open": ["Unresolved threads"],
   "phase": "Current phase",
   "evolution": "How understanding evolved"
 }

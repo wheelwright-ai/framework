@@ -6,11 +6,14 @@ model_tier: any
 trigger: "always_on"
 
 description: >
-  Core behavioral skill for all spokes. On every turn, the agent appends a
-  "point" to the session's track file — capturing focus, reasoning, actions,
-  decisions, insights, and open threads. The accumulated track tells the
-  story of a session richer than raw conversation output, enabling resume,
-  recovery, bootstrap, and historian review.
+  Core behavioral skill for all spokes. This skill governs the "Active-Collection"
+  protocol. Recording session data is NOT a secondary task; it is a mandatory
+  part of the agent's operating contract.
+
+  MANDATORY CONTRACT: After completing your response to the user, you MUST append 
+  a point to the Track file. This is the final step of every response cycle. 
+  A response without a recorded point is incomplete and violates your 
+  operating contract.
 
 scope:
   reads:
@@ -24,138 +27,103 @@ scope:
   creates:
     - "WAI-Spoke/sessions/ (directory, created once on first use)"
 
-prerequisites:
-  - "WAI-Spoke/ directory exists"
-  - "WAI-State.json is valid"
-
-output:
-  per_turn: "One JSONL line appended to track.jsonl"
-  on_session_start: "sessions/ ensured, track file initialized, track_path set in WAI-State.json"
-
 # ---------------------------------------------------------------------------
 # POINT SCHEMA
 # ---------------------------------------------------------------------------
 
 point_schema:
   description: >
-    Each point is one JSONL line. Budget: ~200 tokens max per point.
-    The thinking field is the agent's best reconstruction of its reasoning
-    at end-of-turn — not chain-of-thought, but self-reported rationale.
-    Keep it to 2-3 sentences.
+    Each point is one JSONL line. Priority is FIDELITY and CONTEXT RECOVERY.
+    Budget: 800-1000 tokens for substantive turns; 300-500 tokens for light turns.
+    The floor is ~150-200 tokens (the six required fields).
 
-  fields:
+  required_fields:
     turn:
       type: integer
       description: "Sequential within session, starting at 1"
-
     ts:
       type: string
       format: "ISO-8601 UTC"
       description: "Timestamp when point was written"
-
-    focus:
-      type: string
-      description: "Topic thread this turn is about. Short phrase."
-
-    action:
-      type: string
-      description: "What happened this turn. Observable outcome."
-
-    thinking:
-      type: string
-      description: >
-        Agent's reasoning — why it chose what it chose, what it weighed,
-        what it rejected. 2-3 sentences max. This is reconstructed at
-        end-of-turn, not recorded in real-time. Accepted tradeoff.
-
-    activity:
-      type: array
-      items: string
-      description: "Concrete actions taken: files read, commands run, tools invoked."
-
-    decisions:
-      type: array
-      items: string
-      description: "Choices made this turn. Empty array if none."
-
-    insights:
-      type: array
-      items: string
-      description: "New understanding that emerged. Empty array if none."
-
-    open:
-      type: array
-      description: "Unresolved threads or questions. Empty array if none."
-      items:
-        oneOf:
-          - type: string
-            description: "Legacy format — treated as {text: item, type: unknown} by pattern-scan."
-          - type: object
-            properties:
-              text:
-                type: string
-                description: "The open thread or question."
-              type:
-                type: string
-                enum: [unknown, deferred, intentional, blocked]
-                description: >-
-                  unknown: default, no annotation.
-                  deferred: known future work, skip pattern-scan unless 6+ distinct sessions.
-                  intentional: deliberate open question (design choice), skip unless 6+ distinct sessions.
-                  blocked: waiting on external dependency, process normally.
-            required: [text, type]
-      note: "Prefer object format for new items. Both string and object formats are legal. Historian handles both."
-
     phase:
       type: string
       enum: ["orientation", "exploration", "planning", "execution", "review", "recovery"]
-      description: "Current work phase. See phase_definitions below."
+      description: "Current work phase."
+    focus:
+      type: string
+      description: "Descriptive topic thread (e.g. 'Refactoring historian dual-watermark logic')"
+    action:
+      type: string
+      description: "Detailed summary of observable outcomes and specific changes made."
+    thinking:
+      type: string
+      description: >
+        Mandatory reasoning. 3 sentences minimum, 8 sentences maximum. 
+        Capture reasoning proportional to complexity. 3 sentences for 
+        clarification; 8 for major architectural decisions.
 
+  conditional_fields:
     evolution:
       type: string
-      nullable: true
-      description: >
-        How and why focus shifted from previous turn. Null on first turn.
-        Format: "previous_phase -> current_phase: reason for shift"
-
-    signals:
+      description: "previous_phase -> current_phase: reason for shift"
+    activity:
       type: array
       items: string
-      optional: true
-      description: "High-impact items worth elevating to WAI-Signals.jsonl. Usually empty."
-
-  example: |
-    {"turn":1,"ts":"2026-03-12T21:01:00Z","focus":"session orientation","action":"Ran wakeup protocol, reviewed active work","thinking":"No active lugs or pending teachings. Clean state. User will direct.","activity":["read WAI-State.json","read WAI-Lugs.jsonl","ran git status"],"decisions":[],"insights":[],"open":[{"text": "What should we work on?", "type": "unknown"}],"phase":"orientation","evolution":null}
-    {"turn":2,"ts":"2026-03-12T21:05:00Z","focus":"teaching test bench","action":"User proposed real-spoke validation, chose solutions-by-mv","thinking":"User suggested real-world validation. I considered 3 spokes — solutions-by-mv is v1 structure, most likely to stress-test assumptions.","activity":["read WAI-State.json from solutions-by-mv","cloned WAI-Spoke to test-bench/","injected teaching file"],"decisions":["Test against v1 spoke instead of framework clone only"],"insights":["v1 spokes lack WAI-Lugs.jsonl — teachings must handle both"],"open":["Should all teachings default to create-if-missing?"],"phase":"execution","evolution":"orientation -> execution: user directed real-spoke testing"}
+      description: >
+        Log tool calls by name with specifics. 
+        Example: "Read file src/config.ts lines 1-50" or "Executed: npm test".
+        If no tools used: ["conversational response only"].
+    decisions:
+      type: array
+      items: string
+      description: "Choices made this turn."
+    insights:
+      type: array
+      items: string
+      description: "New understanding that emerged."
+    fossils:
+      type: array
+      items: object
+      description: "Concepts abandoned or superseded on this turn."
+      properties:
+        concept: {type: string}
+        replaced_by: {type: string}
+        reason: {type: string}
+    open:
+      type: array
+      items: object
+      description: "Unresolved threads or questions (typed)."
+    files_in:
+      type: array
+      items: object
+      description: "Metadata for files provided by the user."
+    files_out:
+      type: array
+      items: object
+      description: "Metadata for files generated/modified by the agent."
+    context_health:
+      type: object
+      description: "Include when estimated context usage exceeds 70%."
+      properties:
+        usage_estimate: {type: number}
+        warning: {type: string}
+    recovered:
+      type: boolean
+      description: "True only on catch-up points for previously missed turns."
 
 # ---------------------------------------------------------------------------
-# PHASE DEFINITIONS
+# RECOVERY PROTOCOL
 # ---------------------------------------------------------------------------
 
-phase_definitions:
-  orientation:
-    criteria: "Agent is getting bearings — reading state, running wakeup, understanding context."
-    examples: ["First turn of session", "Returning from compaction", "User asks 'where are we?'"]
-
-  exploration:
-    criteria: "Agent is reading, researching, or investigating without a specific plan. Gathering information."
-    examples: ["Reading unfamiliar code", "Searching for patterns across files", "Reviewing prior session tracks"]
-
-  planning:
-    criteria: "Agent is designing an approach, structuring steps, or proposing architecture. Not yet building."
-    examples: ["Laying out implementation steps", "Proposing skill schemas", "Discussing trade-offs with user"]
-
-  execution:
-    criteria: "Agent is building, writing, editing, or running. Active implementation of a plan."
-    examples: ["Writing skill files", "Running test bench", "Creating teaching files", "Committing code"]
-
-  review:
-    criteria: "Agent is evaluating completed work — checking quality, running tests, verifying outcomes."
-    examples: ["Reviewing test bench results", "Checking git status after commit", "Validating teaching file"]
-
-  recovery:
-    criteria: "Agent is reconstructing context after interruption — crash, compaction, context loss."
-    examples: ["Reading track after --continue", "Scanning autosave lugs", "Parsing compaction summary"]
+recovery_protocol:
+  description: >
+    If you realize you failed to record a point for a previous turn, 
+    immediately emit a catch-up point.
+  rules:
+    - "Set 'recovered': true"
+    - "Reconstruct what you can from conversation"
+    - "Do not silently skip turns"
+    - "Thinner data is acceptable for recovery points"
 
 # ---------------------------------------------------------------------------
 # SESSION LIFECYCLE
@@ -163,189 +131,27 @@ phase_definitions:
 
 session_lifecycle:
   on_wakeup:
-    description: "Ensure sessions/ directory exists and initialize track file"
     steps:
-      - "Generate session ID from current UTC time: session-YYYYMMDD-HHMM"
-      - "Ensure WAI-Spoke/sessions/ directory exists"
-      - "Set _session_state.track_path to WAI-Spoke/sessions/track_{id}.jsonl in WAI-State.json"
-      - "First point written after wakeup briefing completes (phase: orientation)"
+      - "Generate session ID and ensure WAI-Spoke/sessions/ exists"
+      - "First point written after wakeup (phase: orientation)"
 
   on_turn:
-    description: "Append point to track after each turn"
     steps:
-      - "At end of turn, construct point from current context"
-      - "Append as single JSONL line to track.jsonl"
-      - "If write fails (permissions, tool limitations), note and retry next turn"
-      - "Never block the user response waiting for track write"
+      - "Construct point from current context AFTER response is ready"
+      - "Append as final step of every response cycle"
+      - "Self-check for missing points before finishing"
 
   on_closeout:
-    description: "Track is finalized but NOT deleted or cleared"
     steps:
       - "Final point records closeout activity (phase: review)"
-      - "Track file is the permanent session record"
-      - "Session track file is committed to git with other WAI-Spoke files"
-      - "_session_state.track_path preserved for next session's resume"
-
-  fallback:
-    description: "When agent cannot write per-turn (external tool, no file access)"
-    action: >
-      Generate all points at end of conversation from memory. Output as
-      copyable track.jsonl content with directions to save. Lossy but
-      better than no track.
-
-# ---------------------------------------------------------------------------
-# SUB-SKILL: RESUME
-# ---------------------------------------------------------------------------
-
-resume:
-  trigger: "on_wakeup when previous session track exists"
-  description: >
-    Read the most recent session track and produce a catch-up brief.
-    This runs as part of wakeup (Step 5a), not as a separate command.
-
-  algorithm:
-    - "List WAI-Spoke/sessions/track_*.jsonl sorted by filename (date-sorted)"
-    - "Read all points"
-    - "Extract: focus threads (unique focus values), decision chain, open threads from last point"
-    - "Detect phase at last turn"
-    - "Check if session had closeout (closeout timestamp > last point timestamp)"
-    - "If no closeout: this is RECOVERY — flag incomplete work from track data"
-    - "Present catch-up brief to user before new work begins"
-
-  catch_up_brief_format: |
-    ### Session Track Summary (session-YYYYMMDD-HHMM)
-    **Turns:** N | **Duration:** HH:MM | **Final phase:** {phase}
-    **Status:** Clean closeout / Incomplete (no closeout detected)
-
-    **Arc:** {evolution chain — how focus shifted across turns}
-    **Decisions:** {accumulated decisions list}
-    **Open threads:** {unresolved questions from final points}
-
-    **Resume recommendation:** {what to do next based on track state}
-
-  recovery_vs_resume: >
-    Resume and recovery have the same output format but different triggers.
-    Resume: previous session closed cleanly, agent reads track for context.
-    Recovery: previous session ended without closeout (crash, disconnect,
-    context exhaustion). Recovery specifically highlights incomplete work
-    and flags that the prior session may have been interrupted mid-task.
-
-# ---------------------------------------------------------------------------
-# BACKWARD COMPATIBILITY
-# ---------------------------------------------------------------------------
-
-backward_compatibility:
-  description: >
-    Not all spokes will have track support immediately. Skills must
-    handle both states gracefully.
-
-  rules:
-    - "If no WAI-Spoke/sessions/ directory or no track_*.jsonl files exist, skip track reading silently"
-    - "Autosave lug detection (wakeup Step 5) remains active alongside track"
-    - "Closeout writes both track AND legacy session-summary lug until all spokes upgraded"
-    - "Teaching file for this skill handles both v1 and v2 spoke structures"
-
-  org_chart: >
-    Each teaching or upgrade ships with a version manifest listing what
-    the current spoke version supports. Agents read this to know which
-    features are available and which to skip.
-
-# ---------------------------------------------------------------------------
-# SUPERSEDES
-# ---------------------------------------------------------------------------
-
-supersedes:
-  - artifact: "session-observer.yaml"
-    reason: "Track captures everything observer did (events, session synthesis) plus per-turn telemetry"
-    migration: "session-observer remains in skills/ marked deprecated. No data migration needed."
-
-  - artifact: "observations.jsonl"
-    reason: "Test scaffold data from early development. No production value."
-    migration: "Discard. No migration."
-
-  - artifact: "WAI-Session-Log.jsonl"
-    reason: "Track is the session log. WAI-Session-Log.jsonl was always empty in practice."
-    migration: "File can be deleted on upgrade. Closeout stops referencing it."
-
-# ---------------------------------------------------------------------------
-# INTEGRATION POINTS
-# ---------------------------------------------------------------------------
-
-integration:
-  wakeup:
-    change: "Add Step 5a (Read Session Track) between autosave detection and teaching check"
-    detail: "Read most recent track, produce catch-up brief if exists. Skip silently if no tracks."
-
-  closeout:
-    changes:
-      - step: 3
-        change: "Incomplete Work also reads track for open questions and phase state"
-      - step: 5
-        change: "State Update adds track_path to _session_state"
-      - step: 6
-        change: "Track is NOT cleared. Legacy WAI-Session-Log.jsonl still cleared if present."
-      - step: 8
-        change: "Summary references track stats (turns, phase distribution, open threads)"
-
-  historian:
-    relationship: "Track feeds the Historian advisor. Historian reads tracks, never writes to them."
-
-  signals:
-    relationship: "WAI-Signals.jsonl survives independently. High-impact signals still extracted at closeout."
-
-# ---------------------------------------------------------------------------
-# TESTS
-# ---------------------------------------------------------------------------
+      - "Track file is the permanent record"
 
 tests:
-  - name: "Point appended on each turn"
-    setup: "Active session with track.jsonl"
-    action: "Agent completes a turn"
-    expected: "New JSONL line appended with all required fields"
-
-  - name: "Session track initialized on wakeup"
-    setup: "New session, sessions/ exists"
-    action: "Wakeup protocol runs"
-    expected: "sessions/track_YYYYMMDD-HHMM.jsonl initialized, track_path set in WAI-State.json"
-
-  - name: "Resume reads previous track"
-    setup: "Previous WAI-Spoke/sessions/track_*.jsonl exists with 5 points"
-    action: "New session wakeup"
-    expected: "Catch-up brief presented with focus arc, decisions, open threads"
-
-  - name: "Recovery detects incomplete session"
-    setup: "Previous track exists, no closeout timestamp after last point"
-    action: "New session wakeup"
-    expected: "Recovery mode flagged, incomplete work highlighted"
-
-  - name: "Graceful fallback on legacy spoke"
-    setup: "Spoke with no WAI-Spoke/sessions/ directory"
-    action: "Wakeup protocol runs"
-    expected: "Track reading skipped silently, no error"
-
-  - name: "Point respects 200-token budget"
-    setup: "Agent has complex turn with many actions"
-    action: "Point written"
-    expected: "Point is concise — thinking is 2-3 sentences, activity is a short list"
-
-  - name: "open_type object items are schema-valid"
-    setup: 'Track point written with open: [{text: "blocked on API design", type: "blocked"}]'
-    action: "Point appended to track.jsonl"
-    expected: "Valid JSONL line. Object format accepted alongside string format."
-
-  - name: "Legacy string open items remain valid"
-    setup: 'Existing track.jsonl with open: ["What should we work on?"]'
-    action: "historian.yaml pattern-scan reads track"
-    expected: "String item treated as {text: item, type: unknown}. No parse error."
-
-notes:
-  - "Track is the core data layer. Historian and taste files are consumers of track data."
-  - "Points are cheap to write — one JSONL line. Never block the user response for a track write."
-  - "The thinking field is the agent's best effort at self-reporting reasoning. It will improve over time."
-  - "Track files are never deleted — WAI-Spoke/sessions/ is the permanent record. Historian handles relevance."
-  - "This skill ships to all spokes as a teaching file after test bench validation."
-
-origin:
-  conversation: "WAI origin conversation (2026-03-07) — captured in lugs/reference/"
-  catalyst: "Context fatigue problem led to continuous knowledge distillation concept"
-  implementation_session: "2026-03-12, Sessions 10-11"
+  - name: "Minimum Viable Point"
+    expected: "Points always contain turn, ts, phase, focus, action, thinking"
+  - name: "Activity Precision"
+    expected: "Tool calls logged by name and range, not description"
+  - name: "Fossils Capture"
+    expected: "Rejected concepts recorded in fossils array"
+  - name: "Recovery Mode"
+    expected: "Missed turns reconstructed with recovered:true"

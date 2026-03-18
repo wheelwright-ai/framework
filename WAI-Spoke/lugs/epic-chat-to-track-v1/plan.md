@@ -6,9 +6,9 @@
 |------|--------|--------|
 | T1 Prompt | ✅ done | — (delivered as `framework/skills/chat-to-track.md`) |
 | T2 Command | ✅ done | — (delivered as `templates/commands/wai-chat-to-track.md`) |
-| T3 Wakeup ingest | 🔲 open | `lug-chat-to-track-wakeup-ingest` |
-| T4 Historian compat | 🔲 open | `lug-chat-to-track-historian-compat` |
-| T5 Propagation | 🔲 open (blocked) | `lug-chat-to-track-propagation` |
+| T3 Wakeup ingest | ✅ done | `lug-chat-to-track-wakeup-ingest` |
+| T4 Historian compat | ✅ done | `lug-chat-to-track-historian-compat` |
+| T5 Propagation | ✅ done | `lug-chat-to-track-propagation` |
 
 ## Execution Order
 

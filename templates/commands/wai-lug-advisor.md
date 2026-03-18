@@ -24,12 +24,18 @@ A lug is a JSON object stored in `WAI-Spoke/WAI-Lugs.jsonl` (one per line). Lugs
 | Short | Full | Purpose |
 |-------|------|---------|
 | `i` | `id` | Unique identifier |
-| `t` | `title` | Brief imperative title |
+| `t` | `title` | **Indicative, descriptive title (5+ words)**. Explain the *intent* or *impact* (e.g., "Implement dual-watermark fix for historian ASCII sort bug" NOT "Fix bug"). |
 | `ty` | `type` | Lug type (see catalog below) |
 | `s` | `status` | Current status |
 | `ca` | `created_at` | ISO-8601 creation timestamp |
 | `gb` | `gathered_by` | Agent or session that created it |
 | `v` | `version` | Version number (foundation, core-protocol lugs) |
+
+**Title Policy:**
+- **No generic session summaries:** "Session 35 summary" is BANNED.
+- **Good:** "Session 35: Successfully implemented chat-to-track epic and historian dual-watermark"
+- **Good:** "Task: Update WAI-State.json schema to include hub_fingerprint"
+- **Bad:** "Task: Update state"
 
 Both short and full key forms are valid. Prefer short keys for storage efficiency.
 
