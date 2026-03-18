@@ -237,3 +237,51 @@
 
 **Impact:** Comprehensive review provided, ready for next action.
 
+
+## Session 43 (continued) - 2026-03-18
+
+### GitHub Actions Integration Error Diagnosis
+
+**Investigated:**
+- User reported integration errors on GitHub after push
+- Ran `./run-integration-tests.sh` locally to reproduce
+- Analyzed `benchmarks/e2e/test_skills.py` validation schema
+
+**Root Cause Identified:**
+1. **126 Lug Status Validation Failures**
+   - Session 42 introduced `"completed"` and `"archived"` statuses
+   - Test expects: `o/p/c/b` or `open/in-progress/closed/resolved/blocked/published/reviewed/proposed`
+   - Test does NOT recognize `"completed"` or `"archived"`
+   - Affects 126 lugs in WAI-Lugs.jsonl
+
+2. **3 Skill Structure Failures (wai.md)**
+   - Missing: `## Wakeup Protocol`
+   - Missing: `## Complete Briefing Format`
+   - Missing: `## Health Check`
+
+3. **4 Inbox Routing Documentation Failures**
+   - Missing routing rules for delivery_confirmation
+   - Missing routing rules for phone-home
+   - Missing mailroom safety rules
+   - Missing explicit NEVER prohibitions
+
+**Resolution Options Provided:**
+- Option 1: Fix test to accept new statuses (quick fix)
+- Option 2: Migrate all lugs to old status values (breaking change)
+- Option 3: Disable GitHub Actions (loses CI/CD)
+- Option 4: Comprehensive fix (test + wai.md + routing docs) - **Recommended**
+
+**Signal Extracted:**
+- Impact 8: First comprehensive CI/CD failure diagnosis
+- Identifies schema drift pattern between implementation and validation
+
+**Next:** User decision on which resolution option to implement
+
+**Files Analyzed:**
+- `.github/workflows/integration-tests.yml`
+- `benchmarks/e2e/test_skills.py` (lines 64-69)
+- `run-integration-tests.sh`
+- Test output showing 126 status failures + 3 structure + 4 routing
+
+**Impact:** Unblocking green CI/CD builds, establishing schema evolution pattern.
+
