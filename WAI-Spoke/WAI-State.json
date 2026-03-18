@@ -101,7 +101,10 @@
     "next_session_recommendation": "Continue with Skill System Migration (E1-E7) or address high-priority features (Hub Templates, Universal Teach/Learn, Spoke ID System). Teaching adoption complete - 6 hub teachings applied.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-18T01:54:00Z"
+    "protocol_last_run": "2026-03-18T01:54:00Z",
+    "mode": "execution",
+    "_mode_options": ["execution", "interactive", "planning", "review", "deploy"],
+    "_mode_description": "Controls advisory triggers, auto-implementation, and verbosity"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",

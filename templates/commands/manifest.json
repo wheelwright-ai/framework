@@ -1,8 +1,10 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "WAI session commands - consistent across all AI integrations",
   "skill_registry": "WAI-Spoke/WAI-Skills.jsonl",
-  "_note": "Commands are the instructions layer. WAI-Skills.jsonl is the skill registry with full metadata.",
+  "_note": "Commands are the instructions layer. WAI-Skills.jsonl is the skill registry with full metadata (24 skills registered).",
+  "_skill_system_version": "1.0.0",
+  "_registry_schema": "JSONL with fields: id, name, type, lifecycle, scope, safety_level, advisory, watchers, objects, use_cases, command_file, description",
   "commands": [
     {
       "name": "wai",
