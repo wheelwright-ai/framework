@@ -154,6 +154,49 @@ Show unified WAI Point briefing:
 
 ---
 
+## Step 5b: Track Predecessor Detection ⭐ NEW!
+
+**Enables cross-tool session continuity.**
+
+Scan conversation context for track file content loaded by the user:
+
+**Detection criteria:**
+- JSON lines format
+- Contains required fields: `turn`, `ts`, `phase`, `focus`, `action`, `thinking`
+- Sequential turn numbers starting at 1
+- Valid ISO-8601 timestamps
+
+**If track file detected:**
+
+1. Extract metadata:
+   - Session ID (from first point)
+   - Last turn number
+   - Last timestamp
+   - Source filename (if available)
+
+2. Report to user:
+
+```markdown
+### Track Predecessor Detected
+
+- Session: session-20260317-2100
+- Turns: 20
+- Last activity: 2026-03-17T21:45:00Z
+- Source: track_session-20260317-2100.jsonl
+
+New session will link to this predecessor.
+```
+
+3. Store detection result for session use (for `/wai-track-generate` command)
+
+**If no track detected:**
+
+Continue silently (no message needed - this is the common case).
+
+**Purpose:** Allows users to load a track from a prior session (different tool/environment) and continue the conversation with full chain linking. See `/wai-track-generate` for generating tracks in non-WAI-Spoke environments.
+
+---
+
 ## Step 6: Auto-Implementation Queue ⭐ NEW!
 
 Check for auto-implementation work:
