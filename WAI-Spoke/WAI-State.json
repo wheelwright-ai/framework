@@ -92,14 +92,14 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260319-1819",
-    "last_modified_by": "OpenCode GPT-5.4",
-    "last_modified_at": "2026-03-19T18:19:40.955271Z",
-    "last_closeout": "2026-03-19T18:19:40.955271Z",
-    "session_count": 48,
+    "last_session_id": "session-20260319-211351",
+    "last_modified_by": "claude-sonnet-4-20250514",
+    "last_modified_at": "2026-03-19T21:15:00Z",
+    "last_closeout": "2026-03-19T21:15:00Z",
+    "session_count": 49,
     "track_path": "WAI-Spoke/sessions/track_20260318-wakeup.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Run independent recheck of implementation-canonical-state-migration-v1, then proceed with implementation-idempotent-closeout-concurrency-v1 if accepted.",
+    "next_session_recommendation": "Consider implementing epic-working-agreement-skill (ready with canonical advisor approach) or continue canonical evolution work",
     "requires_review": false,
     "review_reason": null,
     "protocol_last_run": "2026-03-19T07:44:50Z",
@@ -159,7 +159,26 @@
       }
     },
     "compatibility_notes": "Dual-read capability preserves legacy state formats during migration. Single canonical write ensures convergence.",
-    "last_migration_check": "2026-03-19T18:19:40.955271Z"
+    "last_migration_check": "2026-03-19T21:15:00Z"
+  },
+  "_closeout_state": {
+    "_purpose": "Tracks closeout operations for idempotency and replay safety",
+    "current_session_id": "session-20260319-211351",
+    "session_id_format": "session-YYYYMMDD-HHMMSS",
+    "closeout_receipts": [],
+    "completed_operations": [],
+    "duplicate_detection_keys": {
+      "session_summaries": [],
+      "signal_teachings": [],
+      "migration_receipts": [],
+      "version_increments": []
+    },
+    "concurrency_state": {
+      "active_locks": [],
+      "lock_timeout_seconds": 30,
+      "retry_backoff_seconds": 2
+    },
+    "last_closeout_check": "2026-03-19T21:15:00Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -179,7 +198,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
@@ -211,7 +230,7 @@
     },
     "create_hub": {
       "requires": "framework_path must be set",
-      "note": "Hub creation is manual — copy templates/HUB/ to your desired hub path and configure hub-profile.json",
+      "note": "Hub creation is manual \u2014 copy templates/HUB/ to your desired hub path and configure hub-profile.json",
       "what_it_creates": [
         "~/wheelwright-hub/ (or user-chosen path)",
         "hub-profile.json (user preferences)",

@@ -276,10 +276,58 @@ fi
    [N] linting errors found
    
    Fix linting errors and run shipit again.
-   Override: Set SHIPIT_SKIP_LINT=1 to bypass (NOT RECOMMENDED)
+    Override: Set SHIPIT_SKIP_LINT=1 to bypass (NOT RECOMMENDED)
 ```
 
-#### 5c. Type Checking (OPTIONAL)
+#### 5c. Idempotency Testing (REQUIRED for Wheelwright projects)
+
+**Purpose:** Verify closeout operations are replay-safe and concurrent-safe.
+
+Detect and run idempotency test suite:
+
+```bash
+# Check if idempotency tests exist
+if [ -d "tests/idempotency" ] && [ -f "tests/idempotency/test_runner.py" ]; then
+    echo "🔄 Running idempotency tests..."
+    python tests/idempotency/test_runner.py --category=all --timeout=300
+    IDEMPOTENCY_EXIT_CODE=$?
+else
+    echo "ℹ️  No idempotency tests found - SKIP (Wheelwright projects should have these)"
+    IDEMPOTENCY_EXIT_CODE=0
+fi
+```
+
+**Exit codes:**
+- `0` = All idempotency tests passed → CONTINUE
+- `non-zero` = Idempotency tests failed → **ABORT SHIPIT**
+
+**Test Categories Verified:**
+- **Closeout Replay (7 tests):** Second closeout detects completion and skips operations
+- **Concurrent Closeout (8 tests):** File locking prevents corruption during concurrent operations
+- **Signal Deduplication (9 tests):** Duplicate signal publication prevention
+- **Migration Resume (10 tests):** Checkpoint-based resume from interruption
+
+**On failure:**
+```
+❌ QUALITY GATE FAILED: Idempotency
+   [X] of 34 idempotency tests failed
+   
+   Failed categories:
+   - Closeout Replay: [details]
+   - Concurrent Safety: [details]
+   
+   ⛔ SHIPIT ABORTED
+   Idempotency failure indicates closeout operations are not replay-safe.
+   This must be fixed before shipping to prevent data corruption.
+```
+
+**Override (NOT RECOMMENDED):**
+```bash
+# Emergency override (logs warning to session)
+export SHIPIT_SKIP_IDEMPOTENCY=1
+```
+
+#### 5d. Type Checking (OPTIONAL)
 
 If type checker is configured, run it:
 
@@ -300,6 +348,7 @@ After all gates:
 ✅ QUALITY GATES PASSED
    Tests:        ✓ [X] passed / [Y] total
    Linting:      ✓ Clean
+   Idempotency:  ✓ 34/34 tests passed (replay-safe verified)
    Type Check:   ⚠️ [N] warnings (non-blocking)
    
    → Safe to proceed with shipit

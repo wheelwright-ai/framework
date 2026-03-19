@@ -119,6 +119,25 @@
     "compatibility_notes": "This section enables dual-read during migration while maintaining single canonical write target",
     "last_migration_check": null
   },
+  "_closeout_state": {
+    "_purpose": "Tracks closeout operations for idempotency and replay safety",
+    "current_session_id": null,
+    "session_id_format": "session-YYYYMMDD-HHMMSS",
+    "closeout_receipts": [],
+    "completed_operations": [],
+    "duplicate_detection_keys": {
+      "session_summaries": [],
+      "signal_teachings": [],
+      "migration_receipts": [],
+      "version_increments": []
+    },
+    "concurrency_state": {
+      "active_locks": [],
+      "lock_timeout_seconds": 30,
+      "retry_backoff_seconds": 2
+    },
+    "last_closeout_check": null
+  },
   "analytics": {
     "sessions": {
       "total_count": 0,

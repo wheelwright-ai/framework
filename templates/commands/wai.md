@@ -57,6 +57,30 @@ This complements the technical spec in WAI-State.json.
 
 ---
 
+## Step 1b: Ozi Work Queue Check (If Enabled)
+
+If `ozi-work-queue-monitor` skill is enabled, run Ozi's briefing:
+
+```bash
+# Check if Ozi is enabled, then run briefing
+python3 wai_ozi.py
+```
+
+**What Ozi shows:**
+- 🎉 Completed work since last session (ready for acceptance)
+- ❓ Work needing your attention (clarifications, reviews)
+- ⚡ Active work in progress (health monitoring)
+- 🆕 Ready work available for dispatch
+- ⏰ Stale work (>4hrs no activity, needs reassignment)
+
+**If Ozi is disabled:**
+- Script outputs: "ℹ️ Ozi work queue monitoring is disabled"
+- Continue with normal wakeup protocol
+
+See `wai-ozi-work-queue-monitor.md` for full protocol.
+
+---
+
 ## Step 3a: Auto-Discovery of New Hub Teachings ⭐ NEW!
 
 Poll the hub's teachings folder to discover new framework updates:
