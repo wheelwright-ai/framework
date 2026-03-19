@@ -64,7 +64,8 @@
       "Bash(/tmp/track_init.json:*)",
       "Bash(WAI-Spoke/WAI-Lugs.jsonl:*)",
       "Bash(WAI-Spoke/sessions/track_20260317-0444.jsonl:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(WAI-Spoke/sessions/track_20260318-wakeup.jsonl:*)"
     ]
   }
 }

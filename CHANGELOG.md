@@ -1,5 +1,10 @@
 
 
+## [2.0.50] - 2026-03-19
+
+### Recorded
+- Lug `43c7023a0244` — docs/llm-full.txt + README.md maintenance, priority before_next_epic
+
 ## [2.0.41] - 2026-03-17
 
 ### Added

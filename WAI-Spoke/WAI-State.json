@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.49",
+    "version": "2.0.50",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
@@ -91,17 +91,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260318-lug-cleanup",
-    "last_modified_by": "Claude Sonnet 4.5",
-    "last_modified_at": "2026-03-19T05:17:53Z",
-    "last_closeout": "2026-03-19T05:17:53Z",
-    "session_count": 46,
+    "last_session_id": "session-20260319-1407",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-19T14:07:18Z",
+    "last_closeout": "2026-03-19T14:07:18Z",
+    "session_count": 47,
     "track_path": "WAI-Spoke/sessions/track_20260318-wakeup.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Verify GitHub Actions passes with shipit quality gate fixes. Monitor emailinator next wakeup for shipit teaching discovery. Consider tracking teaching adoption status across spokes.",
+    "next_session_recommendation": "Execute lug 43c7023a0244: update README.md (frozen since session 15), create docs/llm-full.txt, add Step 7b to wai-closeout.md. Priority: before_next_epic.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-18T01:54:00Z",
+    "protocol_last_run": "2026-03-19T07:44:50Z",
     "mode": "execution"
   },
   "_critical_directives": {
@@ -122,7 +122,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
@@ -162,7 +162,7 @@
     },
     "create_hub": {
       "requires": "framework_path must be set",
-      "note": "Hub creation is manual — copy templates/HUB/ to your desired hub path and configure hub-profile.json",
+      "note": "Hub creation is manual \u2014 copy templates/HUB/ to your desired hub path and configure hub-profile.json",
       "what_it_creates": [
         "~/wheelwright-hub/ (or user-chosen path)",
         "hub-profile.json (user preferences)",

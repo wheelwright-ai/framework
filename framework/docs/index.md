@@ -138,6 +138,7 @@ Read the specs:
 
 ## Documentation Structure
 
+- **design/** - Goal-state architecture and decisions to align on before implementation
 - **start-here/** — Core concepts, quickstart, architecture
 - **skills/** — Skill contract, built-in Skills, creating custom Skills
 - **lugs/** — Lug schema, types, PEV pattern, impact scoring
@@ -152,3 +153,7 @@ Read the specs:
 **WAI v2.0.0** — February 2026
 
 Agents communicate through files. Institutions remember through Lugs.
+
+## Current Canonical Draft
+
+- [Goal-State Design](./design/goal-state-wheelwright.md)
