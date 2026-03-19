@@ -1,236 +1,169 @@
-# Migration Guide: v1 to v2
+# Canonical Wheelwright Migration Guide
 
-This guide covers migrating from WAI v1 (CLI-based) to v2 (file-based protocol).
+This guide covers migration to the canonical Wheelwright object model and behavior.
 
-## What Changed
+## Canonical Architecture
 
-### Architecture Shift
+The canonical Wheelwright model uses these core objects:
 
-| Aspect | v1 (CLI) | v2 (File Protocol) |
-|--------|----------|-------------------|
-| Commands | `wai status`, `wai teach` | Skills (YAML files) |
-| State | WAI-State.json | WAI-Manifest.yaml + BRIEF.md |
-| Signals | Separate system | Lugs with impact >= 8 |
-| Backpressure | Explicit signals | Skills (advisor role) |
-| Communication | CLI prompts | File-based (read/write) |
+| Component | Purpose | Canonical File |
+|-----------|---------|----------------|
+| **Wheel** | Top-level network identity | `WAI-State.json` (wheel section) |
+| **Hub** | Coordination node | Hub directory with registry |
+| **Spoke** | Project-local installation | `WAI-Spoke/` directory |
+| **Skills** | Operational protocols | `WAI-Spoke/commands/*.md` |
+| **Lugs** | Work/intelligence records | `WAI-Spoke/WAI-Lugs.jsonl` |
+| **Sessions** | Bounded work intervals | `WAI-Spoke/sessions/` |
+| **Tracks** | Session telemetry | `session-*/track.jsonl` |
 
-### Why the Change
+## Migration Principles
 
-On 2026-02-10, the v1 CLI accidentally destroyed the Hub folder during a file restructuring operation. The CLI had too much power without adequate safeguards.
+The canonical migration follows dual-read/single-write compatibility:
 
-v2 enforces:
-- **File-based communication** - No destructive CLI commands
-- **WAI-Integrity.md** - Data protection contract
-- **safe-refactor** - Git checkpoint before structural changes
-- **Append-only files** - Lugs and ledgers only grow
+1. **Dual-read capability** - Framework can understand both legacy and canonical formats
+2. **Single canonical write** - New writes use canonical format only  
+3. **Idempotent adoption** - Migration can be safely repeated
+4. **Rollback support** - Migration receipts enable safe rollback
+5. **Hub visibility** - Hub tracks migration status per spoke
 
-## Migration Steps
+## Migration Process
 
-### Step 1: Backup v1 Data
+### Phase 1: Pre-Migration Backup
 
-```bash
-cp -r WAI-Spoke WAI-Spoke-v1-backup
-cp WAI-State.json WAI-State-v1.json
-cp WAI-State.md WAI-State-v1.md
-```
-
-### Step 2: Create v2 Structure
+Create rollback checkpoint before any changes:
 
 ```bash
-# Create new v2 files
-touch BRIEF.md
-touch EXTENSION.md
-mkdir -p WAI-Spoke
-
-# Create v2 manifest
-cat > WAI-Spoke/WAI-Manifest.yaml << 'EOF'
-node_type: spoke
-node_path: "your-org/your-project"
-framework_version: "2.0.0"
-template_versions:
-  lugs: 2
-  brief: 1
-  guide: 1
-hub_lug_cursor: null
-skills_loaded:
-  - safe-refactor
-  - session-observer
-last_session: null
-outbound_pending: []
-EOF
+# Create migration checkpoint
+cp WAI-Spoke/WAI-State.json WAI-State-pre-canonical-$(date +%Y%m%d-%H%M).json
+cp -r WAI-Spoke WAI-Spoke-backup-$(date +%Y%m%d-%H%M)
+git add . && git commit -m "Migration checkpoint: pre-canonical state"
 ```
 
-### Step 3: Migrate BRIEF Rules
+### Phase 2: Framework Version Verification  
 
-Extract behavioral rules from v1 state files into BRIEF.md:
+Check framework version compatibility in `WAI-State.json`:
 
-**v1 WAI-State.json:**
 ```json
 {
-  "rules": {
-    "always": ["Run tests before commit"],
-    "never": ["Deploy without approval"]
+  "wheel": {
+    "framework_version": "3.0.0",
+    "version": "your-project-version"
   }
 }
 ```
 
-**v2 BRIEF.md:**
-```markdown
-# BRIEF — your-project
+**Note:** `framework_version` tracks Wheelwright capability level, `version` tracks your project.
 
-**BRIEF Cascade:** This file inherits rules from hub/BRIEF.md
+### Phase 3: Migration State Initialization
 
-## Always
-- Run tests before commit
-
-## Never
-- Deploy without approval
-```
-
-### Step 4: Create EXTENSION.md
-
-Define your spoke's identity:
-
-```markdown
-# your-project Extension
-
-## Identity
-
-**Role:** [Your role from v1 wheel.role]
-**Lens:** [What you focus on]
-
-**Primary Focus:**
-- [Key responsibility 1]
-- [Key responsibility 2]
-
-## Skills Loaded
-
-- safe-refactor (guardian)
-- session-observer (watcher)
-```
-
-### Step 5: Migrate Lugs
-
-v1 Lugs should already be in WAI-Lugs.jsonl. Verify format:
-
-**v1 format:**
-```json
-{"id": "lug-001", "type": "diagnosis", "title": "Bug found", ...}
-```
-
-**v2 format (same, but verify fields):**
-```json
-{"id": "lug-001", "type": "diagnosis", "title": "Bug found", "status": "published", "impact": 7, "node": "your-org/your-project", ...}
-```
-
-If missing v2 fields, run migration script:
-```bash
-python3 framework/archive/scripts/migrate_lugs_v2.py WAI-Spoke/WAI-Lugs.jsonl
-```
-
-### Step 6: Create Session Ledger
-
-```bash
-cat > WAI-Spoke/WAI-Ledger.jsonl << 'EOF'
-# WAI Session Ledger
-# CRITICAL: This file is append-only per WAI-Integrity.md
-
-EOF
-```
-
-### Step 7: Remove v1 CLI (Optional)
-
-If you were using the `wai` CLI command:
-
-```bash
-# Check if wai CLI is installed
-which wai
-
-# Remove from PATH if present
-# (depends on how you installed it)
-```
-
-v2 doesn't use a CLI. Skills are YAML files that agents read and execute.
-
-### Step 8: Verify Migration
-
-Run this prompt in your project:
-
-```
-Verify WAI v2 migration:
-1. Does BRIEF.md exist with cascade mention?
-2. Does EXTENSION.md exist with role and lens?
-3. Does WAI-Spoke/WAI-Manifest.yaml exist with framework_version: "2.0.0"?
-4. Does WAI-Spoke/WAI-Ledger.jsonl exist?
-5. Are Lugs in WAI-Lugs.jsonl valid (have id, type, status, impact)?
-```
-
-## Handling Signals
-
-### v1 Signals
-In v1, signals were a separate system with their own flow.
-
-### v2 Signals
-In v2, signals are just Lugs with `impact >= 8`:
+Add `_migration_state` section to `WAI-State.json` for adoption tracking:
 
 ```json
 {
-  "id": "lug-001",
-  "type": "observation",
-  "title": "Security pattern applicable across projects",
-  "impact": 9,  // >= 8 makes it a signal
-  "outbound_submitted_to": "hub/intake",
-  "outbound_submitted_at": "2026-02-14T00:00:00Z"
+  "_migration_state": {
+    "_purpose": "Tracks capability adoption and migration receipts for dual-read/single-write compatibility",
+    "framework_migrations_applied": [],
+    "capability_adoptions": [], 
+    "migration_receipts": [],
+    "rollback_checkpoints": [],
+    "dual_read_capabilities": {
+      "state_format": "v3_canonical_with_v1_v2_compat",
+      "signal_storage": "canonical_lugs_with_signals_compat",
+      "track_storage": "canonical_sessions_with_flat_compat"
+    },
+    "adoption_markers": {
+      "canonical_runtime_baseline": {
+        "adopted": false,
+        "adopted_at": null,
+        "adopted_by": null,
+        "receipt_id": null,
+        "rollback_checkpoint": null
+      },
+      "canonical_state_migration": {
+        "adopted": false,
+        "adopted_at": null,
+        "adopted_by": null,
+        "receipt_id": null,
+        "rollback_checkpoint": null
+      }
+    },
+    "compatibility_notes": "This section enables dual-read during migration while maintaining single canonical write target",
+    "last_migration_check": null
+  }
 }
 ```
 
-Migrate v1 signals by converting them to high-impact Lugs.
+### Phase 4: Signal Migration
 
-## Handling Backpressure
+**Legacy Pattern:** Separate `WAI-Signals.jsonl` file
+**Canonical Pattern:** High-impact lugs (impact >= 8) in `WAI-Lugs.jsonl`
 
-### v1 Backpressure
-Explicit backpressure signals to slow down conductors.
-
-### v2 Backpressure
-Skills with advisor role:
-- `complexity-advisor` - Warns when task is complex
-- `context-advisor` - Warns when context is filling up
-- `stewardship-advisor` - Warns about scope drift
-
-These are defined in YAML, not sent as explicit signals.
-
-## Common Issues
-
-### "Framework files not found"
-**Cause:** Agent looking for v1 file structure
-**Solution:** Ensure WAI-Manifest.yaml exists with `framework_version: "2.0.0"`
-
-### "Skills not running"
-**Cause:** v1 expected CLI commands
-**Solution:** Skills are YAML files that agents read and execute automatically
-
-### "Hub connection failed"
-**Cause:** v1 used different hub path
-**Solution:** Update hub_path in WAI-State.json (if used) or configure hub connection
-
-## Rollback
-
-If migration fails:
+If you have existing signals in `WAI-Signals.jsonl`:
 
 ```bash
-# Restore v1 backup
-rm -rf WAI-Spoke
-mv WAI-Spoke-v1-backup WAI-Spoke
-mv WAI-State-v1.json WAI-State.json
-mv WAI-State-v1.md WAI-State.md
-rm BRIEF.md EXTENSION.md
+# Review existing signals
+cat WAI-Spoke/WAI-Signals.jsonl
+
+# Each signal becomes a high-impact lug in WAI-Lugs.jsonl
+# Manual conversion required - automated tooling pending
+```
+
+### Phase 5: Track Storage Migration  
+
+**Legacy Pattern:** Flat `track_*.jsonl` files in `WAI-Spoke/`
+**Canonical Pattern:** Session directories `WAI-Spoke/sessions/session-YYYYMMDD-HHMM/track.jsonl`
+
+```bash
+# Create canonical session directory structure
+mkdir -p WAI-Spoke/sessions/
+
+# Move existing tracks (if any) to session directories
+# Update WAI-State.json _session_state.track_path accordingly
+```
+
+### Phase 6: State Template Migration
+
+**Legacy Pattern:** Mixed schema generations with BRIEF.md/WAI-Manifest.yaml references
+**Canonical Pattern:** WAI-State.json with canonical `wheel` section and `_compatibility` section
+
+1. Ensure `wheel` section is primary with proper `framework_version` separation
+2. Move legacy fields to `_compatibility` section  
+3. Remove references to BRIEF.md, WAI-Manifest.yaml, EXTENSION.md patterns
+
+## Migration Validation
+
+After migration, verify canonical compliance:
+
+1. **State Structure:** `wheel` section is primary, legacy in `_compatibility`
+2. **Signal Storage:** High-impact decisions stored as lugs in `WAI-Lugs.jsonl` 
+3. **Track Storage:** Session tracks in canonical directory structure
+4. **Framework Version:** Properly separated from project version
+5. **Migration Receipts:** All adoptions tracked in `_migration_state`
+
+## Rollback Process
+
+If migration issues occur:
+
+```bash
+# Restore from checkpoint
+cp WAI-State-pre-canonical-YYYYMMDD-HHMM.json WAI-Spoke/WAI-State.json
+rm -rf WAI-Spoke/sessions/  # if canonical sessions were created
+git reset --hard HEAD~1  # back to migration checkpoint commit
 ```
 
 ## Post-Migration
 
-After successful migration:
+- Update `_migration_state.adoption_markers` as capabilities are adopted
+- Use dual-read capability during transition period
+- Monitor `_migration_state.last_migration_check` for compatibility status
 
-1. **Remove v1 backups** (after verification)
-2. **Update .gitignore** to exclude v1 artifacts
-3. **Test wakeup and closeout** with new structure
-4. **Create decision Lug** documenting the migration
+## Deprecated Patterns
+
+These patterns are **incompatible** with canonical Wheelwright:
+
+❌ **BRIEF.md as control plane** - Use WAI-State.json `wheel` section
+❌ **WAI-Manifest.yaml** - Use WAI-State.json migration tracking  
+❌ **EXTENSION.md** - Use skill system (`WAI-Spoke/commands/`)
+❌ **Separate WAI-Signals.jsonl** - Use high-impact lugs in WAI-Lugs.jsonl
+❌ **Flat track storage** - Use canonical session directories
+❌ **CLI teach/learn commands** - Use wakeup/closeout protocol

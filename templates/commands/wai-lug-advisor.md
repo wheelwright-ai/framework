@@ -61,6 +61,7 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `feature` | New capability or enhancement | No — add to tracker |
 | `review` | Something needing review or verification | No — add to tracker |
 | `epic` | Large multi-session effort (blocked until tasks clear) | No — add to tracker |
+| `implementation` | Execution-control lug for non-trivial planned work | No — add to tracker |
 | `signal` | High-impact decision or insight (impact >= 8) | No — record in WAI-Signals.jsonl |
 | `foundation` | Project identity, boundaries, approach | No — defines the project |
 | `session-summary` | Completed session record (autosaves reconciled) | No — archive only |
@@ -156,7 +157,7 @@ Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (sessio
 
 ## PEV Fields (Required for Actionable Lugs)
 
-**Every `task`, `epic`, `bug`, `feature`, and `review` lug MUST include PEV fields.** These transform a lug from a decision record into a workable ticket that any agent can pick up cold.
+**Every `task`, `epic`, `bug`, `feature`, `review`, and `implementation` lug MUST include PEV fields.** These transform a lug from a decision record into a workable ticket that any agent can pick up cold.
 
 | Field | Purpose | Example |
 |-------|---------|---------|
@@ -177,6 +178,224 @@ Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (sessio
 ```
 
 **Why this matters:** A lug without PEV forces the next agent to explore the codebase guessing where to start. PEV gives them a runway — `perceive` orients, `execute` directs, `verify` closes the loop.
+
+---
+
+## `implementation` Lugs
+
+`implementation` is a first-class lug type for **non-trivial execution batches**.
+
+Use an `implementation` lug when:
+- work spans multiple files or multiple child lugs
+- work sits under an `epic` and needs ordered execution
+- the implementer needs a review gate before editing
+- multiple agents or sub-agents may participate and need one control record
+- you want durable implementation feedback, not just a one-shot task description
+
+**Default expectation:** If work is non-trivial, especially if it is epic-backed and requires a plan, create an `implementation` lug.
+
+An `implementation` lug should:
+- link the child work lugs it composes
+- state sequence: what is sequential, what may parallelize safely, what is deferred
+- require implementer review before editing begins
+- record whether the implementer is satisfied to proceed
+- bounce back to the user if concerns or ambiguities remain
+- record who worked on it and any contributing sub-agents
+- capture completion feedback, implementation observations, and follow-up risks
+
+Recommended fields in addition to the normal lug fields:
+- `parent_epic`
+- `composes`
+- `target_files`
+- `non_goals`
+- `sequence`
+- `implementer_review`
+- `subagent_policy`
+- `verification_requirements`
+- `implementation_feedback`
+- `ownership`
+
+**Canonical Lifecycle:**
+```text
+planned → review_pending → approved_to_implement → in_progress → in_remediation → ready_for_recheck → implemented → accepted
+```
+
+**Status Definitions:**
+- `planned`: Initial creation, ready for review
+- `review_pending`: Under review by implementer
+- `approved_to_implement`: Review passed, ready for implementation
+- `in_progress`: Implementation in progress  
+- `in_remediation`: Review found gaps, being fixed
+- `ready_for_recheck`: Remediation complete, needs re-review
+- `implemented`: Implementation complete but pending final acceptance
+- `accepted`: Fully complete with all review notes resolved
+
+**Review/Reconciliation Workflow:**
+
+All `implementation` lugs must include these canonical fields:
+
+```json
+{
+  "ready_to_build_gate": {
+    "required": true,
+    "checks": [
+      "Scope is bounded and non-goals are explicit",
+      "Dependencies, blockers, and target files or target objects are named",
+      "Sequence is clear enough to execute without chat context",
+      "Verification requirements are concrete and relevant",
+      "Review sources and review questions are present"
+    ]
+  },
+  "review_rubric": {
+    "self_review_required": true,
+    "ready_to_build": [
+      "Is this lug mature enough to build without filling architectural gaps from chat?",
+      "Are sequence, non-goals, and dependencies explicit?",
+      "Are target files or target objects named?",
+      "Is verification concrete rather than aspirational?"
+    ],
+    "acceptance_checks": [
+      {
+        "id": "scope",
+        "question": "Did the implementation stay within the lug's scope and non-goals?",
+        "pass_condition": "No unauthorized file or architecture expansion occurred",
+        "failure_action": "Move to in_remediation and add review note"
+      },
+      {
+        "id": "canonical_alignment",
+        "question": "Do the changes align with the goal-state design and parent epic?",
+        "pass_condition": "No contradiction with the canonical object model or behavior remains in touched files",
+        "failure_action": "Move to in_remediation and add review note"
+      },
+      {
+        "id": "persistence",
+        "question": "Was review, progress, and completion written back to the lug?",
+        "pass_condition": "The implementation lug and session-summary reflect the real work performed",
+        "failure_action": "Treat work as incomplete until persisted"
+      },
+      {
+        "id": "verification",
+        "question": "Was actual verification performed and recorded?",
+        "pass_condition": "Claims are backed by concrete checks, not just assertions",
+        "failure_action": "Require remediation or downgrade completion claim"
+      },
+      {
+        "id": "handoff_quality",
+        "question": "Could a new agent continue from the lug alone?",
+        "pass_condition": "Next steps, blockers, observations, and remaining work are durable",
+        "failure_action": "Require lug update before acceptance"
+      }
+    ]
+  },
+  "remediation_plan": {
+    "required_when_in_remediation": true,
+    "version": 1,
+    "authored_at": "ISO-8601",
+    "authored_by": "agent-name",
+    "model": "model-id",
+    "addresses_note_ids": ["rn-001-example"],
+    "problem_summary": "Why the prior attempt failed or was kicked back.",
+    "planned_changes": [
+      "What will be changed to address the review note",
+      "What will remain out of scope during remediation"
+    ],
+    "verification_plan": [
+      "How the remediation will be checked",
+      "What evidence will be gathered before recheck"
+    ],
+    "risks": [
+      "Known uncertainty, dependency, or likely follow-up"
+    ],
+    "needs_user_review": false
+  },
+  "workflow": {
+    "current_phase": "plan|work|verify|accept",
+    "current_owner": "planner|builder|validator|user",
+    "current_state": "open|in_progress|complete",
+    "handoff_reason": "Why the ball moved to this owner",
+    "next_expected_transition": "What should happen next",
+    "steps": {
+      "plan": {
+        "type": "plan",
+        "owner": "planner",
+        "state": "open|in_progress|complete"
+      },
+      "work": {
+        "type": "work",
+        "owner": "builder",
+        "state": "open|in_progress|complete"
+      },
+      "verify": {
+        "type": "verify",
+        "owner": "validator",
+        "state": "open|in_progress|complete"
+      },
+      "accept": {
+        "type": "accept",
+        "owner": "user",
+        "state": "open|in_progress|complete"
+      }
+    }
+  },
+  "review_notes": [
+    {
+      "id": "rn-001-example",
+      "at": "2026-03-19T09:05:00Z", 
+      "by": "agent-name",
+      "model": "claude-sonnet-4-20250514",
+      "type": "concern|gap|suggestion|acceptance-note|blocked",
+      "scope": "signals|tracks|state|verification|etc",
+      "message": "Detailed description of issue",
+      "file_refs": ["path/to/file.md:123", "other/file.md:456"],
+      "status": "open|acknowledged|resolved|rejected",
+      "resolution_note": "How this was addressed"
+    }
+  ],
+  "review_cycles": [
+    {
+      "cycle": 1,
+      "reviewed_at": "2026-03-19T09:05:00Z",
+      "reviewed_by": "agent-name", 
+      "model": "claude-sonnet-4-20250514",
+      "result": "approved|needs_remediation|accepted",
+      "summary": "Brief review outcome description",
+      "blocking_note_ids": ["rn-001-example"],
+      "non_blocking_note_ids": []
+    }
+  ],
+  "acceptance": {
+    "status": "pending|ready_for_acceptance|accepted",
+    "accepted_at": null,
+    "accepted_by": null,
+    "model": null,
+    "notes": "Final acceptance notes"
+  }
+}
+```
+
+**Review Gate Rules:**
+1. **Pre-Implementation Review**: Before any implementation, create review cycle documenting approval/concerns
+2. **Persistent Review Notes**: All review findings must be recorded as `review_notes[]`, not just in chat
+3. **Remediation Tracking**: If review finds gaps, status moves to `in_remediation` with blocking note IDs
+4. **Recheck Required**: After fixes, implementer moves to `ready_for_recheck`, reviewer confirms resolution
+5. **Final Acceptance**: Only after all review notes are resolved can status move to `accepted`
+6. **Lug-Centered Interaction**: For non-trivial implementation work, reviewer/implementer back-and-forth should be written to the lug itself whenever possible; chat should mainly tell an agent which lug to load and what state to inspect
+7. **Ready-To-Build Gate**: Before implementation starts, the implementer must explicitly check and record that the lug is ready to build using the `ready_to_build_gate` and `review_rubric.ready_to_build` criteria
+8. **Self-Grading Requirement**: Before requesting recheck, the implementer must run the `review_rubric.acceptance_checks` against its own work and persist the result on the lug
+9. **Remediation Plan Requirement**: If a quality review kicks the lug back to `in_remediation`, the builder must write a `remediation_plan` to the same lug before retrying. The plan should state what failed, what will change, how it will be verified, and whether any user review is needed before reimplementation.
+10. **Workflow Action Tracker**: Update `workflow.current_phase`, `workflow.current_owner`, and `workflow.current_state` at major handoffs so future agents can instantly see who has the ball and what phase is active without parsing the full audit trail.
+
+**Persistence Gate Rule:** Review is not complete until it is written back to the `implementation` lug. Before editing any target file, the implementer must update the lug with review cycle entry, any review notes, and the intended next step. If review only exists in chat, it is incomplete.
+
+**Completion gate rule:** Implementation is not complete until the same lug is updated with what changed, verification actually performed, contributors/sub-agents used, completion notes, observations, and follow-up candidates, and a session-summary lug is appended.
+
+**Remediation planning rule:** When a lug is in `in_remediation`, do not silently retry. First persist a `remediation_plan` that addresses the open review note IDs. If the remediation materially changes scope or architecture, set `needs_user_review: true` and return to the user before implementing.
+
+**Workflow handoff rule:** At major transitions (plan complete, implementation complete, verification complete, acceptance recorded), update the `workflow` action tracker so the lug shows exactly who has the ball. This helps continuation agents identify their role without reading the full history.
+
+**Sub-agent rule:** Sub-agents may help with bounded analysis, comparison, or verification, but they do not replace the primary implementer's judgment on architecture, scope, or final reconciliation unless the lug explicitly allows it.
+
+**Storage note:** `implementation` lugs improve traceability for complex work, but they do not solve scaling limits of a single large JSONL file. If JSONL maintenance friction rises, treat that as a separate architecture problem to address rather than skipping durable planning records.
 
 ---
 

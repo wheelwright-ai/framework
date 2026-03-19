@@ -40,6 +40,7 @@ cat WAI-Spoke/WAI-State.json
 Key sections to check:
 - `_foundation` - Project identity, context, vision
 - `_session_state` - Last session info, session count
+- `_migration_state` - Framework version compatibility, adoption markers, rollback checkpoints
 - `_auto_implementation` - Auto-execution settings (if exists)
 
 ---
@@ -81,9 +82,9 @@ For each teaching in hub/framework/:
         |----------|---------|-------------|-----------------|
         | filename | ... | ... | ... |
 
-     3. **Duplicate check (signal type):** Before adopting a signal teaching, check if an entry with the same `timestamp` already exists in `WAI-Signals.jsonl`. If it does, skip the append — still move to `processed/`.
-     4. Present: "Apply all / Skip all / Apply [specific]?" — wait for user response
-     5. For each approved: adopt directly (signal → append to `WAI-Signals.jsonl`; skill → copy to `templates/commands/`), then move to `seed/ingest/processed/`
+      3. **Duplicate check (signal type):** Before adopting a signal teaching, check if an entry with the same `timestamp` already exists in `WAI-Lugs.jsonl` (canonical signal storage). If it does, skip the append — still move to `processed/`.
+      4. Present: "Apply all / Skip all / Apply [specific]?" — wait for user response
+      5. For each approved: adopt directly (signal → append to `WAI-Lugs.jsonl` as high-impact lug; skill → copy to `templates/commands/`), then move to `seed/ingest/processed/`
 
      **Path B — `safe_to_auto_adopt: false` (full mailroom ceremony):**
      1. **RECEIVE** — List all new `.teaching` files
@@ -112,7 +113,7 @@ Load active work and learnings:
 
 ```bash
 cat WAI-Spoke/WAI-Lugs.jsonl
-cat WAI-Spoke/WAI-Signals.jsonl
+# Signals are canonically stored as high-impact lugs (impact >= 8) in WAI-Lugs.jsonl
 ```
 
 ---
@@ -266,14 +267,14 @@ Scan WAI-Spoke/sessions/ to surface recent activity from other tools/machines.
 
 ## Step 9: Initialize Session Track ⭐ NEW!
 
-Create session tracking:
+Create canonical session tracking:
 
 ```bash
-# Create session directory
-SESSION_DIR="WAI-Spoke/session-$(date +%Y%m%d-%H%M)"
+# Create canonical session directory
+SESSION_DIR="WAI-Spoke/sessions/session-$(date +%Y%m%d-%H%M)"
 mkdir -p "$SESSION_DIR"
 
-# Initialize track.jsonl
+# Initialize canonical track.jsonl
 touch "$SESSION_DIR/track.jsonl"
 ```
 
@@ -321,7 +322,7 @@ After completing all steps, ask:
 | `WAI-State.md` | Strategic context, vision | UPDATE |
 | `WAI-Skills.jsonl` | Skill registry with metadata | READ |
 | `WAI-Lugs.jsonl` | Active task/dependency graph | UPDATE |
-| `WAI-Signals.jsonl` | High-impact learnings | APPEND |
+| `WAI-Lugs.jsonl` | High-impact learnings (as high-impact lugs) | APPEND |
 | `WAI-Session-Log.jsonl` | Conversation turns (cleared on closeout) | APPEND |
 
 ---
@@ -351,6 +352,7 @@ Briefing sections displayed on wakeup:
 - **Active Skills** — Loaded skills and advisory watches
 - **Active Work** — Prioritized backlog from WAI-Lugs.jsonl
 - **External Tracks** — Pending track files to ingest
+- **Migration Health** — Framework version compatibility, pending adoptions, rollback readiness
 - **Context Health** — Git status, hub connection, session state
 - **Recent Changes** — High-impact changes from last session
 - **Next Actions** — Recommended work items
@@ -363,6 +365,7 @@ Session health indicators checked on wakeup:
 
 - **Protocol Completed** — All 10 steps executed
 - **Hub Connected** — Hub path valid and accessible
+- **Migration Ready** — Framework version compatible, no pending adoptions blocking session
 - **Git Clean** — No uncommitted changes (or list changes)
 - **Session Count** — Increment on significant updates
 - **Track Initialized** — Session track file created
@@ -381,9 +384,11 @@ Inbox items are automatically routed on wakeup:
 | `task` | WAI-Lugs.jsonl | Append to task tracker |
 | `bug` | WAI-Lugs.jsonl | Append to task tracker |
 | `feature` | WAI-Lugs.jsonl | Append to task tracker |
-| `signal` | WAI-Signals.jsonl | Append to signals file |
+| `signal` | WAI-Lugs.jsonl | Append as high-impact lug (canonical model) |
 | `delivery_confirmation` | acknowledged (no file) | Log receipt, move to processed |
 | `phone-home` | outbox/ | Generate status report response |
+
+**Signal Handling Note:** Signals are canonically stored as high-impact lugs (impact >= 8) in `WAI-Lugs.jsonl` and routed through the hub bulletin at `WAI-Hub/Signals/incoming/` and `WAI-Hub/Signals/processed/`.
 
 **MAILROOM SAFETY RULES:**
 

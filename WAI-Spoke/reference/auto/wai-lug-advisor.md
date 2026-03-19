@@ -55,6 +55,7 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `feature` | New capability or enhancement | No — add to tracker |
 | `review` | Something needing review or verification | No — add to tracker |
 | `epic` | Large multi-session effort (blocked until tasks clear) | No — add to tracker |
+| `implementation` | Execution-control lug for non-trivial planned work | No — add to tracker |
 | `signal` | High-impact decision or insight (impact >= 8) | No — record in WAI-Signals.jsonl |
 | `foundation` | Project identity, boundaries, approach | No — defines the project |
 | `session-summary` | Completed session record (autosaves reconciled) | No — archive only |
@@ -111,6 +112,67 @@ Minimal required fields: `i`, `ty`, `t` (or `title`):
 ```
 
 Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
+
+---
+
+## `implementation` Lugs
+
+`implementation` is a first-class lug type for non-trivial execution batches, especially when work sits under an epic and needs ordered implementation.
+
+Use an `implementation` lug when:
+- work spans multiple files or child lugs
+- sequence matters
+- the implementer should review the plan before editing
+- multiple agents may contribute and need one durable control record
+
+Expected behavior:
+- link the work lugs it composes
+- specify sequence, safe parallelism, and non-goals
+- record implementer review before implementation begins
+- bounce back to the user if concerns remain
+- track contributors and sub-agent use
+- capture implementation feedback and observations on completion
+- include a ready-to-build gate and review rubric so the implementer knows how the work will be graded
+- require a remediation plan on the lug before retrying work that was kicked back on quality
+- update the workflow action tracker at major handoffs so continuation agents know who has the ball
+
+Persistence gate:
+- review is not complete until written back to the implementation lug
+- before editing target files, update review status, review history, current owner, and intended next step
+- if approval only exists in chat, the review is incomplete
+- implementation is not complete until the lug is updated with what changed, verification actually performed, observations, and follow-up work, plus a session-summary lug is appended
+
+**Canonical Lifecycle:**
+```text
+planned → review_pending → approved_to_implement → in_progress → in_remediation → ready_for_recheck → implemented → accepted
+```
+
+**Review/Reconciliation Workflow:**
+
+All `implementation` lugs must include canonical review fields:
+- `review_notes[]`: Persistent review findings with id, timestamp, model attribution, type (concern/gap/suggestion/acceptance-note/blocked), scope, message, file references, status (open/acknowledged/resolved/rejected), resolution notes
+- `review_cycles[]`: Review history with cycle number, timestamp, model attribution, result (approved/needs_remediation/accepted), summary, blocking/non-blocking note IDs  
+- `acceptance`: Final acceptance status with timestamp and model attribution
+
+**Workflow Rules:**
+1. **All review notes persistent**: Review findings recorded in lug, not just chat
+2. **Remediation tracking**: Open review notes prevent final acceptance
+3. **Status transitions**: If review finds gaps → `in_remediation` → fix → `ready_for_recheck` → re-review → `accepted`
+4. **Model attribution**: Every review cycle and note tracks which model performed the review
+5. **Blocking vs non-blocking**: Review notes classified to determine if remediation required
+6. **Lug-centered interaction**: For non-trivial implementation work, use the implementation lug as the durable interaction surface; chat should mostly direct the implementer to load the lug and address persisted notes
+7. **Ready-to-build gate**: Before implementation starts, the implementer must record that the lug is ready to build using explicit readiness checks
+8. **Self-grading**: Before requesting recheck, the implementer must run the lug's review rubric against its own work and persist the outcome
+9. **Remediation plan**: If a quality review moves the lug to `in_remediation`, the builder must persist a remediation plan on the same lug before retrying. The plan should explain what failed, what will change, how it will be verified, and whether user review is needed.
+10. **Workflow action tracker**: Update workflow.current_phase/current_owner/current_state at handoffs so agents can instantly see who owns the ball
+
+Recommended additional fields:
+- `ready_to_build_gate`: required readiness checks before implementation begins
+- `review_rubric`: ready-to-build questions plus acceptance checks used by implementer and reviewer
+- `remediation_plan`: required when a kicked-back implementation is about to be retried
+- `workflow`: action tracker with phases (plan/work/verify/accept), owners (planner/builder/validator/user), and states (open/in_progress/complete)
+
+If work is non-trivial, especially epic-backed and plan-driven, prefer creating an `implementation` lug rather than relying on conversational handoff.
 
 ---
 

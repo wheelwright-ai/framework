@@ -1,11 +1,15 @@
 {
-  "wheelwright": {
-    "version": "1.0.0",
-    "structure_version": "v1",
-    "description": "Wheelwright-enabled project with context persistence",
-    "framework_path": null,
+  "wheel": {
+    "name": null,
+    "version": "0.1.0",
+    "framework_version": "3.0.0",
+    "description": "Wheelwright-enabled project with canonical state management",
     "hub_path": null,
-    "tagline": "We aren't reinventing the wheel - we're evolving it faster than one person ever could."
+    "status": "active",
+    "tagline": "We aren't reinventing the wheel - we're evolving it faster than one person ever could.",
+    "type": null,
+    "created": null,
+    "last_updated": null
   },
   "_wai_bootstrap": {
     "_purpose": "Instructions for AI assistants to find or create Wheelwright components",
@@ -82,7 +86,38 @@
     "session_count": 0,
     "current_session": null,
     "track_path": null,
-    "protocol_completed": false
+    "protocol_completed": false,
+    "next_session_recommendation": null
+  },
+  "_migration_state": {
+    "_purpose": "Tracks capability adoption and migration receipts for dual-read/single-write compatibility",
+    "framework_migrations_applied": [],
+    "capability_adoptions": [],
+    "migration_receipts": [],
+    "rollback_checkpoints": [],
+    "dual_read_capabilities": {
+      "state_format": "v3_canonical_with_v1_v2_compat",
+      "signal_storage": "canonical_lugs_with_signals_compat",
+      "track_storage": "canonical_sessions_with_flat_compat"
+    },
+    "adoption_markers": {
+      "canonical_runtime_baseline": {
+        "adopted": false,
+        "adopted_at": null,
+        "adopted_by": null,
+        "receipt_id": null,
+        "rollback_checkpoint": null
+      },
+      "canonical_state_migration": {
+        "adopted": false,
+        "adopted_at": null,
+        "adopted_by": null,
+        "receipt_id": null,
+        "rollback_checkpoint": null
+      }
+    },
+    "compatibility_notes": "This section enables dual-read during migration while maintaining single canonical write target",
+    "last_migration_check": null
   },
   "analytics": {
     "sessions": {
@@ -124,37 +159,7 @@
     "hub_learning": true,
     "quality_gates": true
   },
-  "wheel": {
-    "name": null,
-    "abbrev": null,
-    "version": "0.1.0",
-    "hub_path": null,
-    "type": null,
-    "description": null,
-    "repository": null,
-    "created": null,
-    "last_updated": null,
-    "status": "active",
-    "workspace": {
-      "ide_cmd": null,
-      "run_cmd": null,
-      "cli_cmd": null,
-      "hub_cmd": null,
-      "paths": {
-        "primary": null,
-        "windows": {
-          "root": null,
-          "spoke": null,
-          "hub": null
-        },
-        "wsl": {
-          "root": null,
-          "spoke": null,
-          "hub": null
-        }
-      }
-    }
-  },
+
   "hub": {
     "summary": null,
     "objectives": [],
@@ -202,7 +207,7 @@
     },
     "signals": {
       "threshold": 8,
-      "instruction": "Append to WAI-Signals.jsonl if decision impact >= 8"
+      "instruction": "Signals are high-impact lugs (impact >= 8) stored in WAI-Lugs.jsonl and routed via hub bulletin"
     }
   },
   "ai_context": {
@@ -222,5 +227,34 @@
     "total_sessions": 0,
     "total_turns": 0,
     "last_closeout": null
+  },
+  "_compatibility": {
+    "_note": "Legacy fields retained for migration compatibility only. Canonical model is above.",
+    "wheelwright": {
+      "version": "1.0.0",
+      "structure_version": "v1",
+      "description": "Legacy wheelwright section - replaced by canonical wheel section",
+      "framework_path": null,
+      "hub_path": null
+    },
+    "workspace": {
+      "ide_cmd": null,
+      "run_cmd": null,
+      "cli_cmd": null,
+      "hub_cmd": null,
+      "paths": {
+        "primary": null,
+        "windows": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        },
+        "wsl": {
+          "root": null,
+          "spoke": null,
+          "hub": null
+        }
+      }
+    }
   }
 }

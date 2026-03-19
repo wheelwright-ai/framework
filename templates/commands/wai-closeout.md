@@ -115,16 +115,19 @@ Persist session state with enough detail that a new agent/session can:
 
 **Actions:**
 1. Review session for decisions or learnings with **impact >= 8**
-2. For each qualifying signal, create a signal entry in `WAI-Spoke/WAI-Signals.jsonl`:
+2. For each qualifying signal, create a high-impact lug entry in `WAI-Spoke/WAI-Lugs.jsonl`:
 
 ```json
 {
-  "timestamp": "ISO-8601",
-  "session_id": "session-YYYYMMDD-HHMMSS",
-  "signal": "what was decided/learned",
+  "id": "signal-YYYYMMDD-HHMM-brief-description",
+  "type": "signal",
+  "title": "Brief descriptive title of signal",
+  "description": "what was decided/learned",
   "impact": 8-10,
-  "rationale": "why it matters",
-  "by": "agent-name"
+  "created_by": "agent-name",
+  "created_at": "ISO-8601",
+  "session_id": "session-YYYYMMDD-HHMMSS",
+  "rationale": "why it matters"
 }
 ```
 
@@ -183,7 +186,14 @@ This versions the *session state*, not a release.
 - `_session_state.last_modified_by` = current AI model name
 - `_session_state.last_modified_at` = current UTC timestamp
 - `_session_state.next_session_recommendation` = summary of what to do next
-- `_session_state.track_path` = path to current session's track file (e.g., `WAI-Spoke/sessions/track_20260312-2100.jsonl`)
+- `_session_state.track_path` = path to current session's track file (e.g., `WAI-Spoke/sessions/session-20260312-2100/track.jsonl`)
+- `_migration_state.last_migration_check` = current UTC timestamp (ISO-8601)
+
+**Update migration receipts (if any capability adoptions occurred this session):**
+
+- If implementation lugs completed: add migration receipt to `_migration_state.migration_receipts[]`
+- If capability adoptions occurred: update `_migration_state.adoption_markers` with receipt IDs and rollback checkpoints
+- If framework version changed: record in `_migration_state.framework_migrations_applied[]`
 
 ### 6. Finalize Session Track
 
@@ -250,13 +260,13 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 **Conditions (both must be true):**
 - `wheel.hub_path` is set and the directory exists
-- `WAI-Signals.jsonl` contains entries with `timestamp > old_last_closeout` (captured before Step 5)
+- `WAI-Lugs.jsonl` contains high-impact lugs (impact >= 8) with `created_at > old_last_closeout` (captured before Step 5)
 
 **If either condition is false:** Skip silently. Note "No new signals to teach" in summary.
 
 **If both conditions are true:**
-1. Collect all signal entries from `WAI-Signals.jsonl` where `timestamp > old_last_closeout`
-2. For each signal, derive a filename: sanitize `timestamp` to `YYYYMMDD-HHMM`, then append the sender spoke ID (from `wheel.name`, lowercased, spaces → hyphens) → `teachings/signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching`. Example: `signal-20260316-0045-from-wheelwright.md.teaching`. If that filename already exists, append `-2`, `-3`, etc. until unique.
+1. Collect all high-impact lugs from `WAI-Lugs.jsonl` where `created_at > old_last_closeout` AND `impact >= 8` (canonical signal criteria)
+2. For each qualifying lug, derive a filename: sanitize `created_at` to `YYYYMMDD-HHMM`, then append the sender spoke ID (from `wheel.name`, lowercased, spaces → hyphens) → `teachings/signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching`. Example: `signal-20260316-0045-from-wheelwright.md.teaching`. If that filename already exists, append `-2`, `-3`, etc. until unique.
 3. Write the teaching file — substitute the actual signal JSON verbatim (one file per signal, not a placeholder):
 
 ```markdown
@@ -269,12 +279,12 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 ## What This Teaching Does
 
-Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+Appends a high-impact lug (signal) to `WAI-Lugs.jsonl` on this spoke. Signals are canonically high-impact lugs (impact >= 8) that get distributed via the hub bulletin.
 
 ## Embedded Signal
 
 ```json
-{actual signal JSON object here}
+{actual high-impact lug JSON object here}
 ```
 
 ## Post-Completion
@@ -282,7 +292,7 @@ Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
 Move this file to `WAI-Spoke/seed/ingest/processed/`.
 ```
 
-4. **Idempotency:** Receiving spokes may see the same signal teaching more than once (re-teach, restore). Before appending, check if a signal with the same `timestamp` and `signal` text already exists in `WAI-Signals.jsonl`. If it does, skip — do not duplicate.
+4. **Idempotency:** Receiving spokes may see the same signal teaching more than once (re-teach, restore). Before appending, check if a lug with the same `id` or (`created_at` + `title`) already exists in `WAI-Lugs.jsonl`. If it does, skip — do not duplicate.
 5. Report: "N signal teaching(s) written to teachings/"
 
 **Note:** The hub symlink (`hub/framework → ../framework/teachings/`) means these files are immediately visible to all connected spokes on their next wakeup. No further distribution step required.

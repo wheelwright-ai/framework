@@ -1,7 +1,8 @@
 # Track Format Specification (v3.0)
 
 **Format:** Pure JSONL (JSON Lines)
-**Filename Pattern:** `track_YYYYMMDD-HHMM.jsonl`
+**Canonical Write Target:** `WAI-Spoke/sessions/session-YYYYMMDD-HHMM/track.jsonl`
+**Legacy Compatibility:** `track_YYYYMMDD-HHMM.jsonl` (read-only during migration)
 **Encoding:** UTF-8
 
 ---
@@ -9,6 +10,10 @@
 ## 1. Overview
 
 A Track is a sequential record of "points" (turns) captured during an AI-human session. Unlike raw chat logs, Tracks focus on **state, reasoning, and delta**.
+
+**Canonical Storage:** Tracks are stored in session directories at `WAI-Spoke/sessions/session-YYYYMMDD-HHMM/track.jsonl` where each session gets its own directory. This enables session-scoped artifacts, metadata, and clean organization.
+
+**Migration Note:** Flat files like `track_session-YYYYMMDD-HHMM.jsonl` in `WAI-Spoke/sessions/` are legacy format for compatibility reading only. New track generation should target the canonical session directory structure.
 
 ---
 
@@ -72,3 +77,5 @@ Used when a session is closed explicitly.
 1. **No Mixed Formats:** Do not include Markdown commentary or YAML frontmatter.
 2. **Atomic Writes:** Each turn must be appended immediately.
 3. **Fidelity:** Capture enough data to reconstruct the agent's mental model without the chat history.
+4. **Canonical Storage:** Always write to `WAI-Spoke/sessions/session-YYYYMMDD-HHMM/track.jsonl`. Create the session directory if needed.
+5. **Legacy Compatibility:** Tools may read from flat `track_*.jsonl` files during migration but should not write new ones.
