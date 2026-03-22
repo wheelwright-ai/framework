@@ -78,7 +78,7 @@ point_schema:
           description: "Links to previous session in conversation chain"
           properties:
             session_id: {type: string}
-            source_file: {type: string, description: "Track filename (e.g., 'track_session-20260317-2100.jsonl')"}
+            source_file: {type: string, description: "Track filename (e.g., 'WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl')"}
             last_turn: {type: integer}
             last_timestamp: {type: string, format: "ISO-8601 UTC"}
             detected_from: {type: string, enum: ["context", "file", "manual"]}
@@ -181,7 +181,7 @@ track_chain_protocol:
       - "First point includes session_metadata with predecessor link"
       - "Output as downloadable file or code block"
     output_format: |
-      Track file generated: track_session-{session_id}.jsonl
+      Track file generated: WAI_Track-{YYYYMMDD}-{HHMM}-{Provider}-{Model}.jsonl
       
       Contains:
       - {turn_count} turns (this session only)

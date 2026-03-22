@@ -11,6 +11,21 @@
 
 ---
 
+## Canonical Storage
+
+**Single source of truth:** This file is the canonical declaration for lug storage. All other protocol files defer here.
+
+| What | Where | Notes |
+|------|-------|-------|
+| All lugs | `WAI-Spoke/WAI-Lugs.jsonl` | Append-only JSONL, one object per line |
+| Signals | `WAI-Spoke/WAI-Lugs.jsonl` | Signals ARE lugs with `impact >= 8` — no separate file |
+| Inbox/outbox | `WAI-Spoke/lugs/inbox/` and `lugs/outbox/` | Delivery channel only — not durable storage |
+| Hub bulletin | `WAI-Hub/Signals/incoming/` | High-impact lugs copied here at closeout for cross-spoke visibility |
+
+`WAI-Spoke/WAI-Signals.jsonl` is **retired**. Do not create it or write to it.
+
+---
+
 ## What Is A Lug
 
 A lug is a JSON object stored in `WAI-Spoke/WAI-Lugs.jsonl` (one per line). Lugs are the persistent memory of the session system — they carry work items, decisions, signals, and protocols across sessions, models, and projects.
@@ -62,7 +77,7 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `review` | Something needing review or verification | No — add to tracker |
 | `epic` | Large multi-session effort (blocked until tasks clear) | No — add to tracker |
 | `implementation` | Execution-control lug for non-trivial planned work | No — add to tracker |
-| `signal` | High-impact decision or insight (impact >= 8) | No — record in WAI-Signals.jsonl |
+| `signal` | High-impact decision or insight (impact >= 8) | No — signals ARE lugs; store in WAI-Lugs.jsonl (no separate file) |
 | `foundation` | Project identity, boundaries, approach | No — defines the project |
 | `session-summary` | Completed session record (autosaves reconciled) | No — archive only |
 | `autosave` | Crash-recovery checkpoint from mid-session | Reconcile at closeout |
@@ -76,6 +91,81 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `config` | Configuration update for node | Applied during learn |
 | `session` | Historical session record (legacy) | No — archive only |
 | `challenge` | Problem-centric anchor for idea lugs — stable problem statement with linked hypotheses | No — append-only record in WAI-Challenges.jsonl |
+
+---
+
+## PEV Chain Pattern
+
+For work requiring structured perceive→execute→verify reasoning, use linked lugs instead of PEV fields on a single record.
+
+### Link Schema
+
+Each lug in a PEV chain carries:
+- `pev_role`: one of `perceive` | `execute` | `verify`
+- `pev_chain_id`: shared identifier for the chain (e.g. `pev-feature-auth-20260322`)
+
+### Chain Structure
+
+| Role | Purpose | Key Fields |
+|------|---------|-----------|
+| `perceive` | Frames the problem: evidence, conditions, unknowns | `pev_role`, `pev_chain_id`, `evidence[]`, `conditions[]` |
+| `execute` | Records intended action or implementation plan | `pev_role`, `pev_chain_id`, `plan`, `target_files[]` |
+| `verify` | Defines proof the work is correct | `pev_role`, `pev_chain_id`, `criteria[]`, `verified_at` |
+
+### Example
+
+```json
+{"id": "pev-auth-perceive", "type": "work", "pev_role": "perceive", "pev_chain_id": "pev-auth-20260322", "title": "Auth system: problem framing", "evidence": ["Users can bypass 2FA via API"], "conditions": ["Only affects API endpoints, not web UI"]}
+{"id": "pev-auth-execute", "type": "work", "pev_role": "execute", "pev_chain_id": "pev-auth-20260322", "title": "Auth system: implementation plan", "plan": "Add 2FA enforcement middleware to API router"}
+{"id": "pev-auth-verify", "type": "work", "pev_role": "verify", "pev_chain_id": "pev-auth-20260322", "title": "Auth system: verification criteria", "criteria": ["API requests without valid 2FA token receive 403", "Existing web UI 2FA flow unchanged"]}
+```
+
+### When to Use
+
+Use PEV chains for: architectural decisions, bug investigations, features with clear acceptance criteria.
+Skip for: simple tasks, signal lugs, session summaries.
+
+### Compatibility
+
+Existing lugs with `perceive`/`execute`/`verify` as plain fields remain valid. Dual-read: both patterns are acceptable. New structured work should prefer the chain pattern.
+
+---
+
+## Canonical Type System
+
+### Top-Level Types (use these for new lugs)
+
+| Type | Purpose |
+|------|---------|
+| `epic` | Large work body spanning multiple sessions |
+| `work` | Executable work item (replaces task/bug/feature) |
+| `decision` | Architectural or directional choice |
+| `finding` | Investigation result or discovered fact |
+| `test` | Test specification or result |
+| `session-summary` | End-of-session record |
+| `signal` | High-impact learning (impact >= 8) |
+
+### work.kind Field
+
+When creating a `work` lug, set `work.kind` to classify the work:
+
+| work.kind | Replaces | Use when |
+|-----------|---------|---------|
+| `task` | type: "task" | Defined unit of work |
+| `bug` | type: "bug" | Defect or broken behavior |
+| `feature` | type: "feature" | New capability |
+| `implementation` | type: "implementation" | Capability rollout |
+
+**Example:**
+```json
+{"id": "work-fix-auth-20260322", "type": "work", "work": {"kind": "bug"}, "title": "Fix auth bypass"}
+```
+
+### Dual-Read Compatibility
+
+Existing lugs with `type: "task"`, `type: "bug"`, or `type: "feature"` remain valid and are read correctly. Do not bulk-rewrite existing lugs. New lugs should use canonical types.
+
+**Reading old lugs:** treat `type: "task"` as equivalent to `type: "work", work.kind: "task"`.
 
 ---
 
@@ -567,7 +657,7 @@ If any answer is "yes or maybe" → add more clarity.
 | Type | Purpose | AI Execution? | Example |
 |------|---------|--------------|---------|
 | `task` | Track work item | NO — add to tracker | "Implement caching" → task list |
-| `signal` | Share insight (impact >= 8) | NO — record in Signals | "Found useful pattern" → logged |
+| `signal` | Share insight (impact >= 8) | NO — record in WAI-Lugs.jsonl | "Found useful pattern" → logged as lug |
 | `phone-home` | Request status | AUTO by learn | inbox processor handles |
 | `foundation` | Project identity | NO — defines project | Identity and boundaries |
 

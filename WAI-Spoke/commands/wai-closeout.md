@@ -264,6 +264,20 @@ This versions the *session state*, not a release.
 5. Release `.state.lock`
 6. Record completion in `_closeout_state.completed_operations`: "state_update_complete"
 
+### 5b. Adoption Marker Sync
+
+Check that WAI-State.json adoption markers reflect the actual implementation state of capability lugs.
+
+For each lug in `WAI-Lugs.jsonl` where `type = "implementation"` and `status = "implemented"`:
+1. Derive the expected adoption marker key (strip `-v1`/`-v2` suffix from migration_id or lug id to get the marker name)
+2. Check `_migration_state.adoption_markers[<key>].adopted` in `WAI-State.json`
+3. If `adopted = false`: update to `true`, set `adopted_at` = current UTC, set `adopted_by` = current agent
+4. Log: "Synced adoption marker: <key>"
+
+If no mismatches found: output "Adoption markers current — no sync needed"
+
+**Why:** Prevents adoption markers from staying false after implementation completes, which misleads future agents into believing migrations are pending when they are done.
+
 ### 6. Finalize Session Track
 
 **Close the session track (if active):**
@@ -323,61 +337,119 @@ Any lug intended for another agent (including future-you in a new session) must 
    - Report: "N lugs delivered to hub"
 4. If hub unreachable: note in `_session_state.next_session_recommendation`, continue — do not block commit
 
-### 9b. Signal Teach (Conditional)
+### 9b. Teaching Generation + Hub Publish (Conditional)
 
-**Automatically distribute new signals to the hub — no separate /wai (Step 9b: auto-teach on closeout) needed.**
+**Automatically generate current teaching files during closeout, clean up superseded versions, and publish them to the hub using copy-based distribution. No separate manual teaching step is required for canonical framework changes.**
 
-**Conditions (both must be true):**
+**Purpose:**
+- Convert migration-relevant framework changes into teaching files automatically
+- Keep exactly one current teaching per teaching family in the active publish location
+- Archive superseded versions deterministically
+- Publish current teachings to the hub without symlinks
+
+**Framework objects covered:**
+- High-impact signal lugs (`impact >= 8`)
+- Skills and advisors in `templates/commands/`
+- Spoke template changes in `templates/spoke/`
+- State schema or canonical behavior changes affecting spoke migration
+- Lug/schema or protocol changes that alter spoke behavior
+
+**Conditions:**
+- `teachings/` exists or can be created
+- At least one migration-relevant framework object changed this session, OR at least one new high-impact lug exists with `created_at > old_last_closeout`
+
+**Hub publishing conditions:**
 - `wheel.hub_path` is set and the directory exists
-- `WAI-Lugs.jsonl` contains high-impact lugs (impact >= 8) with `created_at > old_last_closeout` (captured before Step 5)
+- `{hub_path}/teachings_repo/` exists or can be created
 
-**If either condition is false:** Skip silently. Note "No new signals to teach" in summary.
+**If no teaching-worthy changes are found:** Skip silently. Note "No new teachings to generate" in summary.
 
 **Serialized Operation (Graceful Failure):**
 1. Check for `.teaching-distribution.lock` file
-2. If lock exists: ⚠️ **CONCURRENT OPERATION:** Teaching distribution in progress
-   - Display warning: "Another agent is distributing teachings. Retry in 30 seconds or use --force-teaching flag to override."
-   - Record in `_session_state.next_session_recommendation`: "Retry signal teaching distribution"
+2. If lock exists:
+   - Display warning: "Another agent is distributing teachings. Retry in 30 seconds."
+   - Record in `_session_state.next_session_recommendation`: "Retry teaching generation and hub publish"
    - Continue to next step (do not block commit)
 
-**If both conditions are true and no lock conflict:**
-1. Create `.teaching-distribution.lock` file
-2. Collect all high-impact lugs from `WAI-Lugs.jsonl` where `created_at > old_last_closeout` AND `impact >= 8` (canonical signal criteria)
-3. For each qualifying lug, derive a filename: sanitize `created_at` to `YYYYMMDD-HHMM`, then append the sender spoke ID (from `wheel.name`, lowercased, spaces → hyphens) → `teachings/signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching`. Example: `signal-20260316-0045-from-wheelwright.md.teaching`. If that filename already exists, append `-2`, `-3`, etc. until unique.
-3. Write the teaching file — substitute the actual signal JSON verbatim (one file per signal, not a placeholder):
+**If no lock conflict:**
+1. Create `.teaching-distribution.lock`
+2. Detect migration-relevant changes from this session. Minimum detection sources:
+   - High-impact lugs in `WAI-Lugs.jsonl` where `created_at > old_last_closeout` AND `impact >= 8`
+   - Modified files under `templates/commands/`
+   - Modified files under `templates/spoke/`
+   - State/schema or protocol changes that alter spoke behavior
+3. Normalize candidate changes before version decisions:
+   - Ignore whitespace-only diffs, timestamp-only churn, and non-semantic formatting changes
+   - Group changes into stable teaching families using `family_key = {object_type}-{object_name}` (examples: `skill-wai-closeout`, `advisor-wai-complexity`, `template-spoke-CLAUDE`, `state-schema`, `protocol-track-chain`)
+4. For each teaching family:
+   - Determine whether a new version is required based on migration-relevant content changes only
+   - Bump version according to policy:
+     - `major`: breaking or incompatible migration behavior
+     - `minor`: backward-compatible capability addition
+     - `patch`: clarification, fix, or non-breaking correction
+   - Enforce the single-current rule: only one current teaching per family may remain in active publish state
+5. Generate teaching files into `teachings/` using the filename pattern `{family_key}-v{version}.md.teaching`
+6. Each generated teaching must include:
+   - What changed
+   - Why it matters to spokes
+   - Exact migration/apply instructions
+   - `safe_to_auto_adopt` with reasoning
+   - Source files and originating lug(s), when available
+   - Superseded family/version information, when applicable
+7. Signal teachings remain first-class teachings. For each qualifying high-impact lug, embed the actual lug JSON verbatim inside the generated teaching. Receiving spokes must remain idempotent: if a lug with the same `id` or same semantic identity already exists locally, skip append.
+8. Cleanup active teaching state before publish:
+   - Scan for existing teachings in the same family
+   - Keep only the newest current version in active publish state
+   - Move superseded versions to `teachings/archive/{family_key}/`
+   - Delete only duplicate-byte-identical files or failed partial files
+   - If generation fails for a family after partial write, remove the partial artifact and preserve the prior current version
+9. Idempotency requirements:
+   - Re-running closeout without relevant source changes must not create a new version
+   - Re-running closeout without relevant source changes must not duplicate archive entries
+   - Identical current teaching content must not be rewritten unnecessarily
 
-```markdown
-# Teaching: Signal — {signal content summary}
-
-**Type:** signal
-**safe_to_auto_adopt:** true
-
----
-
-## What This Teaching Does
-
-Appends a high-impact lug (signal) to `WAI-Lugs.jsonl` on this spoke. Signals are canonically high-impact lugs (impact >= 8) that get distributed via the hub bulletin.
-
-## Embedded Signal
-
-```json
-{actual high-impact lug JSON object here}
-```
-
-## Post-Completion
-
-Move this file to `WAI-Spoke/seed/ingest/processed/`.
-```
-
-4. **Idempotency:** Receiving spokes may see the same signal teaching more than once (re-teach, restore). Before appending, check if a lug with the same `id` or (`created_at` + `title`) already exists in `WAI-Lugs.jsonl`. If it does, skip — do not duplicate.
-5. Report: "N signal teaching(s) written to teachings/"
-
-**Note:** The hub symlink (`hub/framework → ../framework/teachings/`) means these files are immediately visible to all connected spokes on their next wakeup. No further distribution step required.
+**Hub Publish (copy-based, no symlinks):**
+1. If hub conditions are met, publish current teachings to `{hub_path}/teachings_repo/{spoke_id}/`
+2. Use the canonical hub layout:
+   - `current/` for current teachings only
+   - `archive/{family_key}/` for superseded versions
+   - `index.json` at the hub root and per-spoke directory
+3. For each teaching family during publish:
+   - If the current hub file has the same content hash, skip copy
+   - If the hub current version differs, move the old current file to `archive/{family_key}/` and copy the new current file into `current/`
+4. Rewrite `{hub_path}/teachings_repo/{spoke_id}/index.json` atomically
+5. Rewrite `{hub_path}/teachings_repo/index.json` atomically
+6. Never rely on or create symlinks inside `teachings_repo/`
+7. If hub publish fails or hub is unavailable:
+   - Keep local current teachings intact
+   - Record retry guidance in `_session_state.next_session_recommendation`
+   - Do not block commit
 
 **Completion:**
-4. Record teaching filenames in `_closeout_state.duplicate_detection_keys.signal_teachings[]`
-5. Remove `.teaching-distribution.lock`
-6. Record completion in `_closeout_state.completed_operations`: "signal_teaching_complete"
+1. Record generated teaching filenames in `_closeout_state.duplicate_detection_keys.signal_teachings[]` or a broader teaching receipt structure if available
+2. Remove `.teaching-distribution.lock`
+3. Record completion in `_closeout_state.completed_operations`: `teaching_generation_complete`
+4. Report counts in summary:
+   - `N` teachings generated
+   - `M` superseded teachings archived
+   - `P` teachings published to hub
+
+### 9c. Hub Signal Bulletin
+
+**Publish high-impact lugs to the hub bulletin board for cross-spoke visibility.**
+
+Read `hub_path` from `WAI-State.json` at `wheel.hub_path`.
+
+**If hub_path is null or hub not accessible:** Skip silently. Log: "Hub bulletin skipped — hub not connected"
+
+**If hub is accessible:**
+
+For each lug in `WAI-Lugs.jsonl` where `impact > 7` and `status != "archived"`:
+1. Check if `{hub_path}/WAI-Hub/Signals/incoming/{lug-id}.json` already exists
+2. If not: write the full lug JSON as `{hub_path}/WAI-Hub/Signals/incoming/{lug-id}.json`
+3. Log: "Published to hub bulletin: {lug-id} (impact={impact})"
+
+If no qualifying lugs found: log "Hub bulletin: no lugs with impact > 7 to publish"
 
 ### 10. Summary Generation
 

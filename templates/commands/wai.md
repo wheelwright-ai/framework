@@ -41,7 +41,7 @@ Key sections to check:
 - `_foundation` - Project identity, context, vision
 - `_session_state` - Last session info, session count
 - `_migration_state` - Framework version compatibility, adoption markers, rollback checkpoints
-- `_auto_implementation` - Auto-execution settings (if exists)
+- `WAI-Spoke/runtime/ozi-sessions/` - Session-local Ozi auto mode files (if present)
 
 ---
 
@@ -83,14 +83,25 @@ See `wai-ozi-work-queue-monitor.md` for full protocol.
 
 ## Step 3a: Auto-Discovery of New Hub Teachings ⭐ NEW!
 
-Poll the hub's teachings folder to discover new framework updates:
+Poll the hub's teachings folders to discover new framework and cross-spoke updates.
+
+**Determine node type and hub path:**
+Read `wheel.node_type` and `wheel.hub_path` from `WAI-State.json`.
 
 ```bash
-# Scan hub/framework/*.teaching
-ls -1 /home/mario/projects/wheelwright/hub/framework/*.teaching 2>/dev/null | wc -l
+# Example logic for finding teachings based on node type
+if [ "$NODE_TYPE" = "hub" ]; then
+  # Hub learns from all connected spokes + framework updates
+  ls -1 "${HUB_PATH}/teachings_repo/*/current/*.teaching" 2>/dev/null
+  ls -1 "${FRAMEWORK_PATH}/teachings/*.teaching" 2>/dev/null
+else
+  # Spoke learns from framework + aggregated cross-spoke teachings
+  ls -1 "${HUB_PATH}/framework/*.teaching" 2>/dev/null
+  ls -1 "${HUB_PATH}/cross_spoke/current/*.teaching" 2>/dev/null
+fi
 ```
 
-For each teaching in hub/framework/:
+For each discovered teaching:
 1. Check if already adopted (exists in WAI-Spoke/seed/processed/)
 2. If new, add to discovery queue
 
@@ -117,6 +128,16 @@ For each teaching in hub/framework/:
      4. **WAIT** — Get explicit user approval before proceeding
      5. **PROCEED** — copy to `WAI-Spoke/seed/ingest/manual/` for review; move original to `seed/ingest/processed/`
 
+**Hub Signal Bulletin (incoming/):**
+
+Check `{hub_path}/WAI-Hub/Signals/incoming/` for new signal files:
+1. For each `.json` file found: read it, check if already known (id present in WAI-Lugs.jsonl)
+2. If new: surface in briefing as "Hub signal: {title} (impact={impact}, from={node})"
+3. Do NOT auto-adopt — signals are advisory. User decides whether to act.
+4. After inspection: optionally move processed signals to `WAI-Hub/Signals/processed/` at closeout
+
+If hub_path is null or hub not accessible: skip silently.
+
 ---
 
 ## Step 3: Load Skills
@@ -132,6 +153,8 @@ Report any active advisory watches and skills that recommend themselves at sessi
 ---
 
 ## Step 4: Load Lugs and Signals
+
+# Canonical storage declaration: see wai-lug-advisor.md
 
 Load active work and learnings:
 
@@ -207,7 +230,7 @@ Scan conversation context for track file content loaded by the user:
 - Session: session-20260317-2100
 - Turns: 20
 - Last activity: 2026-03-17T21:45:00Z
-- Source: track_session-20260317-2100.jsonl
+- Source: WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl
 
 New session will link to this predecessor.
 ```
@@ -222,29 +245,21 @@ Continue silently (no message needed - this is the common case).
 
 ---
 
-## Step 6: Auto-Implementation Queue ⭐ NEW!
+## Step 6: Ozi Auto Queue Awareness ⭐ NEW!
 
-Check for auto-implementation work:
+If Ozi has session-local auto mode enabled for this terminal/session key:
+- run `python3 wai_ozi.py`
+- let Ozi claim eligible ready lugs for this session only
+- show builder-focused output: ready queue, claimed work, dispatch activity
 
-If `_auto_implementation.enabled == true`:
-- Build queue from WAI-Lugs.jsonl
-- Sort by natural priority (bugs > flagged > tasks)
-- Display queue in awareness mode
+If Ozi auto mode is off:
+- normal wakeup continues without auto-claiming work
+- users can enable builder mode with `/wai-auto-on`
 
-```
-### Auto-Implementation Queue (Awareness Mode)
-🎯 {count} items in queue
-🔒 Auto-Implement: {enabled|disabled}
-
-Queue (confidence = N/10):
-- 🔴 bug-001 - Fix authentication (conf: 9)
-- 🟡 feature-002 - Add payment processing (conf: 6) [review]
-- 🟢 task-001 - Update API docs (conf: 8)
-```
-
-If `review_low_confidence == true`:
-- Highlight low-confidence items (< 8)
-- Run Step 6.1: Interactive review
+Important:
+- auto mode is not a shared project-wide toggle
+- other sessions on the same repo may keep different Ozi modes
+- implementation lugs still require explicit approval before execution
 
 ---
 

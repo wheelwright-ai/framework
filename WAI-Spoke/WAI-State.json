@@ -92,17 +92,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260319-211351",
+    "last_session_id": "session-20260322-0000",
     "last_modified_by": "claude-sonnet-4-20250514",
     "last_modified_at": "2026-03-19T21:15:00Z",
     "last_closeout": "2026-03-19T21:15:00Z",
     "session_count": 49,
-    "track_path": "WAI-Spoke/sessions/track_20260318-wakeup.jsonl",
+    "track_path": "WAI-Spoke/sessions/session-20260322-0000/track.jsonl",
     "protocol_completed": true,
     "next_session_recommendation": "Consider implementing epic-working-agreement-skill (ready with canonical advisor approach) or continue canonical evolution work",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-19T07:44:50Z",
+    "protocol_last_run": "2026-03-22T23:08:09Z",
     "mode": "execution"
   },
   "_migration_state": {
@@ -119,6 +119,17 @@
           "canonical_signal_routing",
           "canonical_wakeup_closeout"
         ]
+      },
+      {
+        "migration_id": "canonical-state-migration-v1",
+        "applied_at": "2026-03-22T00:20:00Z",
+        "applied_by": "claude-sonnet-4-6",
+        "receipt_id": "receipt-state-migration-20260322",
+        "rollback_checkpoint": "WAI-Lugs.jsonl.backup",
+        "capabilities_adopted": [
+          "canonical_state_schema",
+          "canonical_workflow_types"
+        ]
       }
     ],
     "capability_adoptions": [
@@ -133,9 +144,34 @@
         "status": "active",
         "adopted_at": "2026-03-19T09:35:00Z",
         "migration_batch": "canonical-runtime-baseline-v1"
+      },
+      {
+        "capability": "canonical_state_schema",
+        "status": "active",
+        "adopted_at": "2026-03-22T00:20:00Z",
+        "migration_batch": "canonical-state-migration-v1"
       }
     ],
-    "migration_receipts": [],
+    "migration_receipts": [
+      {
+        "receipt_id": "receipt-runtime-baseline-20260319-0935",
+        "migration_id": "canonical-runtime-baseline-v1",
+        "issued_at": "2026-03-19T09:35:00Z",
+        "issued_by": "OpenCode GPT-5.4",
+        "rollback_checkpoint": "state-backup-20260319-0930.json",
+        "status": "active",
+        "notes": "Retroactively created — migration was applied but receipt was not written at time of adoption"
+      },
+      {
+        "receipt_id": "receipt-state-migration-20260322",
+        "migration_id": "canonical-state-migration-v1",
+        "issued_at": "2026-03-22T00:20:00Z",
+        "issued_by": "claude-sonnet-4-6",
+        "rollback_checkpoint": "WAI-Lugs.jsonl.backup",
+        "status": "active",
+        "notes": "Adoption marker corrected — implementation was done in session 50 but marker was not flipped"
+      }
+    ],
     "rollback_checkpoints": [],
     "dual_read_capabilities": {
       "state_format": "v3_canonical_with_v1_v2_compat",
@@ -151,11 +187,11 @@
         "rollback_checkpoint": "state-backup-20260319-0930.json"
       },
       "canonical_state_migration": {
-        "adopted": false,
-        "adopted_at": null,
-        "adopted_by": null,
-        "receipt_id": null,
-        "rollback_checkpoint": null
+        "adopted": true,
+        "adopted_at": "2026-03-22T00:20:00Z",
+        "adopted_by": "claude-sonnet-4-6",
+        "receipt_id": "receipt-state-migration-20260322",
+        "rollback_checkpoint": "WAI-Lugs.jsonl.backup"
       }
     },
     "compatibility_notes": "Dual-read capability preserves legacy state formats during migration. Single canonical write ensures convergence.",
@@ -198,7 +234,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
@@ -230,7 +266,7 @@
     },
     "create_hub": {
       "requires": "framework_path must be set",
-      "note": "Hub creation is manual \u2014 copy templates/HUB/ to your desired hub path and configure hub-profile.json",
+      "note": "Hub creation is manual — copy templates/HUB/ to your desired hub path and configure hub-profile.json",
       "what_it_creates": [
         "~/wheelwright-hub/ (or user-chosen path)",
         "hub-profile.json (user preferences)",
@@ -378,15 +414,13 @@
     "last_closeout": "2026-03-13T18:21:27Z"
   },
   "_auto_implementation": {
+    "deprecated": true,
     "enabled": false,
-    "require_confirmation": true,
-    "max_confidence_auto": 8,
-    "review_low_confidence": true,
-    "log_all_executions": true,
-    "auto_adopt_teachings": true,
-    "require_teaching_confirmation": true,
-    "safe_only": true,
-    "log_all_adoptions": true
+    "notes": [
+      "Shared project-wide auto mode is deprecated.",
+      "Use session-local Ozi runtime files in WAI-Spoke/runtime/ozi-sessions/ instead.",
+      "Control current session with /wai-auto-on, /wai-auto-off, /wai-auto-status, and /wai-auto-parallel."
+    ]
   },
   "_compatibility": {
     "_note": "Legacy fields retained for migration compatibility only. Canonical model is above.",

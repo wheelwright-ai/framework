@@ -36,7 +36,7 @@ Wheelwright builds AI wheels that remember everything. Instead of losing context
 - `WAI-State.md` - Strategic context, vision (UPDATE)
 - `WAI-Skills.jsonl` - Skill registry with metadata (READ)
 - `WAI-Lugs.jsonl` - Active work and task graph (UPDATE)
-- `WAI-Signals.jsonl` - High-impact learnings (APPEND)
+- `WAI-Lugs.jsonl` - High-impact signals stored as lugs with `impact >= 8` (APPEND — `WAI-Signals.jsonl` is retired)
 
 ---
 
@@ -215,9 +215,9 @@ cat WAI-Spoke/WAI-Skills.jsonl
 
 ### Task Management
 ```
-1. View work: jq 'select(.status == "published")' WAI-Spoke/WAI-Lugs.jsonl
+1. View work: jq 'select(.status == "open" or .status == "in_progress")' WAI-Spoke/WAI-Lugs.jsonl
 2. Track decisions: Advisory skills auto-capture high-impact items
-3. Review signals: tail -20 WAI-Spoke/WAI-Signals.jsonl
+3. Review signals: jq 'select(.type == "signal" or .ty == "signal")' WAI-Spoke/WAI-Lugs.jsonl
 ```
 
 ---

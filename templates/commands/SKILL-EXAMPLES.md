@@ -97,7 +97,7 @@ AI: Project foundation incomplete. Need to define: identity, boundaries, approac
 ### Signal Advisor
 **Triggers:** Decision with impact >= 8
 **Example:**
-(Auto-logs) Decision: Switch from YOLO to ADAPTIVE mode. Impact: 10. Logged to WAI-Signals.jsonl
+(Auto-logs) Decision: Switch from YOLO to ADAPTIVE mode. Impact: 10. Logged to WAI-Lugs.jsonl as signal lug
 
 ### Lug Advisor
 **Triggers:** User mentions lugs, task graph, or asks for task management
@@ -116,7 +116,7 @@ AI: Use lugs (task graph). Create with: /wai-lug create [task-name]
 
 ### Make Decision (Impact >= 8)
 1. Make decision
-2. Signal Advisor auto-logs to WAI-Signals.jsonl
+2. Signal Advisor auto-logs to WAI-Lugs.jsonl (signal lug, impact >= 8)
 3. At closeout, decision flows to hub via /wai (Step 3a: auto-discovery)
 
 ### End Session

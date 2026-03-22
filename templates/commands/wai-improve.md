@@ -165,7 +165,7 @@ For each relevant file or feature, assess:
 
 ### 2c. Scan Signals and Decisions
 
-Read `WAI-Spoke/WAI-Signals.jsonl`. For signals with impact >= 7, check whether any captured decision:
+Read `WAI-Spoke/WAI-Lugs.jsonl` and filter for signal lugs (`type == "signal"` or `ty == "signal"`) with impact >= 7. Check whether any captured decision:
 - Already resolved the challenge (idea may be stale)
 - Ruled out the proposed mechanism ("we decided not to do X because Y")
 - Established a precedent that the idea should follow

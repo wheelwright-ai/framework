@@ -46,7 +46,7 @@ Scanning context for track file...
 
 If detected:
 ```
-✓ Predecessor detected: track_session-20260317-2100.jsonl
+✓ Predecessor detected: WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl
   - Session: session-20260317-2100
   - Turns: 20
   - Last activity: 2026-03-17T21:45:00Z
@@ -102,7 +102,7 @@ For each turn in THIS session (not including loaded predecessor):
     "has_predecessor": true,
     "predecessor": {
       "session_id": "session-20260317-2100",
-      "source_file": "track_session-20260317-2100.jsonl",
+      "source_file": "WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl",
       "last_turn": 20,
       "last_timestamp": "2026-03-17T21:45:00Z",
       "detected_from": "context"
@@ -120,7 +120,7 @@ For each turn in THIS session (not including loaded predecessor):
 
 ### 4. Output Track File
 
-**Filename:** `track_session-{session_id}.jsonl`
+**Filename:** `WAI_Track-{YYYYMMDD}-{HHMM}-{Provider}-{Model}.jsonl`
 
 **Format:** JSONL (one JSON object per line)
 
@@ -128,7 +128,7 @@ For each turn in THIS session (not including loaded predecessor):
 
 **Option A: Code block (copy-paste)**
 ```
-### Generated Track File: track_session-20260318-0315.jsonl
+### Generated Track File: WAI_Track-20260318-0315-Claude-claude-sonnet-4-5.jsonl
 
 ```jsonl
 {...point 1...}
@@ -136,18 +136,18 @@ For each turn in THIS session (not including loaded predecessor):
 {...point 3...}
 ```
 
-Copy the content above and save as: track_session-20260318-0315.jsonl
+Copy the content above and save as: WAI_Track-20260318-0315-Claude-claude-sonnet-4-5.jsonl
 ```
 
 **Option B: Downloadable (if tool supports)**
 ```
-[Download: track_session-20260318-0315.jsonl]
+[Download: WAI_Track-20260318-0315-Claude-claude-sonnet-4-5.jsonl]
 ```
 
 **Option C: File write (if WAI-Spoke/ exists)**
 ```bash
 # Write to WAI-Spoke/sessions/
-echo '{...}' >> WAI-Spoke/sessions/track_session-20260318-0315.jsonl
+echo '{...}' >> WAI-Spoke/sessions/WAI_Track-20260318-0315-Claude-claude-sonnet-4-5.jsonl
 ```
 
 ---
@@ -159,7 +159,7 @@ After generation:
 ```markdown
 ## Track Generation Complete
 
-**File:** track_session-20260318-0315.jsonl
+**File:** WAI_Track-20260318-0315-Claude-claude-sonnet-4-5.jsonl
 
 ### This Session
 - Turns: 5
@@ -167,7 +167,7 @@ After generation:
 - Duration: 2026-03-18 03:15:00 → 03:42:00 (27 minutes)
 
 ### Predecessor Chain
-- Links to: track_session-20260317-2100.jsonl (20 turns)
+- Links to: WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl (20 turns)
 - Total conversation: 2 sessions, 25 turns
 
 ### Next Steps
@@ -183,7 +183,7 @@ After generation:
 - [ ] All turns from THIS session included (not duplicating predecessor)
 - [ ] First point includes session_metadata (if applicable)
 - [ ] Predecessor link accurate (if detected)
-- [ ] File follows naming convention: track_session-{id}.jsonl
+- [ ] File follows naming convention: WAI_Track-{YYYYMMDD}-{HHMM}-{Provider}-{Model}.jsonl
 - [ ] User can download/save/copy the output
 
 ---
@@ -215,7 +215,7 @@ After generation:
 User: "Generate track for this conversation"
 
 Agent:
-✓ Track generated: track_session-20260318-0400.jsonl
+✓ Track generated: WAI_Track-20260318-0400-Claude-claude-sonnet-4-5.jsonl
   - Turns: 3
   - Origin session (no predecessor)
   - Ready to use as foundation for future sessions
@@ -224,29 +224,29 @@ Agent:
 ### Example 2: Continuation Session
 
 ```
-User: [Loads track_session-A.jsonl with 20 turns]
+User: [Loads WAI_Track-A.jsonl with 20 turns]
 User: [Has 5 turns of new conversation]
 User: "Generate track for this session"
 
 Agent:
-✓ Predecessor detected: track_session-A.jsonl (20 turns)
-✓ Track generated: track_session-B.jsonl
+✓ Predecessor detected: WAI_Track-A.jsonl (20 turns)
+✓ Track generated: WAI_Track-B.jsonl
   - Turns: 5 (this session only)
-  - Links to: track_session-A.jsonl
+  - Links to: WAI_Track-A.jsonl
   - Total chain: 2 sessions, 25 turns
 ```
 
 ### Example 3: Deep Chain
 
 ```
-User: [Loads track_session-C.jsonl which links to B → A]
+User: [Loads WAI_Track-C.jsonl which links to B -> A]
 User: "Generate track"
 
 Agent:
 ✓ Conversation chain detected: A → B → C (loaded) → D (new)
-✓ Track generated: track_session-D.jsonl
+✓ Track generated: WAI_Track-D.jsonl
   - Turns: 8 (this session only)
-  - Links to: track_session-C.jsonl
+  - Links to: WAI_Track-C.jsonl
   - Total chain: 4 sessions, 45 turns
 ```
 

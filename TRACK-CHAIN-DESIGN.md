@@ -49,7 +49,7 @@ Add to the **first point** of each track file:
     "has_predecessor": true,
     "predecessor": {
       "session_id": "session-20260317-2100",
-      "source_file": "track_session-20260317-2100.jsonl",
+      "source_file": "WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl",
       "last_turn": 20,
       "last_timestamp": "2026-03-17T21:45:00Z",
       "detected_from": "context"
@@ -117,7 +117,7 @@ When scanning context for track files, look for:
 - Session: session-20260317-2100
 - Turns: 20
 - Last activity: 2026-03-17T21:45:00Z
-- Source: track_session-20260317-2100.jsonl
+- Source: WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl
 
 New session will link to this predecessor.
 ```
@@ -134,11 +134,11 @@ New session will link to this predecessor.
 
 **Output format:**
 ```
-Track file generated: track_session-20260318-0300.jsonl
+Track file generated: WAI_Track-20260318-0300-Claude-claude-sonnet-4-5.jsonl
 
 Contains:
 - 5 turns (this session only)
-- Links to predecessor: track_session-20260317-2100.jsonl
+- Links to predecessor: WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl
 - Total conversation spans 2 sessions (25 turns)
 
 [Download link or code block with file content]
@@ -153,18 +153,18 @@ When loading a track with predecessors, agent reports chain:
 
 This track is part of a 3-session chain:
 
-Session A (track_session-20260317-1800.jsonl)
+Session A (WAI_Track-20260317-1800-Claude-claude-sonnet-4-5.jsonl)
 ├─ Turns: 1-20
 ├─ Started: 2026-03-17T18:00:00Z
 └─ Environment: claude-code
 
-Session B (track_session-20260317-2100.jsonl) ← PREDECESSOR
+Session B (WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl) ← PREDECESSOR
 ├─ Turns: 1-5
 ├─ Started: 2026-03-17T21:00:00Z
 ├─ Environment: cursor
 └─ Links to: Session A
 
-Session C (track_session-20260318-0300.jsonl) ← CURRENT
+Session C (WAI_Track-20260318-0300-Claude-claude-sonnet-4-5.jsonl) ← CURRENT
 ├─ Turns: 1-8 (in progress)
 ├─ Started: 2026-03-18T03:00:00Z
 └─ Links to: Session B
@@ -206,17 +206,17 @@ Add Step 5b: Track Predecessor Detection
 # Session A - Claude Code with WAI-Spoke
 User: "Let's build a feature"
 [20 turns of work, automatic track writing]
-→ Produces: track_session-20260317-2100.jsonl
+→ Produces: WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl
 
 # Session B - ChatGPT Web (no WAI-Spoke)
-User: [Loads track_session-20260317-2100.jsonl]
+User: [Loads WAI_Track-20260317-2100-Claude-claude-opus-4-6.jsonl]
 User: "Continue building the feature"
 [5 more turns of work]
 User: "Generate track for this conversation"
-Agent: [Outputs track_session-20260318-0300.jsonl with predecessor link]
+Agent: [Outputs WAI_Track-20260318-0300-Claude-claude-sonnet-4-5.jsonl with predecessor link]
 
 # Session C - Cursor with WAI-Spoke
-User: [Loads track_session-20260318-0300.jsonl]
+User: [Loads WAI_Track-20260318-0300-Claude-claude-sonnet-4-5.jsonl]
 Agent: "Detected predecessor chain (2 prior sessions, 25 turns total)"
 [Work continues with automatic track writing]
 ```
@@ -226,7 +226,7 @@ Agent: "Detected predecessor chain (2 prior sessions, 25 turns total)"
 ```
 User wants to review how a decision evolved across multiple sessions:
 
-1. Load track_session-C.jsonl (current)
+1. Load WAI_Track-C.jsonl (current)
 2. Agent reports: "Links to B → A (3 sessions, 33 turns)"
 3. Load all three tracks to reconstruct full conversation
 4. Search across all tracks for decision keywords
@@ -267,7 +267,7 @@ User wants to review how a decision evolved across multiple sessions:
 4. **Partial chains:** What if only middle session (B) is loaded, not A?
 
 **Recommended answers:**
-1. Use session_id for consistency (track_session-{id}.jsonl)
+1. Use session_id for consistency (WAI_Track-{YYYYMMDD}-{HHMM}-{Provider}-{Model}.jsonl)
 2. No hard limit, but report chain depth to user
 3. No - predecessor may not be accessible (different machine/cloud)
 4. Report what we know: "Links to A (not loaded), full chain may be deeper"

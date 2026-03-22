@@ -551,29 +551,25 @@ Release Tag:
 
 ### 10. Teach All Spokes (Auto)
 
-**After successful closeout, distribute updates to all spokes.**
+**After successful closeout, updates are distributed automatically.**
 
 This step runs automatically when:
 - Running from framework or hub node
-- `lug-wai-paths` provides hub_path and framework_path
-- Closeout completed successfully
+- Closeout completed successfully (Step 9b generates teaching files)
 
 **Teach Procedure:**
 ```
-1. Read hub registry for active spokes
-2. For each spoke with WAI-Spoke/:
-   - Generate upgrade-adoption-plan.json
-   - Distribute template files to seed/ingest/
-   - Update registry with taught_at timestamp
-3. Report results
+1. `wai-closeout` Step 9b generates `.teaching` files
+2. Files are published to the canonical hub layout (`teachings_repo/`)
+3. Spokes auto-discover and pull these updates on their next wakeup
+4. No separate manual distribution or `upgrade-adoption-plan.json` generation is required.
 ```
 
 **Report:**
 ```
 Teach Distribution:
-- Spokes taught: [N]/[M]
-- Files distributed: [N] per spoke
-- Registry updated: ✓
+- Hub teachings generated: ✓
+- Available for spokes to pull: ✓
 ```
 
 **If teach fails for a spoke:** Log warning, continue with others. Report failures at end.
@@ -634,9 +630,8 @@ Teach Distribution:
 - Release tag: v[X.Y.Z] pushed ✓  *(or "n/a — progress save")*
 
 ### Teach (auto)
-- Spokes: [N]/[M] taught
-- Files: [N] per spoke
-- Registry: updated
+- Hub teachings generated: ✓
+- Available for spokes to pull: ✓
 
 ## Status: SHIPPED ✓
 ```
