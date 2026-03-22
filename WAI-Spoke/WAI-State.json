@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.50",
+    "version": "2.0.51",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,8 +33,8 @@
         }
       }
     },
-    "last_modified_at": "2026-03-18T11:17:00.697480+00:00",
-    "last_modified_by": "Claude Sonnet 4.5"
+    "last_modified_at": "2026-03-22T23:39:26Z",
+    "last_modified_by": "claude-sonnet-4-6"
   },
   "_project_foundation": {
     "source_lug": "lug-fnd-f0aa32c5",
@@ -92,17 +92,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260322-0000",
-    "last_modified_by": "claude-sonnet-4-20250514",
-    "last_modified_at": "2026-03-19T21:15:00Z",
-    "last_closeout": "2026-03-19T21:15:00Z",
-    "session_count": 49,
-    "track_path": "WAI-Spoke/sessions/session-20260322-0000/track.jsonl",
+    "last_session_id": "session-20260322-2339",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-22T23:39:26Z",
+    "last_closeout": "2026-03-22T23:39:26Z",
+    "session_count": 50,
+    "track_path": "WAI-Spoke/sessions/session-20260322-2339/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Consider implementing epic-working-agreement-skill (ready with canonical advisor approach) or continue canonical evolution work",
+    "next_session_recommendation": "Deploy WAI-Hub/Signals/ to actual hub. Continue Phase 4 Spoke ID System (m8n3p7q2r6s4). Resolve or close task-ozi-fifo-test-1/2.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-22T23:08:09Z",
+    "protocol_last_run": "2026-03-22T23:38:09Z",
     "mode": "execution"
   },
   "_migration_state": {
@@ -160,7 +160,7 @@
         "issued_by": "OpenCode GPT-5.4",
         "rollback_checkpoint": "state-backup-20260319-0930.json",
         "status": "active",
-        "notes": "Retroactively created — migration was applied but receipt was not written at time of adoption"
+        "notes": "Retroactively created \u2014 migration was applied but receipt was not written at time of adoption"
       },
       {
         "receipt_id": "receipt-state-migration-20260322",
@@ -169,7 +169,7 @@
         "issued_by": "claude-sonnet-4-6",
         "rollback_checkpoint": "WAI-Lugs.jsonl.backup",
         "status": "active",
-        "notes": "Adoption marker corrected — implementation was done in session 50 but marker was not flipped"
+        "notes": "Adoption marker corrected \u2014 implementation was done in session 50 but marker was not flipped"
       }
     ],
     "rollback_checkpoints": [],
@@ -195,11 +195,11 @@
       }
     },
     "compatibility_notes": "Dual-read capability preserves legacy state formats during migration. Single canonical write ensures convergence.",
-    "last_migration_check": "2026-03-19T21:15:00Z"
+    "last_migration_check": "2026-03-22T23:39:26Z"
   },
   "_closeout_state": {
     "_purpose": "Tracks closeout operations for idempotency and replay safety",
-    "current_session_id": "session-20260319-211351",
+    "current_session_id": "session-20260322-2339",
     "session_id_format": "session-YYYYMMDD-HHMMSS",
     "closeout_receipts": [],
     "completed_operations": [],
@@ -214,7 +214,7 @@
       "lock_timeout_seconds": 30,
       "retry_backoff_seconds": 2
     },
-    "last_closeout_check": "2026-03-19T21:15:00Z"
+    "last_closeout_check": "2026-03-22T23:39:26Z"
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -234,7 +234,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
@@ -266,7 +266,7 @@
     },
     "create_hub": {
       "requires": "framework_path must be set",
-      "note": "Hub creation is manual — copy templates/HUB/ to your desired hub path and configure hub-profile.json",
+      "note": "Hub creation is manual \u2014 copy templates/HUB/ to your desired hub path and configure hub-profile.json",
       "what_it_creates": [
         "~/wheelwright-hub/ (or user-chosen path)",
         "hub-profile.json (user preferences)",
