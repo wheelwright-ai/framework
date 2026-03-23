@@ -96,6 +96,9 @@ if [ "$NODE_TYPE" = "hub" ]; then
   ls -1 "${FRAMEWORK_PATH}/teachings/*.teaching" 2>/dev/null
 else
   # Spoke learns from framework + aggregated cross-spoke teachings
+  # Primary: teachings_repo/ (canonical path — requires hub-migration-v1 applied to hub)
+  ls -1 "${HUB_PATH}/teachings_repo/framework/current/*.teaching" 2>/dev/null
+  # Fallback: legacy framework/ symlink path (remove after all hubs migrated to teachings_repo/)
   ls -1 "${HUB_PATH}/framework/*.teaching" 2>/dev/null
   ls -1 "${HUB_PATH}/cross_spoke/current/*.teaching" 2>/dev/null
 fi
