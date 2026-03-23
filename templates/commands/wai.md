@@ -190,6 +190,60 @@ Check `WAI-Spoke/seed/ingest/` for `WAI_Track-*.jsonl` files — external sessio
 
 ---
 
+## Step 4.2: Fleet Health Aggregation (Hub Only)
+
+**Runs only when `node_type == "hub"`.**
+
+Aggregate spoke self-health reports delivered to the hub inbox at spoke closeout (Step 9d).
+
+**Scan for reports:**
+```bash
+ls WAI-Spoke/seed/ingest/spoke-health-*.json 2>/dev/null
+```
+
+**For each file found:**
+1. Read the JSON (schema: `id`, `spoke_id`, `session_id`, `timestamp`, `score`, `percent`, `status`, `failures[]`)
+2. Collect: spoke_id, score, percent, status, timestamp, failures
+
+**Aggregate and display:**
+
+Compute fleet status:
+- `healthy` — all spokes at 100%
+- `degraded` — any spoke 80–99%
+- `critical` — any spoke <80%
+
+Surface in briefing as:
+
+```
+### Fleet Health
+| Spoke | Score | Status | Failures | Reported |
+|---|---|---|---|---|
+| wheelwright | 16/16 (100%) | healthy | — | 2026-03-23T02:00Z |
+| pathfinder | 12/16 (75%) | critical | hc-q-03, hc-q-11 | 2026-03-23T01:45Z |
+
+Fleet status: DEGRADED — 1 of 2 spokes need attention
+```
+
+**If no reports found:** Continue silently — log "Fleet health: no spoke reports in inbox."
+
+**After display:**
+1. Append a `fleet-health` lug to `WAI-Spoke/WAI-Lugs.jsonl`:
+```json
+{
+  "id": "fleet-health-{YYYYMMDD-HHMM}",
+  "type": "fleet-health",
+  "timestamp": "ISO-8601",
+  "spoke_count": 2,
+  "fleet_status": "healthy | degraded | critical",
+  "spokes": [
+    {"spoke_id": "...", "score": "N/M", "percent": 100, "status": "healthy", "failures": []}
+  ]
+}
+```
+2. Move each processed file to `WAI-Spoke/seed/ingest/processed/`
+
+---
+
 ## Step 5: Display Briefing
 
 Show unified WAI Point briefing:
