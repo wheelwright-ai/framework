@@ -386,32 +386,66 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
             f.write(json.dumps(lug) + "\n")
 
     def _add_signal(self, signal: Dict[str, Any]):
-        """Add signal to WAI-Signals.jsonl with deduplication check."""
-        signals_file = self.spoke_dir / "WAI-Spoke" / "WAI-Signals.jsonl"
+        """
+        Add signal to WAI-Lugs.jsonl with deduplication check.
 
-        # Check for existing signal with same timestamp
-        if signals_file.exists():
-            existing_signals = self._load_signals()
-            for existing in existing_signals:
-                if existing.get("timestamp") == signal.get("timestamp"):
-                    return  # Skip duplicate
+        WAI-Signals.jsonl is RETIRED — signals are now high-impact lugs
+        (ty="signal") in WAI-Lugs.jsonl. Deduplication key is timestamp.
+        """
+        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
 
-        with open(signals_file, "a") as f:
-            f.write(json.dumps(signal) + "\n")
+        # Check for existing signal with same timestamp (destination-side check)
+        existing_signals = self._load_signals()
+        for existing in existing_signals:
+            if existing.get("ca", existing.get("timestamp", "")) == signal.get(
+                "timestamp", signal.get("ca", "")
+            ):
+                return  # Skip duplicate
+
+        # Convert legacy signal format to lug format, preserving legacy fields
+        # for backward-compatible test assertions (timestamp, signal)
+        timestamp = signal.get("timestamp", signal.get("ca", ""))
+        signal_text = signal.get("signal", signal.get("t", ""))
+        lug = {
+            "i": f"signal-{timestamp[:10].replace('-', '')}-{hash(signal_text) & 0xFFFF:04x}",
+            "ty": "signal",
+            "t": signal_text,
+            "s": "c",
+            "ca": timestamp,
+            "gb": signal.get("by", signal.get("gb", "test-agent")),
+            "impact": signal.get("impact", 8),
+            "description": signal_text,
+            "session_id": signal.get("session_id", ""),
+            "rationale": signal.get("rationale", ""),
+            # Legacy fields for backward-compatible test assertions
+            "timestamp": timestamp,
+            "signal": signal_text,
+        }
+
+        with open(lugs_file, "a") as f:
+            f.write(json.dumps(lug) + "\n")
 
     def _load_signals(self) -> List[Dict[str, Any]]:
-        """Load all signals from WAI-Signals.jsonl."""
-        signals_file = self.spoke_dir / "WAI-Spoke" / "WAI-Signals.jsonl"
-        if not signals_file.exists():
+        """
+        Load signal lugs from WAI-Lugs.jsonl.
+
+        WAI-Signals.jsonl is RETIRED as of WAI v2 migration. Signals are now
+        high-impact lugs (ty="signal" or impact >= 8) in WAI-Lugs.jsonl.
+        This loader reads signal-type lugs from the canonical location.
+        """
+        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
+        if not lugs_file.exists():
             return []
 
         signals = []
-        with open(signals_file) as f:
+        with open(lugs_file) as f:
             for line in f:
                 line = line.strip()
-                if line and not line.startswith("#"):
+                if line:
                     try:
-                        signals.append(json.loads(line))
+                        lug = json.loads(line)
+                        if lug.get("ty") == "signal":
+                            signals.append(lug)
                     except json.JSONDecodeError:
                         continue
         return signals
@@ -424,12 +458,103 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
         return list(teachings_dir.glob("*.teaching"))
 
     def _execute_closeout(self, closeout_time: str) -> Dict[str, Any]:
-        """Execute closeout operation (mock implementation)."""
-        # TODO: Implement actual closeout logic
+        """
+        Execute closeout signal extraction (mock implementation).
+
+        Simulates Step 2 of wai-closeout.md: scans WAI-Lugs.jsonl for entries
+        with impact >= 8, deduplicates using {created_at}+{title}+{impact} key
+        stored in _closeout_state.duplicate_detection_keys.signal_teachings,
+        and records new signals into WAI-Lugs.jsonl with ty="signal".
+
+        NOTE: File locking (.state.lock, .lugs.lock) is DEFERRED — not
+        implemented. Deduplication key is checked at destination instead.
+        """
+        state_file = self.spoke_dir / "WAI-Spoke" / "WAI-State.json"
+        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
+
+        with open(state_file) as f:
+            state = json.load(f)
+
+        closeout_state = state.get("_closeout_state", {})
+        dup_keys = closeout_state.get("duplicate_detection_keys", {})
+        existing_signal_keys = set(dup_keys.get("signal_teachings", []))
+
+        # Load current lugs
+        lugs = []
+        with open(lugs_file) as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        lugs.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+
+        # Extract signals from high-impact lugs (impact >= 8)
+        new_signal_keys = []
+        signals_extracted = 0
+        for lug in lugs:
+            impact = lug.get("impact")
+            if impact is None:
+                continue
+            try:
+                impact_int = int(impact)
+            except (ValueError, TypeError):
+                continue
+
+            if impact_int < 8:
+                continue
+
+            # Skip lugs that are already signal or session-summary type
+            if lug.get("ty") in ("signal", "session-summary", "autosave"):
+                continue
+
+            ca = lug.get("ca", "")
+            title = lug.get("t", "")
+            dedup_key = f"{ca}+{title}+{impact_int}"
+
+            if dedup_key in existing_signal_keys:
+                continue  # Already extracted — skip duplicate
+
+            # Create signal lug entry in WAI-Lugs.jsonl
+            signal_lug = {
+                "i": f"signal-{ca[:10].replace('-', '')}-{lug['i']}",
+                "ty": "signal",
+                "t": title,
+                "s": "c",
+                "ca": ca,
+                "gb": lug.get("gb", "test-agent"),
+                "impact": impact_int,
+                "description": lug.get("resolution", lug.get("t", "")),
+                "session_id": f"session-{closeout_time[:10].replace('-', '')}-closeout",
+                "rationale": "High-impact decision captured by closeout protocol",
+            }
+
+            with open(lugs_file, "a") as f:
+                f.write(json.dumps(signal_lug) + "\n")
+
+            new_signal_keys.append(dedup_key)
+            signals_extracted += 1
+
+        # Record new dedup keys in state
+        if "_closeout_state" not in state:
+            state["_closeout_state"] = {}
+        if "duplicate_detection_keys" not in state["_closeout_state"]:
+            state["_closeout_state"]["duplicate_detection_keys"] = {
+                "session_summaries": [],
+                "signal_teachings": [],
+            }
+        state["_closeout_state"]["duplicate_detection_keys"]["signal_teachings"].extend(
+            new_signal_keys
+        )
+
+        with open(state_file, "w") as f:
+            json.dump(state, f, indent=2)
+
         return {
             "success": True,
             "closeout_time": closeout_time,
-            "signals_extracted": 1 if self._load_signals() else 0,
+            "signals_extracted": signals_extracted,
         }
 
     def _execute_signal_teach(self, teach_time: str) -> Dict[str, Any]:

@@ -74,30 +74,29 @@ Persist session state with enough detail that a new agent/session can:
 
 **Purpose:** Ensure replay safety and handle concurrent closeout attempts.
 
+> **NOT IMPLEMENTED — DEFERRED:** File locking (`.closeout.lock`, `.state.lock`, `.lugs.lock`) and migration checkpoints (`.migration-checkpoint.json`) are NOT implemented. These are deferred to a future batch. Concurrency is handled by the ownership-based model below.
+
 **Session ID Generation:**
 1. Generate deterministic session ID: `session-$(date -u +%Y%m%d-%H%M%S)`
 2. Check `_closeout_state.duplicate_detection_keys.session_summaries` for existing session ID
 3. If duplicate session ID exists: append `-2`, `-3`, etc. until unique
 
-**Concurrency Protection:**
-1. **Critical Operations (File Locking):**
-   - WAI-State.json updates: Create `.state.lock` (30s timeout)
-   - WAI-Lugs.jsonl appends: Create `.lugs.lock` (30s timeout)
-   - If lock acquisition fails: Display clear message and exit gracefully
+**Concurrency Protection (Ownership-Based):**
+> File locking is deferred. Concurrency is handled by ownership:
+> 1. Before starting closeout, agent updates the active implementation lug to `in_progress` with `updated_at` timestamp
+> 2. Other agents seeing a lug in `in_progress` with activity within 4 hours MUST NOT take over
+> 3. If `in_progress` with no `updated_at` activity >4 hours: consider stale, ask user before proceeding
+> 4. This model is explicitly limited to human-in-loop AI collaboration — not designed for fully autonomous concurrent agents
 
-2. **Serialized Operations (Graceful Failure):**
-   - Teaching distribution: Check for `.teaching-distribution.lock`
-   - Git operations: Check for `.git/index.lock`
-   - If conflict detected: Show warning, provide retry suggestion
+**Serialized Operations (Graceful Failure):**
+- Teaching distribution: Check for `.teaching-distribution.lock`
+- Git operations: Check for `.git/index.lock`
+- If conflict detected: Show warning, provide retry suggestion
 
 **Duplicate Detection Preparation:**
 1. Load existing operations from `_closeout_state.completed_operations`
 2. Check for partial closeout state (interrupted previous attempt)
 3. If interrupted closeout detected: Warn and offer recovery options
-
-**Lock Cleanup:**
-- Set trap to remove locks on script exit (normal or error)
-- Locks older than 5 minutes automatically ignored (stale protection)
 
 ### 1. Lug Reconciliation
 
@@ -110,27 +109,25 @@ Persist session state with enough detail that a new agent/session can:
    - Record in `_closeout_state.completed_operations`: "session_summary_skipped"
    - Continue to Step 2
 
-**Concurrent-Safe Actions (with .lugs.lock):**
-1. Acquire `.lugs.lock` file (30s timeout)
-2. Read `WAI-Spoke/WAI-Lugs.jsonl`
-3. Find entries where `ty="autosave"` AND `reconciled=false` (or `reconciled` not set)
-4. Consolidate into ONE permanent `session-summary` lug capturing:
+**Actions:**
+1. Read `WAI-Spoke/WAI-Lugs.jsonl`
+2. Find entries where `ty="autosave"` AND `reconciled=false` (or `reconciled` not set)
+3. Consolidate into ONE permanent `session-summary` lug capturing:
    - Task context (what was the session about?)
    - Actions taken
    - Files touched
    - Key decisions made
    - **Incomplete work** (critical for session continuity)
    - Final state
-5. Mark all autosave lugs: set `reconciled: true`, `s: "c"`
-6. Append session-summary lug to `WAI-Spoke/WAI-Lugs.jsonl`
-7. Record session ID in `_closeout_state.duplicate_detection_keys.session_summaries[]`
-8. Release `.lugs.lock`
-9. Record completion in `_closeout_state.completed_operations`: "lug_reconciliation_complete"
+4. Mark all autosave lugs: set `reconciled: true`, `s: "c"`
+5. Append session-summary lug to `WAI-Spoke/WAI-Lugs.jsonl`
+6. Record session ID in `_closeout_state.duplicate_detection_keys.session_summaries[]`
+7. Record completion in `_closeout_state.completed_operations`: "lug_reconciliation_complete"
 
 **Session-summary lug format:**
 ```json
 {
-  "i": "session-YYYYMMDD-HHMMSS",
+  "i": "ss-{session_id}",
   "ty": "session-summary",
   "t": "Session N summary",
   "s": "c",
@@ -162,10 +159,9 @@ Persist session state with enough detail that a new agent/session can:
    - Display warning: "Skipping duplicate signal extraction, continuing..."
    - Continue with remaining signals
 
-**Concurrent-Safe Actions (with .lugs.lock):**
-1. Acquire `.lugs.lock` file (30s timeout)
-2. Review session for decisions or learnings with **impact >= 8**
-3. For each qualifying signal, create a high-impact lug entry in `WAI-Spoke/WAI-Lugs.jsonl`:
+**Actions:**
+1. Review session for decisions or learnings with **impact >= 8**
+2. For each qualifying signal, create a high-impact lug entry in `WAI-Spoke/WAI-Lugs.jsonl`:
 
 ```json
 {
@@ -195,9 +191,8 @@ Persist session state with enough detail that a new agent/session can:
 **Note:** This step absorbs the `wai-signal-advisor.md` behavior — closeout is where signals get permanently captured.
 
 **Completion:**
-4. Record signal deduplication keys in `_closeout_state.duplicate_detection_keys.signal_teachings[]`
-5. Release `.lugs.lock`
-6. Record completion in `_closeout_state.completed_operations`: "signal_extraction_complete"
+3. Record signal deduplication keys in `_closeout_state.duplicate_detection_keys.signal_teachings[]`
+4. Record completion in `_closeout_state.completed_operations`: "signal_extraction_complete"
 
 ### 3. Incomplete Work Capture
 
@@ -240,10 +235,9 @@ This versions the *session state*, not a release.
    - Display warning: "Skipping state update, appears already completed..."
    - Continue to Step 6
 
-**Concurrent-Safe Actions (with .state.lock):**
-1. Acquire `.state.lock` file (30s timeout)
-2. Read current WAI-State.json for compare-and-swap validation
-3. Update session metadata in `WAI-State.json`:
+**Actions:**
+1. Read current WAI-State.json for compare-and-swap validation
+2. Update session metadata in `WAI-State.json`:
 
 - `_session_state.session_count` += 1
 - `_session_state.last_closeout` = current UTC timestamp (ISO-8601)
@@ -262,9 +256,8 @@ This versions the *session state*, not a release.
 - If framework version changed: record in `_migration_state.framework_migrations_applied[]`
 
 **Completion:**
-4. Write updated WAI-State.json atomically
-5. Release `.state.lock`
-6. Record completion in `_closeout_state.completed_operations`: "state_update_complete"
+3. Write updated WAI-State.json
+4. Record completion in `_closeout_state.completed_operations`: "state_update_complete"
 
 ### 5b. Adoption Marker Sync
 
@@ -478,6 +471,42 @@ For each lug in `WAI-Lugs.jsonl` where `impact > 7` and `status != "archived"`:
 
 If no qualifying lugs found: log "Hub bulletin: no lugs with impact > 7 to publish"
 
+### 9d. Spoke Health Report (Auto)
+
+**Send a self-health snapshot to the hub registry at every closeout.**
+
+Read `hub_path` from `WAI-State.json` at `wheel.hub_path`.
+
+**If hub_path is null or hub not accessible:** Skip silently.
+
+**If hub is accessible:**
+
+1. Load `templates/health-check.jsonl` from the framework path. If not found, skip and log.
+2. Run each check from the questionnaire (shell command, capture stdout).
+3. Score: count PASS vs total checks. Compute percent.
+4. Build the health lug:
+```json
+{
+  "id": "spoke-health-{spoke_id}-{session_id}",
+  "type": "spoke-health",
+  "spoke_id": "{wheel.name}",
+  "session_id": "{session_id}",
+  "timestamp": "{ISO-8601}",
+  "score": "{passed}/{total}",
+  "percent": 95,
+  "failures": [
+    {"check_id": "hc-q-...", "title": "...", "fail_means": "..."}
+  ],
+  "status": "healthy | degraded | critical"
+}
+```
+   Status thresholds: healthy = 100%, degraded = 80-99%, critical = <80%
+
+5. Write the lug to `{hub_path}/WAI-Spoke/seed/ingest/spoke-health-{spoke_id}-{session_id}.json`
+6. Log: "Spoke health: {score} ({status}) — sent to hub inbox"
+
+**Purpose:** Hub aggregates these at wakeup to build a fleet health snapshot. Spoke does not need to wait for hub response.
+
 ### 10. Summary Generation
 
 **Create and present session summary:**
@@ -544,14 +573,11 @@ git push origin main
 📋 All operations completed successfully with replay safety verified
 ```
 
-**Cleanup Lock Files:**
-1. Remove any remaining lock files (.state.lock, .lugs.lock, .teaching-distribution.lock)
-2. Clear `_closeout_state.current_session_id`
-3. Record final `_closeout_state.last_closeout_check` timestamp
+**Cleanup:**
+1. Clear `_closeout_state.current_session_id`
+2. Record final `_closeout_state.last_closeout_check` timestamp
 
-**Trap Cleanup (Automatic):**
-- All lock files are automatically removed on script exit (normal or error)
-- Stale lock files (>5 minutes) are automatically ignored
+> **NOT IMPLEMENTED — DEFERRED:** File lock cleanup (.state.lock, .lugs.lock, .teaching-distribution.lock) is deferred. Ownership-based concurrency (Step 0) is used instead.
 
 ---
 
@@ -573,13 +599,13 @@ git push origin main
 - [ ] Changes pushed to origin/main
 
 **Idempotency and Concurrency:**
-- [ ] Session ID generated deterministically and uniquely
-- [ ] Duplicate operations detected and handled gracefully (warn-continue)
-- [ ] File locks acquired successfully for critical operations (WAI-State.json, WAI-Lugs.jsonl)
+- [ ] Session ID generated deterministically using `ss-{session_id}` format
+- [ ] Duplicate operations detected via `_closeout_state.duplicate_detection_keys` and skipped gracefully (warn-continue)
 - [ ] Concurrent operations handled gracefully (teaching distribution, git operations)
-- [ ] All lock files cleaned up properly
 - [ ] Idempotency summary displayed with operation status
 - [ ] Replay safety verified - running closeout twice produces consistent results
+
+> **NOT IMPLEMENTED — DEFERRED:** File locking (.closeout.lock, .state.lock, .lugs.lock) and migration checkpoints (.migration-checkpoint.json) are not part of this implementation. Concurrency is handled by the ownership-based model in Step 0.
 
 ---
 
