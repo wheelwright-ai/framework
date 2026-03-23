@@ -276,10 +276,58 @@ fi
    [N] linting errors found
    
    Fix linting errors and run shipit again.
-   Override: Set SHIPIT_SKIP_LINT=1 to bypass (NOT RECOMMENDED)
+    Override: Set SHIPIT_SKIP_LINT=1 to bypass (NOT RECOMMENDED)
 ```
 
-#### 5c. Type Checking (OPTIONAL)
+#### 5c. Idempotency Testing (REQUIRED for Wheelwright projects)
+
+**Purpose:** Verify closeout operations are replay-safe and concurrent-safe.
+
+Detect and run idempotency test suite:
+
+```bash
+# Check if idempotency tests exist
+if [ -d "tests/idempotency" ] && [ -f "tests/idempotency/test_runner.py" ]; then
+    echo "🔄 Running idempotency tests..."
+    python tests/idempotency/test_runner.py --category=all --timeout=300
+    IDEMPOTENCY_EXIT_CODE=$?
+else
+    echo "ℹ️  No idempotency tests found - SKIP (Wheelwright projects should have these)"
+    IDEMPOTENCY_EXIT_CODE=0
+fi
+```
+
+**Exit codes:**
+- `0` = All idempotency tests passed → CONTINUE
+- `non-zero` = Idempotency tests failed → **ABORT SHIPIT**
+
+**Test Categories Verified:**
+- **Closeout Replay (7 tests):** Second closeout detects completion and skips operations
+- **Concurrent Closeout (8 tests):** File locking prevents corruption during concurrent operations
+- **Signal Deduplication (9 tests):** Duplicate signal publication prevention
+- **Migration Resume (10 tests):** Checkpoint-based resume from interruption
+
+**On failure:**
+```
+❌ QUALITY GATE FAILED: Idempotency
+   [X] of 34 idempotency tests failed
+   
+   Failed categories:
+   - Closeout Replay: [details]
+   - Concurrent Safety: [details]
+   
+   ⛔ SHIPIT ABORTED
+   Idempotency failure indicates closeout operations are not replay-safe.
+   This must be fixed before shipping to prevent data corruption.
+```
+
+**Override (NOT RECOMMENDED):**
+```bash
+# Emergency override (logs warning to session)
+export SHIPIT_SKIP_IDEMPOTENCY=1
+```
+
+#### 5d. Type Checking (OPTIONAL)
 
 If type checker is configured, run it:
 
@@ -300,6 +348,7 @@ After all gates:
 ✅ QUALITY GATES PASSED
    Tests:        ✓ [X] passed / [Y] total
    Linting:      ✓ Clean
+   Idempotency:  ✓ 34/34 tests passed (replay-safe verified)
    Type Check:   ⚠️ [N] warnings (non-blocking)
    
    → Safe to proceed with shipit
@@ -314,7 +363,7 @@ export SHIPIT_SKIP_LINT=1       # Skip linting
 export SHIPIT_FORCE=1           # Skip ALL quality gates
 ```
 
-**⚠️ WARNING:** Overrides should be logged to WAI-Signals.jsonl as technical debt.
+**⚠️ WARNING:** Overrides should be logged to WAI-Lugs.jsonl as a signal lug (impact >= 8) for technical debt tracking.
 
 ---
 
@@ -324,28 +373,47 @@ export SHIPIT_FORCE=1           # Skip ALL quality gates
 
 #### Benchmark Detection and Execution
 
+**Wheelwright framework benchmark (preferred):**
+
 ```bash
-# Auto-detect benchmarks
-if [ -f "benchmark.py" ]; then
-    python3 benchmark.py --profile=all
-elif [ -d "benchmarks/" ] && [ -f "benchmarks/pytest" ]; then
-    pytest benchmarks/ -v
-elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
-    npm run benchmark
+# Run Wheelwright WEI benchmark if runner exists
+if [ -f "benchmarks/runner/benchmark_runner.py" ]; then
+    echo "Running Wheelwright WEI benchmark (small + medium tiers)..."
+    python3 benchmarks/runner/benchmark_runner.py small --persist
+    python3 benchmarks/runner/benchmark_runner.py medium --persist
+    # Note: large tier generates 400MB reference files — skip in shipit unless explicitly requested
+    echo "WEI scores appended to benchmarks/benchmark-results.jsonl"
 else
-    echo "ℹ️ No benchmarks detected - SKIP"
+    # Fallback: detect other benchmark runners
+    if [ -f "benchmark.py" ]; then
+        python3 benchmark.py --profile=all
+    elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
+        npm run benchmark
+    else
+        echo "No benchmarks detected - SKIP"
+    fi
 fi
 ```
 
 #### Regression Analysis
 
-Compare against baseline:
+Compare latest WEI score against prior run:
 
 ```bash
-# If benchmarks/baseline.json exists, compare
-if [ -f "benchmarks/baseline.json" ]; then
-    # Calculate % change for each metric
-    # Flag regressions > 10% degradation
+# If benchmark-results.jsonl exists, compare last two entries
+if [ -f "benchmarks/benchmark-results.jsonl" ]; then
+    python3 -c "
+import json
+lines = [l for l in open('benchmarks/benchmark-results.jsonl') if l.strip()]
+if len(lines) >= 2:
+    prev = json.loads(lines[-2])
+    curr = json.loads(lines[-1])
+    delta = curr['wei'] - prev['wei']
+    flag = 'REGRESSION' if delta < -2 else 'OK'
+    print(f'WEI: {prev[\"wei\"]:.1f} -> {curr[\"wei\"]:.1f} ({delta:+.1f}) [{flag}]')
+else:
+    print('First run — no baseline to compare')
+"
 fi
 ```
 
@@ -377,7 +445,7 @@ fi
 ```
 
 - **Option 1:** Abort shipit, user fixes regression
-- **Option 2:** Continue but log regression to WAI-Signals.jsonl (impact: 7+)
+- **Option 2:** Continue but log regression to WAI-Lugs.jsonl as a signal lug (impact: 7+)
 - **Option 3:** Update baseline if regression is intentional tradeoff
 
 **Benchmark Results Storage:**
@@ -502,29 +570,25 @@ Release Tag:
 
 ### 10. Teach All Spokes (Auto)
 
-**After successful closeout, distribute updates to all spokes.**
+**After successful closeout, updates are distributed automatically.**
 
 This step runs automatically when:
 - Running from framework or hub node
-- `lug-wai-paths` provides hub_path and framework_path
-- Closeout completed successfully
+- Closeout completed successfully (Step 9b generates teaching files)
 
 **Teach Procedure:**
 ```
-1. Read hub registry for active spokes
-2. For each spoke with WAI-Spoke/:
-   - Generate upgrade-adoption-plan.json
-   - Distribute template files to seed/ingest/
-   - Update registry with taught_at timestamp
-3. Report results
+1. `wai-closeout` Step 9b generates `.teaching` files
+2. Files are published to the canonical hub layout (`teachings_repo/`)
+3. Spokes auto-discover and pull these updates on their next wakeup
+4. No separate manual distribution or `upgrade-adoption-plan.json` generation is required.
 ```
 
 **Report:**
 ```
 Teach Distribution:
-- Spokes taught: [N]/[M]
-- Files distributed: [N] per spoke
-- Registry updated: ✓
+- Hub teachings generated: ✓
+- Available for spokes to pull: ✓
 ```
 
 **If teach fails for a spoke:** Log warning, continue with others. Report failures at end.
@@ -585,9 +649,8 @@ Teach Distribution:
 - Release tag: v[X.Y.Z] pushed ✓  *(or "n/a — progress save")*
 
 ### Teach (auto)
-- Spokes: [N]/[M] taught
-- Files: [N] per spoke
-- Registry: updated
+- Hub teachings generated: ✓
+- Available for spokes to pull: ✓
 
 ## Status: SHIPPED ✓
 ```

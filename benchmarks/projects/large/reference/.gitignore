@@ -1,0 +1,3 @@
+# Reference files are generated at runtime (never committed).
+# Run: python3 benchmarks/runner/generate_reference_files.py benchmarks/projects/large/reference 400
+*.md

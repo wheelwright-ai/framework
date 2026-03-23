@@ -1,0 +1,1 @@
+"""Notifications — queue_consumer."""

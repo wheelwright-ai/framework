@@ -1,0 +1,1 @@
+"""Search — embedding_service."""

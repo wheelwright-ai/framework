@@ -1,0 +1,15 @@
+{
+  "wheel": {
+    "version": "2.0.0",
+    "node_type": "spoke",
+    "name": "Large Platform Benchmark",
+    "status": "active"
+  },
+  "_project_foundation": {
+    "completed": true,
+    "identity": {
+      "name": "Multi-Service Platform",
+      "one_liner": "Benchmark project simulating a large distributed platform with 8 services"
+    }
+  }
+}

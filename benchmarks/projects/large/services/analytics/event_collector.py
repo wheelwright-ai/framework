@@ -1,0 +1,1 @@
+"""Analytics — event_collector."""

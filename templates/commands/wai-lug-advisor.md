@@ -629,9 +629,25 @@ If any answer is "yes or maybe" → add more clarity.
 
 ## Priority Flags
 
-- `priority: "before_next_epic"` — Must complete before starting any new epic
-- `priority: "session_focus"` — Current session's primary epic
-- `priority: "high"` / `"medium"` / `"low"` — Standard priority
+Standard scale (use these for all new lugs):
+
+| Value | Meaning |
+|-------|---------|
+| `"P1"` | High — urgent, blocking, or critical path |
+| `"P2"` | Medium — important, scheduled work |
+| `"P3"` | Low — backlog, non-blocking |
+| `"P4"` | Trivial — nice-to-have, no deadline |
+
+**Migration:** Existing lugs with `"high"` or `"critical"` = P1; `"medium"` = P2; `"low"` = P3. No bulk rewrite required — old values remain readable. New lugs MUST use P1–P4.
+
+**Workflow qualifiers** (scheduling context, not priority — store in `workflow_flag`, not `priority`):
+
+| Value | Meaning |
+|-------|---------|
+| `"before_next_epic"` | Must clear before any new epic starts |
+| `"session_focus"` | Primary focus of the current session |
+
+If found in `priority` on an existing lug, treat as P1-equivalent.
 
 ---
 

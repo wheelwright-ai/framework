@@ -373,28 +373,47 @@ export SHIPIT_FORCE=1           # Skip ALL quality gates
 
 #### Benchmark Detection and Execution
 
+**Wheelwright framework benchmark (preferred):**
+
 ```bash
-# Auto-detect benchmarks
-if [ -f "benchmark.py" ]; then
-    python3 benchmark.py --profile=all
-elif [ -d "benchmarks/" ] && [ -f "benchmarks/pytest" ]; then
-    pytest benchmarks/ -v
-elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
-    npm run benchmark
+# Run Wheelwright WEI benchmark if runner exists
+if [ -f "benchmarks/runner/benchmark_runner.py" ]; then
+    echo "Running Wheelwright WEI benchmark (small + medium tiers)..."
+    python3 benchmarks/runner/benchmark_runner.py small --persist
+    python3 benchmarks/runner/benchmark_runner.py medium --persist
+    # Note: large tier generates 400MB reference files — skip in shipit unless explicitly requested
+    echo "WEI scores appended to benchmarks/benchmark-results.jsonl"
 else
-    echo "ℹ️ No benchmarks detected - SKIP"
+    # Fallback: detect other benchmark runners
+    if [ -f "benchmark.py" ]; then
+        python3 benchmark.py --profile=all
+    elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
+        npm run benchmark
+    else
+        echo "No benchmarks detected - SKIP"
+    fi
 fi
 ```
 
 #### Regression Analysis
 
-Compare against baseline:
+Compare latest WEI score against prior run:
 
 ```bash
-# If benchmarks/baseline.json exists, compare
-if [ -f "benchmarks/baseline.json" ]; then
-    # Calculate % change for each metric
-    # Flag regressions > 10% degradation
+# If benchmark-results.jsonl exists, compare last two entries
+if [ -f "benchmarks/benchmark-results.jsonl" ]; then
+    python3 -c "
+import json
+lines = [l for l in open('benchmarks/benchmark-results.jsonl') if l.strip()]
+if len(lines) >= 2:
+    prev = json.loads(lines[-2])
+    curr = json.loads(lines[-1])
+    delta = curr['wei'] - prev['wei']
+    flag = 'REGRESSION' if delta < -2 else 'OK'
+    print(f'WEI: {prev[\"wei\"]:.1f} -> {curr[\"wei\"]:.1f} ({delta:+.1f}) [{flag}]')
+else:
+    print('First run — no baseline to compare')
+"
 fi
 ```
 

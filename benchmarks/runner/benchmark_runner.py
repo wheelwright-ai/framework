@@ -312,13 +312,68 @@ def run_benchmark(tier: str, project_dir: Path, task_file: Path, output_dir: Pat
 
     return results
 
+def ensure_reference_files(project_dir: Path, tier: str):
+    """Generate reference files for large tier if not present (never committed)."""
+    ref_dir = project_dir / 'reference'
+    if not ref_dir.exists():
+        return
+    existing = list(ref_dir.glob('*.md'))
+    if existing:
+        return  # Already generated
+
+    size_map = {'small': 20, 'medium': 100, 'large': 400}
+    size_mb = size_map.get(tier, 20)
+    print(f"  Generating {size_mb}MB reference files for {tier} tier...")
+
+    # Import inline to avoid circular dependency
+    import importlib.util
+    gen_path = Path(__file__).parent / 'generate_reference_files.py'
+    spec = importlib.util.spec_from_file_location('gen_ref', gen_path)
+    gen_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(gen_mod)
+    gen_mod.generate_fake_docs(ref_dir, size_mb)
+
+
+def persist_results(benchmark_dir: Path, tier: str, results: dict, run_id: str):
+    """Append WEI results to benchmark-results.jsonl for longitudinal tracking."""
+    from calculate_scores import BenchmarkScorer
+
+    scorer = BenchmarkScorer(results['baseline'], results['wheelwright'])
+    scores = scorer.calculate_all_scores()
+
+    entry = {
+        'run_id': run_id,
+        'ts': datetime.utcnow().isoformat() + 'Z',
+        'tier': tier,
+        'wei': scores['wei']['wheelwright'],
+        'wei_baseline': scores['wei']['baseline'],
+        'wei_improvement': scores['wei']['improvement'],
+        'token_efficiency_factor': scores['token_efficiency']['improvement_factor'],
+        'context_critical_test': scores['context_efficiency']['critical_test'],
+        'baseline_tokens': results['baseline']['tokens_used'],
+        'wheelwright_tokens': results['wheelwright']['tokens_used'],
+        'baseline_files': results['baseline']['files_loaded'],
+        'wheelwright_files': results['wheelwright']['files_loaded'],
+    }
+
+    results_file = benchmark_dir / 'benchmark-results.jsonl'
+    with open(results_file, 'a') as f:
+        f.write(json.dumps(entry) + '\n')
+
+    print(f"  WEI: baseline={entry['wei_baseline']} → wheelwright={entry['wei']:.1f} (+{entry['wei_improvement']:.1f})")
+    print(f"  Token efficiency: {entry['token_efficiency_factor']:.0f}x | Critical test: {entry['context_critical_test']}")
+
+
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: benchmark_runner.py <tier>")
+    if len(sys.argv) not in (2, 3):
+        print("Usage: benchmark_runner.py <tier> [--persist]")
         print("  tier: small, medium, or large")
+        print("  --persist: append WEI score to benchmark-results.jsonl")
         sys.exit(1)
 
     tier = sys.argv[1]
+    persist = len(sys.argv) == 3 and sys.argv[2] == '--persist'
+
     if tier not in ['small', 'medium', 'large']:
         print(f"Invalid tier: {tier}")
         sys.exit(1)
@@ -333,7 +388,11 @@ if __name__ == "__main__":
         print(f"Error: Project directory not found: {project_dir}")
         sys.exit(1)
 
+    # Auto-generate reference files for large tier (never committed)
+    ensure_reference_files(project_dir, tier)
+
     # Run benchmark
+    run_id = str(uuid.uuid4())[:8]
     results = run_benchmark(tier, project_dir, task_file, output_dir)
 
     # Save summary
@@ -342,3 +401,10 @@ if __name__ == "__main__":
         json.dump(results, f, indent=2)
 
     print(f"✅ Results saved to {summary_file}")
+
+    # Persist WEI score
+    if persist:
+        print("\n📊 Persisting WEI score to benchmark-results.jsonl...")
+        sys.path.insert(0, str(Path(__file__).parent))
+        persist_results(benchmark_dir, tier, results, run_id)
+        print(f"✅ Score appended to benchmark-results.jsonl")
