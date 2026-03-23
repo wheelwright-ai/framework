@@ -687,6 +687,59 @@ If any answer is "yes or maybe" → add more clarity.
 
 ---
 
+## Ozi Gardening Lug Types
+
+Ozi automation history lives in these three lug types in WAI-Lugs.jsonl — **not** in WAI-State.json.
+
+### ozi-controller
+One Ozi automation pass or bounded task batch.
+
+| Field | Value |
+|-------|-------|
+| `id` | `ozi-ctrl-{YYYYMMDD-HHMM}-{task-slug}` |
+| `type` | `"ozi-controller"` |
+| `title` | What Ozi is orchestrating |
+| `session_id` | Session that created this controller |
+| `target_lug_id` | Implementation or task lug being worked |
+| `status` | `active \| completed \| failed` |
+| `work_lug_ids` | Child ozi-work lug ids |
+| `test_lug_ids` | Paired ozi-test lug ids |
+| `created_at` | ISO-8601 |
+| `completed_at` | ISO-8601 or null |
+
+### ozi-work
+One discrete unit of work dispatched by an Ozi controller.
+
+| Field | Value |
+|-------|-------|
+| `id` | `ozi-work-{YYYYMMDD-HHMM}-{task-slug}` |
+| `type` | `"ozi-work"` |
+| `controller_id` | Parent ozi-controller lug id |
+| `task` | Concise description of what was done |
+| `target_file` | File or resource modified |
+| `status` | `completed \| failed \| skipped` |
+| `result` | Short outcome note |
+| `created_at` | ISO-8601 |
+| `completed_at` | ISO-8601 or null |
+
+### ozi-test
+Paired verification record. Required before any ozi-work lug can move to `ready_for_recheck`.
+
+| Field | Value |
+|-------|-------|
+| `id` | `ozi-test-{YYYYMMDD-HHMM}-{task-slug}` |
+| `type` | `"ozi-test"` |
+| `work_lug_id` | Parent ozi-work lug id |
+| `test_command` | Runnable shell or Python verification command |
+| `expected` | Expected output or behaviour |
+| `actual` | Observed result |
+| `result` | `pass \| fail \| skip` |
+| `tested_at` | ISO-8601 |
+
+**Rule:** Every ozi-work lug must have a paired ozi-test lug. WAI-State.json must not accumulate automation history keys.
+
+---
+
 ## Related Skills
 
 - `/wai-closeout` — Reconciles autosaves, creates session-summary
