@@ -151,6 +151,8 @@ Persist session state with enough detail that a new agent/session can:
 
 ### 2. Signal Extraction
 
+# Signal storage: see wai-lug-advisor.md — Canonical Storage
+
 **Purpose:** Capture high-impact decisions for cross-session learning.
 
 **Idempotency Check:**

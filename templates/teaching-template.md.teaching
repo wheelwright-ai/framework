@@ -1,0 +1,124 @@
+# Teaching: {title}
+
+**Type:** {Protocol Enhancement | Protocol Correction | Bug Fix | Migration Signal | Principle + Signal}
+**Version:** {major}.{minor}.{patch}
+**Created:** {YYYY-MM-DD}
+**Safe to Auto-Adopt:** {true | false}
+**Affects:** {list of affected components}
+**Supersedes:** {prior teaching id or "nothing"}
+
+---
+
+## Prerequisites
+
+{Choose one:}
+
+**Standalone (no dependencies):**
+None — this teaching is standalone and has no dependencies.
+
+**With dependencies:**
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| {teaching-id} applied | `{shell check} && echo PASS \|\| echo FAIL` | {what breaks without it} |
+
+**Check before applying (if dependencies exist):**
+```bash
+{runnable command returning PASS/FAIL}
+```
+
+## Batch Sequence
+
+**Batch:** {batch-name or "standalone"}
+**Apply order:** {N of M or "1 of 1"}
+**Depends on:** {teaching-id (T-NN) or "none"}
+**Required before:** {teaching-id (T-NN) or "none"}
+**Parallel safe:** {yes | no — reason}
+**Full batch order:** {T-01 → T-02 → ... or "standalone"}
+
+---
+
+## What This Teaching Provides
+
+{High-level summary of what this teaching adds, fixes, or changes. 2-4 sentences.}
+
+---
+
+## Why This Matters
+
+{Explanation of the problem this solves and the impact on spoke behavior without this fix.}
+
+---
+
+## What Changed in {file path}
+
+{Specific description of what was added, removed, or modified in the source file(s).}
+
+{Include before/after code blocks if helpful.}
+
+---
+
+## Resolving {framework_path}
+
+`{framework_path}` is the root of the Wheelwright framework repository. Resolve from `WAI-State.json` at `wheel.framework_path`, or ask the user.
+
+```bash
+FRAMEWORK_PATH=$(python3 -c "import json; d=json.load(open('WAI-Spoke/WAI-State.json')); print(d['wheel'].get('framework_path') or '')")
+echo "Framework path: $FRAMEWORK_PATH"
+# If empty, ask the user or check ~/projects/wheelwright/framework
+```
+
+---
+
+## How to Apply This Teaching
+
+### Step 1 — {First action}
+
+{Instructions and commands for this step.}
+
+### Step {N} — Move teaching to processed
+
+```bash
+mkdir -p WAI-Spoke/seed/ingest/processed/
+mv WAI-Spoke/seed/ingest/{filename}.md.teaching WAI-Spoke/seed/ingest/processed/
+```
+
+---
+
+## Behavioral Implications
+
+{What changes in agent behavior after this teaching is applied. Be specific about what agents will do differently.}
+
+---
+
+## Verification
+
+After applying:
+
+```bash
+# {What to check — use PASS/FAIL output pattern}
+{check command} && echo "PASS — {what passed}" || echo "FAIL — {what failed}"
+```
+
+---
+
+## Backward Compatibility
+
+- {List what existing data, behavior, and conventions are preserved}
+- {Note any dual-read compatibility if applicable}
+
+---
+
+{If this teaching embeds a signal lug, include it here:}
+## Embedded Signal Lug
+
+Append to `WAI-Lugs.jsonl` (idempotent — skip if id already present):
+
+```json
+{"id": "{signal-id}", "type": "signal", "title": "{title}", "description": "{description}", "impact": {8-10}, "created_by": "{agent}", "created_at": "{ISO-8601}", "rationale": "{why it matters}"}
+```
+
+---
+
+**Teaching Package:** {package-id}
+**Safe to Auto-Adopt:** {Yes | No — reason}
+**Impact:** {description of impact scope and severity}

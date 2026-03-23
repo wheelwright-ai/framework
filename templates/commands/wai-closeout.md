@@ -398,6 +398,31 @@ Any lug intended for another agent (including future-you in a new session) must 
    - `safe_to_auto_adopt` with reasoning
    - Source files and originating lug(s), when available
    - Superseded family/version information, when applicable
+   - `## Prerequisites` block: runnable shell commands returning PASS/FAIL for each dependency; use "None" if standalone
+   - `## Batch Sequence` block: batch name, apply order (N of M), depends-on, required-before, parallel-safe flag, full batch order
+
+   **Teaching file format — required blocks immediately after the header:**
+
+   ```markdown
+   ## Prerequisites
+
+   None — this teaching is standalone and has no dependencies.
+   {OR}
+   | Requirement | Verify with | Blocks |
+   |---|---|---|
+   | {teaching-id} applied | `{shell check} && echo PASS || echo FAIL` | {what fails without it} |
+
+   ## Batch Sequence
+
+   **Batch:** {batch-name or "standalone"}
+   **Apply order:** {N of M or "1 of 1"}
+   **Depends on:** {teaching-id (T-NN) or "none"}
+   **Required before:** {teaching-id (T-NN) or "none"}
+   **Parallel safe:** {yes | no — reason}
+   **Full batch order:** {T-01 → T-02 → ... or "standalone"}
+   ```
+
+   Placement: immediately after the header block (after the first `---`), before `## What This Teaching Provides`.
 7. Signal teachings remain first-class teachings. For each qualifying high-impact lug, embed the actual lug JSON verbatim inside the generated teaching. Receiving spokes must remain idempotent: if a lug with the same `id` or same semantic identity already exists locally, skip append.
 8. Cleanup active teaching state before publish:
    - Scan for existing teachings in the same family
