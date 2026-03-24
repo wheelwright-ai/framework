@@ -464,12 +464,12 @@ Read `hub_path` from `WAI-State.json` at `wheel.hub_path`.
 
 **If hub is accessible:**
 
-For each lug in `WAI-Lugs.jsonl` where `impact > 7` and `status != "archived"`:
+For each lug in `WAI-Lugs.jsonl` where `type == "signal"` AND `impact > 7` AND `status != "archived"`:
 1. Check if `{hub_path}/WAI-Hub/Signals/incoming/{lug-id}.json` already exists
 2. If not: write the full lug JSON as `{hub_path}/WAI-Hub/Signals/incoming/{lug-id}.json`
 3. Log: "Published to hub bulletin: {lug-id} (impact={impact})"
 
-If no qualifying lugs found: log "Hub bulletin: no lugs with impact > 7 to publish"
+If no qualifying lugs found: log "Hub bulletin: no signal lugs with impact > 7 to publish"
 
 ### 9d. Spoke Health Report (Auto)
 

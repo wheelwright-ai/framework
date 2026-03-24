@@ -1,5 +1,18 @@
 
 
+## [2.0.56] - 2026-03-24
+
+### Fixed
+- `wai-closeout.md` Step 9c: hub bulletin now filters to `type == "signal"` only (was publishing all high-impact lugs — epics, tasks, implementations — causing 155-file accumulation since February)
+
+### Added
+- `refactor-mail-routing-language-v1` lug (P4) — deferred: inbox→incoming/outgoing language standardization
+- `hub/teachings_repo/framework/current/skill-wai-closeout-step9c-fix-v1.md.teaching` — distributes the Step 9c fix to connected spokes
+
+### Maintenance
+- Cleared 155 stale non-signal files from `hub/WAI-Hub/Signals/incoming/` to `processed/`
+- Adopted 4 hub teachings (fleet-health already applied, 2 signal duplicates skipped, 7 signals from high-impact pack ingested)
+
 ## [2.0.50] - 2026-03-19
 
 ### Recorded
