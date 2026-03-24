@@ -175,6 +175,7 @@ ls WAI-Spoke/WAI-Signals.jsonl 2>/dev/null && echo "FAIL — still exists, retir
 grep -q "Canonical Storage" WAI-Spoke/commands/wai-lug-advisor.md && echo "PASS — section present" || echo "FAIL — section missing"
 
 # 3. Confirm no stale USAGE of WAI-Signals.jsonl (retirement notices are fine)
+# Check for old routing instructions like "record in WAI-Signals.jsonl"
 grep -q "record in WAI-Signals\|write to WAI-Signals\|append to WAI-Signals\|WAI-Signals.jsonl |" WAI-Spoke/commands/wai-lug-advisor.md && echo "FAIL — stale usage instruction found" || echo "PASS — clean (retirement notice is acceptable)"
 ```
 

@@ -1,0 +1,69 @@
+# Teaching: Fix closeout Step 9c — type filter for hub bulletin
+
+**Type:** skill
+**safe_to_auto_adopt:** true
+
+---
+
+## Prerequisites
+
+None — standalone fix.
+
+## Batch Sequence
+
+**Batch:** standalone
+**Apply order:** 1 of 1
+**Depends on:** none
+**Required before:** none
+**Parallel safe:** yes
+**Full batch order:** standalone
+
+---
+
+## What This Teaching Provides
+
+Fixes a bug in closeout Step 9c where ALL high-impact lugs (epics, tasks, implementations, session summaries) were published to the hub bulletin. Only `type == "signal"` lugs should be published.
+
+**Root cause:** Filter was `impact > 7` with no type restriction. Result: 155 non-signal files accumulated in `WAI-Hub/Signals/incoming/` since February.
+
+---
+
+## How to Apply
+
+In `WAI-Spoke/commands/wai-closeout.md` (and `templates/commands/wai-closeout.md` if on framework spoke), find Step 9c and update the filter line:
+
+**Find:**
+```
+For each lug in `WAI-Lugs.jsonl` where `impact > 7` and `status != "archived"`:
+```
+
+**Replace with:**
+```
+For each lug in `WAI-Lugs.jsonl` where `type == "signal"` AND `impact > 7` AND `status != "archived"`:
+```
+
+Also update the "none found" log message:
+
+**Find:**
+```
+If no qualifying lugs found: log "Hub bulletin: no lugs with impact > 7 to publish"
+```
+
+**Replace with:**
+```
+If no qualifying lugs found: log "Hub bulletin: no signal lugs with impact > 7 to publish"
+```
+
+---
+
+## Verification
+
+```bash
+grep -q 'type == "signal"' WAI-Spoke/commands/wai-closeout.md && echo PASS || echo FAIL
+```
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.
