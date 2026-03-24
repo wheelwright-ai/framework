@@ -28,7 +28,7 @@ Wheelwright builds AI wheels that remember everything. Instead of losing context
 
 **Start here:**
 1. Read `CLAUDE.md` or `GEMINI.md` (your integration file)
-2. Load skill registry: `WAI-Spoke/WAI-Skills.jsonl`
+2. Load skill registry: `WAI-Spoke/skills/WAI-Skills.jsonl`
 3. Reference skills below as needed
 
 **Core files:**
@@ -175,10 +175,10 @@ Framework self-improvement protocol - propose and implement WAI enhancements.
 
 ## Skill Registry
 
-All skills are registered in `WAI-Spoke/WAI-Skills.jsonl` with metadata:
+All skills are registered in `WAI-Spoke/skills/WAI-Skills.jsonl` with metadata:
 
 ```bash
-cat WAI-Spoke/WAI-Skills.jsonl
+cat WAI-Spoke/skills/WAI-Skills.jsonl
 ```
 
 **Registry Fields:**
@@ -192,7 +192,7 @@ cat WAI-Spoke/WAI-Skills.jsonl
 - `watchers` - Array of patterns that trigger advisory
 - `objects` - Files this skill reads/writes
 - `use_cases` - When to use this skill
-- `command_file` - Filename in `commands/`
+- `command_file` - Filename within the skill's subfolder (`skills/{id}/{command_file}`). Hub overrides live at `WAI-Hub/skills/{id}/{command_file}` and take precedence on hub nodes.
 - `description` - One-line summary
 
 ---
@@ -201,7 +201,7 @@ cat WAI-Spoke/WAI-Skills.jsonl
 
 ### Session Start
 ```
-1. Load skills: cat WAI-Spoke/WAI-Skills.jsonl
+1. Load skills: cat WAI-Spoke/skills/WAI-Skills.jsonl
 2. Check mode: jq '._session_state.mode' WAI-Spoke/WAI-State.json
 3. Run wakeup: /wai
 4. Review briefing and active work
@@ -241,7 +241,7 @@ cat WAI-Spoke/WAI-Skills.jsonl
 
 - `CLAUDE.md` - Claude Code integration instructions
 - `GEMINI.md` - Gemini integration instructions  
-- `WAI-Spoke/WAI-Skills.jsonl` - Skill registry
+- `WAI-Spoke/skills/WAI-Skills.jsonl` - Skill registry
 - `WAI-Spoke/WAI-State.json` - Session state
 - `templates/commands/` - Skill source files
 

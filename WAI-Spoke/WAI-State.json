@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.58",
+    "version": "2.0.59",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -34,7 +34,8 @@
       }
     },
     "last_modified_at": "2026-03-22T23:39:26Z",
-    "last_modified_by": "claude-sonnet-4-6"
+    "last_modified_by": "claude-sonnet-4-6",
+    "spoke_id": "a055479fb9bf"
   },
   "_project_foundation": {
     "source_lug": "lug-fnd-f0aa32c5",
@@ -92,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260324-0540",
+    "last_session_id": "session-20260324-0013",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-24T05:55:00Z",
-    "last_closeout": "2026-03-24T05:55:00Z",
-    "session_count": 62,
-    "track_path": "WAI-Spoke/sessions/session-20260324-0540/track.jsonl",
+    "last_modified_at": "2026-03-24T16:00:00Z",
+    "last_closeout": "2026-03-24T16:00:00Z",
+    "session_count": 63,
+    "track_path": "WAI-Spoke/sessions/session-20260324-0013/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 62 complete. Next: (1) Review track-chain-protocol-v1 teaching (Path B, deferred); (2) Build Spoke ID System — wai/spoke_id.py + wai/file_validator.py, hub is primary registry (P-high, lug m8n3p7q2r6s4); (3) refactor-chat-to-track-skill-location (P3); (4) refactor-mail-routing-language-v1 (P4). Note: epic-teaching-generation-canonical-evolution-v1 has duplicate lug (in_progress + implemented) — reconcile at next session.",
+    "next_session_recommendation": "Session 63 complete. Next: (1) Sync templates/spoke/skills/WAI-Skills.jsonl — 16 stale entries vs 32-skill registry; (2) Author wai-lug-compat teaching file for distribution to other spokes; (3) Author hub-coord skill command files (hub-registry-verification, hub-knowledge-base-curator, hub-health-monitor); (4) Migration teaching for lugs/inbox+outbox dir rename to incoming+outgoing; (5) Review track-chain-protocol-v1 teaching (Path B, deferred).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-24T05:55:00Z",
+    "protocol_last_run": "2026-03-24T23:15:31Z",
     "mode": "execution"
   },
   "_migration_state": {

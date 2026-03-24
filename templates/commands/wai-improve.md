@@ -151,10 +151,9 @@ Present any matches. Do not suppress findings. One sentence per match is enough:
 
 ### 2b. Scan Existing Skills and Functionality
 
-Check `templates/commands/` (or `WAI-Spoke/commands/` if local overrides exist) for skills that already address any part of the challenge.
+Check `templates/commands/` (framework authoring source) and `WAI-Spoke/skills/` (installed spoke skills) for skills that already address any part of the challenge.
 
 Also check:
-- `WAI-Spoke/skills/` — local skill files
 - `WAI-Spoke/WAI-State.json` → `features[]` — declared existing features
 - `WAI-Spoke/_project_foundation` → `in_scope[]` — committed work that may already be underway
 
@@ -176,10 +175,10 @@ The most common fitting problem is terminology drift — the user uses one word,
 
 | User's term | System's existing term | Relationship |
 |-------------|----------------------|--------------|
-| "inbox processing" | `wai` (Step 3a: teaching discovery) / inbox protocol | Same concept |
+| "incoming processing" | `wai` (Step 3a: teaching discovery) / incoming protocol | Same concept |
 | "idea queue" | `ty: "idea"` lugs | Same concept |
 | "project memory" | foundation lug + WAI-State.json | Partial — foundation is the structured part |
-| "send to another project" | `/wai (Step 9b: auto-teach on closeout)` outbox delivery | Same concept |
+| "send to another project" | `/wai (Step 9b: auto-teach on closeout)` outgoing delivery | Same concept |
 
 If terminology mismatches are found, name them before proceeding:
 > "You called this [user term] — the system already uses [system term] for this. Are you extending that, or describing something different?"

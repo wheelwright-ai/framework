@@ -31,7 +31,7 @@ Save where we are so we can pick up seamlessly in a new session.
 
 ## Follow-ons
 
-- New session — Will auto-learn from inbox on wakeup
+- New session — Will auto-learn from incoming on wakeup
 
 ## Use Cases
 
@@ -321,14 +321,14 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 **Skip conditions:** If no actionable lugs were created/modified this session, skip this step entirely.
 
-### 9. Outbox Delivery
+### 9. Outgoing Delivery
 
 **Deliver queued lugs to hub before committing.**
 
-1. Check `WAI-Spoke/lugs/outbox/` for `.jsonl` files
-2. If outbox is empty → skip, note "Outbox empty" in summary
+1. Check `WAI-Spoke/lugs/outgoing/` for `.jsonl` files
+2. If outgoing is empty → skip, note "Outgoing empty" in summary
 3. If items found and `hub_path` is connected:
-   - For each file where `destination_wheel_id` matches hub or target: copy to `{hub_path}/WAI-Spoke/lugs/inbox/`
+   - For each file where `destination_wheel_id` matches hub or target: copy to `{hub_path}/WAI-Spoke/lugs/incoming/`
    - Report: "N lugs delivered to hub"
 4. If hub unreachable: note in `_session_state.next_session_recommendation`, continue — do not block commit
 
@@ -503,7 +503,7 @@ Read `hub_path` from `WAI-State.json` at `wheel.hub_path`.
    Status thresholds: healthy = 100%, degraded = 80-99%, critical = <80%
 
 5. Write the lug to `{hub_path}/WAI-Spoke/seed/ingest/spoke-health-{spoke_id}-{session_id}.json`
-6. Log: "Spoke health: {score} ({status}) — sent to hub inbox"
+6. Log: "Spoke health: {score} ({status}) — sent to hub incoming"
 
 **Purpose:** Hub aggregates these at wakeup to build a fleet health snapshot. Spoke does not need to wait for hub response.
 

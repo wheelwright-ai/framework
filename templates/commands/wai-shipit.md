@@ -94,11 +94,23 @@ Record the answer. It determines whether Step 9b runs.
 **If running from the framework repo: keep IDE skills in sync with canonical templates.**
 
 ```bash
+# Keep Claude Code slash commands in sync (flat — Claude Code requirement)
 yes | cp templates/commands/wai*.md .claude/commands/
-for f in templates/spoke/commands/wai*.md; do \cp templates/commands/$(basename "$f") "$f" 2>/dev/null || true; done
+
+# Sync canonical source → template spoke skill subdirs
+for skill_dir in templates/spoke/skills/*/; do
+  id=$(basename "$skill_dir")
+  # Find the command file in this skill dir
+  for f in "$skill_dir"*.md; do
+    [ -f "$f" ] || continue
+    fname=$(basename "$f")
+    src="templates/commands/$fname"
+    [ -f "$src" ] && \cp "$src" "$f" 2>/dev/null || true
+  done
+done
 ```
 
-This prevents the three-copy problem: `templates/commands/` is canonical; `.claude/commands/` is what Claude Code reads; `templates/spoke/commands/` is the spoke template. All must match.
+This prevents the three-copy problem: `templates/commands/` is canonical (authoring source); `.claude/commands/` is flat (Claude Code requirement); `templates/spoke/skills/{id}/` is the spoke install template (subdir-per-skill structure). All must match on canonical content.
 
 **Skip this step** if not running from the framework repo (spokes have no `.claude/commands/`).
 

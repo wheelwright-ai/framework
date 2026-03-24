@@ -5,7 +5,7 @@
 skill_id: chat-to-track
 prompt_version: "0.10"
 updated_at: "2026-03-24"
-verify_with: grep -m1 'prompt_version' skills/chat-to-track.md
+verify_with: grep -m1 'prompt_version' templates/commands/chat-to-track.md
 ```
 
 **Source of truth for `/wai-chat-to-track`.** Paste this prompt into any external AI session (ChatGPT, Gemini, Claude.ai, etc.) to activate structured track recording. Export at session end and drop the JSONL file into `WAI-Spoke/seed/ingest/` — wakeup absorbs it automatically.

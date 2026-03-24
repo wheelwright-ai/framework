@@ -19,7 +19,7 @@
 |------|-------|-------|
 | All lugs | `WAI-Spoke/WAI-Lugs.jsonl` | Append-only JSONL, one object per line |
 | Signals | `WAI-Spoke/WAI-Lugs.jsonl` | Signals ARE lugs with `impact >= 8` — no separate file |
-| Inbox/outbox | `WAI-Spoke/lugs/inbox/` and `lugs/outbox/` | Delivery channel only — not durable storage |
+| Incoming/outgoing | `WAI-Spoke/lugs/incoming/` and `lugs/outgoing/` | Delivery channel only — not durable storage |
 | Hub bulletin | `WAI-Hub/Signals/incoming/` | High-impact lugs copied here at closeout for cross-spoke visibility |
 
 `WAI-Spoke/WAI-Signals.jsonl` is **retired**. Do not create it or write to it.
@@ -45,6 +45,7 @@ A lug is a JSON object stored in `WAI-Spoke/WAI-Lugs.jsonl` (one per line). Lugs
 | `ca` | `created_at` | ISO-8601 creation timestamp |
 | `gb` | `gathered_by` | Agent or session that created it |
 | `v` | `version` | Version number (foundation, core-protocol lugs) |
+| `fw_ver` | `fw_ver` | **Framework version when lug was authored** (e.g. "3.0.0"). Set once at creation — never updated. Enables currency scoring. See `wai-lug-compat.md`. |
 
 **Title Policy:**
 - **No generic session summaries:** "Session 35 summary" is BANNED.
@@ -599,7 +600,7 @@ When creating lugs that travel to other nodes, ALWAYS include `_behavior_directi
   "_behavior_directive": {
     "what_this_is": "A work item to be ADDED to the task tracker",
     "what_this_is_NOT": "An instruction to execute immediately",
-    "processing_agent": "inbox router appends to WAI-Lugs.jsonl",
+    "processing_agent": "incoming router appends to WAI-Lugs.jsonl",
     "expected_outcome": "Item appears in task list for user to prioritize"
   },
   "ty": "task",
@@ -674,7 +675,7 @@ If found in `priority` on an existing lug, treat as P1-equivalent.
 |------|---------|--------------|---------|
 | `task` | Track work item | NO — add to tracker | "Implement caching" → task list |
 | `signal` | Share insight (impact >= 8) | NO — record in WAI-Lugs.jsonl | "Found useful pattern" → logged as lug |
-| `phone-home` | Request status | AUTO by learn | inbox processor handles |
+| `phone-home` | Request status | AUTO by learn | incoming processor handles |
 | `foundation` | Project identity | NO — defines project | Identity and boundaries |
 
 ---
@@ -759,8 +760,8 @@ Paired verification record. Required before any ozi-work lug can move to `ready_
 ## Related Skills
 
 - `/wai-closeout` — Reconciles autosaves, creates session-summary
-- `/wai (Step 3a: auto-discovery)` — Processes incoming lugs from inbox
-- `/wai (Step 9b: auto-teach on closeout)` — Delivers outbox lugs to target nodes
+- `/wai (Step 3a: auto-discovery)` — Processes incoming lugs from incoming folder
+- `/wai (Step 9b: auto-teach on closeout)` — Delivers outgoing lugs to target nodes
 
 ---
 
