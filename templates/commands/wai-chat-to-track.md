@@ -15,17 +15,21 @@ any external AI conversation and bring the value back into WAI.**
 
 ## Procedure
 
-### Step 1: Copy to Clipboard
+### Step 1: Check Version + Copy to Clipboard
 
 1. Read the prompt from `framework/skills/chat-to-track.md`
-2. Copy the full content to the clipboard:
+2. Extract and display the current version:
+   ```
+   Chat-to-Track prompt version: {prompt_version} (updated {updated_at})
+   ```
+3. Copy the full prompt body (everything after the yaml header block) to the clipboard:
    - WSL: `cat <path> | clip.exe`
    - macOS: `cat <path> | pbcopy`
    - Linux: `cat <path> | xclip -selection clipboard`
-3. Confirm:
+4. Confirm:
 
 ```
-✅ Chat-to-Track prompt copied to clipboard!
+✅ Chat-to-Track v{prompt_version} copied to clipboard!
 ```
 
 ### Step 2: Show Directions
