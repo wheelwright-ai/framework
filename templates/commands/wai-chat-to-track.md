@@ -53,9 +53,13 @@ process.
    — the AI records telemetry events after each response
    — if context runs low, it will recommend a closeout
 
-### Closeout and Export
+### Export
 
-4. When you're done, say: **"closeout chat"**
+4. When you're done, say: **"Export WAI Track"**
+   - `full` → entire session
+   - `after: {turn_number}` → from a specific turn onward
+   - `selective: {topic}` → filtered by lens
+   - `summary` → compressed insights
 5. The AI outputs a complete JSONL track — copy it
 
 ### Bring It Home
