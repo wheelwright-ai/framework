@@ -103,7 +103,7 @@
     "next_session_recommendation": "Session 76 complete. Enhanced wakeup/closeout markers deployed. Next: Publish 5 signals as teachings (Session 77 priority). Markers now show: WAKEUP = project context, CLOSEOUT = track stats + version changes. Ready for spoke distribution.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-25T20:53:41Z",
+    "protocol_last_run": "2026-03-25T21:21:11Z",
     "mode": "execution"
   },
   "_critical_directives": {
