@@ -1,0 +1,75 @@
+{
+  "id": "epic-skill-thrift-v1",
+  "type": "epic",
+  "title": "Apply Skill Thrift Principle to all WAI skills — lean primary files, reference files for verbose content",
+  "status": "open",
+  "created_at": "2026-03-25T05:30:00Z",
+  "created_by": "claude-opus-4-6",
+  "session_id": "session-20260325-0500",
+  "impact": 9,
+  "_behavior_directive": {
+    "what_this_is": "Epic to systematically slim every WAI skill file. Primary files carry behavioral instructions only. Verbose content (examples, schemas, deferred specs, onboarding prose, report templates) moves to secondary reference files loaded on-demand.",
+    "what_this_is_NOT": "Not removing functionality. Every behavioral instruction is preserved. Only the token cost of loading the skill changes."
+  },
+  "perceive": [
+    "templates/commands/wai*.md — all skill files, sorted by size",
+    "templates/commands/wai-closeout.md — already done (650→137 lines, -77%)",
+    "templates/commands/wai-shipit.md — already done (680→113 lines, -79%)"
+  ],
+  "execute": {
+    "principle": "Primary skill file = behavioral instructions only. No onboarding prose, no use-case catalogs, no JSON/bash examples the agent already knows, no descriptions of unimplemented features. Secondary {skill}-reference.md files in same folder carry reference material.",
+    "tiers": {
+      "tier1_high_impact": {
+        "description": "Skills >200 lines — largest token savings",
+        "items": [
+          {"file": "wai-lug-advisor.md", "lines": 795, "bytes": 34342, "notes": "Biggest skill. Schema examples, PEV chain examples, type system docs, lifecycle diagrams — most can move to reference"},
+          {"file": "wai-improve.md", "lines": 656, "bytes": 28378, "notes": "Backlog review protocol. Scoring rubrics, fit-check examples, priority tables — reference material"},
+          {"file": "wai-ozi-work-queue-monitor.md", "lines": 364, "bytes": 9275, "notes": "Queue monitor with detailed state machine docs"},
+          {"file": "wai-lug-compat.md", "lines": 277, "bytes": 9108, "notes": "Compat layer with migration examples"},
+          {"file": "wai.md", "lines": 220, "bytes": 7866, "notes": "Already trimmed from 568. May have more to cut."},
+          {"file": "wai-ide-setup.md", "lines": 262, "bytes": 7379, "notes": "Hook setup with per-tool examples"},
+          {"file": "wai-track-generate.md", "lines": 274, "bytes": 6811, "notes": "Track generation with format examples"},
+          {"file": "wai-principles.md", "lines": 234, "bytes": 6601, "notes": "P1-P9+ principles with rationale sections"},
+          {"file": "wai-foundation.md", "lines": 261, "bytes": 6465, "notes": "Foundation questionnaire with examples"}
+        ]
+      },
+      "tier2_medium": {
+        "description": "Skills 100-200 lines — moderate savings",
+        "items": [
+          {"file": "wai-brief.md", "lines": 182, "bytes": 5658},
+          {"file": "wai-status.md", "lines": 131, "bytes": 3789},
+          {"file": "wai-chat-to-track.md", "lines": 134, "bytes": 3649},
+          {"file": "wai-mode.md", "lines": 134, "bytes": 3434},
+          {"file": "wai-stewardship-framework.md", "lines": 106, "bytes": 2578},
+          {"file": "wai-complexity-advisor.md", "lines": 95, "bytes": 3300}
+        ]
+      },
+      "tier3_already_lean": {
+        "description": "Skills <100 lines — likely already lean, review only",
+        "items": [
+          "wai-closeout.md (137 — DONE)", "wai-shipit.md (113 — DONE)",
+          "wai-init-v2.md (97)", "wai-sync-v2.md (95)", "wai-rules.md (81)",
+          "wai-red-light.md (80)", "wai-benchmark.md (67)", "wai-signal-advisor.md (55)",
+          "wai-stewardship-advisor.md (50)", "wai-auto-on.md (46)", "wai-foundation-advisor.md (46)",
+          "wai-context-advisor.md (45)", "wai-auto-status.md (39)", "wai-auto-parallel.md (37)",
+          "wai-green-light.md (31)", "wai-auto-off.md (27)", "wai-time.md (17)"
+        ]
+      }
+    },
+    "per_skill_process": [
+      "1. Read the skill file",
+      "2. Identify: onboarding prose, use-case catalogs, JSON/bash examples, report templates, deferred/unimplemented features",
+      "3. Write slimmed primary file preserving all behavioral instructions",
+      "4. Write {skill}-reference.md with moved content (only if content has value — don't create empty reference files)",
+      "5. Sync to template spoke: templates/spoke/skills/{id}/{command_file}",
+      "6. Verify: diff before/after line counts"
+    ]
+  },
+  "verify": [
+    "Every skill's primary file contains all behavioral instructions (no behavior lost)",
+    "Reference files exist only where verbose content was moved",
+    "Template spoke skills are in sync with templates/commands/",
+    "Total token savings reported per tier"
+  ],
+  "estimated_savings": "Tier 1 alone: ~15,000-20,000 tokens. Full epic: ~25,000+ tokens across all skills."
+}

@@ -27,6 +27,7 @@
 {"id":"epic-hub-evolution-structure","type":"epic","status":"ready_to_implement","title":"Hub folder/structure evolution for canonical Wheelwright","folder":"epic/open"}
 {"id":"epic-session15-fleet-evolution","type":"epic","status":"o","title":"Canonical Wheelwright evolution - object model, behavior, migration, and post-deploy skills","folder":"epic/open"}
 {"id":"epic-sharded-lugs-with-index","type":"epic","status":"o","title":"Sharded lug system with index file for portable access","folder":"epic/open"}
+{"id":"epic-skill-thrift-v1","type":"epic","status":"open","title":"Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference files for verbose con","folder":"epic/open"}
 {"id":"epic-v1-v2-state-migration","type":"epic","status":"o","title":"Create v1\u2192v2 WAI-State.json migration teaching","folder":"epic/open"}
 {"id":"epic-teaching-generation-canonical-evolution-v1","type":"epic","status":"in_progress","title":"Generate + dogfood teaching files for canonical evolution v2 changes","folder":"epic/in_progress"}
 {"id":"6ed194b4add6","type":"signal","status":"published","title":"Teaching Reconciliation Protocol","folder":"signal/delivered"}
@@ -120,6 +121,7 @@
 {"id":"decision-plan-dogfood-execute-protocol","type":"signal","status":"o","title":"Multi-file changes require Plan \u2192 Epic \u2192 Dogfood \u2192 Execute sequence","folder":"signal/undelivered"}
 {"id":"refactor-skill-storage-structure-v1","type":"signal","status":"open","title":"Skills storage migrated: commands/ \u2192 skills/, WAI-Skills.jsonl moved inside folder","folder":"signal/undelivered"}
 {"id":"signal-skill-hub-override-resolution-v1","type":"signal","status":"open","title":"Hub override skill resolution: WAI-Hub/skills/{id}/ checked before WAI-Spoke/skills/{id}/","folder":"signal/undelivered"}
+{"id":"signal-template-spoke-sync-gap-v1","type":"signal","status":"undelivered","title":"Template spoke skills were 100% stale \u2014 all 26 files out of sync with framework source","folder":"signal/undelivered"}
 {"id":"signal-write-tool-destruction","type":"signal","status":"o","title":"Signal: Write tool file destruction risk (basher secrets.sh incident)","folder":"signal/undelivered"}
 {"id":"2f4b10e30144","type":"task","status":"completed","title":"Clean-slate Initialization for WAI CLI Rebuild v2","folder":"task/completed"}
 {"id":"task-build-and-ship-framework-upgrade-v1-20260218-02","type":"task","status":"archived","title":"Build the framework and generate the upgrade-adoption-plan.json","folder":"task/completed"}
@@ -332,6 +334,8 @@
 {"id":"session-20260323-0128","type":"session-summary","status":"c","title":"Session 53: Hub canonical evolution migration complete","folder":"session-summary"}
 {"id":"session-20260323-162700","type":"session-summary","status":"c","title":"Session 52 \u2014 Cluster 1 Hub Orchestration: all 5 epics implemented","folder":"session-summary"}
 {"id":"session-20260324-0419","type":"session-summary","status":"c","title":"Session 61 \u2014 chat-to-track v0.10 integration","folder":"session-summary"}
+{"id":"session-20260325-0330","type":"session-summary","status":"completed","title":"Session 66: Context diet \u2014 bytype restructure, bug promotion, template sync","folder":"session-summary"}
+{"id":"session-20260325-0500","type":"session-summary","status":"completed","title":"Session 67: Skill Thrift \u2014 closeout/shipit slimmed 78%, principle established, epic for remaining sk","folder":"session-summary"}
 {"id":"session-43-lug-cleanup-2026-03-18","type":"session-summary","status":"completed","title":"Session 43: Complete Lug Cleanup & Reviews","folder":"session-summary"}
 {"id":"session-8-summary-20260218","type":"session-summary","status":"published","title":"WAI Session 8: Implemented full teach/learn automation cycle","folder":"session-summary"}
 {"id":"session-summary-20260313-181446","type":"session-summary","status":"c","title":"WAI Wakeup/Closeout & Historian/Taste Integration","folder":"session-summary"}
