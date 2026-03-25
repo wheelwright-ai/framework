@@ -234,6 +234,7 @@ When closeout succeeds, display this to signal completion distinctly:
 ┌─ CLOSEOUT Session-{N} [{track_name}] {timestamp}
 │
 │  Track stats: {turns} turns, {phase_distribution}
+│  Context: {context_percent}% ({context_used}K/{context_limit}K tokens)
 │  Version: v{old_version} → v{new_version}
 │  Session count: {old_count} → {new_count}
 │  Commits: {N} files pushed to origin/main
@@ -247,8 +248,9 @@ When closeout succeeds, display this to signal completion distinctly:
 - `{timestamp}` = current UTC time (ISO-8601)
 - `{turns}` = total track points written (count lines in track.jsonl)
 - `{phase_distribution}` = breakdown of phases in track (e.g., "execution (70%) + review (30%)")
+- `{context_percent}`, `{context_used}`, `{context_limit}` = final context measurement from closeout (run `/context` before Step 11 if available)
 - `{old_version}` → `{new_version}` = version before and after closeout
 - `{old_count}` → `{new_count}` = session_count before and after increment
 - `{N}` = number of files committed and pushed
 
-**Distinction:** **WAKEUP** = shows project + active work. **CLOSEOUT** = shows track stats + version changes. Unmistakable when tab-switching.
+**Distinction:** **WAKEUP** = shows project + active work. **CLOSEOUT** = shows track stats + context usage + version changes. Unmistakable when tab-switching.
