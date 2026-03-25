@@ -1,0 +1,322 @@
+# Teaching: Install wai-lug-compat skill — version-aware lug lifecycle
+
+**Type:** skill
+**safe_to_auto_adopt:** false
+
+---
+
+## Prerequisites
+
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| WAI-Lugs.jsonl exists | `test -f WAI-Spoke/WAI-Lugs.jsonl && echo PASS || echo FAIL` | Lug currency audit |
+| WAI-State.json has wheel.version | `python3 -c "import json; d=json.load(open('WAI-Spoke/WAI-State.json')); print('PASS' if d.get('wheel',{}).get('version') else 'FAIL')"` | fw_ver stamping |
+
+## Batch Sequence
+
+**Batch:** lug-compat-install-v1
+**Apply order:** 1 of 1
+**Depends on:** none
+**Required before:** none
+**Parallel safe:** yes
+
+---
+
+## What This Teaching Provides
+
+Installs the `wai-lug-compat` skill on this spoke. After installation, the spoke can:
+
+1. **Score lug currency** — classify existing lugs as `current`, `minor_drift`, `major_drift`, or `unversioned` based on `fw_ver` field vs current framework version
+2. **Review outdated lugs** — append-only review fields (`reviewed_fw_ver`, `review_status`, `review_notes`) without altering original lug content
+3. **Return reviewed lugs to hub** — emit `type: lug-review` payloads via outgoing delivery so subsequent spokes skip redundant review
+4. **Author better signals** — enforce notice-style signal structure (`event` + `what_changed` + `why`) instead of prescriptive instructions
+
+It also adds `fw_ver` to the `wai-lug-advisor.md` Key Mapping table so the field is documented alongside other schema fields.
+
+---
+
+## Step 1: Install the Skill File
+
+**Detect skill storage location:**
+
+```bash
+# Check which structure this spoke uses
+if [ -d "WAI-Spoke/skills" ]; then
+  SKILL_DIR="WAI-Spoke/skills/lug-compat"
+  REGISTRY="WAI-Spoke/skills/WAI-Skills.jsonl"
+elif [ -d "WAI-Spoke/commands" ]; then
+  SKILL_DIR="WAI-Spoke/commands"
+  REGISTRY="WAI-Spoke/WAI-Skills.jsonl"
+else
+  echo "ERROR: Cannot find skill storage directory. Check WAI-Spoke/."
+  exit 1
+fi
+
+mkdir -p "$SKILL_DIR"
+```
+
+**Write the skill file** to `$SKILL_DIR/wai-lug-compat.md`:
+
+> The full skill content follows. Write it exactly as shown to the path above.
+
+---
+
+```
+# WAI Lug Compatibility Advisor
+
+**Version-aware lug lifecycle — identify outdated lugs, review them against the current framework, send improved versions back to the hub so other spokes don't repeat the same work.**
+
+---
+
+## Execution Context
+
+- **Nodes:** spoke, hub
+- **Exposure:** spoke.chat:local
+- **Trigger:** `/wai-lug-compat` or automatically at wakeup when stale lug count exceeds threshold
+
+---
+
+## The Problem This Solves
+
+Lugs travel across sessions, models, spokes, and time. A lug authored under framework v1.0 may give guidance that contradicts v3.0 protocol. Without a version stamp, no agent can tell the difference between a trustworthy lug and an archaic one.
+
+**Symptoms of unversioned lug rot:**
+- Agent follows an old lug's protocol and gets contradictory results
+- Multiple spokes independently review and discard the same outdated lug
+- Hub distributes stale advice to every new spoke that comes online
+
+This skill fixes all three by adding version stamps at authoring time, defining a review protocol, and routing improved lugs back to the hub.
+
+---
+
+## New Schema Fields
+
+### `fw_ver` — Framework Version (authoring stamp)
+
+Set at lug creation time to the current `wheel.version` from `WAI-State.json`.
+**Never updated after creation** — it records when the lug was written, not when it was last touched.
+Required on all new lugs and signals from this version forward.
+
+### `reviewed_fw_ver` — Review Version
+
+Set when a lug passes through the review protocol. Records the framework version in use at review time.
+
+### `review_status` — Review Outcome
+
+Values: `valid | outdated_protocol | superseded | contradicts_current`
+
+| Value | Meaning |
+|-------|---------|
+| `valid` | Still accurate under current framework |
+| `outdated_protocol` | References a protocol that has changed |
+| `superseded` | A newer lug covers this ground |
+| `contradicts_current` | Actively conflicts with current framework |
+
+### `hub_origin` — Distribution Tracking
+
+Set to `true` when a lug was received from hub distribution. Enables the return loop.
+
+---
+
+## Currency Scoring
+
+| Score | Condition | Action |
+|-------|-----------|--------|
+| `current` | Same major.minor | Trust — no review needed |
+| `minor_drift` | Same major, minor gap <= 2 | Review recommended |
+| `major_drift` | Major version differs | Review required before acting |
+| `unversioned` | No `fw_ver` field | Treat as suspect — schedule review |
+
+---
+
+## Step 1: Currency Audit
+
+Run on demand (`/wai-lug-compat`) or at wakeup when `major_drift + unversioned > 5`.
+
+1. Load all lugs from `WAI-Spoke/WAI-Lugs.jsonl`
+2. Read current version: `WAI-State.json -> wheel.version`
+3. Score each non-reconciled lug by `fw_ver`
+4. Report counts and actions needed
+
+---
+
+## Step 2: Review Protocol
+
+For each lug in `major_drift` or `unversioned`:
+
+1. Read the lug content fully
+2. Identify protocol references, path names, field names, or behavioral directives
+3. Check each against current framework (skills in `WAI-Spoke/skills/` or `WAI-Spoke/commands/`)
+4. Classify with `review_status`
+5. Append review fields to lug in WAI-Lugs.jsonl — do NOT alter original fields:
+
+```json
+{
+  "reviewed_fw_ver": "3.0.0",
+  "reviewed_at": "ISO-8601",
+  "reviewed_by": "agent-id / session-id",
+  "review_status": "outdated_protocol",
+  "review_notes": "Human-readable summary of what changed",
+  "reconciled": true
+}
+```
+
+---
+
+## Step 3: Hub Return Loop
+
+After reviewing any lug where `hub_origin: true`:
+
+Write a `lug-review` payload to `WAI-Spoke/lugs/outgoing/lug-review-{source_id}.jsonl`:
+
+```json
+{
+  "id": "lug-review-{source_id}-{YYYYMMDD}",
+  "type": "lug-review",
+  "source_id": "<original lug id>",
+  "review_fw_ver": "3.0.0",
+  "review_status": "...",
+  "review_notes": "...",
+  "reviewed_by": "...",
+  "reviewed_at": "ISO-8601",
+  "fw_ver": "3.0.0"
+}
+```
+
+Closeout Step 9 (Outgoing Delivery) routes it to the hub. Hub accepts only if `review_fw_ver >= lug's fw_ver`.
+
+---
+
+## Step 4: Authoring Guidance
+
+Every new lug must include `fw_ver` set to the current `wheel.version`:
+
+```json
+{
+  "id": "descriptive-slug-5-plus-words",
+  "type": "task | signal | epic | ...",
+  "title": "5+ words describing intent and impact",
+  "status": "open",
+  "fw_ver": "3.0.0",
+  "created_at": "ISO-8601",
+  "created_by": "agent-id or session-id"
+}
+```
+
+Signals must use notice style — `event` + `what_changed` + `why`, NOT a prescriptive body.
+
+---
+
+## Wakeup Integration
+
+At Step 4 (Load Lugs): count currency scores. If `major_drift + unversioned > 5`, surface in briefing:
+
+```
+Warning: Lug Currency: N major-drift, M unversioned — run /wai-lug-compat to review
+```
+
+Do not block wakeup. Currency audit is advisory.
+
+---
+
+## Related Skills
+
+- `wai-lug-advisor.md` — lug schema, storage, lifecycle
+- `wai-closeout.md` — Step 9: Outgoing Delivery
+- `wai.md` — Step 4: Load Lugs (currency audit trigger)
+```
+
+---
+
+## Step 2: Register the Skill
+
+**Duplicate check first:**
+
+```bash
+python3 -c "
+import json, sys
+registry = '$REGISTRY'
+try:
+    with open(registry) as f:
+        entries = [json.loads(l) for l in f if l.strip()]
+    ids = [e.get('id') for e in entries]
+    print('SKIP' if 'lug-compat' in ids else 'ADD')
+except FileNotFoundError:
+    print('NO_REGISTRY')
+"
+```
+
+**If output is `ADD`:** append this line to `$REGISTRY`:
+
+```json
+{"id": "lug-compat", "name": "Lug Compatibility Advisor", "type": "advisory", "lifecycle": "stable", "scope": "spoke", "safety_level": 10, "advisory": true, "watchers": ["fw_ver.*missing", "lug.*unversioned", "currency.*audit", "major_drift"], "objects": ["WAI-Lugs.jsonl"], "use_cases": ["lug_currency_scoring", "stale_lug_review", "hub_return_loop", "signal_authoring_guidance"], "command_file": "wai-lug-compat.md", "description": "Version-aware lug lifecycle — scores lugs by framework version currency, provides review protocol for outdated lugs, routes reviewed lugs back to hub, enforces notice-style signal authoring"}
+```
+
+**If output is `SKIP`:** registry already has `lug-compat` — skip this step.
+
+---
+
+## Step 3: Add fw_ver to wai-lug-advisor.md Key Mapping
+
+**Detect the lug-advisor file location:**
+
+```bash
+if [ -f "WAI-Spoke/skills/lug-advisor/wai-lug-advisor.md" ]; then
+  LUG_ADVISOR="WAI-Spoke/skills/lug-advisor/wai-lug-advisor.md"
+elif [ -f "WAI-Spoke/commands/wai-lug-advisor.md" ]; then
+  LUG_ADVISOR="WAI-Spoke/commands/wai-lug-advisor.md"
+else
+  echo "lug-advisor not found — skipping fw_ver row addition"
+  LUG_ADVISOR=""
+fi
+```
+
+**Check if `fw_ver` row already present:**
+
+```bash
+[ -n "$LUG_ADVISOR" ] && grep -q "fw_ver" "$LUG_ADVISOR" && echo "SKIP" || echo "ADD"
+```
+
+**If `ADD`:** In `$LUG_ADVISOR`, find the Key Mapping table and add this row after the `| v | version | ...` row:
+
+```
+| `fw_ver` | `fw_ver` | **Framework version when lug was authored** (e.g. "3.0.0"). Set once at creation — never updated. Enables currency scoring. See `wai-lug-compat.md`. |
+```
+
+The Key Mapping table ends with the `| v | version | ...` row before the **Title Policy:** section. Insert the `fw_ver` row between them.
+
+---
+
+## Verification
+
+After applying all three steps:
+
+```bash
+# Step 1: skill file exists
+if [ -d "WAI-Spoke/skills" ]; then
+  test -f WAI-Spoke/skills/lug-compat/wai-lug-compat.md && echo "skill: PASS" || echo "skill: FAIL"
+else
+  test -f WAI-Spoke/commands/wai-lug-compat.md && echo "skill: PASS" || echo "skill: FAIL"
+fi
+
+# Step 2: registry entry exists
+python3 -c "
+import json
+f = 'WAI-Spoke/skills/WAI-Skills.jsonl' if __import__('os').path.exists('WAI-Spoke/skills/WAI-Skills.jsonl') else 'WAI-Spoke/WAI-Skills.jsonl'
+entries = [json.loads(l) for l in open(f) if l.strip()]
+print('registry: PASS' if any(e.get('id')=='lug-compat' for e in entries) else 'registry: FAIL')
+"
+
+# Step 3: fw_ver documented in lug-advisor
+for p in WAI-Spoke/skills/lug-advisor/wai-lug-advisor.md WAI-Spoke/commands/wai-lug-advisor.md; do
+  [ -f "$p" ] && grep -q "fw_ver" "$p" && echo "fw_ver row: PASS" && break
+done
+```
+
+All three should print PASS.
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.
