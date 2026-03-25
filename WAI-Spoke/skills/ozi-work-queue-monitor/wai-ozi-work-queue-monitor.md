@@ -89,15 +89,22 @@ For lugs with `status='ready'`, attempt auto-assignment:
 ```python
 def auto_dispatch_ready_work(ready_lugs):
     """Assign ready work to available agents"""
-    
+
     for lug in ready_lugs:
+        # ROUTING GATE: Verify scope before dispatch
+        routed_to = lug.get('routed_to', 'LOCAL')  # default LOCAL
+
+        if routed_to != 'LOCAL':
+            print(f"⚠️  Ozi: Skipping {lug['id']} — routed to {routed_to}, not LOCAL dispatch")
+            continue
+
         # Skip high-risk lug types
         if lug['type'] in ['implementation', 'epic', 'review']:
             continue
-        
+
         # Find available builder
         # (For now, we'll use sub-agents via Task tool)
-        
+
         if session_auto_mode_enabled():
             print(f"🚀 Ozi: Dispatching {lug['id']} to sub-agent...")
             

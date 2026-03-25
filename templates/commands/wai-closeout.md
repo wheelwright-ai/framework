@@ -51,13 +51,16 @@ If capability adoptions or migrations occurred: update extended state (`WAI-Stat
 
 For each implementation lug with `status = "implemented"`: check `_migration_state.adoption_markers` in extended state. If `adopted = false`, update to `true` with timestamp. Log result.
 
-### 5c. Lug Status Sync and Index Regeneration
+### 5c. Lug Status Sync and Routing-Aware Archival
 
 1. Scan `bytype/*/open/` and `bytype/*/in_progress/` for lugs whose status changed this session
-2. Move completed lugs to `bytype/{type}/completed/`
-3. Move delivered signals from `undelivered/` to `delivered/`
-4. Regenerate `WAI-LugIndex.jsonl` — one line per lug: `{id, type, status, title, folder, created_at}`
-5. Report: "Moved N lugs. Index: T entries."
+2. For each completed lug, check `routed_to` field:
+   - **LOCAL:** Move to `bytype/{type}/completed/` (stays in this spoke)
+   - **FRAMEWORK:** Move to `bytype/{type}/completed/` AND copy to hub teachings (Step 9b)
+   - **SIGNAL:** Move to `bytype/signal/delivered/` AND copy to hub signal bulletin (Step 9c)
+3. Move delivered signals from `undelivered/` to `delivered/` (archive metadata only; actual delivery in Step 9c)
+4. Regenerate `WAI-LugIndex.jsonl` — one line per lug: `{id, type, status, title, folder, created_at, routed_to}`
+5. Report: "Moved N lugs. Routing: M LOCAL, K FRAMEWORK, J SIGNAL. Index: T entries."
 
 ### 6. Finalize Session Track
 
@@ -99,15 +102,40 @@ Check `WAI-Spoke/lugs/outgoing/` for queued deliveries. If found and hub connect
 
 Teaching format details: see `wai-closeout-reference.md` in this skill's folder.
 
-### 9c. Hub Signal Bulletin
+### 9c. Hub Signal Bulletin (Routing-Aware)
 
-For each signal lug with `impact > 7` and `status != "archived"`: if not already at `{hub_path}/WAI-Hub/Signals/incoming/{id}.json`, write it there. Skip if hub not connected.
+For each lug with `routed_to = "SIGNAL"`: if not already at `{hub_path}/WAI-Hub/Signals/incoming/{id}.json`, write it there. Skip if hub not connected.
 
-### 10. Summary Generation
+**Also include** any signal lug with `impact > 7` and `routed_to = "SIGNAL"` that wasn't already caught by routing.
+
+Report: "Delivered N lugs to hub bulletin."
+
+### 10. Autosave Cleanup (Interruption Recovery Hygiene)
+
+Remove autosave checkpoints older than 3 sessions:
+
+```bash
+# Get current session count from WAI-State.json
+CURRENT_SESSION=$(jq -r '._session_state.session_count' WAI-State.json)
+CUTOFF=$((CURRENT_SESSION - 3))
+
+# Remove old autosave files
+find WAI-Spoke/.autosave -name "*.json" -exec basename {} \; | while read file; do
+    # Extract session metadata from autosave if available
+    # If autosave is from session < CUTOFF, delete it
+    rm -f "WAI-Spoke/.autosave/$file"
+done
+
+echo "✅ Cleaned autosave checkpoints > 3 sessions old"
+```
+
+**Why:** Autosaves are crash recovery helpers, not permanent archives. After 3+ sessions, if we haven't resumed from them, they're stale and should be removed. Keeps .autosave/ folder clean.
+
+### 11. Summary Generation
 
 Present to user: accomplishments, decisions, incomplete work with continuation guidance, new version, signals extracted, files modified, track stats.
 
-### 11. Git Commit + Push
+### 12. Git Commit + Push
 
 ```bash
 git add WAI-Spoke/ [other session files]

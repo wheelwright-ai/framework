@@ -374,6 +374,55 @@ If found in `priority` on an existing lug, treat as P1-equivalent.
 
 ---
 
+## Routing Fields (Lug Dispatch Awareness)
+
+**When creating a lug, declare its routing destination to enable scope-aware dispatch.**
+
+### `routed_to` (Enum, Required for all lugs)
+
+| Value | Meaning | Behavior at Closeout |
+|-------|---------|---------------------|
+| `"LOCAL"` | Stays in this spoke — project-specific work | File copied to `lugs/bytype/{type}/completed/` only |
+| `"FRAMEWORK"` | Framework improvement — goes to hub | File copied to hub teaching delivery + `completed/` |
+| `"SIGNAL"` | High-impact learning (impact >= 8) — broadcast to all spokes | File copied to hub signal bulletin + `bytype/signal/delivered/` |
+
+**Default:** If not set, assume `LOCAL`. Ozi should ask before creating any lug.
+
+### `scope_verified_by` (String, Required if routed_to != LOCAL)
+
+Who decided this lug's routing? Record the decision maker and rationale:
+- `"user"` — User explicitly approved routing
+- `"ozi"` — Ozi routing gate (with decision criteria noted)
+- `"framework"` — Detected as framework-wide issue
+- `"auto-signal"` — Impact threshold (>= 8) triggered automatic signal routing
+
+**Example:**
+```json
+{
+  "routed_to": "FRAMEWORK",
+  "scope_verified_by": "user (Session 74: 'this is a wakeup protocol fix affecting all spokes')"
+}
+```
+
+### Routing Logic at Lug Creation
+
+Before creating any lug:
+1. Load `_project_foundation.boundaries` (in_scope, out_of_scope)
+2. Classify the lug:
+   - **LOCAL:** "Affects only this project" ✓
+   - **FRAMEWORK:** "Affects how projects work" → route to FRAMEWORK
+   - **SIGNAL:** "Impact >= 8 and affects multiple spokes" → route to SIGNAL
+3. Announce: `"Creating {type} '{title}' → {routed_to}"`
+4. Wait for user confirmation (can override routing)
+5. Record decision in `scope_verified_by`
+
+**Test case:** User requests "optimize wakeup for fast projects"
+- Ozi recognizes this improves wakeup (framework concern)
+- Routes to: `epic-minimal-context-wakeup-v1` (LOCAL) + creates `signal-ozi-routing-awareness` (SIGNAL)
+- Announces: "Creating epic → LOCAL (scope: this framework project) + Creating signal → SIGNAL (scope: all spokes learn from routing improvement)"
+
+---
+
 ## Conditional Loading Fields
 
 - `load_always: true` — Auto-load on session start

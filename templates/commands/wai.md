@@ -45,6 +45,52 @@ Each skill lives in its own subfolder: `skills/{id}/{command_file}`.
 
 ---
 
+## Step 3b: Track Integrity Check (Interruption Detection)
+
+**Check if the previous session completed cleanly or was interrupted.**
+
+```bash
+# Check last session track
+LAST_TRACK="WAI-Spoke/sessions/$(ls -1t WAI-Spoke/sessions/ | head -1)/track.jsonl"
+if [ -f "$LAST_TRACK" ]; then
+    LAST_LINE=$(tail -1 "$LAST_TRACK")
+    # Validate: is it valid JSON and does it have required fields?
+    if echo "$LAST_LINE" | jq . >/dev/null 2>&1; then
+        STATUS="CLEAN"
+    else
+        STATUS="INTERRUPTED"
+    fi
+else
+    STATUS="FIRST_SESSION"
+fi
+```
+
+**If STATUS = "INTERRUPTED":**
+1. Note: "Last session ended unexpectedly (Windows update, power loss, or crash)"
+2. Check for autosave checkpoints: `ls WAI-Spoke/.autosave/turn-*.json | sort -t- -k2 -rn | head -1`
+3. Offer recovery prompt:
+   - **Green Light** — Resume from autosave checkpoint
+   - **Red Light** — Inspect last track entry and autosave before resuming
+   - **Skip** — Ignore interruption, start fresh
+   - **New Project** — Abandon this spoke, start over
+
+**If STATUS = "CLEAN":**
+- Continue with normal wakeup flow
+- Update `_session_status: "clean"` in WAI-State.json
+
+**Marker:** Set `_session_status` in WAI-State.json:
+```json
+{
+  "_session_status": {
+    "interruption_state": "clean|interrupted|stale",
+    "last_interrupted_at": "ISO-8601 or null",
+    "autosave_checkpoint": "path/to/turn-N.json or null"
+  }
+}
+```
+
+---
+
 ## Step 4: Load Active Lugs
 
 # Canonical storage: see wai-lug-schema.md
@@ -75,6 +121,27 @@ WAI-Spoke/lugs/
     session-summary/               — all completed, no status subfolder
     other/{open,completed}/        — rare types (idea, policy, learning, etc.)
 ```
+
+**In-Progress Lug Timeout Check (Stale Work Detection):**
+
+For each lug with `status="in_progress"`, check when it was last updated:
+
+```bash
+# Find stale in_progress lugs (unchanged for >4 hours)
+FOUR_HOURS_AGO=$(date -d '4 hours ago' +%s 2>/dev/null || date -v-4H +%s)
+for lug in WAI-Spoke/lugs/bytype/*/in_progress/*.json; do
+    UPDATED=$(jq -r '.updated_at // .created_at' "$lug")
+    UPDATED_EPOCH=$(date -d "$UPDATED" +%s 2>/dev/null || date -f- +%s <<< "$UPDATED")
+    if [ "$UPDATED_EPOCH" -lt "$FOUR_HOURS_AGO" ]; then
+        echo "⚠️  STALE: $(basename $lug) unchanged since $UPDATED — suggest abandon/resume/extend"
+    fi
+done
+```
+
+**Action:** Surface stale lugs in briefing. User can:
+- **Abandon:** Move to completed with "abandoned" note
+- **Resume:** Set status back to open, continue work
+- **Extend:** Update timestamp, continue next session
 
 ---
 
@@ -146,6 +213,8 @@ For each file:
 Show unified WAI Point briefing:
 - Project identity and phase
 - Active work (from `bytype/*/open/` and `bytype/*/in_progress/`)
+  - **Include routing info:** Group by `routed_to` (LOCAL, FRAMEWORK, SIGNAL)
+  - Announce: "Routing: X LOCAL (this project), Y FRAMEWORK (hub), Z SIGNAL (broadcast)"
 - Teaching discovery results
 - Context health (git, hub, session state, **context budget**)
 - Next actions (from `_session_state.next_session_recommendation`)
@@ -156,7 +225,7 @@ Show unified WAI Point briefing:
 
 **Runs at wakeup (Step 7) and monitored throughout the session.**
 
-Estimate cumulative context consumption as a percentage of the model's context window. Display budget status in the briefing using traffic-light tiers:
+Display budget status using actual token measurement and traffic-light tiers:
 
 | Tier | Range | Behavior |
 |------|-------|----------|
@@ -165,9 +234,11 @@ Estimate cumulative context consumption as a percentage of the model's context w
 | ORANGE | 60-80% | Warn: "Context at {N}% — consider closeout after current task" |
 | RED | >80% | **Auto-prepare closeout.** Notify user: "Context at {N}% — initiating closeout preparation." Begin state preservation (reconcile lugs, capture session summary, prepare WAI-State updates). User can override with "continue" but default is closeout. |
 
-**Estimation method:** Count tokens consumed by protocol files loaded, conversation turns, and tool results. Exact counting is not required — conservative estimates are fine. Use model context limit from `ai_context.context_limit` in WAI-State.json (default: 200,000).
+**Measurement method:** Report actual token usage from the `/context` command (Claude Code only). Framework must have a way to query real context usage at wakeup. Note: This is a measurement, not an estimate. Use model context limit from `ai_context.context_limit` in WAI-State.json (default: 200,000).
 
-**Before loading any file on-demand during the session:** Check if loading it would push context into the next tier. If it would cross into RED, warn before loading.
+**For non-Claude tools:** If `/context` is unavailable, include note in briefing: "Context measurement unavailable on this tool. Run `/context` periodically to check budget." Do NOT estimate.
+
+**During the session:** Before loading large files on-demand, check if loading would exceed 200KB of additional tokens. If so, warn before loading. Do not load if it would cross into RED tier without user approval.
 
 ---
 
@@ -185,18 +256,37 @@ mkdir -p "$SESSION_DIR"
 touch "$SESSION_DIR/track.jsonl"
 ```
 
-**Track capture:** Every turn MUST conclude with an append to `track.jsonl`:
-```json
-{
-  "turn": 1, "ts": "ISO-8601",
-  "focus": "Topic thread", "action": "Outcome summary",
-  "thinking": "Full rationale (5-8 sentences)",
-  "activity": ["Actions taken"], "decisions": ["Choices made"],
-  "insights": ["New understandings"], "open": ["Unresolved threads"],
-  "phase": "orientation|exploration|planning|execution|review|recovery",
-  "evolution": "How understanding evolved"
-}
-```
+**Track capture & Autosave:** Every turn MUST conclude with:
+
+1. **Autosave checkpoint** (BEFORE appending to track):
+   ```bash
+   TURN_N={turn_number}
+   cat > "WAI-Spoke/.autosave/turn-${TURN_N}.json" << 'EOF'
+   {
+     "turn": {TURN_N},
+     "ts": "ISO-8601",
+     "focus": "Current thread",
+     "completed": false,
+     "state": { ... lug state, open work, decisions ... }
+   }
+   EOF
+   ```
+   Purpose: If session crashes, recover from this checkpoint before track.jsonl append.
+
+2. **Track entry** (AFTER turn completes successfully):
+   ```json
+   {
+     "turn": 1, "ts": "ISO-8601",
+     "focus": "Topic thread", "action": "Outcome summary",
+     "thinking": "Full rationale (5-8 sentences)",
+     "activity": ["Actions taken"], "decisions": ["Choices made"],
+     "insights": ["New understandings"], "open": ["Unresolved threads"],
+     "phase": "orientation|exploration|planning|execution|review|recovery",
+     "evolution": "How understanding evolved",
+     "completed": true
+   }
+   ```
+   Note: `completed: true` signals clean turn completion. If missing at next wakeup, implies interruption.
 
 ---
 

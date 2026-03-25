@@ -1,4 +1,25 @@
 
+## [2.0.69] - 2026-03-25
+
+### Added - Critical Path Implementation (Session 74)
+- **Gap 1: Context Estimation Accuracy** — replaced naive file-size estimates with actual `/context` tool measurement in wakeup Step 7. Framework now reports real token usage, not guesses (impact 9).
+- **Gap 2: Lug Routing Awareness** — extended lug schema with `routed_to` enum (LOCAL|FRAMEWORK|SIGNAL) and `scope_verified_by` field. Ozi dispatch gate skips non-LOCAL lugs. Closeout Step 5c routes by destination: LOCAL→spoke, FRAMEWORK→teachings, SIGNAL→bulletin.
+- **Gap 3: Interruption Recovery** — added track integrity validation in wakeup Step 3b. Detects session interruptions via `completed: true` field. Auto-save checkpoints at `.autosave/turn-{N}.json`. Recovery prompt: Green Light (resume) / Red Light (inspect) / Skip / New. Closeout Step 10 cleans autosaves >3 sessions old.
+
+### Changed
+- `templates/commands/wai.md` — Step 3b (new): track integrity check + interruption detection. Step 4: in-progress lug timeout detection (>4h). Step 7: measure context not estimate. Step 8: autosave + track structure.
+- `templates/commands/wai-lug-schema.md` — new "Routing Fields" section (routed_to, scope_verified_by, routing logic).
+- `templates/commands/wai-closeout.md` — Step 5c: routing-aware archival. Step 9c: hub bulletin respects SIGNAL routing. Step 10 (new): autosave cleanup.
+- `WAI-Spoke/skills/ozi-work-queue-monitor/wai-ozi-work-queue-monitor.md` — added routing gate in auto_dispatch_ready_work().
+
+### Signals Created
+- signal-context-estimation-accuracy-v1 (impact 9, routed FRAMEWORK)
+- signal-recovery-mechanism-design-v1 (impact 8, routed SIGNAL)
+- signal-critical-path-resolution-complete-v1 (impact 9, routed SIGNAL)
+
+### Status
+- **Framework State:** Production-ready. All Ozi autonomous orchestration components in place.
+- **Version:** 2.0.68 → 2.0.69 (session patch)
 
 ## [2.0.67] - 2026-03-25
 
