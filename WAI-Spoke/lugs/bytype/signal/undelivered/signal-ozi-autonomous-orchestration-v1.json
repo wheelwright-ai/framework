@@ -1,0 +1,49 @@
+{
+  "id": "signal-ozi-autonomous-orchestration-v1",
+  "type": "signal",
+  "impact": 10,
+  "status": "undelivered",
+  "created_at": "2026-03-25T12:00:00Z",
+  "created_by": "claude-haiku-4-5",
+  "timestamp": "2026-03-25T12:00:00Z",
+  "fw_version": "3.0.0",
+  "title": "Ozi Autonomous Orchestration — Work queue + auto-chain = continuous delivery",
+  "summary": "Design for Ozi as autonomous work orchestrator: maintains prioritized work queue (teachings → inbound → signals → local), marks items ready vs needs_refinement, executes with approval, chains jobs with minimal context, captures UAT + implementation notes in track. Enables: users build queue, Ozi executes, clear burndown, continuous delivery.",
+  "description": "Session 73: User described vision for work queue management. Instead of 'Ozi what should I work on?', Ozi maintains queue. Two modes: (1) Interactive 'Work the job queue' / 'Review refinements', (2) Auto-chain: approve once, Ozi chains through jobs (implement → minimal closeout → load next), minimal context (~20k tokens), track captures UAT + implementation. Queue prioritizes: teaching files first (framework upgrades) → inbound lugs (hub deliveries) → signals (learnings) → local work (project items). Lug creation auto-enrolls in queue.",
+  "design_pillars": [
+    "Queue discipline: Prioritized, visible, chainable work list",
+    "Minimal context: Each job loads only WAI + named lug + prev track (~20k vs 46k full wakeup)",
+    "Ready vs refinement: Auto-discover readiness, present refinements for user review",
+    "Autonomous execution: Approve once, chain through queue until completion or stop",
+    "Accountability: Track + UAT recording creates audit trail + learning",
+    "User controls depth: Can work queue interactively or delegate to Ozi auto-mode"
+  ],
+  "enabling_practices": [
+    "User builds lug queue. Ozi works through it.",
+    "Lug creation is enrollment in work queue",
+    "Priority order built into framework (teachings first)",
+    "Blocker detection prevents stuck queue",
+    "Track file is continuous execution log",
+    "Auto-mode enables unattended work (with checkpoints)"
+  ],
+  "impact_on_framework": [
+    "Ozi becomes autonomous work dispatcher, not task suggester",
+    "Clear burndown visibility (queue state in WAI-State)",
+    "Continuous delivery of framework improvements",
+    "Teaching files auto-processed in sequence",
+    "Minimal context overhead (20k vs 46k per job)",
+    "Track becomes execution audit log, not just context bridge"
+  ],
+  "user_value": [
+    "Build the queue once. Ozi executes. No babysitting.",
+    "See exactly what's queued and in what order (priority-driven)",
+    "Approve auto-mode: 'Go!' and Ozi works while you do something else",
+    "UAT in track means implemention is documented and testable",
+    "Context stays lean: each job knows what it's doing"
+  ],
+  "next_action": "Implement epic-ozi-work-queue-orchestration-v1. This is largest epic yet (10-15 steps). Needs: queue schema, priority logic, minimal context loader, auto-chain orchestrator, track extensions, closeout integration.",
+  "learning": "Autonomous work execution scales. Framework should assume Ozi can work without supervision. Give it a queue, it executes. Give it approval, it chains. This is the path to true 'AI as responsible partner' — not just suggesting work, but tracking + executing it accountably.",
+  "routed_to": "signal:all-spokes",
+  "scope_verified_by": "user request",
+  "routing_notes": "Highest-impact signal yet (10). Transforms how all spokes interact with Ozi. Teaching for entire framework ecosystem."
+}

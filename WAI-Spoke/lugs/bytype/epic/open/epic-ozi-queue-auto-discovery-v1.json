@@ -1,0 +1,49 @@
+{
+  "id": "epic-ozi-queue-auto-discovery-v1",
+  "type": "epic",
+  "status": "open",
+  "created_at": "2026-03-25T12:30:00Z",
+  "created_by": "claude-haiku-4-5",
+  "timestamp": "2026-03-25T12:30:00Z",
+  "fw_version": "3.0.0",
+  "title": "Ozi Queue Auto-Discovery — Initialize work queue on first run",
+  "one_liner": "If work queue doesn't exist in WAI-State.json, Ozi auto-discovers and builds it from current lugs (teachings → inbound → signals → local), ready for orchestration.",
+  "summary": "When epic-ozi-work-queue-orchestration-v1 is first implemented, `_work_queue` won't exist in legacy WAI-State.json. Ozi should detect missing queue, scan current lug state, auto-populate queue with discovered items in priority order (teachings → inbound → signals → open lugs), mark readiness (ready vs needs_refinement), and present it to user for review/approval before starting orchestration.",
+  "motivation": "Bootstrap path for existing projects. Queue auto-discovery means users don't have to manually populate the queue — Ozi looks at what exists and builds a sensible queue from current work.",
+  "acceptance_criteria": [
+    "Wakeup Step 4.5 (new): Check if `_work_queue` exists in WAI-State.json",
+    "If missing: trigger queue auto-discovery",
+    "Auto-discovery scans in priority order:",
+    "  (1) Hub teachings in `seed/ingest/` → add to queue as priority 1",
+    "  (2) Inbound lugs (hub deliveries) → add as priority 2",
+    "  (3) Signals undelivered → add as priority 3",
+    "  (4) Local lugs (epic/task/feature/bug open) → add as priority 4",
+    "For each lug: determine readiness state (ready vs needs_refinement)",
+    "  - ready: has acceptance_criteria, estimated_steps, no blockers",
+    "  - needs_refinement: missing acceptance criteria or blocker list unclear",
+    "Create `_work_queue` in WAI-State.json with discovered + sorted items",
+    "Present discovered queue to user: 'Built queue from X items. Review: Work it / Refine / Adjust'",
+    "User can adjust order, move items to needs_refinement, mark as blocked"
+  ],
+  "scope": [
+    "Wakeup Step 4.5: Auto-discovery detection + trigger logic",
+    "Queue builder logic: scan all lug types, prioritize, assess readiness",
+    "Readiness heuristics: check for acceptance_criteria field, estimated_steps, blocker_list",
+    "Queue initialization in WAI-State.json",
+    "Briefing output: show discovered queue + prompt for review/adjustment"
+  ],
+  "out_of_scope": [
+    "Manual queue building (that's user job after discovery)",
+    "Automatic readiness prediction (always ask or mark for review)"
+  ],
+  "implementation_notes": "Auto-discovery is one-time bootstrap. After first run, queue exists and is maintained by lug creation + user edits.",
+  "related_epics": [
+    "epic-ozi-work-queue-orchestration-v1 (queue management that this bootstraps)"
+  ],
+  "phase": "planning",
+  "priority": "medium",
+  "size_estimate": "3-4 steps",
+  "routed_to": "framework",
+  "scope_verified_by": "user request (Session 73: 'Ozi logic is implemented it should scan what it has to build that queue if not there')",
+  "routing_notes": "Bootstrap feature for queue orchestration. Feeds into epic-ozi-work-queue-orchestration-v1."
+}

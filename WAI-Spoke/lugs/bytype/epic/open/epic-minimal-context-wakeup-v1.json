@@ -1,0 +1,42 @@
+{
+  "id": "epic-minimal-context-wakeup-v1",
+  "type": "epic",
+  "status": "open",
+  "created_at": "2026-03-25T11:01:00Z",
+  "created_by": "claude-haiku-4-5",
+  "timestamp": "2026-03-25T11:01:00Z",
+  "fw_version": "3.0.0",
+  "title": "Minimal Context Cross-Project Wakeup — Fast handoff between spokes",
+  "one_liner": "Enable rapid context handoff when moving between projects: closeout specifies next project, wakeup loads minimal state + asks for details.",
+  "summary": "Currently every wakeup loads full context (WAI-State.json, Skills, lug index, strategic context). When user switches projects (e.g., 'close wheelwright, start xyz'), next wakeup should skip 70% of that and ask 'which areas matter today?' to reconstruct focus.",
+  "motivation": "Cross-project work is common. Full wakeup is ~46k tokens. Minimal wakeup could be ~8-12k. User controls depth with follow-up questions. Saves token budget for actual work.",
+  "acceptance_criteria": [
+    "Closeout Step 9: Add `_next_session_context_preference` field to WAI-State.json with { project: string, minimal: boolean, focus_areas: string[] }",
+    "Wakeup Step 2: Detect `minimal: true` flag",
+    "Wakeup Step 7: If minimal, load ONLY WAI-State.json (core identity), skip Skills/lug loads, present mini-briefing + 'Need more context? Ask for [lugs|skills|signals|strategic]'",
+    "Session tracks record context depth: 'minimal' vs 'full'",
+    "User can override with /wai-full to load complete context on-demand"
+  ],
+  "scope": [
+    "Extend WAI-State.json schema (_next_session_context_preference)",
+    "Modify wakeup Step 2 (state loading) to detect minimal flag",
+    "Modify wakeup Step 7 (briefing) to support minimal mode",
+    "Add /wai-full command to restore full context mid-session",
+    "Update closeout Step 9 (WAI-State updates) to set preference"
+  ],
+  "out_of_scope": [
+    "Partial lug loading (all-or-nothing for now)",
+    "Spoke-specific context (only project-level)",
+    "Automatic context depth detection"
+  ],
+  "implementation_notes": "Minimal mode is opt-in at closeout ('next project: xyz, minimal mode'). Default is full wakeup. User always in control.",
+  "related_epics": [
+    "epic-skill-thrift-v1 (general slim-down)"
+  ],
+  "phase": "planning",
+  "priority": "medium",
+  "size_estimate": "5-7 steps",
+  "routed_to": "local",
+  "scope_verified_by": "user feedback (Session 73: cross-project handoff feature for Wheelwright Framework)",
+  "routing_notes": "Architectural improvement to Wheelwright's wakeup. Stays local. Becomes a teaching only if other spokes adopt similar pattern."
+}
