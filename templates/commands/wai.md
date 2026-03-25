@@ -292,7 +292,28 @@ touch "$SESSION_DIR/track.jsonl"
 
 ## Step 9: Ready
 
-"Wake complete. Ready to work."
+Display wakeup completion marker with session context:
+
+```
+┌─ WAI WAKEUP Session-{N} [{track_name}] {timestamp}
+│
+│  Project: {project_name} v{version}
+│  Active work: {X} open, {Y} in_progress, {Z} signals
+│  Context: {percent}% ({tokens_used}K/{tokens_limit}K)
+│
+└─ Ready to work.
+```
+
+**Values to fill:**
+- `{N}` = `_session_state.session_count` from WAI-State.json
+- `{track_name}` = session directory name (e.g., `session-20260325-1326`)
+- `{timestamp}` = current UTC time (ISO-8601)
+- `{project_name}` = `wheel.name` from WAI-State.json
+- `{version}` = `wheel.version`
+- `{X}`, `{Y}`, `{Z}` = lug counts from Step 4
+- `{percent}`, `{tokens_used}`, `{tokens_limit}` = from Step 7 context measurement
+
+This marker is unmistakable: **WAKEUP** = shows project + active work. **CLOSEOUT** = shows track stats + commits (see wai-closeout.md).
 
 ---
 

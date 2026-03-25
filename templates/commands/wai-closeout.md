@@ -231,14 +231,24 @@ git tag -l | tail -1  # Verify tag (if production release)
 When closeout succeeds, display this to signal completion distinctly:
 
 ```
-╔══════════════════════════════════════════════════════════════════════════╗
-║                                                                          ║
-║                     ✅ CLOSEOUT COMPLETE                                ║
-║                                                                          ║
-║                    Session state saved to git.                          ║
-║              Next wakeup will load exactly where we left off.           ║
-║                                                                          ║
-╚══════════════════════════════════════════════════════════════════════════╝
+┌─ CLOSEOUT Session-{N} [{track_name}] {timestamp}
+│
+│  Track stats: {turns} turns, {phase_distribution}
+│  Version: v{old_version} → v{new_version}
+│  Session count: {old_count} → {new_count}
+│  Commits: {N} files pushed to origin/main
+│
+└─ Session saved. Next wakeup loads exactly where we left off.
 ```
 
-This visual marker distinguishes **closeout** from **wakeup** (which displays "WAI Point Briefing"). Makes it unmistakable when switching between agent tabs or IDE sessions.
+**Values to fill:**
+- `{N}` = `_session_state.session_count` from WAI-State.json (before increment)
+- `{track_name}` = session directory name (e.g., `session-20260325-1326`)
+- `{timestamp}` = current UTC time (ISO-8601)
+- `{turns}` = total track points written (count lines in track.jsonl)
+- `{phase_distribution}` = breakdown of phases in track (e.g., "execution (70%) + review (30%)")
+- `{old_version}` → `{new_version}` = version before and after closeout
+- `{old_count}` → `{new_count}` = session_count before and after increment
+- `{N}` = number of files committed and pushed
+
+**Distinction:** **WAKEUP** = shows project + active work. **CLOSEOUT** = shows track stats + version changes. Unmistakable when tab-switching.
