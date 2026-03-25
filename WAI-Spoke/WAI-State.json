@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.69",
+    "version": "2.0.70",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -95,12 +95,12 @@
   "_session_state": {
     "last_session_id": "session-20260325-1240",
     "last_modified_by": "claude-haiku-4-5",
-    "last_modified_at": "2026-03-25T14:00:00Z",
-    "last_closeout": "2026-03-25T14:00:00Z",
-    "session_count": 74,
-    "track_path": "WAI-Spoke/sessions/session-20260325-1240/track.jsonl",
+    "last_modified_at": "2026-03-25T20:43:11Z",
+    "last_closeout": "2026-03-25T20:43:11Z",
+    "session_count": 75,
+    "track_path": "WAI-Spoke/sessions/session-20260325-1326/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 74 complete: ALL 3 CRITICAL GAPS CLOSED. Framework production-ready. What was done: (1) Context estimation fixed—measured via /context tool not guessed. (2) Lug routing added—routed_to enum (LOCAL/FRAMEWORK/SIGNAL) with dispatch gate in Ozi. (3) Interruption recovery built—track integrity check + autosave checkpoints + recovery prompt. What's next: (1) End-to-end Ozi orchestration test with all 3 mechanisms. (2) Remaining 6 epics (skill thrift tiers 2-3, queue auto-discovery, output simplification). (3) Generate teachings from 3 signals for hub distribution. Framework now resilient to Windows updates, power loss, and supports full autonomous dispatch.",
+    "next_session_recommendation": "Session 75 complete. Next: (1) Publish 5 signals as teachings to hub. (2) Reconcile 2 completed epics (routing awareness, interruption recovery). (3) Execute remaining 6 epics (skill thrift, queue auto-discovery, wakeup simplification). Framework is production-ready and Ozi autonomous orchestration unblocked.",
     "requires_review": false,
     "review_reason": null,
     "protocol_last_run": "2026-03-25T20:41:16Z",

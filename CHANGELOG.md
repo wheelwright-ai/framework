@@ -1,3 +1,28 @@
+## [2.0.70] - 2026-03-25
+
+### Changed - Documentation + Skill Consolidation (Session 75)
+- **README.md:** Updated from Session 15. Added Track/Historian section, live spoke examples (PathFinder, Tracks), updated skills table, version string (2.0.69).
+- **docs/llm-full.txt:** Created single-file LLM context loader (91KB). Concatenates WAI-State.json, core protocol files, utilities, CHANGELOG. Enables external agents to load full framework knowledge in one file.
+- **templates/commands/wai-closeout.md:** Integrated production release gate (Step 0: "Is this a production release?") + quality gates (0a-0e: hygiene, breaking changes, tests, linting, benchmarks). Added Step 7b (docs sync automation). Added Step 13 (git tag for releases). Folded /wai-shipit into closeout workflow.
+- **Removed:** templates/commands/wai-shipit.md, .claude/commands/wai-shipit.md, WAI-Spoke/commands/wai-shipit.md, templates/spoke/skills/shipit/ — shipit functionality consolidated into closeout.
+- **Updated:** README.md, CLAUDE.md, WAI-Skills.jsonl — removed shipit references, clarified single /wai-closeout command for all workflows.
+
+### Deliverables
+- Single /wai-closeout command handles both normal sessions and production releases
+- Quality gates only run if production release = yes
+- Git tag applied only for production releases
+- Step 7b automates README.md + docs/llm-full.txt regeneration on protocol changes
+- All users now have unified single-command closeout workflow
+
+### Signals Ready for Hub Distribution
+- signal-critical-path-resolution-complete-v1 (impact 9) — framework production-ready, all 3 critical gaps closed
+- signal-context-estimation-accuracy-v1 (impact 9) — accurate token usage measurement via /context
+- signal-batch-sequence-required-v1 (impact 8) — teaching batch dependencies discovered
+- signal-ozi-autonomous-orchestration-v1 (impact 8) — Ozi dispatch unblocked
+- decision-plan-dogfood-execute-protocol (impact 8) — dogfood + execute pattern validated
+
+### Status
+- **Framework State:** v2.0.70. Production-ready. All session continuity mechanisms validated. Cleaner closeout procedure. Ready for Ozi autonomous dispatch and hub teaching distribution.
 
 ## [2.0.69] - 2026-03-25
 
