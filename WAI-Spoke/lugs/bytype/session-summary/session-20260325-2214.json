@@ -1,0 +1,54 @@
+{
+  "id": "session-20260325-2214",
+  "type": "session-summary",
+  "title": "Session 68: Lug hygiene audit + advisor→guard rename + teaching delivery",
+  "status": "completed",
+  "created_at": "2026-03-25T22:14:00Z",
+  "created_by": "claude-opus-4-6",
+  "session_number": 68,
+  "accomplished": [
+    "Delivered epic-prompt-validation-bench-move teaching to wheelwright-ai-website spoke",
+    "Audited all active lugs for definition quality and drift risk",
+    "Closed 5 superseded/completed lugs (sharded-lugs, v1-v2-migration, hub-broadcast, context-diet, teach-learn, code-cleanup)",
+    "Reconciled 2 epics with updated child statuses (session15-fleet-evolution, hub-evolution-structure)",
+    "Renamed 6 advisor skills to gate/guard/schema/capture pattern for clarity",
+    "Removed 6 advisory skills from .claude/commands/ (not user-invocable)",
+    "Updated WAI-Skills.jsonl, CLAUDE.md, GEMINI.md, and ~20 living files with new names",
+    "Renamed skill folders in templates/spoke/skills/ and WAI-Spoke/skills/",
+    "Generated teaching for spoke distribution: skill-advisor-rename-to-guards-v1.md.teaching",
+    "Assessed 5 in_progress implementations — recommendations provided for each"
+  ],
+  "files_touched": [
+    "WAI-Spoke/lugs/bytype/epic/completed/ (7 lugs moved)",
+    "WAI-Spoke/lugs/bytype/task/completed/ (1 lug moved)",
+    "WAI-Spoke/lugs/bytype/feature/completed/ (1 lug moved)",
+    "WAI-Spoke/lugs/bytype/bug/completed/ (1 lug moved)",
+    "WAI-Spoke/lugs/bytype/epic/open/epic-session15-fleet-evolution.json",
+    "WAI-Spoke/lugs/bytype/epic/in_progress/epic-hub-evolution-structure.json",
+    "WAI-Spoke/skills/WAI-Skills.jsonl",
+    "templates/commands/wai-*.md (6 renamed)",
+    "templates/spoke/skills/ (6 folders renamed)",
+    "WAI-Spoke/skills/ (6 folders renamed)",
+    ".claude/commands/ (6 files removed)",
+    "CLAUDE.md", "GEMINI.md", "README.md",
+    "hub/teachings_repo/framework/current/skill-advisor-rename-to-guards-v1.md.teaching"
+  ],
+  "decisions": [
+    "Advisory skills renamed: -advisor → -gate/-guard/-schema/-capture based on behavior pattern",
+    "Guards/gates are NOT user-invocable slash commands — removed from .claude/commands/",
+    "Stale lugs describing superseded designs must be closed to prevent drift",
+    "Implementation lugs #1-5 assessed: #3 close as superseded, #4 rewrite minimal, #1 slim, #2 absorb into #1, #5 close as superseded by PEV"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Implementation decisions #1,2,4,5 discussed but not yet executed (hub-teachings-schema slim, teachings-copy absorb, teaching-auto-gen rewrite, ozi-gardens close)",
+      "Implementation #3 (ozi-working-agreement-enforcement) agreed to close but not yet moved to completed"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Execute agreed implementation lug dispositions: close #3 and #5, slim #1, absorb #2, rewrite #4 to minimal version",
+      "Continue epic-skill-thrift-v1 — Tier 1 skills still need slimming",
+      "Review remaining open tasks for staleness"
+    ]
+  }
+}

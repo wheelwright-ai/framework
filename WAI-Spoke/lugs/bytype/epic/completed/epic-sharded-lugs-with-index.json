@@ -1,0 +1,15 @@
+{
+  "i": "epic-sharded-lugs-with-index",
+  "t": "Sharded lug system with index file for portable access",
+  "ty": "epic",
+  "s": "o",
+  "impact": 8,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[architecture] Date-partitioned lug files (lugs/global-YYYY-MM-DD.jsonl). Agent maintains index for review without folder crawling. Same pattern for skills. Hub library will grow — index essential. ezorg-email already evolved this organically.",
+  "s": "completed",
+  "reconciled": true,
+  "reconciled_at": "2026-03-24T22:20:00Z",
+  "reconciled_reason": "Superseded by epic-context-diet-v1 which implemented bytype/ folder structure instead of date-partitioned sharding. Index concept survived as WAI-LugIndex.jsonl.",
+  "superseded_by": "epic-context-diet-v1"
+}

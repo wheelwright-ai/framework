@@ -24,9 +24,9 @@ Skills are in `templates/commands/`:
 | `wai-closeout.md` | Session preservation — reconcile, signal, commit |
 | `wai-shipit.md` | Quality gates + closeout for releases |
 | `wai-foundation.md` | Project identity, goals, boundaries |
-| `wai-lug-advisor.md` | Lug system — schema, lifecycle, authoring |
-| `wai-complexity-advisor.md` | Planning gate (2+ files OR 6+ steps) |
-| `wai-stewardship-advisor.md` | Scope drift detection |
+| `wai-lug-schema.md` | Lug system — schema, lifecycle, authoring (auto-trigger) |
+| `wai-complexity-gate.md` | Planning gate — 2+ files OR 6+ steps (auto-trigger) |
+| `wai-stewardship-guard.md` | Scope drift detection (auto-trigger) |
 | `wai-ide-setup.md` | Hook configuration for Claude Code and other tools |
 | `wai-rules.md` | Project boundaries |
 | `wai-principles.md` | WAI principles P1-P9 |

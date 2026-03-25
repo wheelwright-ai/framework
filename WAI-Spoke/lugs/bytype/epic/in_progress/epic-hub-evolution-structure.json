@@ -1,0 +1,50 @@
+{
+  "i": "epic-hub-evolution-structure",
+  "t": "Hub folder/structure evolution for canonical Wheelwright",
+  "ty": "epic",
+  "s": "in_progress",
+  "impact": 9,
+  "ca": "2026-03-19T22:31:00Z",
+  "ua": "2026-03-24T22:25:00Z",
+  "gb": "claude-sonnet-4-5",
+  "description": "Evolve hub directory structure to support canonical Wheelwright model.",
+  "canonical_hub_structure": {
+    "teachings_repo/": {
+      "purpose": "Teaching distribution from all spokes",
+      "structure": "teachings_repo/{spoke_id}/*.teaching",
+      "status": "implemented"
+    },
+    "signals/": {
+      "incoming/": "High-impact lugs from spokes awaiting processing",
+      "processed/": "Archive of processed signals",
+      "status": "implemented",
+      "note": "WAI-Hub/Signals/incoming/ and processed/ operational"
+    },
+    "lugs/": {
+      "inbox/": "Lug delivery from spokes (inter-spoke communication)",
+      "status": "not_started"
+    },
+    "registry/": {
+      "spokes.json": "Active spoke registry with metadata",
+      "status": "not_started"
+    },
+    "metadata/": {
+      "hub-state.json": "Hub operational state",
+      "distribution-log.jsonl": "Teaching distribution audit trail",
+      "status": "not_started"
+    }
+  },
+  "implementation_children": [
+    {"id": "implementation-hub-teachings-copy", "status": "completed"},
+    {"id": "implementation-hub-signal-routing", "status": "completed", "note": "Signals route via WAI-Hub/Signals/"},
+    {"id": "implementation-hub-lug-inbox", "status": "not_started"},
+    {"id": "implementation-hub-spoke-registry", "status": "not_started"}
+  ],
+  "remaining_work": [
+    "Hub lug inbox for inter-spoke communication",
+    "Spoke registry with provenance tracking",
+    "Hub metadata and distribution audit trail"
+  ],
+  "reconciled_at": "2026-03-24T22:25:00Z",
+  "reconciled_reason": "Session 68 audit: teachings_repo and signal routing are operational. Updated child statuses. Moved from open to in_progress. 2 of 4 children completed."
+}

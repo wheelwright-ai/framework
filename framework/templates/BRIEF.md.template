@@ -37,7 +37,7 @@ Rules that **must not** be violated:
 - ❌ Skip tests or bypass quality gates without explicit approval
 - ❌ Commit generated files (build artifacts, __pycache__, etc.)
 - ❌ Make destructive changes without checkpoints (safe-refactor)
-- ❌ Proceed with work if foundation is uncertain (wai-foundation-advisor)
+- ❌ Proceed with work if foundation is uncertain (wai-foundation-gate)
 - ❌ Ignore machine classification (adjust recommendations to hardware)
 
 ---

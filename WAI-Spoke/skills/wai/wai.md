@@ -154,7 +154,7 @@ Report any active advisory watches and skills that recommend themselves at sessi
 
 ## Step 4: Load Lugs and Signals
 
-# Canonical storage declaration: see wai-lug-advisor.md
+# Canonical storage declaration: see wai-lug-schema.md
 
 Load active work and learnings:
 

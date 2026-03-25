@@ -23,7 +23,7 @@ Session-summary lug fields: `id`, `type: "session-summary"`, `title`, `status: "
 
 ### 2. Signal Extraction
 
-Review session for decisions/learnings with **impact >= 8**. Write each as a signal lug to `lugs/bytype/signal/undelivered/{id}.json`. Signal schema: see `wai-lug-advisor.md`. Impact scale: 10=direction change, 9=architectural, 8=significant pattern, <8=skip.
+Review session for decisions/learnings with **impact >= 8**. Write each as a signal lug to `lugs/bytype/signal/undelivered/{id}.json`. Signal schema: see `wai-lug-schema.md`. Impact scale: 10=direction change, 9=architectural, 8=significant pattern, <8=skip.
 
 ### 3. Incomplete Work Capture
 

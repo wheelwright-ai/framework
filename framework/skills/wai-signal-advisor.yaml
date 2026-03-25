@@ -1,4 +1,4 @@
-name: wai-signal-advisor
+name: wai-signal-capture
 role: advisor
 model: lightweight
 description: "Cross-node signal propagation - publishes high-impact learnings to hub for other spokes"
@@ -96,7 +96,7 @@ output:
 
 use_cases:
   - scenario: "Agent makes architectural decision (impact: 9) about JWT refresh"
-    what_happens: "wai-signal-advisor creates signal file in hub/intake/"
+    what_happens: "wai-signal-capture creates signal file in hub/intake/"
     why_it_matters: "Other spokes discover pattern, avoid reinventing solution"
     user_trigger: "Automatic on post_decision event (impact >= 8)"
     expected_output: |
@@ -106,59 +106,59 @@ use_cases:
       Other spokes will discover this signal on their next session_start.
 
   - scenario: "Agent discovers race condition bug (impact: 8), creates observation Lug"
-    what_happens: "wai-signal-advisor publishes bug lesson as signal"
+    what_happens: "wai-signal-capture publishes bug lesson as signal"
     why_it_matters: "Other spokes learn from this bug, can check their own code"
     user_trigger: "Automatic on post_observation (impact >= 8)"
 
   - scenario: "Low-impact decision (impact: 5) - routine refactoring"
-    what_happens: "wai-signal-advisor evaluates, skips signal creation (below threshold)"
+    what_happens: "wai-signal-capture evaluates, skips signal creation (below threshold)"
     why_it_matters: "Hub intake doesn't fill with low-value signals"
     user_trigger: "Automatic evaluation on post_decision"
 
   - scenario: "Spoke has cross_node_signals: false in manifest"
-    what_happens: "wai-signal-advisor skips all signal creation (opted out)"
+    what_happens: "wai-signal-capture skips all signal creation (opted out)"
     why_it_matters: "Spokes can opt out of cross-node participation (privacy)"
     user_trigger: "Automatic check on trigger"
 
   - scenario: "Similar signal already exists in hub/intake/"
-    what_happens: "wai-signal-advisor detects duplicate, skips creation"
+    what_happens: "wai-signal-capture detects duplicate, skips creation"
     why_it_matters: "Prevents signal spam, keeps hub intake clean"
     user_trigger: "Automatic duplicate check"
 
   - scenario: "hub_path not configured in WAI-State.json"
-    what_happens: "wai-signal-advisor warns, skips signal creation"
+    what_happens: "wai-signal-capture warns, skips signal creation"
     why_it_matters: "Graceful degradation - spoke works without hub connection"
     user_trigger: "Automatic hub check on trigger"
 
   - scenario: "User explicitly requests signal publication for specific Lug"
-    what_happens: "wai-signal-advisor creates signal even if impact < 8 (manual override)"
+    what_happens: "wai-signal-capture creates signal even if impact < 8 (manual override)"
     why_it_matters: "User judgment overrides automatic threshold"
     user_trigger: "/publish-signal {lug_id} command (future enhancement)"
 
 tests:
   - name: "Creates signal for high-impact decision"
     setup: "Decision Lug with impact: 9"
-    action: "Trigger wai-signal-advisor"
+    action: "Trigger wai-signal-capture"
     expected: "Signal file created in hub/intake/"
 
   - name: "Skips signal for low-impact decision"
     setup: "Decision Lug with impact: 5"
-    action: "Trigger wai-signal-advisor"
+    action: "Trigger wai-signal-capture"
     expected: "Signal skipped, no file created"
 
   - name: "Detects and skips duplicate signals"
     setup: "Similar signal already in hub/intake/"
-    action: "Trigger wai-signal-advisor with similar Lug"
+    action: "Trigger wai-signal-capture with similar Lug"
     expected: "Duplicate detected, signal skipped"
 
   - name: "Respects cross_node_signals: false"
     setup: "WAI-Manifest.yaml with cross_node_signals: false"
-    action: "Trigger wai-signal-advisor"
+    action: "Trigger wai-signal-capture"
     expected: "Signal creation skipped (opted out)"
 
   - name: "Handles missing hub gracefully"
     setup: "hub_path invalid or hub/intake/ missing"
-    action: "Trigger wai-signal-advisor"
+    action: "Trigger wai-signal-capture"
     expected: "Warning issued, signal skipped, no crash"
 
 notes: |

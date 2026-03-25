@@ -306,7 +306,7 @@ always:
 
 **Advisor Skills:**
 - **brief-advisor:** Enforces all BRIEF rules (cascade)
-- **wai-foundation-advisor:** Enforces Hub "Never proceed on uncertain foundation"
+- **wai-foundation-gate:** Enforces Hub "Never proceed on uncertain foundation"
 
 ---
 

@@ -63,39 +63,39 @@ Quality gate + closeout + git commit workflow with test execution and README syn
 
 ### Advisory Skills
 
-**[wai-complexity-advisor](/wai-complexity-advisor) - Complexity Planning Advisor**  
+**[wai-complexity-gate](/wai-complexity-gate) - Complexity Gate**  
 Triggers planning gate when work affects 2+ files OR requires 6+ steps - exempts utility commands.  
-📄 `templates/commands/wai-complexity-advisor.md`  
+📄 `templates/commands/wai-complexity-gate.md`  
 **Triggers:** Changes to 2+ files, 6+ implementation steps, architectural decisions  
 **Auto-watch:** Enabled
 
-**[wai-stewardship-advisor](/wai-stewardship-advisor) - Stewardship Advisor**  
+**[wai-stewardship-guard](/wai-stewardship-guard) - Stewardship Guard**  
 Detects scope drift, enforces boundaries, requires explicit acknowledgment for direction changes.  
-📄 `templates/commands/wai-stewardship-advisor.md`  
+📄 `templates/commands/wai-stewardship-guard.md`  
 **Triggers:** Scope drift, boundary violation, foundation evolution  
 **Auto-watch:** Enabled
 
-**[wai-context-advisor](/wai-context-advisor) - Context Efficiency Advisor**  
+**[wai-context-guard](/wai-context-guard) - Context Guard**  
 Enforces lazy-loading patterns, prevents unnecessary file reads, optimizes token usage.  
-📄 `templates/commands/wai-context-advisor.md`  
+📄 `templates/commands/wai-context-guard.md`  
 **Triggers:** Loading reference files, reading deprecated content, context bloat  
 **Auto-watch:** Enabled
 
-**[wai-foundation-advisor](/wai-foundation-advisor) - Foundation Completeness Advisor**  
+**[wai-foundation-gate](/wai-foundation-gate) - Foundation Gate**  
 Enforces foundation completion before work starts - guides users through identity, boundaries, approach.  
-📄 `templates/commands/wai-foundation-advisor.md`  
+📄 `templates/commands/wai-foundation-gate.md`  
 **Triggers:** Incomplete foundation, missing setup, work before initialization  
 **Auto-watch:** Enabled
 
-**[wai-signal-advisor](/wai-signal-advisor) - Signal Capture Advisor**  
+**[wai-signal-capture](/wai-signal-capture) - Signal Capture**  
 Triggers signal capture for high-impact decisions (impact >= 8) - ensures learnings are preserved.  
-📄 `templates/commands/wai-signal-advisor.md`  
+📄 `templates/commands/wai-signal-capture.md`  
 **Triggers:** Impact >= 8, high-impact decisions, significant learnings  
 **Auto-watch:** Enabled
 
-**[wai-lug-advisor](/wai-lug-advisor) - Lug System Advisor**  
+**[wai-lug-schema](/wai-lug-schema) - Lug Schema**  
 Advisory skill for lug authoring - schema enforcement, lifecycle guidance, cross-session clarity.  
-📄 `templates/commands/wai-lug-advisor.md`  
+📄 `templates/commands/wai-lug-schema.md`  
 **Triggers:** Lug creation, schema changes, lifecycle operations  
 **Auto-watch:** Enabled
 

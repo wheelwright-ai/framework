@@ -256,7 +256,7 @@ user complaints about frequent re-logins.
 ### Signal Not Created
 
 **Check:**
-- Impact >= 8? (wai-signal-advisor threshold)
+- Impact >= 8? (wai-signal-capture threshold)
 - cross_node_signals: true in WAI-Manifest.yaml?
 - hub_path configured in WAI-State.json?
 - Duplicate signal already in hub/intake/?
@@ -329,7 +329,7 @@ user complaints about frequent re-logins.
 
 - **docs/CROSS-NODE-SIGNALS.md** - Complete signal protocol
 - **hub/intake/README.md** - Signal queue documentation
-- **framework/skills/wai-signal-advisor.yaml** - Signal creation Skill
+- **framework/skills/wai-signal-capture.yaml** - Signal creation Skill
 - **framework/skills/hub-watcher.yaml** - Signal detection Skill
 - **wai/signal_reviewer.py** - /wai-learn implementation
 

@@ -26,8 +26,8 @@ Skills are in `templates/commands/`:
 | `wai-teach.md` | Push templates and lugs to target nodes |
 | `wai-learn.md` | Inbox processing protocol |
 | `wai-foundation.md` | Project identity, goals, boundaries |
-| `wai-lug-advisor.md` | Lug system — schema, lifecycle, authoring |
-| `wai-complexity-advisor.md` | Planning gate (2+ files OR 6+ steps) |
+| `wai-lug-schema.md` | Lug system — schema, lifecycle, authoring |
+| `wai-complexity-gate.md` | Planning gate (2+ files OR 6+ steps) |
 | `wai-rules.md` | Project boundaries |
 | `wai-principles.md` | WAI principles P1-P9 |
 

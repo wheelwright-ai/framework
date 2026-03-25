@@ -70,12 +70,12 @@ Autonomy (P10): Trust is the default
 - Proceed and report — don't interrupt flow
 
 Behavioral Rules: See skill files, not inline
-- Complexity: wai-complexity-advisor.md
-- Scope drift: wai-stewardship-advisor.md
-- Foundation: wai-foundation-advisor.md
+- Complexity: wai-complexity-gate.md
+- Scope drift: wai-stewardship-guard.md
+- Foundation: wai-foundation-gate.md
 
 ## Related Skills
 
 - /wai — Full briefing
-- /wai-stewardship-advisor — Scope drift detection
-- /wai-foundation-advisor — Foundation enforcement
+- /wai-stewardship-guard — Scope drift detection
+- /wai-foundation-gate — Foundation enforcement

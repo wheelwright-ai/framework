@@ -528,11 +528,11 @@ Run three audits:
 
 ### 6d. Complexity Check
 
-Before marking approved, assess whether the implementation triggers the complexity advisor:
+Before marking approved, assess whether the implementation triggers the complexity gate:
 - Does it touch 2 or more files? → planning gate applies
 - Does it require 6 or more steps? → planning gate applies
 
-If yes: note in the idea lug that `/wai-complexity-advisor` should be run at implementation start. Do not run the complexity advisor now — that happens in the implementation session, not the idea session.
+If yes: note in the idea lug that `/wai-complexity-gate` should be run at implementation start. Do not run the complexity gate now — that happens in the implementation session, not the idea session.
 
 ### 6e. User Approval
 
@@ -567,7 +567,7 @@ On approval:
 
 A `s: approved` idea lug is the input to an implementation session, not the implementation itself. In the next session:
 1. Read the idea lug
-2. Run `/wai-complexity-advisor` if triggered
+2. Run `/wai-complexity-gate` if triggered
 3. Create an epic or task lug from it (the idea lug's PEV fields become the epic's PEV fields)
 4. Close the idea lug (`s: c`, `superseded_by: epic-id`)
 
@@ -648,9 +648,9 @@ Quality of output scales with quality of foundation. A spoke with a thin foundat
 ## Related Skills
 
 - `/wai-foundation` — required before evaluating ideas on an unfamiliar project
-- `/wai-lug-advisor` — lug schema and authoring rules
-- `/wai-complexity-advisor` — planning gate before implementation begins
-- `/wai-stewardship-advisor` — scope drift detection during implementation
+- `/wai-lug-schema` — lug schema and authoring rules
+- `/wai-complexity-gate` — planning gate before implementation begins
+- `/wai-stewardship-guard` — scope drift detection during implementation
 
 ---
 

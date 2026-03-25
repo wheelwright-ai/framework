@@ -1,0 +1,14 @@
+{
+  "i": "epic-v1-v2-state-migration",
+  "t": "Create v1→v2 WAI-State.json migration teaching",
+  "ty": "epic",
+  "s": "o",
+  "impact": 9,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[architecture] Subsumes: strip deprecated keys (_wai_bootstrap, analytics zeros, feature_toggles, ai_rules, ai_context, spokes.available template values), add structure_version v2, document seed/ingest/processed as canonical, clean orphaned skill files from WAI-Spoke root, reset inflated wheelwright.version, delete stale upgrade-adoption-plan.json, incorporate old file data before removing. Deploy via teach/learn pipeline.",
+  "s": "completed",
+  "reconciled": true,
+  "reconciled_at": "2026-03-24T22:20:00Z",
+  "reconciled_reason": "Work completed piecemeal across sessions 51-67: state split (context-diet cd-02), bootstrap stripped, deprecated keys removed, WAI-State-extended.json created. No remaining items."
+}

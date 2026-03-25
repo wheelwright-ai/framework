@@ -47,7 +47,7 @@ Each skill lives in its own subfolder: `skills/{id}/{command_file}`.
 
 ## Step 4: Load Active Lugs
 
-# Canonical storage: see wai-lug-advisor.md
+# Canonical storage: see wai-lug-schema.md
 
 Scan for active work across the `bytype/` hierarchy:
 

@@ -148,7 +148,7 @@ Persist session state with enough detail that a new agent/session can:
 
 ### 2. Signal Extraction
 
-# Signal storage: see wai-lug-advisor.md — Canonical Storage
+# Signal storage: see wai-lug-schema.md — Canonical Storage
 
 **Purpose:** Capture high-impact decisions for cross-session learning.
 
@@ -188,7 +188,7 @@ Persist session state with enough detail that a new agent/session can:
    - Architectural insights
    - Reusable solutions
 
-**Note:** This step absorbs the `wai-signal-advisor.md` behavior — closeout is where signals get permanently captured.
+**Note:** This step absorbs the `wai-signal-capture.md` behavior — closeout is where signals get permanently captured.
 
 **Completion:**
 3. Record signal deduplication keys in `_closeout_state.duplicate_detection_keys.signal_teachings[]`
@@ -344,7 +344,7 @@ Any lug intended for another agent (including future-you in a new session) must 
 
 **Framework objects covered:**
 - High-impact signal lugs (`impact >= 8`)
-- Skills and advisors in `templates/commands/`
+- Skills and guards in `templates/commands/`
 - Spoke template changes in `templates/spoke/`
 - State schema or canonical behavior changes affecting spoke migration
 - Lug/schema or protocol changes that alter spoke behavior
@@ -375,7 +375,7 @@ Any lug intended for another agent (including future-you in a new session) must 
    - State/schema or protocol changes that alter spoke behavior
 3. Normalize candidate changes before version decisions:
    - Ignore whitespace-only diffs, timestamp-only churn, and non-semantic formatting changes
-   - Group changes into stable teaching families using `family_key = {object_type}-{object_name}` (examples: `skill-wai-closeout`, `advisor-wai-complexity`, `template-spoke-CLAUDE`, `state-schema`, `protocol-track-chain`)
+   - Group changes into stable teaching families using `family_key = {object_type}-{object_name}` (examples: `skill-wai-closeout`, `guard-wai-complexity`, `template-spoke-CLAUDE`, `state-schema`, `protocol-track-chain`)
 4. For each teaching family:
    - Determine whether a new version is required based on migration-relevant content changes only
    - Bump version according to policy:

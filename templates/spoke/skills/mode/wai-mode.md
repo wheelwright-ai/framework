@@ -27,9 +27,9 @@ Set session mode to control advisory behavior, auto-implementation triggers, and
 ## Mode Details
 
 ### execution (Default)
-- Standard complexity advisor triggers (2+ files OR 6+ steps)
-- Stewardship advisor watches for drift
-- Context advisor enforces lazy-loading
+- Standard complexity gate triggers (2+ files OR 6+ steps)
+- Stewardship guard watches for drift
+- Context guard enforces lazy-loading
 - Auto-implementation available if enabled in settings
 - Normal verbosity
 
@@ -41,21 +41,21 @@ Set session mode to control advisory behavior, auto-implementation triggers, and
 - No auto-implementation
 
 ### planning
-- Only planning and design advisors active
+- Only planning and design guards active
 - No code execution
 - Focus on architecture, design docs, and specifications
 - High verbosity with architectural reasoning
 - All implementation deferred to lugs
 
 ### review
-- Quality and testing advisors active
+- Quality and testing guards active
 - Read-only preference (write operations require confirmation)
 - Focus on code review, quality gates, test coverage
 - Normal verbosity with quality metrics
 - No auto-implementation
 
 ### deploy
-- All safety-critical advisors active
+- All safety-critical guards active
 - Maximum verification before any operation
 - Quality gates enforced
 - High verbosity with safety checks

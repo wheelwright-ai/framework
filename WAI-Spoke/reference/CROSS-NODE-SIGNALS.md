@@ -35,11 +35,11 @@ Cross-node signals allow spokes to publish discoveries, patterns, and learnings 
 
 **Trigger:** High-impact decision or observation (impact >= 8)
 
-**wai-signal-advisor Skill:**
+**wai-signal-capture Skill:**
 ```
 Decision/Observation created (impact >= 8)
   ↓
-wai-signal-advisor evaluates signal worthiness
+wai-signal-capture evaluates signal worthiness
   ↓
 Check: cross_node_signals enabled in manifest?
   ↓
@@ -258,7 +258,7 @@ hub/archive/
 
 ## Integration with Skills
 
-### wai-signal-advisor (Creation)
+### wai-signal-capture (Creation)
 
 **Role:** Advisor
 **Trigger:** post_decision (impact >= 8), post_observation (impact >= 8)
@@ -310,7 +310,7 @@ signals:
 - `false`: Spoke opts out of cross-node participation (privacy)
 
 **auto_publish:**
-- `true`: wai-signal-advisor publishes automatically (default)
+- `true`: wai-signal-capture publishes automatically (default)
 - `false`: Require manual approval before publishing
 
 **review_on_start:**
@@ -378,7 +378,7 @@ signals:
 ```
 
 **Effect:**
-- wai-signal-advisor skips signal publication
+- wai-signal-capture skips signal publication
 - hub-watcher still notifies about signals (read-only mode)
 - Spoke can review signals but doesn't publish
 
@@ -496,7 +496,7 @@ Action: [A]dopt
 ## Related Documents
 
 - **hub/intake/README.md** - Signal queue documentation
-- **framework/skills/wai-signal-advisor.yaml** - Signal creation Skill
+- **framework/skills/wai-signal-capture.yaml** - Signal creation Skill
 - **framework/skills/hub-watcher.yaml** - Signal detection Skill
 - **docs/COMMAND-MAPPING.md** - /wai-learn command specification
 - **hub/health.yaml** - Hub health status

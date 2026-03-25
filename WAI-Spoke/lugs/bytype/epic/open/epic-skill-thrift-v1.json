@@ -22,7 +22,7 @@
       "tier1_high_impact": {
         "description": "Skills >200 lines — largest token savings",
         "items": [
-          {"file": "wai-lug-advisor.md", "lines": 795, "bytes": 34342, "notes": "Biggest skill. Schema examples, PEV chain examples, type system docs, lifecycle diagrams — most can move to reference"},
+          {"file": "wai-lug-schema.md", "lines": 795, "bytes": 34342, "notes": "Biggest skill. Schema examples, PEV chain examples, type system docs, lifecycle diagrams — most can move to reference"},
           {"file": "wai-improve.md", "lines": 656, "bytes": 28378, "notes": "Backlog review protocol. Scoring rubrics, fit-check examples, priority tables — reference material"},
           {"file": "wai-ozi-work-queue-monitor.md", "lines": 364, "bytes": 9275, "notes": "Queue monitor with detailed state machine docs"},
           {"file": "wai-lug-compat.md", "lines": 277, "bytes": 9108, "notes": "Compat layer with migration examples"},
@@ -41,7 +41,7 @@
           {"file": "wai-chat-to-track.md", "lines": 134, "bytes": 3649},
           {"file": "wai-mode.md", "lines": 134, "bytes": 3434},
           {"file": "wai-stewardship-framework.md", "lines": 106, "bytes": 2578},
-          {"file": "wai-complexity-advisor.md", "lines": 95, "bytes": 3300}
+          {"file": "wai-complexity-gate.md", "lines": 95, "bytes": 3300}
         ]
       },
       "tier3_already_lean": {
@@ -49,9 +49,9 @@
         "items": [
           "wai-closeout.md (137 — DONE)", "wai-shipit.md (113 — DONE)",
           "wai-init-v2.md (97)", "wai-sync-v2.md (95)", "wai-rules.md (81)",
-          "wai-red-light.md (80)", "wai-benchmark.md (67)", "wai-signal-advisor.md (55)",
-          "wai-stewardship-advisor.md (50)", "wai-auto-on.md (46)", "wai-foundation-advisor.md (46)",
-          "wai-context-advisor.md (45)", "wai-auto-status.md (39)", "wai-auto-parallel.md (37)",
+          "wai-red-light.md (80)", "wai-benchmark.md (67)", "wai-signal-capture.md (55)",
+          "wai-stewardship-guard.md (50)", "wai-auto-on.md (46)", "wai-foundation-gate.md (46)",
+          "wai-context-guard.md (45)", "wai-auto-status.md (39)", "wai-auto-parallel.md (37)",
           "wai-green-light.md (31)", "wai-auto-off.md (27)", "wai-time.md (17)"
         ]
       }

@@ -138,7 +138,7 @@ Persist session state with enough detail that a new agent/session can:
    - Architectural insights
    - Reusable solutions
 
-**Note:** This step absorbs the `wai-signal-advisor.md` behavior — closeout is where signals get permanently captured.
+**Note:** This step absorbs the `wai-signal-capture.md` behavior — closeout is where signals get permanently captured.
 
 ### 3. Incomplete Work Capture
 

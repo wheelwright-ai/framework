@@ -272,6 +272,6 @@ Include any `lug-review-*.jsonl` files in `WAI-Spoke/lugs/outgoing/` in the hub 
 
 ## Related Skills
 
-- `wai-lug-advisor.md` — lug schema, storage, lifecycle (canonical reference)
+- `wai-lug-schema.md` — lug schema, storage, lifecycle (canonical reference)
 - `wai-closeout.md` — Step 9: Outgoing Delivery (routes lug-review returns to hub)
 - `wai.md` — Step 4: Load Lugs (currency audit trigger)

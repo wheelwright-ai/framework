@@ -1,0 +1,116 @@
+{
+  "id": "epic-context-diet-v1",
+  "type": "epic",
+  "title": "Context Diet: lazy-load wakeup, lug index + folder archive, context governor, wakeup slim-down",
+  "status": "open",
+  "created_at": "2026-03-25T02:00:00Z",
+  "created_by": "claude-opus-4-6",
+  "impact": 9,
+  "fw_ver": "3.0.0",
+  "source_track": "083-tuesday-forge",
+  "description": "WAI eager-loads ~98K tokens of lugs + ~8K tokens of state/skills at wakeup, consuming 50%+ of a 200K context window before work begins. 79% of lugs are completed/archived. This epic restructures WAI from eager-load to selective-hydration.",
+  "items": [
+    {
+      "id": "cd-01",
+      "title": "Lug folder archive + index",
+      "description": "Split WAI-Lugs.jsonl into typed archive folders + lightweight WAI-LugIndex.jsonl. Only active/ folder loaded at wakeup.",
+      "status": "implemented",
+      "agent": null,
+      "files": [
+        "WAI-Spoke/WAI-Lugs.jsonl",
+        "WAI-Spoke/WAI-LugIndex.jsonl",
+        "WAI-Spoke/lugs/active/",
+        "WAI-Spoke/lugs/signal/",
+        "WAI-Spoke/lugs/epic/",
+        "WAI-Spoke/lugs/task/",
+        "WAI-Spoke/lugs/session-summary/",
+        "templates/commands/wai.md",
+        "templates/commands/wai-closeout.md",
+        "templates/commands/wai-lug-advisor.md"
+      ],
+      "estimate_tokens_saved": 90000
+    },
+    {
+      "id": "cd-02",
+      "title": "WAI-State.json slim split",
+      "description": "Extract _migration_state, _closeout_state, _compatibility, _wai_bootstrap into WAI-State-extended.json. Wakeup reads slim file only. Skills read extended on demand.",
+      "status": "implemented",
+      "agent": null,
+      "files": [
+        "WAI-Spoke/WAI-State.json",
+        "WAI-Spoke/WAI-State-extended.json",
+        "templates/commands/wai.md"
+      ],
+      "estimate_tokens_saved": 1200
+    },
+    {
+      "id": "cd-03",
+      "title": "Context budget governor",
+      "description": "Traffic-light budget system added to wai.md. GREEN/YELLOW/ORANGE are advisory. RED (>80%) auto-prepares closeout — notifies user and begins state preservation. Pre-load check warns before crossing into RED.",
+      "status": "implemented",
+      "agent": null,
+      "files": [
+        "templates/commands/wai.md",
+        "templates/commands/wai-status.md"
+      ],
+      "estimate_tokens_saved": 0
+    },
+    {
+      "id": "cd-04",
+      "title": "Wakeup skill slim-down",
+      "description": "Trimmed wai.md from 568L to 179L (68% reduction). Removed hub-only steps (fleet health, lug review), duplicate reference sections, verbose mailroom rules. Hub override file already has hub steps.",
+      "status": "implemented",
+      "agent": null,
+      "files": [
+        "templates/commands/wai.md",
+        "hub/WAI-Hub/skills/wai/wai.md"
+      ],
+      "estimate_tokens_saved": 1500
+    }
+  ],
+  "phases": {
+    "phase_1": {
+      "name": "Split and index",
+      "items": [
+        "cd-01",
+        "cd-02"
+      ],
+      "description": "Structural changes — archive lugs, slim state, generate index"
+    },
+    "phase_2": {
+      "name": "Selective hydration",
+      "items": [
+        "cd-04"
+      ],
+      "description": "Wakeup reads only what it needs"
+    },
+    "phase_3": {
+      "name": "Governor",
+      "items": [
+        "cd-03"
+      ],
+      "description": "Budget awareness and drift protection"
+    }
+  },
+  "hypothesis": {
+    "before": {
+      "wakeup_tokens": 112000,
+      "usable_tokens": 88000,
+      "usable_percent": 44
+    },
+    "after_phase_1": {
+      "wakeup_tokens": 15000,
+      "usable_tokens": 185000,
+      "usable_percent": 92
+    },
+    "after_all": {
+      "wakeup_tokens": 8000,
+      "usable_tokens": 192000,
+      "usable_percent": 96
+    }
+  },
+  "principle": "Context is a budget, not a landfill.",
+  "status": "completed",
+  "completed_at": "2026-03-24T22:20:00Z",
+  "completed_reason": "All 4 items (cd-01 through cd-04) implemented. bytype/ lug storage, WAI-State split, context governor, and wakeup slim-down all operational."
+}

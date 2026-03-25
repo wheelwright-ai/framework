@@ -30,7 +30,7 @@
       "mechanism": "Advisors request amendments through WAI-Lugs.jsonl references",
       "storage": "WAI-State.json._ozi.working_agreement_amendments[]",
       "schema": {
-        "advisor_id": "Which advisor requested amendment (e.g., 'wai-complexity-advisor')",
+        "advisor_id": "Which advisor requested amendment (e.g., 'wai-complexity-gate')",
         "lug_id": "Lug that justified the amendment (e.g., 'implementation-xyz')",
         "amendment_type": "add | modify | suspend",
         "target_contract": "Which default contract is being amended (e.g., 'foundation-first')",
@@ -91,7 +91,7 @@
     "scenario": "Complexity Advisor needs to suspend 'ask-first' during rapid prototyping",
     "request_lug": "amendment-complexity-rapid-proto-mode",
     "amendment": {
-      "advisor_id": "wai-complexity-advisor",
+      "advisor_id": "wai-complexity-gate",
       "lug_id": "amendment-complexity-rapid-proto-mode",
       "amendment_type": "suspend",
       "target_contract": "ask-first",

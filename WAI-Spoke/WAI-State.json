@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.62",
+    "version": "2.0.63",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-0500",
+    "last_session_id": "session-20260325-2214",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-25T05:45:00Z",
-    "last_closeout": "2026-03-25T05:45:00Z",
-    "session_count": 67,
-    "track_path": "WAI-Spoke/sessions/session-20260325-0500/track.jsonl",
+    "last_modified_at": "2026-03-25T22:50:00Z",
+    "last_closeout": "2026-03-25T22:50:00Z",
+    "session_count": 68,
+    "track_path": "WAI-Spoke/sessions/session-20260324-2214/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 67 complete. Next: Execute epic-skill-thrift-v1 \u2014 start with Tier 1 skills (wai-lug-advisor 795 lines, wai-improve 656 lines). Also pending: teaching for bytype restructure, template sync automation.",
+    "next_session_recommendation": "Session 68 complete. Next: (1) Execute implementation lug dispositions — close #3 ozi-working-agreement and #5 ozi-gardens as superseded, slim #1 hub-teachings-schema, absorb #2 hub-teachings-copy, rewrite #4 teaching-auto-gen to minimal version. (2) Continue epic-skill-thrift-v1 Tier 1 (wai-lug-schema 795L, wai-improve 656L). (3) Review remaining open tasks for staleness.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-25T05:01:58Z",
+    "protocol_last_run": "2026-03-25T07:38:50Z",
     "mode": "execution"
   },
   "_critical_directives": {
@@ -124,7 +124,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

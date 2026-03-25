@@ -346,7 +346,7 @@ Ozi: "Scanning 5 projects...
 
 **Ozi (Built-in):**
 - Always present as orchestrator identity
-- Coordinates advisors
+- Coordinates guards
 - Generates briefings
 - Responds to commands
 

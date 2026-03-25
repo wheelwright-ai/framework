@@ -31,16 +31,16 @@ REQUIRED_SKILLS = [
     "wai-shipit",
     # wai-teach absorbed into wai-closeout.md Step 9b (signal teach, S25)
     # wai-learn absorbed into wai.md Step 3a (S22)
-    "wai-lug-advisor",
+    "wai-lug-schema",
     "wai-foundation",
     "wai-ide-setup",
-    "wai-complexity-advisor",
+    "wai-complexity-gate",
     "wai-rules",
     "wai-principles",
     "wai-status",
-    "wai-context-advisor",
-    "wai-signal-advisor",
-    "wai-stewardship-advisor",
+    "wai-context-guard",
+    "wai-signal-capture",
+    "wai-stewardship-guard",
     "wai-green-light",
     "wai-red-light",
 ]
@@ -54,7 +54,7 @@ SKILL_REQUIRED_SECTIONS = {
     "wai-closeout": ["## Closeout Procedure", "## Incomplete Work"],
     # wai-teach removed — absorbed into wai-closeout.md Step 9b
     # wai-learn removed — absorbed into wai.md Step 3a
-    "wai-lug-advisor": [
+    "wai-lug-schema": [
         "## Lug Creation Template",
         "## Lug Lifecycle",
         "## Complete Lug Type Catalog",

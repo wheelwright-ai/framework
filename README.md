@@ -111,10 +111,10 @@ Skills are markdown files in `templates/commands/`. They define what the agent d
 | `wai-shipit.md` | `/wai-shipit` | Quality gates + closeout + commit |
 | `wai-teach.md` | `/wai-teach` | Push templates/lugs to target nodes |
 | `wai-learn.md` | `/wai-learn` | Force recheck inbox (auto-runs on wakeup) |
-| `wai-lug-advisor.md` | `/wai-lug-advisor` | Lug schema, lifecycle, authoring |
+| `wai-lug-schema.md` | `/wai-lug-schema` | Lug schema, lifecycle, authoring |
 | `wai-foundation.md` | `/wai-foundation` | Project identity and boundaries |
 | `wai-ide-setup.md` | `/wai-ide-setup` | Hook configuration for Claude/Gemini/Cursor |
-| `wai-complexity-advisor.md` | `/wai-complexity-advisor` | Planning gate (2+ files OR 6+ steps) |
+| `wai-complexity-gate.md` | `/wai-complexity-gate` | Planning gate (2+ files OR 6+ steps) |
 | `wai-rules.md` | `/wai-rules` | Project boundaries |
 | `wai-principles.md` | `/wai-principles` | WAI principles P1-P9 |
 
