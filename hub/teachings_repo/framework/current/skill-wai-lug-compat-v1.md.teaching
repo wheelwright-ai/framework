@@ -31,7 +31,7 @@ Installs the `wai-lug-compat` skill on this spoke. After installation, the spoke
 3. **Return reviewed lugs to hub** — emit `type: lug-review` payloads via outgoing delivery so subsequent spokes skip redundant review
 4. **Author better signals** — enforce notice-style signal structure (`event` + `what_changed` + `why`) instead of prescriptive instructions
 
-It also adds `fw_ver` to the `wai-lug-advisor.md` Key Mapping table so the field is documented alongside other schema fields.
+It also adds `fw_ver` to the `wai-lug-schema.md` Key Mapping table so the field is documented alongside other schema fields.
 
 ---
 
@@ -221,7 +221,7 @@ Do not block wakeup. Currency audit is advisory.
 
 ## Related Skills
 
-- `wai-lug-advisor.md` — lug schema, storage, lifecycle
+- `wai-lug-schema.md` — lug schema, storage, lifecycle
 - `wai-closeout.md` — Step 9: Outgoing Delivery
 - `wai.md` — Step 4: Load Lugs (currency audit trigger)
 ```
@@ -256,15 +256,15 @@ except FileNotFoundError:
 
 ---
 
-## Step 3: Add fw_ver to wai-lug-advisor.md Key Mapping
+## Step 3: Add fw_ver to wai-lug-schema.md Key Mapping
 
 **Detect the lug-advisor file location:**
 
 ```bash
-if [ -f "WAI-Spoke/skills/lug-advisor/wai-lug-advisor.md" ]; then
-  LUG_ADVISOR="WAI-Spoke/skills/lug-advisor/wai-lug-advisor.md"
-elif [ -f "WAI-Spoke/commands/wai-lug-advisor.md" ]; then
-  LUG_ADVISOR="WAI-Spoke/commands/wai-lug-advisor.md"
+if [ -f "WAI-Spoke/skills/lug-advisor/wai-lug-schema.md" ]; then
+  LUG_ADVISOR="WAI-Spoke/skills/lug-advisor/wai-lug-schema.md"
+elif [ -f "WAI-Spoke/commands/wai-lug-schema.md" ]; then
+  LUG_ADVISOR="WAI-Spoke/commands/wai-lug-schema.md"
 else
   echo "lug-advisor not found — skipping fw_ver row addition"
   LUG_ADVISOR=""
@@ -308,7 +308,7 @@ print('registry: PASS' if any(e.get('id')=='lug-compat' for e in entries) else '
 "
 
 # Step 3: fw_ver documented in lug-advisor
-for p in WAI-Spoke/skills/lug-advisor/wai-lug-advisor.md WAI-Spoke/commands/wai-lug-advisor.md; do
+for p in WAI-Spoke/skills/lug-advisor/wai-lug-schema.md WAI-Spoke/commands/wai-lug-schema.md; do
   [ -f "$p" ] && grep -q "fw_ver" "$p" && echo "fw_ver row: PASS" && break
 done
 ```

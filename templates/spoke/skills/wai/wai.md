@@ -84,33 +84,49 @@ Poll the hub's teachings folders for new framework and cross-spoke updates.
 
 Read `wheel.node_type` and `wheel.hub_path` from WAI-State.json.
 
+**Hub path validation (REQUIRED — never skip):**
 ```bash
-# Spoke: learn from framework + cross-spoke
-ls -1 "${HUB_PATH}/teachings_repo/framework/current/*.teaching" 2>/dev/null
-ls -1 "${HUB_PATH}/cross_spoke/current/*.teaching" 2>/dev/null
+test -d "${HUB_PATH}" && echo "HUB_OK" || echo "HUB_MISSING"
+test -d "${HUB_PATH}/teachings_repo/framework/current" && echo "TEACHINGS_OK" || echo "TEACHINGS_MISSING"
+```
+
+**If hub_path is null, empty, or the directory does not exist:**
+Surface in briefing under Context Health:
+> HUB PATH ERROR: `wheel.hub_path` is `{value}` — directory not found. Teaching discovery skipped.
+> Fix: Set `wheel.hub_path` in WAI-State.json to the correct hub directory.
+
+**If hub_path resolves but `teachings_repo/framework/current/` is absent:**
+> TEACHINGS REPO MISSING: `{hub_path}/teachings_repo/framework/current/` not found.
+> Hub is reachable but teachings folder absent. Check hub setup.
+
+Do NOT skip silently. Both errors must appear in the Step 7 briefing.
+
+**If hub path is valid**, scan:
+```bash
+ls -1 "${HUB_PATH}/teachings_repo/framework/current/"*.teaching 2>/dev/null
+ls -1 "${HUB_PATH}/cross_spoke/current/"*.teaching 2>/dev/null
 ```
 
 For each discovered teaching:
-1. Check if already adopted (exists in WAI-Spoke/seed/processed/)
+1. Check if already adopted (filename exists in `WAI-Spoke/seed/ingest/processed/`)
 2. If new, split by `safe_to_auto_adopt` flag:
 
 **Path A — `safe_to_auto_adopt: true`:**
 1. Extract: what it affects, behavioral implication, challenge solved
-2. Present compact table, one row per teaching
-3. Duplicate check: skip if same `timestamp` exists in active lugs or index
-4. Present: "Apply all / Skip all / Apply [specific]?" — wait for response
-5. Adopt approved items, move originals to `seed/ingest/processed/`
+2. If teaching has `## Batch Sequence` block: respect apply order — note dependencies before offering adoption
+3. Present compact table, one row per teaching, with apply order if present
+4. Duplicate check: skip if same `timestamp` exists in active lugs or index
+5. Present: "Apply all / Skip all / Apply [specific]?" — wait for response
+6. Adopt approved items, move originals to `seed/ingest/processed/`
 
 **Path B — `safe_to_auto_adopt: false`:**
 1. List new `.teaching` files
-2. Present summary table (File | Type | Summary)
+2. Present summary table (File | Type | Summary | Apply Order)
 3. State interpretation and planned action for each
 4. Wait for explicit user approval
 5. Copy to `WAI-Spoke/seed/ingest/manual/` for review; move original to processed
 
 **Hub Signal Bulletin:** Check `{hub_path}/WAI-Hub/Signals/incoming/` for new signal files. Surface new ones in briefing. Do NOT auto-adopt — signals are advisory.
-
-If hub_path is null or inaccessible: skip silently.
 
 ---
 

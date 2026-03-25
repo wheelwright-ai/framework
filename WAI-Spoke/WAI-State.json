@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.63",
+    "version": "2.0.64",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-2214",
-    "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-25T22:50:00Z",
-    "last_closeout": "2026-03-25T22:50:00Z",
-    "session_count": 68,
-    "track_path": "WAI-Spoke/sessions/session-20260324-2214/track.jsonl",
+    "last_session_id": "session-20260325-0047",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-25T23:10:00Z",
+    "last_closeout": "2026-03-25T23:10:00Z",
+    "session_count": 69,
+    "track_path": "WAI-Spoke/sessions/session-20260325-0047/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 68 complete. Next: (1) Execute implementation lug dispositions — close #3 ozi-working-agreement and #5 ozi-gardens as superseded, slim #1 hub-teachings-schema, absorb #2 hub-teachings-copy, rewrite #4 teaching-auto-gen to minimal version. (2) Continue epic-skill-thrift-v1 Tier 1 (wai-lug-schema 795L, wai-improve 656L). (3) Review remaining open tasks for staleness.",
+    "next_session_recommendation": "Session 69 complete. Teaching discovery fixed + batch sequence backfilled. Next: (1) Add teaching discovery fallback to AGENTS.md (discussed not done). (2) Test spoke bootstrap in field. (3) Execute implementation lug dispositions — close ozi-working-agreement and ozi-gardens as superseded, slim hub-teachings-schema, absorb hub-teachings-copy, rewrite teaching-auto-gen. (4) Continue epic-skill-thrift-v1 Tier 1 (wai-lug-schema 795L, wai-improve 656L).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-25T07:38:50Z",
+    "protocol_last_run": "2026-03-25T23:10:00Z",
     "mode": "execution"
   },
   "_critical_directives": {

@@ -85,7 +85,13 @@ Check `WAI-Spoke/lugs/outgoing/` for queued deliveries. If found and hub connect
 1. Group changes into teaching families: `{object_type}-{object_name}` (e.g., `skill-wai-closeout`)
 2. Determine version bump: major (breaking), minor (new capability), patch (fix/clarification)
 3. Generate teaching files to `teachings/{family_key}-v{version}.md.teaching`
-4. Each teaching includes: what changed, why it matters, migration instructions, `safe_to_auto_adopt`, `## Prerequisites` block, `## Batch Sequence` block
+4. Each teaching MUST include (hard gate — do not publish without these):
+   - What changed and why it matters
+   - Migration instructions
+   - `safe_to_auto_adopt` flag
+   - `## Prerequisites` block (runnable verify commands, or "None")
+   - `## Batch Sequence` block (apply order, depends-on, required-before, parallel-safe)
+   Missing either block = teaching is incomplete. Fix before publishing.
 5. Enforce single-current rule: archive superseded versions to `teachings/archive/{family_key}/`
 6. Signal teachings embed the actual lug JSON verbatim
 7. If hub connected: publish to `{hub_path}/teachings_repo/framework/current/`, archive old versions, rewrite index.json
