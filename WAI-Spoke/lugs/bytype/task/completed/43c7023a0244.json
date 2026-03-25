@@ -2,7 +2,7 @@
   "i": "43c7023a0244",
   "ty": "task",
   "t": "Maintain docs/llm-full.txt and README.md as living closeout artifacts — update both every session",
-  "s": "o",
+  "s": "c",
   "ca": "2026-03-17T10:15:00Z",
   "gb": "claude-sonnet-4-6",
   "impact": 8,
@@ -29,5 +29,6 @@
     "llm-context"
   ],
   "blocks": [],
-  "blocked_by": []
+  "blocked_by": [],
+  "ua": "2026-03-25T13:40:00Z"
 }

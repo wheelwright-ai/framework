@@ -60,7 +60,7 @@ Shows briefing: project identity, active work, context health
     ↓
 --- work happens ---
     ↓
-Session End (/wai-closeout or /wai-shipit)
+Session End (/wai-closeout — asks "production release?" at start)
     ↓
 Agent reconciles autosaves → session-summary lug
 Extracts high-impact signals (impact >= 8)
@@ -109,8 +109,7 @@ Skills are markdown files in `templates/commands/`. They define what the agent d
 | Skill | Command | Purpose |
 |-------|---------|---------|
 | `wai.md` | `/wai` | Session start — wakeup briefing, teaching discovery, recovery |
-| `wai-closeout.md` | `/wai-closeout` | Session end — reconcile, signals, metadata |
-| `wai-shipit.md` | `/wai-shipit` | Quality gates + closeout + git commit |
+| `wai-closeout.md` | `/wai-closeout` | Session end — reconcile, signals, metadata (production release gate integrated) |
 | `wai-lug-schema.md` | `/wai-lug-schema` | Lug schema, lifecycle, routing fields |
 | `wai-foundation.md` | `/wai-foundation` | Project identity and boundaries |
 | `wai-complexity-gate.md` | `/wai-complexity-gate` | Planning gate (2+ files OR 6+ steps) |
@@ -257,11 +256,9 @@ See `/wai-ide-setup` for Cursor, VS Code, and generic AI agent setup.
 
 ```
 /wai              — Unified wakeup briefing
-/wai-closeout     — End session (reconcile, signal, update state)
-/wai-shipit       — Quality gates + closeout + git commit
-/wai-teach        — Push skills/lugs to hub or spoke
-/wai-learn        — Force reprocess inbox
+/wai-closeout     — End session (asks "production release?", runs gates if yes)
 /wai-time         — Token usage estimate
+/wai-status       — Quick health check
 /wai-rules        — Show project boundaries
 ```
 

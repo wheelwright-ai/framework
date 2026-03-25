@@ -13,7 +13,27 @@ Save session state so the next agent can pick up where we left off.
 
 ## Closeout Procedure
 
-**Before beginning:** Read `_session_state.last_closeout` from `WAI-State.json` and store as `old_last_closeout`. Step 5 will overwrite it; Step 9b needs the old value.
+**Before beginning:** Ask **Is this a production release? (y/n)**
+- **Yes:** Run full closeout + quality gates + git tag `v{version}`
+- **No:** Run standard closeout, skip gates and tagging
+
+Read `_session_state.last_closeout` from `WAI-State.json` and store as `old_last_closeout`. Step 5 will overwrite it; Step 9b needs the old value.
+
+### 0. Quality Gates (Production Releases Only)
+
+Skip if not a production release.
+
+**0a. File Hygiene:** Scan for AI sprawl (`temp_*`, `*.bak`, `*.tmp`, `debug_*`, `scratch_*`, `old_*`, `*.orig`). Delete temp files, ask about unknowns. Report findings.
+
+**0b. Breaking Changes:** Check for API signature changes, removed functions, config format changes. Document in CHANGELOG.md. Confirm user acknowledges.
+
+**0c. Tests:** Auto-detect and run (`pytest`, `npm test`, `make test`). Non-zero exit = abort.
+
+**0d. Linting:** Auto-detect and run (`ruff`, `eslint`). Non-zero exit = abort.
+
+**0e. Benchmarks:** Run if available. On regression: offer abort / acknowledge / update baseline.
+
+Report gate results. Proceed only after user confirms all gates pass or are acknowledged.
 
 ### 1. Lug Reconciliation
 
@@ -164,17 +184,31 @@ git push origin main
 
 Push is mandatory. Do not ask for confirmation.
 
-### 12. Verification
+### 13. Release Tag (Production Releases Only)
+
+Skip if not a production release (confirmed in Step 0).
+
+```bash
+VERSION=$(jq -r '.wheel.version' WAI-Spoke/WAI-State.json)
+git tag "v$VERSION"
+git push origin "v$VERSION"
+```
+
+If tag already exists: stop and report conflict. Do not force-overwrite.
+
+### 14. Verification
 
 ```bash
 git status          # Must be clean
 git log --oneline -1  # Verify commit
+git tag -l | tail -1  # Verify tag (if production release)
 ```
 
 ---
 
 ## Success Criteria
 
+- [ ] Quality gates pass (if production release)
 - [ ] Autosave lugs reconciled into session-summary
 - [ ] Signals extracted (impact >= 8)
 - [ ] Incomplete work documented with continuation guidance
@@ -184,6 +218,7 @@ git log --oneline -1  # Verify commit
 - [ ] Lugs dogfooded (if applicable)
 - [ ] Teachings generated and published (if applicable)
 - [ ] Committed and pushed to origin/main
+- [ ] Release tag applied and pushed (if production release)
 
 ---
 
