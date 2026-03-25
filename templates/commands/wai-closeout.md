@@ -223,3 +223,22 @@ git tag -l | tail -1  # Verify tag (if production release)
 ---
 
 *Closeout = Save game. Next agent continues the adventure.*
+
+---
+
+## Visual Completion Marker
+
+When closeout succeeds, display this to signal completion distinctly:
+
+```
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║                     ✅ CLOSEOUT COMPLETE                                ║
+║                                                                          ║
+║                    Session state saved to git.                          ║
+║              Next wakeup will load exactly where we left off.           ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+```
+
+This visual marker distinguishes **closeout** from **wakeup** (which displays "WAI Point Briefing"). Makes it unmistakable when switching between agent tabs or IDE sessions.
