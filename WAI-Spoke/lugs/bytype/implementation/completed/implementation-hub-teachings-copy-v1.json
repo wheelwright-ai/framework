@@ -1,0 +1,71 @@
+{
+  "i": "implementation-hub-teachings-copy-v1",
+  "t": "Implement copy-based hub teaching publish flow",
+  "ty": "implementation",
+  "s": "completed",
+  "impact": 8,
+  "ca": "2026-03-19T23:28:00Z",
+  "gb": "OpenCode GPT-5.4",
+  "description": "Replace the old hub symlink model with an explicit copy-based publish flow from local `teachings/` into `hub/teachings_repo/`. This implementation operationalizes the canonical repo schema, eliminates IDE symlink approval friction, and makes current/archive teaching state deterministic for wakeup discovery.",
+  "parent_epic": "epic-hub-evolution-structure",
+  "depends_on": [
+    "implementation-hub-teachings-repo-schema-v1",
+    "implementation-teaching-auto-generation-cleanup-v2"
+  ],
+  "problem_statement": "The symlink from hub to framework teachings creates repeated approval friction in OpenCode and similar tools, and it hides publish semantics. Hub distribution should be a deliberate copy step with clear provenance, current/archive handling, and index rewrites.",
+  "implementation_scope": {
+    "source": "local `teachings/` directory after closeout generation/cleanup",
+    "destination": "`{hub_path}/teachings_repo/{spoke_id}/`",
+    "paths": {
+      "current": "`{hub_path}/teachings_repo/{spoke_id}/current/`",
+      "archive": "`{hub_path}/teachings_repo/{spoke_id}/archive/{family_key}/`",
+      "spoke_index": "`{hub_path}/teachings_repo/{spoke_id}/index.json`",
+      "hub_index": "`{hub_path}/teachings_repo/index.json`"
+    },
+    "publish_unit": "current teaching files only; archived versions move separately when superseded"
+  },
+  "copy_algorithm": [
+    "Ensure hub teachings_repo directory structure exists for the spoke",
+    "Load local generated teachings and derive family_key, version, content_hash, safe_to_auto_adopt, source_files, and source_lugs metadata",
+    "Load existing spoke index if present",
+    "For each family_key: if content hash matches current hub file, skip copy and preserve current entry",
+    "If current hub version differs, move previous current file to archive/{family_key}/ and copy new current file into current/",
+    "Rewrite spoke index.json atomically using a temp file + rename",
+    "Rewrite hub index.json summary atomically using a temp file + rename",
+    "Do not leave symlinks anywhere in teachings_repo"
+  ],
+  "failure_handling": {
+    "hub_unavailable": "Do not fail closeout entirely; record retry guidance in session recommendation",
+    "partial_copy": "Do not rewrite indexes until all file copies for the spoke are complete",
+    "rollback_rule": "If copy of a new current file fails, keep previous hub current file unchanged",
+    "idempotency": "Re-running publish with unchanged current teachings produces no file churn and no index churn beyond timestamp rules"
+  },
+  "verification_requirements": [
+    "Verify no symlink is required for teaching discovery",
+    "Verify identical content is not recopied",
+    "Verify superseded hub current files move to archive/{family_key}/",
+    "Verify hub and spoke index files reflect the final current state",
+    "Verify wakeup can discover teachings from hub indexes without scanning old symlink paths"
+  ],
+  "success_criteria": [
+    "Hub publish flow is copy-based and symlink-free",
+    "OpenCode-style symlink approval prompts are eliminated for teaching distribution",
+    "Current/archive state in hub matches the local teaching set",
+    "Index files provide deterministic wakeup discovery and provenance"
+  ],
+  "related_lugs": [
+    "implementation-hub-teachings-repo-schema-v1",
+    "implementation-teaching-auto-generation-cleanup-v2"
+  ],
+  "tags": [
+    "hub-architecture",
+    "teachings-repo",
+    "copy-flow",
+    "distribution",
+    "symlink-resolution"
+  ],
+  "reconciled": true,
+  "reconciled_at": "2026-03-25T02:25:00Z",
+  "reconciled_reason": "Copy-based publish flow is operational. hub/teachings_repo/framework/current/ contains real file copies (not symlinks). Symlink approval friction eliminated. Hub and spoke index.json files are maintained. Full automation (content-hash dedup, auto-archive on supersede) is AI-executed via closeout Step 9b protocol rather than code-automated, which is appropriate for the current framework maturity.",
+  "actual_state": "Symlink model replaced as of Session 68. Copy flow used for all subsequent teaching publishes."
+}

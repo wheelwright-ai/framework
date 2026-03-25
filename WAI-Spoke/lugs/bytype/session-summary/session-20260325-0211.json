@@ -1,0 +1,43 @@
+{
+  "i": "session-20260325-0211",
+  "ty": "session-summary",
+  "t": "Session 70 \u2014 Hub teachings backlog + lug dispositions + Track Prompt v0.18",
+  "s": "c",
+  "ca": "2026-03-25T02:40:00Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 70,
+  "accomplished": [
+    "Applied 4 hub teachings: skill-wai-wakeup-discovery-fix-v1 (WAI-Spoke/skills/wai/wai.md updated \u2014 observable hub path errors, correct scan path, batch sequence in Path A/B), skill-advisor-rename-to-guards-v1 (no-op \u2014 already applied), epic-prompt-validation-bench-move (routed to processed \u2014 targets wheelwright-ai-website), skill-wai-closeout-teaching-gate-v1 (wai-closeout.md Step 9b \u2014 hard gate for Prerequisites+BatchSequence)",
+    "Closed 5 in-progress implementation lugs: ozi-working-agreement (superseded by guard/gate system), ozi-gardens-the-wheel (superseded by ozi-gardens-the-spoke-v1), hub-teachings-repo-schema (structure live), hub-teachings-copy (copy flow operational), teaching-auto-generation-cleanup-v2 (Step 9b implements spec)",
+    "Updated Track Prompt to v0.18 Compressed Protocol Edition \u2014 templates/commands/chat-to-track.md + framework/skills/chat-to-track.md",
+    "bytype/implementation/in_progress/ is now empty"
+  ],
+  "files_touched": [
+    "WAI-Spoke/skills/wai/wai.md",
+    "WAI-Spoke/skills/closeout/wai-closeout.md",
+    "templates/commands/chat-to-track.md",
+    "framework/skills/chat-to-track.md",
+    "WAI-Spoke/seed/ingest/processed/ (4 teaching files added)",
+    "WAI-Spoke/lugs/bytype/implementation/completed/ (5 lugs moved in)",
+    "WAI-Spoke/sessions/session-20260325-0211/track.jsonl",
+    "WAI-Spoke/WAI-State.json"
+  ],
+  "decisions": [
+    "skill-advisor-rename treated as no-op \u2014 WAI-Skills.jsonl already uses new names",
+    "epic-prompt-bench-move routed to processed without local changes \u2014 targets different spoke",
+    "All 5 implementation lugs closed as completed/superseded \u2014 in_progress/ now empty",
+    "Track Prompt v0.18 replaces v0.10 \u2014 compressed protocol edition with Line/Station model"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "AGENTS.md teaching discovery fallback \u2014 add hub path validation + batch sequence handling (from S69 rec, discussed not done)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "1. AGENTS.md teaching discovery fallback",
+      "2. epic-skill-thrift-v1 Tier 1 \u2014 wai-lug-schema (795L) or wai-improve (656L)",
+      "3. epic-prompt-validation-bench-move on wheelwright-ai-website spoke"
+    ]
+  },
+  "autosaves_reconciled": []
+}

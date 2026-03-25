@@ -1,0 +1,77 @@
+# Teaching: WAI Closeout — Prerequisites + Batch Sequence Hard Gate
+
+**Target:** All spokes
+**Affects:** Closeout Step 9b (teaching generation)
+**Type:** Protocol enforcement
+**Safe to auto-adopt:** false
+**Version:** 1.0
+**Created:** 2026-03-25
+**Author:** Mario Vaccari + Claude Sonnet 4.6
+
+---
+
+## Prerequisites
+None — updates wai-closeout.md independently.
+
+## Batch Sequence
+**Batch:** closeout-upgrades
+**Apply order:** 3 of 3 (after wai-closeout-step9b-sender-v1 and wai-shipit-release-tag-v1)
+**Depends on:** wai-closeout-step9b-sender-v1
+**Required before:** none
+**Parallel safe:** no — supersedes earlier closeout-upgrades; apply last in that batch
+**Full batch order:** wai-closeout-step9b-sender-v1 + wai-shipit-release-tag-v1 → skill-wai-closeout-teaching-gate-v1
+
+---
+
+## What This Teaching Does
+
+Upgrades closeout Step 9b to enforce that every generated teaching **must** include both `## Prerequisites` and `## Batch Sequence` blocks before being published. Missing either block is a hard gate — the teaching is incomplete and must be fixed before publishing.
+
+---
+
+## Why This Exists
+
+57% of teachings in the hub (16/28) were missing `## Batch Sequence` blocks. The spec said to include them, but without enforcement, they were omitted. When spokes reconnect after a period offline and receive a backlog, they have no way to determine safe apply order. The result is dependency violations and brittle upgrades.
+
+---
+
+## Version Check Before Applying
+
+Read your spoke's `WAI-Spoke/commands/wai-closeout.md`. Search for:
+
+```
+Missing either block = teaching is incomplete. Fix before publishing.
+```
+
+If found — already applied. Move to `processed/` and stop.
+
+---
+
+## Change to Make
+
+In Step 9b, find the line:
+
+```
+4. Each teaching includes: what changed, why it matters, migration instructions, `safe_to_auto_adopt`, `## Prerequisites` block, `## Batch Sequence` block
+```
+
+Replace with:
+
+```
+4. Each teaching MUST include (hard gate — do not publish without these):
+   - What changed and why it matters
+   - Migration instructions
+   - `safe_to_auto_adopt` flag
+   - `## Prerequisites` block (runnable verify commands, or "None")
+   - `## Batch Sequence` block (apply order, depends-on, required-before, parallel-safe)
+   Missing either block = teaching is incomplete. Fix before publishing.
+```
+
+---
+
+## Verification
+
+After applying, confirm:
+```
+grep -q "Missing either block = teaching is incomplete" WAI-Spoke/commands/wai-closeout.md && echo PASS || echo FAIL
+```

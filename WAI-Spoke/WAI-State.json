@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.64",
+    "version": "2.0.65",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-22T23:39:26Z",
+    "last_modified_at": "2026-03-25T02:40:00Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-0047",
+    "last_session_id": "session-20260325-0211",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-25T23:10:00Z",
-    "last_closeout": "2026-03-25T23:10:00Z",
-    "session_count": 69,
-    "track_path": "WAI-Spoke/sessions/session-20260325-0047/track.jsonl",
+    "last_modified_at": "2026-03-25T02:40:00Z",
+    "last_closeout": "2026-03-25T02:40:00Z",
+    "session_count": 70,
+    "track_path": "WAI-Spoke/sessions/session-20260325-0211/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 69 complete. Teaching discovery fixed + batch sequence backfilled. Next: (1) Add teaching discovery fallback to AGENTS.md (discussed not done). (2) Test spoke bootstrap in field. (3) Execute implementation lug dispositions — close ozi-working-agreement and ozi-gardens as superseded, slim hub-teachings-schema, absorb hub-teachings-copy, rewrite teaching-auto-gen. (4) Continue epic-skill-thrift-v1 Tier 1 (wai-lug-schema 795L, wai-improve 656L).",
+    "next_session_recommendation": "Session 70 complete. Hub teachings backlog cleared (4 teachings applied). 5 implementation lugs closed. Track Prompt upgraded to v0.18. Next: (1) AGENTS.md teaching discovery fallback \u2014 add hub path validation + batch sequence handling (discussed S69, still pending). (2) epic-skill-thrift-v1 Tier 1 \u2014 wai-lug-schema (795L) or wai-improve (656L). (3) epic-prompt-validation-bench-move needs applying on wheelwright-ai-website spoke.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-25T23:10:00Z",
+    "protocol_last_run": "2026-03-25T09:38:24Z",
     "mode": "execution"
   },
   "_critical_directives": {
@@ -124,7 +124,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

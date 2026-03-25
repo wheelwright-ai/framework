@@ -384,15 +384,15 @@ Any lug intended for another agent (including future-you in a new session) must 
      - `patch`: clarification, fix, or non-breaking correction
    - Enforce the single-current rule: only one current teaching per family may remain in active publish state
 5. Generate teaching files into `teachings/` using the filename pattern `{family_key}-v{version}.md.teaching`
-6. Each generated teaching must include:
-   - What changed
-   - Why it matters to spokes
+6. Each generated teaching MUST include (hard gate — do not publish without these):
+   - What changed and why it matters to spokes
    - Exact migration/apply instructions
    - `safe_to_auto_adopt` with reasoning
    - Source files and originating lug(s), when available
    - Superseded family/version information, when applicable
-   - `## Prerequisites` block: runnable shell commands returning PASS/FAIL for each dependency; use "None" if standalone
-   - `## Batch Sequence` block: batch name, apply order (N of M), depends-on, required-before, parallel-safe flag, full batch order
+   - `## Prerequisites` block (runnable verify commands, or "None")
+   - `## Batch Sequence` block (apply order, depends-on, required-before, parallel-safe)
+   Missing either block = teaching is incomplete. Fix before publishing.
 
    **Teaching file format — required blocks immediately after the header:**
 
