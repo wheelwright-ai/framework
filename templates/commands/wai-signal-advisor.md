@@ -13,7 +13,7 @@ During the session, watch for decisions or learnings with impact >= 8:
 - Significant discoveries (what we learned)
 - Permanent constraints adopted
 
-**When detected**, log to `WAI-Spoke/WAI-Lugs.jsonl` as a signal lug (canonical model — `WAI-Signals.jsonl` is retired):
+**When detected**, log to `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` as a signal lug (canonical model — `WAI-Signals.jsonl` is retired):
 
 ```json
 {
@@ -32,7 +32,7 @@ During the session, watch for decisions or learnings with impact >= 8:
 ```
 📡 High-Impact Signals This Session:
 - [signal summary] (impact: X)
-  → Logged to WAI-Lugs.jsonl
+  → Logged to active lugs file
 ```
 
 **Impact scale:**

@@ -76,7 +76,7 @@ From `WAI-Spoke/WAI-State.json`, extract:
 - `_project_foundation.approach.stack_or_tools` — what is it built with?
 - `context.current_phase` — where is the project right now?
 
-Also check `WAI-Spoke/WAI-Lugs.jsonl` for the most recent `ty: "foundation"` lug — it may contain richer or more current context than WAI-State.json.
+Also check `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` for the most recent `ty: "foundation"` lug — it may contain richer or more current context than WAI-State.json.
 
 ### 0b. Foundation Completeness Check
 
@@ -134,7 +134,7 @@ The purpose is not just deduplication — it is *fitting*. An idea doesn't exist
 
 ### 2a. Scan Open Lugs
 
-Read `WAI-Spoke/WAI-Lugs.jsonl`. De-duplicate by ID (latest entry wins). Filter to active lugs: `s` in `o` (open), `p` (in-progress). Skip closed/resolved.
+Read `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl`. De-duplicate by ID (latest entry wins). Filter to active lugs: `s` in `o` (open), `p` (in-progress). Skip closed/resolved.
 
 For each active lug, assess similarity to the incoming idea's **challenge** and **hypothesis**:
 
@@ -164,7 +164,7 @@ For each relevant file or feature, assess:
 
 ### 2c. Scan Signals and Decisions
 
-Read `WAI-Spoke/WAI-Lugs.jsonl` and filter for signal lugs (`type == "signal"` or `ty == "signal"`) with impact >= 7. Check whether any captured decision:
+Read `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` and filter for signal lugs (`type == "signal"` or `ty == "signal"`) with impact >= 7. Check whether any captured decision:
 - Already resolved the challenge (idea may be stale)
 - Ruled out the proposed mechanism ("we decided not to do X because Y")
 - Established a precedent that the idea should follow
@@ -281,7 +281,7 @@ Threshold: **0.5**
 Present to user:
 > This challenge overlaps with existing challenge `{i}`: "{statement}" (similarity: {score}). Same problem? [enter=yes / type correction]
 
-On confirmation: set `challenge_id` = existing challenge `i`. Append an override entry to `WAI-Challenges.jsonl` adding the new idea ID to `related_lugs` (same `i`, updated fields — latest entry per `i` wins, same convention as `WAI-Lugs.jsonl`).
+On confirmation: set `challenge_id` = existing challenge `i`. Append an override entry to `WAI-Challenges.jsonl` adding the new idea ID to `related_lugs` (same `i`, updated fields — latest entry per `i` wins, same convention as the active lugs file).
 
 ### If no match
 
@@ -396,7 +396,7 @@ Show final priority as: `P{N} (base P{N}, adjusted for {phase})` so the reasonin
 
 ## Step 5: Output as Idea Lug
 
-Every fully-processed idea becomes a lug in `WAI-Lugs.jsonl`. "Fully processed" means Steps 0–4 complete.
+Every fully-processed idea becomes a lug in `lugs/active/WAI-Lugs-active.jsonl`. "Fully processed" means Steps 0–4 complete.
 
 ```json
 {

@@ -89,7 +89,7 @@ Wakeup auto-trigger threshold: `major_drift + unversioned > 5`
 
 ### Procedure
 
-1. Load all lugs from `WAI-Spoke/WAI-Lugs.jsonl`
+1. Load all lugs from `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl`
 2. Read current version: `WAI-State.json → wheel.version`
 3. Score each non-reconciled lug by `fw_ver`
 4. Report:
@@ -120,7 +120,7 @@ For each lug in `major_drift` or `unversioned` (or `minor_drift` if user request
 2. Identify any protocol references, path names, field names, or behavioral directives
 3. Check each against the current framework (skill source in `templates/commands/`, installed at `WAI-Spoke/skills/`)
 4. Classify using `review_status` values above
-5. Update the lug in `WAI-Lugs.jsonl`:
+5. Update the lug in the active lugs file:
 
 ```json
 {
@@ -129,7 +129,7 @@ For each lug in `major_drift` or `unversioned` (or `minor_drift` if user request
   "reviewed_at": "ISO-8601",
   "reviewed_by": "claude-sonnet-4-6 / session-20260324-0013",
   "review_status": "outdated_protocol",
-  "review_notes": "Referenced WAI-Signals.jsonl which was retired in v3.0.0. Signals now stored as high-impact lugs in WAI-Lugs.jsonl.",
+  "review_notes": "Referenced WAI-Signals.jsonl which was retired in v3.0.0. Signals now stored as high-impact lugs in the active lugs file.",
   "reconciled": true,
   "superseded_by": "signal-wai-signals-retired-v1"
 }
@@ -215,7 +215,7 @@ Signals are high-impact lugs (`impact >= 8`). They are **notices** — structure
 {
   "type": "signal",
   "event": "WAI-Signals.jsonl retired — signals now stored as high-impact lugs",
-  "what_changed": "Before: signals written to WAI-Signals.jsonl (separate file). After: impact >= 8 lugs written to WAI-Lugs.jsonl only.",
+  "what_changed": "Before: signals written to WAI-Signals.jsonl (separate file). After: impact >= 8 lugs written to active lugs file only.",
   "why": "Reduces fragmentation — one storage location for all work state and learnings. Signals file was a second source of truth that diverged.",
   "impact": 9,
   "fw_ver": "3.0.0"
@@ -227,7 +227,7 @@ Signals are high-impact lugs (`impact >= 8`). They are **notices** — structure
 ```json
 {
   "type": "signal",
-  "body": "Update your spoke. Stop using WAI-Signals.jsonl. Use WAI-Lugs.jsonl instead for all signals going forward."
+  "body": "Update your spoke. Stop using WAI-Signals.jsonl. Use the active lugs file instead for all signals going forward."
 }
 ```
 
@@ -247,7 +247,7 @@ The bad example gives instructions, not a notice. An agent reading it might exec
 
 ## Wakeup Integration
 
-At **Step 4 (Load Lugs)**, after loading `WAI-Lugs.jsonl`:
+At **Step 4 (Load Lugs)**, after loading `lugs/active/WAI-Lugs-active.jsonl`:
 
 1. Count lugs by currency score
 2. If `major_drift + unversioned > 5`: surface in briefing:

@@ -4,7 +4,7 @@ Quality gate: pause work, inspect last 10 autosave checkpoints, assess crash rec
 
 ## Instructions
 
-1. **Read last 10 autosave lugs** from WAI-Lugs.jsonl where `autosave=true AND reconciled=false`
+1. **Read last 10 autosave lugs** from `lugs/active/WAI-Lugs-active.jsonl` where `autosave=true AND reconciled=false`
    If none: report "No autosave lugs found — auto-save protocol may not be active"
 
 2. **Display each** summarized:
@@ -16,7 +16,7 @@ Quality gate: pause work, inspect last 10 autosave checkpoints, assess crash rec
    - **MARGINAL**: Some missing or vague — could resume with effort
    - **INSUFFICIENT**: Sparse/missing/too vague — high risk of lost context
 
-4. **Show Roadmap** — top 5 open epics from WAI-Lugs.jsonl:
+4. **Show Roadmap** — top 5 open epics from the active lugs file:
    (ty=epic, s=o or s=p, sorted by priority then impact desc)
 
 5. **Show Activity** — last 10 lugs touched (newest created_at/updated_at):
@@ -51,7 +51,7 @@ Quality gate: pause work, inspect last 10 autosave checkpoints, assess crash rec
 
 ### Autosave Protocol
 
-After each significant action, an autosave lug is appended to WAI-Lugs.jsonl:
+After each significant action, an autosave lug is appended to `lugs/active/WAI-Lugs-active.jsonl`:
 - Editing or creating a file
 - Making an architectural/design decision
 - Completing a sub-task

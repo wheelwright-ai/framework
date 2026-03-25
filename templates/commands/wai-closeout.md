@@ -103,14 +103,14 @@ Persist session state with enough detail that a new agent/session can:
 **Purpose:** Consolidate autosave checkpoints into permanent record.
 
 **Idempotency Check:**
-1. Check if session-summary for current session ID already exists in WAI-Lugs.jsonl
+1. Check if session-summary for current session ID already exists in active lugs or lug index
 2. If exists: ⚠️ **DUPLICATE DETECTED:** Session summary `{session_id}` already exists
    - Display warning: "Skipping session summary creation, continuing with signal extraction..."
    - Record in `_closeout_state.completed_operations`: "session_summary_skipped"
    - Continue to Step 2
 
 **Actions:**
-1. Read `WAI-Spoke/WAI-Lugs.jsonl`
+1. Scan `WAI-Spoke/lugs/bytype/other/open/` for autosave lugs
 2. Find entries where `ty="autosave"` AND `reconciled=false` (or `reconciled` not set)
 3. Consolidate into ONE permanent `session-summary` lug capturing:
    - Task context (what was the session about?)
@@ -120,7 +120,7 @@ Persist session state with enough detail that a new agent/session can:
    - **Incomplete work** (critical for session continuity)
    - Final state
 4. Mark all autosave lugs: set `reconciled: true`, `s: "c"`
-5. Append session-summary lug to `WAI-Spoke/WAI-Lugs.jsonl`
+5. Write session-summary lug to `WAI-Spoke/lugs/bytype/session-summary/{id}.json`
 6. Record session ID in `_closeout_state.duplicate_detection_keys.session_summaries[]`
 7. Record completion in `_closeout_state.completed_operations`: "lug_reconciliation_complete"
 
@@ -161,7 +161,7 @@ Persist session state with enough detail that a new agent/session can:
 
 **Actions:**
 1. Review session for decisions or learnings with **impact >= 8**
-2. For each qualifying signal, create a high-impact lug entry in `WAI-Spoke/WAI-Lugs.jsonl`:
+2. For each qualifying signal, write a lug to `WAI-Spoke/lugs/bytype/signal/undelivered/{id}.json`:
 
 ```json
 {
@@ -263,7 +263,7 @@ This versions the *session state*, not a release.
 
 Check that WAI-State.json adoption markers reflect the actual implementation state of capability lugs.
 
-For each lug in `WAI-Lugs.jsonl` where `type = "implementation"` and `status = "implemented"`:
+For each lug in active lugs file where `type = "implementation"` and `status = "implemented"`:
 1. Derive the expected adoption marker key (strip `-v1`/`-v2` suffix from migration_id or lug id to get the marker name)
 2. Check `_migration_state.adoption_markers[<key>].adopted` in `WAI-State.json`
 3. If `adopted = false`: update to `true`, set `adopted_at` = current UTC, set `adopted_by` = current agent
@@ -272,6 +272,23 @@ For each lug in `WAI-Lugs.jsonl` where `type = "implementation"` and `status = "
 If no mismatches found: output "Adoption markers current — no sync needed"
 
 **Why:** Prevents adoption markers from staying false after implementation completes, which misleads future agents into believing migrations are pending when they are done.
+
+### 5c. Lug Status Sync and Index Regeneration
+
+**Purpose:** Ensure lugs are in the correct status folder. Regenerate the lookup index.
+
+**Actions:**
+1. Scan `lugs/bytype/*/open/` and `bytype/*/in_progress/` for lugs whose status has changed this session
+2. For each lug where status changed to completed/closed/resolved/implemented:
+   a. Move from current folder to `bytype/{type}/completed/{id}.json`
+3. For signals delivered to hub this session:
+   a. Move from `bytype/signal/undelivered/` to `bytype/signal/delivered/`
+4. Regenerate `WAI-Spoke/WAI-LugIndex.jsonl`:
+   - Scan all `lugs/bytype/` folders recursively
+   - Write one index line per lug: `{"id", "type", "status", "title", "folder", "created_at"}`
+5. Report: "Moved N lugs to completed. Index: T total entries."
+
+**Skip condition:** If no status changes occurred this session, still regenerate index if new lugs were created.
 
 ### 6. Finalize Session Track
 
@@ -316,7 +333,7 @@ Any lug intended for another agent (including future-you in a new session) must 
    - Does `verify` define a concrete "done" state?
    - Is the lug self-contained? (no "see above" or conversation-dependent references)
    - Could a naive agent understand this without your current context?
-5. **Fix gaps found** — update lugs in WAI-Lugs.jsonl before proceeding
+5. **Fix gaps found** — update lugs in active file before proceeding
 6. **Report results** — "N lugs validated, M gaps filled" or "All lugs clean"
 
 **Skip conditions:** If no actionable lugs were created/modified this session, skip this step entirely.
@@ -369,7 +386,7 @@ Any lug intended for another agent (including future-you in a new session) must 
 **If no lock conflict:**
 1. Create `.teaching-distribution.lock`
 2. Detect migration-relevant changes from this session. Minimum detection sources:
-   - High-impact lugs in `WAI-Lugs.jsonl` where `created_at > old_last_closeout` AND `impact >= 8`
+   - High-impact lugs in active file where `created_at > old_last_closeout` AND `impact >= 8`
    - Modified files under `templates/commands/`
    - Modified files under `templates/spoke/`
    - State/schema or protocol changes that alter spoke behavior
@@ -464,7 +481,7 @@ Read `hub_path` from `WAI-State.json` at `wheel.hub_path`.
 
 **If hub is accessible:**
 
-For each lug in `WAI-Lugs.jsonl` where `type == "signal"` AND `impact > 7` AND `status != "archived"`:
+For each lug in active lugs file where `type == "signal"` AND `impact > 7` AND `status != "archived"`:
 1. Check if `{hub_path}/WAI-Hub/Signals/incoming/{lug-id}.json` already exists
 2. If not: write the full lug JSON as `{hub_path}/WAI-Hub/Signals/incoming/{lug-id}.json`
 3. Log: "Published to hub bulletin: {lug-id} (impact={impact})"

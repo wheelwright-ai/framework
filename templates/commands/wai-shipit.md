@@ -11,7 +11,7 @@ Verify this version is ready to ship to users.
 - **Nodes:** spoke, hub, framework
 - **Exposure:** spoke.chat:local, spoke.chat:external
 - **Paths Required:** spoke_path; framework_path + hub_path (for auto-teach)
-- **Lug Storage:** `ty: "shipit"` records in WAI-Lugs.jsonl
+- **Lug Storage:** `ty: "shipit"` records in `lugs/active/WAI-Lugs-active.jsonl`
 
 ---
 
@@ -375,7 +375,7 @@ export SHIPIT_SKIP_LINT=1       # Skip linting
 export SHIPIT_FORCE=1           # Skip ALL quality gates
 ```
 
-**⚠️ WARNING:** Overrides should be logged to WAI-Lugs.jsonl as a signal lug (impact >= 8) for technical debt tracking.
+**⚠️ WARNING:** Overrides should be logged to the active lugs file as a signal lug (impact >= 8) for technical debt tracking.
 
 ---
 
@@ -457,7 +457,7 @@ fi
 ```
 
 - **Option 1:** Abort shipit, user fixes regression
-- **Option 2:** Continue but log regression to WAI-Lugs.jsonl as a signal lug (impact: 7+)
+- **Option 2:** Continue but log regression to the active lugs file as a signal lug (impact: 7+)
 - **Option 3:** Update baseline if regression is intentional tradeoff
 
 **Benchmark Results Storage:**

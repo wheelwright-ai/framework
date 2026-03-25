@@ -178,7 +178,7 @@ The user has granted permission for routine operations. Do not ask for confirmat
 
 **If you store work state anywhere other than a lug, the next agent starts blind.**
 
-Lugs are JSONL records in `WAI-Spoke/WAI-Lugs.jsonl`. They are the only storage the wakeup protocol reads at session start. When a session ends or is interrupted, lugs survive. Everything else is gone.
+Lugs are JSONL records in `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` (active) or individual files in `WAI-Spoke/lugs/{type}/` (archived). The active lugs file is the only storage the wakeup protocol reads at session start. When a session ends or is interrupted, lugs survive. Everything else is gone.
 
 **Claude Code Task tools (TaskCreate, etc.) do not survive session ends.** They are not read on wakeup and are invisible to any future agent or tool.
 

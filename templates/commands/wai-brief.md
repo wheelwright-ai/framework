@@ -10,7 +10,7 @@ Export project context — with or without a topic focus — so any external AI 
 
 - **Nodes:** spoke
 - **Exposure:** spoke.chat:local
-- **Paths Required:** WAI-State.json, WAI-Lugs.jsonl, sessions/
+- **Paths Required:** WAI-State.json, lugs/active/WAI-Lugs-active.jsonl, sessions/
 
 ---
 
@@ -47,7 +47,7 @@ Read from `WAI-State.json`:
 - `_session_state.mode`, `wheel.version`
 - `_session_state.next_session_recommendation`
 
-Grep `WAI-Lugs.jsonl` for:
+Grep `lugs/active/WAI-Lugs-active.jsonl` for:
 - Lugs with `status: open | in_progress | ready` (active work)
 - Last 3 session-summary lugs (recent history)
 - Any lugs with `impact >= 8` from the last 30 days (high-impact decisions)
@@ -88,7 +88,7 @@ Generated: {ISO date}
 
 Search for topic across:
 
-1. **WAI-Lugs.jsonl** — grep for topic keywords in `title`, `description`, `tags`, `decisions[]`
+1. **Active lugs file** (`lugs/active/WAI-Lugs-active.jsonl`) — grep for topic keywords in `title`, `description`, `tags`, `decisions[]`
    - Collect: lug ID, title, status, relevant decisions, options captured in workflow fields
 2. **Current session track** — grep `focus`, `thinking`, `decisions[]`, `open[]` for topic keywords
 3. **WAI-State.json** — check `next_session_recommendation` for topic mentions
