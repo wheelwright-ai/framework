@@ -1,0 +1,10 @@
+{
+  "i": "task-framework-version-in-template",
+  "t": "Add wheel.framework_version to spoke template WAI-State.json",
+  "ty": "task",
+  "s": "o",
+  "impact": 6,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[template] New field separates project version (wheel.version) from framework sync version (wheel.framework_version). Already deployed to all 12 spokes; needs to be in template for new spokes."
+}

@@ -1,0 +1,17 @@
+{
+  "i": "teaching-track-reliability-v1",
+  "t": "Installed track reliability v1.0 — canonical path + per-turn discipline",
+  "ty": "signal",
+  "s": "c",
+  "ca": "2026-03-17T00:00:00Z",
+  "gb": "teaching-file",
+  "impact": 8,
+  "content": {
+    "what": "Fixed path conflict between track-encapsulation and spoke-wai-update teachings. Canonical path is now WAI-Spoke/sessions/track_session-YYYYMMDD-HHMM.jsonl. Installed per-turn discipline: write track before ending response, fast-path for high-pressure turns, no two consecutive skips.",
+    "source": "track-reliability-v1.md.teaching v1.0"
+  },
+  "_behavior_directive": {
+    "what_this_is": "Record that this spoke has track reliability v1.0 installed.",
+    "what_this_is_NOT": "An instruction to re-process this teaching or to migrate legacy track files."
+  }
+}

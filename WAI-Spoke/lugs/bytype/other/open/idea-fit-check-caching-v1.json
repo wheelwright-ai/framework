@@ -1,0 +1,33 @@
+{
+  "i": "idea-fit-check-caching-v1",
+  "ty": "idea",
+  "t": "Fit-check caching — stamp idea lugs with corpus hash to skip redundant scans",
+  "s": "proposed",
+  "ca": "2026-03-14T11:00:00Z",
+  "gb": "agent",
+  "origin": "signal",
+  "scope": "schema",
+  "challenge": "Backlog review re-runs the fit check for every idea against current state, even when the lug corpus hasn't changed — this is expensive and produces no new information in stable periods",
+  "hypothesis": "If we stamp each idea lug with a fit_checked_at timestamp and a lightweight corpus hash (open lug count + latest lug ID + latest skill version), then during backlog review any idea whose hash still matches can skip the fit re-check, making backlog review O(changed) rather than O(all)",
+  "prior_hypothesis": null,
+  "reframe_notes": null,
+  "spoke_context_loaded": true,
+  "fit_classification": "extends",
+  "related_lugs": [
+    "teaching-wai-improve-v1"
+  ],
+  "terminology_reconciled": [],
+  "scores": {
+    "velocity_lift": "low",
+    "implementation_cost": "low",
+    "system_fit": "aligned",
+    "generality": "all-spokes"
+  },
+  "priority": "P4 (base P4 — low velocity)",
+  "next_step": "defer",
+  "agent_framing": "Add corpus hash to idea lugs so backlog review can skip unchanged ideas — implement when backlog size makes scan cost noticeable",
+  "_behavior_directive": {
+    "what_this_is": "Improvement idea — adds caching to the fit check for large backlogs.",
+    "what_this_is_NOT": "An instruction to implement."
+  }
+}

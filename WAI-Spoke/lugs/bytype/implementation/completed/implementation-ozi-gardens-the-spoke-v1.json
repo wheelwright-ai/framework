@@ -1,0 +1,228 @@
+{
+  "id": "implementation-ozi-gardens-the-spoke-v1",
+  "type": "implementation",
+  "title": "Ozi gardens the spoke: automation history through work lugs and paired test lugs",
+  "status": "implemented",
+  "description": "Build the spoke-local Ozi gardening model so automation history lives in controller/work/test lugs rather than opaque state receipts. Ozi becomes the spoke gardener: he owns local implementation controllers, orchestrates child work lugs and paired test lugs, and keeps WAI-State.json bounded to runtime/recovery truth.",
+  "impact": 9,
+  "created_by": "OpenCode GPT-5.4",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-20T05:17:14.293198+00:00",
+  "priority": "high",
+  "tags": [
+    "ozi",
+    "spoke-gardener",
+    "automation-history",
+    "work-lugs",
+    "test-lugs",
+    "canonical-evolution"
+  ],
+  "category": "architecture",
+  "composes": [
+    "task-ozi-controller-work-test-link-schema",
+    "task-ozi-runtime-state-boundary",
+    "task-ozi-teaching-family-work-lugs",
+    "task-ozi-paired-test-lug-policy",
+    "task-ozi-closeout-reconciliation-boundary"
+  ],
+  "target_files": [
+    "WAI-Spoke/WAI-Lugs.jsonl",
+    "templates/commands/wai-closeout.md",
+    "WAI-Spoke/commands/wai-closeout.md",
+    "templates/commands/wai.md",
+    "WAI-Spoke/commands/wai.md",
+    "templates/spoke/WAI-State.json",
+    "WAI-Spoke/WAI-State.json"
+  ],
+  "non_goals": [
+    "Do not make WAI-State.json the authoritative automation history again",
+    "Do not let Octo replace Ozi as the spoke-local executor",
+    "Do not invent controller/work/test relationships only in chat; persist them in lugs"
+  ],
+  "sequence": {
+    "must_be_sequential": [
+      "1. Define the controller/work/test lug contract for spoke-local automation history.",
+      "2. Define the runtime-state boundary so WAI-State.json stays minimal and operational.",
+      "3. Apply the model to the initial target area: teaching generation and hub publish flow.",
+      "4. Define paired-test expectations and lifecycle gates before ready_for_recheck.",
+      "5. Update closeout reconciliation rules so closeout reconciles against Ozi-controlled lugs rather than writing history into state receipts."
+    ],
+    "can_parallelize": [
+      "Draft runtime-state boundary in parallel with link-schema contract",
+      "Draft paired test policy in parallel with initial teaching/hub example"
+    ]
+  },
+  "verification_requirements": [
+    "Verify controller/work/test relationships are cold-readable from the lug alone",
+    "Verify WAI-State.json runtime boundary is explicit and minimal",
+    "Verify each work lug requires at least one paired test lug before ready_for_recheck",
+    "Verify the teaching-generation and hub-publish example is concrete enough to implement without chat context"
+  ],
+  "acceptance_tests": [
+    {
+      "description": "At least one ozi-controller lug exists in WAI-Lugs.jsonl",
+      "command": "python3 -c \"import json; lugs=[json.loads(l) for l in open('WAI-Spoke/WAI-Lugs.jsonl') if l.strip()]; ctrl=[l for l in lugs if l.get('type')=='ozi-controller']; print('PASS' if ctrl else 'FAIL — no ozi-controller lugs found')\"",
+      "expected": "PASS — at least one ozi-controller lug present"
+    },
+    {
+      "description": "Every ozi-work lug has a paired ozi-test lug",
+      "command": "python3 -c \"import json; lugs=[json.loads(l) for l in open('WAI-Spoke/WAI-Lugs.jsonl') if l.strip()]; work=[l for l in lugs if l.get('type')=='ozi-work']; tests=[l for l in lugs if l.get('type')=='ozi-test']; test_ids={l.get('work_lug_id') for l in tests}; unpaired=[w['id'] for w in work if w.get('id') not in test_ids]; print('PASS' if not unpaired else f'FAIL — unpaired: {unpaired}')\"",
+      "expected": "PASS — no unpaired ozi-work lugs"
+    },
+    {
+      "description": "WAI-State.json has no automation history keys at top level",
+      "command": "python3 -c \"import json; s=json.load(open('WAI-Spoke/WAI-State.json')); bad=[k for k in s if any(x in k.lower() for x in ['history','automation','receipt','ozi_log'])]; print('PASS' if not bad else f'FAIL — history keys: {bad}')\"",
+      "expected": "PASS — WAI-State.json stays clean of automation history"
+    }
+  ],
+  "implementer_review": {
+    "required_before_implementation": true,
+    "review_status": "approved_to_implement",
+    "review_sources": [
+      "ozi-gardens-the-wheel-v1",
+      "implementation-octo-gardener-dispatch-v1"
+    ],
+    "review_questions": [
+      "Is Ozi clearly scoped to spoke-local gardening while Octo remains wheel-level?",
+      "Are controller/work/test link rules specific enough for a future implementer?",
+      "Is the runtime-vs-history boundary durable enough to keep state lean?"
+    ],
+    "review_history": [
+      {
+        "cycle": 1,
+        "reviewed_at": "2026-03-23T07:45:00Z",
+        "reviewed_by": "claude-sonnet-4-6",
+        "model": "claude-sonnet-4-6",
+        "result": "approved_with_gap_fill",
+        "summary": "Lug is conceptually sound and boundary is clear (Ozi spoke-local, Octo wheel-level). Three gaps filled in this cycle: (1) controller/work/test lug schema added to lug_schema field — builder now has exact field names and id formats; (2) concrete teaching-generation example added to concrete_example field showing a full controller/work_1/work_2/test_lug chain; (3) all three acceptance_tests replaced with runnable Python/shell commands. runtime-vs-history boundary is clear: WAI-State.json non-goal is explicit and acceptance test 3 verifies it. Ready for builder to claim.",
+        "blocking_issues": [],
+        "recommendations": [
+          "Builder must create ozi-controller, ozi-work, and ozi-test lugs for each Ozi automation batch — do not use session-summary or autosave types for Ozi history.",
+          "The sequence step 5 (update closeout reconciliation) means: closeout Step 1 should look for ozi-controller lugs when reconciling, not just autosave lugs. Additive change — do not remove existing autosave reconciliation.",
+          "WAI-State.json changes (templates/spoke/WAI-State.json) are minimal: add ozi section to _session_state for current controller id and last ozi run timestamp only."
+        ]
+      }
+    ]
+  },
+  "workflow": {
+    "current_phase": "plan",
+    "current_owner": "claude-sonnet-4-6",
+    "current_state": "implemented",
+    "assigned_at": "2026-03-20T05:17:14.293198+00:00",
+    "updated_at": "2026-03-23T16:30:00Z",
+    "handoff_reason": "Implementer review + gap fill complete. Builder can claim after octo-gardener-dispatch ships."
+  },
+  "implementation_record": {
+    "implementer": "OpenCode GPT-5.4",
+    "started_at": "2026-03-20T05:17:14.293198+00:00",
+    "progress": [
+      "✅ Elevated compact spoke-gardening design into a canonical implementation lug",
+      "✅ Linked it conceptually to Octo's wheel-gardening dispatch architecture",
+      "✅ Preserved the old compact lug as design/source material"
+    ]
+  },
+  "ownership": {
+    "tracks_who_worked_on_it": true,
+    "current_owner": "OpenCode GPT-5.4",
+    "contributors": [
+      "OpenCode GPT-5.4"
+    ]
+  },
+  "derived_from": "ozi-gardens-the-wheel-v1",
+  "lug_schema": {
+    "_note": "Canonical schema for Ozi spoke-gardening lugs. All three types live in WAI-Lugs.jsonl.",
+    "controller_lug": {
+      "_note": "One Ozi automation pass or bounded task batch",
+      "required_fields": {
+        "id": "ozi-ctrl-{YYYYMMDD-HHMM}-{task-slug}",
+        "type": "ozi-controller",
+        "title": "What Ozi is orchestrating",
+        "session_id": "session that created this controller",
+        "target_lug_id": "implementation or task lug being worked",
+        "status": "active | completed | failed",
+        "work_lug_ids": [
+          "child ozi-work lug ids"
+        ],
+        "test_lug_ids": [
+          "paired ozi-test lug ids"
+        ],
+        "created_at": "ISO-8601",
+        "completed_at": "ISO-8601 or null"
+      }
+    },
+    "work_lug": {
+      "_note": "One discrete unit of work dispatched by an Ozi controller",
+      "required_fields": {
+        "id": "ozi-work-{YYYYMMDD-HHMM}-{task-slug}",
+        "type": "ozi-work",
+        "controller_id": "parent ozi-controller lug id",
+        "task": "concise description of what was done",
+        "target_file": "file or resource modified",
+        "status": "completed | failed | skipped",
+        "result": "short outcome note",
+        "created_at": "ISO-8601",
+        "completed_at": "ISO-8601 or null"
+      }
+    },
+    "test_lug": {
+      "_note": "Paired verification record. Required before any ozi-work lug can move to ready_for_recheck.",
+      "required_fields": {
+        "id": "ozi-test-{YYYYMMDD-HHMM}-{task-slug}",
+        "type": "ozi-test",
+        "work_lug_id": "parent ozi-work lug id",
+        "test_command": "runnable shell or python verification command",
+        "expected": "expected output or behaviour",
+        "actual": "observed result",
+        "result": "pass | fail | skip",
+        "tested_at": "ISO-8601"
+      }
+    }
+  },
+  "concrete_example": {
+    "_note": "Teaching-generation and hub-publish flow using the controller/work/test pattern",
+    "controller": {
+      "id": "ozi-ctrl-20260323-1200-teach-gen",
+      "type": "ozi-controller",
+      "title": "Generate and publish skill-wai-lug-advisor-v2 teaching",
+      "target_lug_id": "implementation-ozi-gardens-the-spoke-v1",
+      "status": "completed",
+      "work_lug_ids": [
+        "ozi-work-20260323-1200-gen-teaching",
+        "ozi-work-20260323-1201-publish-hub"
+      ],
+      "test_lug_ids": [
+        "ozi-test-20260323-1202-verify-teaching"
+      ]
+    },
+    "work_1": {
+      "id": "ozi-work-20260323-1200-gen-teaching",
+      "type": "ozi-work",
+      "controller_id": "ozi-ctrl-20260323-1200-teach-gen",
+      "task": "Generate skill-wai-lug-advisor-v2.md.teaching from current wai-lug-advisor.md",
+      "target_file": "teachings/skill-wai-lug-advisor-v2.md.teaching",
+      "status": "completed",
+      "result": "Teaching file created with safe_to_auto_adopt: true"
+    },
+    "work_2": {
+      "id": "ozi-work-20260323-1201-publish-hub",
+      "type": "ozi-work",
+      "controller_id": "ozi-ctrl-20260323-1200-teach-gen",
+      "task": "Copy teaching to hub/teachings_repo/framework/current/",
+      "target_file": "hub/teachings_repo/framework/current/skill-wai-lug-advisor-v2.md.teaching",
+      "status": "completed",
+      "result": "Teaching published to hub"
+    },
+    "test_lug": {
+      "id": "ozi-test-20260323-1202-verify-teaching",
+      "type": "ozi-test",
+      "work_lug_id": "ozi-work-20260323-1201-publish-hub",
+      "test_command": "test -f hub/teachings_repo/framework/current/skill-wai-lug-advisor-v2.md.teaching && echo PASS || echo FAIL",
+      "expected": "PASS",
+      "actual": "PASS",
+      "result": "pass"
+    }
+  },
+  "dependencies": [
+    "implementation-octo-gardener-dispatch-v1"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "i": "session-20260315-1906",
+  "ty": "session-summary",
+  "t": "Session 28 summary",
+  "s": "c",
+  "ca": "2026-03-15T19:06:00Z",
+  "gb": "Claude Sonnet 4.6",
+  "session_number": 28,
+  "accomplished": [
+    "Fixed CI: converted 18 shell scripts CRLF→LF",
+    "Added .gitattributes to enforce LF permanently",
+    "Created requirements.txt, requirements-test.txt, run-integration-tests.sh, tests/integration/runner.py",
+    "Fixed 6 e2e test failures in benchmarks/e2e/test_skills.py (type catalog, status catalog, absorbed commands, reconciled record title check)",
+    "All 14 e2e test suites passing"
+  ],
+  "files_touched": [
+    ".gitattributes",
+    "requirements.txt",
+    "requirements-test.txt",
+    "run-integration-tests.sh",
+    "tests/integration/runner.py",
+    "tests/__init__.py",
+    "tests/integration/__init__.py",
+    "benchmarks/e2e/test_skills.py",
+    "18x .sh files (CRLF→LF)"
+  ],
+  "decisions": [
+    "ABSORBED_COMMANDS set in test for wai-teach/wai-learn/wai-review",
+    "title field optional for closed/reconciled lug records"
+  ],
+  "incomplete_work": {
+    "tasks": [],
+    "blockers": [],
+    "next_steps": [
+      "add activity_filter_exclude to historian.yaml pattern_scan",
+      "create epic for idea-challenge-registry-v1"
+    ]
+  },
+  "autosaves_reconciled": []
+}

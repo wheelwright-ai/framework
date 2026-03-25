@@ -1,0 +1,10 @@
+{
+  "i": "task-custom-ai-file-indexing",
+  "t": "Index custom AI personality files (SPARKY.md etc) in upgrade/wakeup",
+  "ty": "task",
+  "s": "o",
+  "impact": 4,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[awareness] SPARKY.md is code-puppy's config. Discovery step should list non-standard AI config files at project root for awareness. Don't overwrite."
+}

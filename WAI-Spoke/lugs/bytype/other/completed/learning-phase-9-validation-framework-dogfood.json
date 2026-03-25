@@ -1,0 +1,17 @@
+{
+  "id": "learning-phase-9-validation-framework-dogfood",
+  "type": "learning",
+  "title": "Phase 9 Validation: Framework Spoke Successfully Uses Self-Registry Pattern",
+  "status": "archived",
+  "description": "Framework spoke created its own .spoke-metadata.yaml file to validate Phase 9 architecture. Self-registry pattern works: spoke maintains metadata locally, all required fields populated, schema validation passes.",
+  "impact": 5,
+  "created_by": "Claude Haiku 4.5",
+  "created_at": "2026-03-12T19:42:15.409712+00:00",
+  "node": "wheelwright/framework",
+  "perceive": "Phase 9 defines self-declaring spoke architecture but hadn't been tested with actual metadata. Framework spoke needed to validate the pattern works before other spokes adopt it.",
+  "execute": "Created .spoke-metadata.yaml for framework spoke using spoke-metadata.yaml.template as schema. Populated all required fields: identity (path, type, status, mission), scope (domains, boundaries), expertise (offers, stack, team_model), framework (version, skills_loaded), activity (git metrics, lug metrics, session metrics).",
+  "verify": "Validation checks: (1) Valid YAML ✓ (2) Matches schema version 2.0 ✓ (3) All identity fields non-empty ✓ (4) Scope domains are specific (not vague) ✓ (5) Boundaries clearly state what framework doesn't do ✓ (6) Expertise offers match actual capabilities (7 skills, 5 templates, guides) ✓ (7) Stack is current (Python, YAML, JSON, Bash, Git) ✓ (8) Activity metrics are real (83 commits, 7 decisions, health=active) ✓",
+  "observation": "Phase 9 architecture proof-of-concept successful. Framework spoke demonstrated:",
+  "archived_at": "2026-03-18T10:54:51.004162Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

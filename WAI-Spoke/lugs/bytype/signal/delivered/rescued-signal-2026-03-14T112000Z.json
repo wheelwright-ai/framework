@@ -1,0 +1,12 @@
+{
+  "id": "rescued-signal-2026-03-14T112000Z",
+  "type": "signal",
+  "status": "published",
+  "impact": 8,
+  "title": "wai-improve v1.0 shipped — improvement idea protocol with six-step pipeline (load context, intake, f",
+  "description": "First formal protocol for managing improvement ideas in Wheelwright. Establishes the intake-to-build pipeline that all future improvement work will flow through.",
+  "created_at": "2026-03-14T11:20:00Z",
+  "created_by": "Claude Sonnet 4.6",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-03-14T11:20:00Z"
+}

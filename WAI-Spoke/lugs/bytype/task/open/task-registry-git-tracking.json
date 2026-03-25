@@ -1,0 +1,10 @@
+{
+  "i": "task-registry-git-tracking",
+  "t": "Hub registry: track whether spokes have git repos",
+  "ty": "task",
+  "s": "o",
+  "impact": 5,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[infrastructure] Fleet upgrade revealed 2 spokes (emailinator, ezorg-leadfinder) have no git. Registry should track this. User will fix."
+}

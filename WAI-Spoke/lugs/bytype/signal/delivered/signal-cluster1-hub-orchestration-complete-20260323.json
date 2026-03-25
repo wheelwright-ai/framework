@@ -1,0 +1,12 @@
+{
+  "id": "signal-cluster1-hub-orchestration-complete-20260323",
+  "type": "signal",
+  "title": "Cluster 1 Hub Orchestration layer implemented — full Octo/Ozi/routing/launch stack built",
+  "status": "published",
+  "impact": 9,
+  "signal": "All 5 Cluster 1 hub-orchestration epics are now implemented: model routing table, provider grabber layer, intent-based spoke launch, Octo gardener dispatch, and Ozi spoke lug model. The hub now has: (1) a model routing table mapping work classes to model classes, (2) pluggable provider grabbers, (3) a launch CLI that routes user intent to spoke+model+startup-profile, (4) Octo as hub-level gardener that scans/dispatches via job queue, (5) canonical ozi-controller/work/test lug pattern for automation history. Cluster 2 (handles, product layer) is now unblocked.",
+  "rationale": "This completes the hub-side orchestration stack. The framework can now route work intelligently, dispatch via Octo, and track automation history via lugs rather than opaque state. Cluster 2 builds on this foundation.",
+  "timestamp": "2026-03-23T08:01:39Z",
+  "session_id": "session-20260323-1616",
+  "by": "claude-sonnet-4-6"
+}

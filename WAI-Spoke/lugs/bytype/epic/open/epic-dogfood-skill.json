@@ -1,0 +1,10 @@
+{
+  "i": "epic-dogfood-skill",
+  "t": "Spoke skill: dogfood — sub-agent validation for ideas and modifications",
+  "ty": "epic",
+  "s": "o",
+  "impact": 8,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[skills] Every spoke gets this. Sends idea/modification to a sub-agent with only base WAI understanding. Proves idea is hallucination-proof and complete. For modifications: dry-run and report feedback. Returns structured assessment to improve the proposal before it ships."
+}

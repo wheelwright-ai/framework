@@ -1,0 +1,15 @@
+{
+  "i": "epic-ac-high-fidelity-v1",
+  "ty": "epic",
+  "t": "Implement High-Fidelity Active-Collection Standard for Session Tracks",
+  "s": "c",
+  "ca": "2026-03-17T08:35:00Z",
+  "gb": "gemini-1.5-pro",
+  "impact": 9,
+  "dogfood_pass": true,
+  "description": "Upgraded the track-encapsulation skill from 'best-effort' to a 'Mandatory Operating Contract'. Increased token budget to 800-1000 for complex turns, mandated 3-8 sentence technical narratives, and added fossils, context_health, and file metadata fields. Created the standalone 'tracks' repository for cross-spoke standards.",
+  "perceive": "Read current spotty tracks (<1KB) and generic session titles. Analyze context-fatigue issues in long sessions.",
+  "execute": "1. Update track-encapsulation.yaml with Mandatory Contract and 6 required fields: turn, ts, phase, focus, action, thinking. 2. Update lug-advisor with Indicative Title policy (5+ words, ban 'Session X summary'). 3. Create 'tracks' repo as a standalone directory (not a submodule) containing spec, prompts, and samples. 4. Define file metadata for files_in/out: name, type, path, and purpose/summary (no hashes required). 5. Sync commands across .claude and templates.",
+  "verify": "1. Check WAI-Spoke/sessions/ for increased file size (>5KB per session minimum). 2. Verify 'recovered':true appears on missed-turn reconstruction. 3. Confirm 'fossils' array captures rejected concepts in track points.",
+  "resolution": "Successfully implemented across framework and new tracks repository. Active-collection is now a mandatory final step of every turn."
+}

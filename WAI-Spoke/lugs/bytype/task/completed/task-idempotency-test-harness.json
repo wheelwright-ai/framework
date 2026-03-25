@@ -1,0 +1,48 @@
+{
+  "id": "task-idempotency-test-harness",
+  "type": "task",
+  "title": "Scaffold idempotency tests for replay scenarios",
+  "status": "drafted",
+  "description": "Draft comprehensive test scaffolds for ensuring Wheelwright operations are idempotent and concurrency-safe. Covers replaying same closeout twice, concurrent closeouts on one spoke, duplicate signal publication, and interrupted migration replay scenarios.",
+  "impact": 8,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-19T08:25:00Z",
+  "parent_epic": "epic-session15-fleet-evolution",
+  "priority": "high",
+  "tags": [
+    "canonical-evolution",
+    "idempotency",
+    "testing",
+    "concurrency",
+    "replay-safety"
+  ],
+  "category": "testing",
+  "blocks": [],
+  "blocked_by": [],
+  "test_categories": {
+    "closeout_replay": "7 test methods ensuring second closeout detects completion and skips",
+    "concurrent_closeout": "8 test methods for file locking/serialization with multiple agents",
+    "signal_deduplication": "9 test methods preventing duplicate signal publication",
+    "migration_resume": "10 test methods for checkpoint-based resume from interruption"
+  },
+  "test_infrastructure": {
+    "spoke_factory": "Creates realistic test spokes/hubs with configurable states",
+    "assertions": "Custom WAI state validation and deep comparison tools",
+    "concurrency_helper": "Multi-process coordination and race condition testing",
+    "test_orchestration": "Category selection and reporting"
+  },
+  "expected_behaviors": {
+    "closeout_replay": "First completes, second detects and skips gracefully",
+    "concurrent_closeouts": "File locking prevents corruption, single winner emerges",
+    "signal_deduplication": "Dedup at source, transport, and destination levels",
+    "migration_resume": "Resume from checkpoint, don't restart from beginning"
+  },
+  "missing_prerequisites": [
+    "File locking system (.closeout.lock, .migration.lock)",
+    "Migration checkpoints (.migration-checkpoint.json)",
+    "Signal deduplication logic in WAI-Signals.jsonl operations",
+    "Real implementation integration"
+  ],
+  "verification_status": "Test scaffolds complete and ready for framework integration"
+}

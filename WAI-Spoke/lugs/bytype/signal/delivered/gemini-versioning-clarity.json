@@ -1,0 +1,25 @@
+{
+  "id": "gemini-versioning-clarity",
+  "type": "signal",
+  "title": "Clarify WAI Versioning Scheme - Multiple Version Indicators",
+  "status": "completed",
+  "_v1_status": "published",
+  "description": "**Source:** Gemini session cross-tool analysis\n\n**Observation:** Ambiguity from multiple version indicators creates AI confusion:\n- WAI_WORKSPACE_VERSION (in WAI script)\n- upgrade_plan_version (in upgrade-adoption-plan.json)\n- wheelwright.version (in WAI-State.json)\n- wheelwright.structure_version (in WAI-State.json)\n\nAI agents unclear which version to reference when, leading to incorrect upgrade decisions and version mismatch errors.\n\n**Impact:** AI confusion on version compatibility, incorrect upgrade paths, difficulty determining \"is this spoke current?\", framework evolution hampered by versioning complexity.\n\n**Current State:**\n- Multiple versioning schemes exist\n- Purpose of each not clearly documented\n- Interactions between versions unclear\n- AI doesn't know which to reference in what context\n\n**Versioning Schemes Observed:**\n1. **WAI_WORKSPACE_VERSION** - Spoke workspace format version (structural)\n2. **upgrade_plan_version** - Teaching file format version\n3. **wheelwright.version** - Framework release version (semantic)\n4. **wheelwright.structure_version** - WAI-Spoke directory structure version\n\n**Recommendation:**\n1. Create VERSION-GUIDE.md documenting:\n   - Framework Version (wheelwright.version): Overall release (3.1.0)\n   - Structure Version (structure_version): WAI-Spoke directory layout (2.0)\n   - Workspace Version (WAI_WORKSPACE_VERSION): Compatibility format (1.0)\n   - Teaching Version (upgrade_plan_version): Teaching file schema (1.0)\n2. Define version compatibility matrix:\n   - Which versions must match for compatibility\n   - Which can differ (backward compatible)\n   - Which trigger mandatory upgrades\n3. Add version checking logic to teach/learn commands\n4. Include version interpretation in WAI-AI-ONBOARDING.md:\n   - When to check which version\n   - How to handle mismatch",
+  "impact": 9,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-06T16:20:00.000000",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "WAI-VERSION-GUIDE.md created",
+  "priority": "high",
+  "tags": [
+    "versioning",
+    "clarity",
+    "v2"
+  ],
+  "scope": "all_spokes",
+  "completed_at": "2026-03-18T10:55:38.005965+00:00"
+}

@@ -1,0 +1,24 @@
+{
+  "i": "hub-broadcast-config-v1",
+  "ty": "task",
+  "t": "Hub: Setup Broadcast Directory and Teaching Symlink",
+  "s": "o",
+  "ca": "2026-03-13T08:20:00Z",
+  "gb": "Gemini CLI",
+  "impact": 9,
+  "destination_wheel_id": "hub",
+  "content": {
+    "perceive": "Spokes need a central 'broadcast' location to pull updates.",
+    "execute": [
+      "Create hub/broadcast/teachings/ directory",
+      "Create hub/broadcast/lugs/ directory",
+      "Setup symlink: hub/broadcast/teachings/latest -> framework/templates/",
+      "Ensure hub/health.yaml tracks broadcast availability"
+    ],
+    "verify": "Spoke can reach hub/broadcast/teachings/latest/commands/wai.md via the hub path."
+  },
+  "_behavior_directive": {
+    "what_this_is": "Instruction for the Hub to prepare the broadcast structure.",
+    "what_this_is_NOT": "Spoke-side logic."
+  }
+}

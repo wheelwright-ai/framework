@@ -1,0 +1,65 @@
+{
+  "i": "epic-session15-fleet-evolution",
+  "ty": "epic",
+  "t": "Canonical Wheelwright evolution - object model, behavior, migration, and post-deploy skills",
+  "s": "o",
+  "ca": "2026-03-14T07:51:22Z",
+  "ua": "2026-03-19T00:00:00Z",
+  "updated_by": "Codex GPT-5",
+  "gb": "Codex GPT-5",
+  "impact": 9,
+  "description": "Parent epic for the canonical Wheelwright redesign and refactor. This epic now explicitly covers the work defined in the 2026-03-18 OpenAI GPT-5.3 canonical design session: establish canonical WAI object definitions, canonical spoke/hub behavior, canonical storage structure, smart-update expectations, and migration-safe closeout semantics before broader fleet polish or new skills. The rule for this epic is canonical-first: incorporate now only the work that defines or protects the canonical design; defer fleet operations, scale optimizations, and convenience skills until after the canonical build and first deployment are stable.",
+  "canonical_focus": {
+    "source_track": "WAI-Spoke/seed/ingest/processed/WAI_Track-20260318-2138-OpenAI-GPT-5.3.jsonl",
+    "source_design_doc": "framework/docs/design/goal-state-wheelwright.md",
+    "goal": "Make Wheelwright canonical in its design before implementation expands again.",
+    "core_decisions": [
+      "Wheel / Hub / Spoke / Skills / Advisors / Lugs / Sessions / Tracks are the core model",
+      "PEV is represented as linked lugs, not embedded fields",
+      "WAI-State.json is the canonical spoke state file",
+      "sessions/session-YYYYMMDD-HHMM/track.jsonl is the canonical track layout",
+      "Signals are high-impact lugs routed through WAI-Hub/Signals/incoming/ and processed/",
+      "Closeout and migration must be idempotent and concurrency-safe",
+      "Ozi is identity/partner framing, not a persistence object"
+    ]
+  },
+  "incorporate_now": {
+    "description": "Work that must be part of the canonical evolution before or during the refactor build.",
+    "children": [
+      "epic-v1-v2-state-migration",
+      "task-framework-version-in-template",
+      "task-idempotent-closeout-concurrency"
+    ],
+    "rewrite_first": [
+      "epic-skills-folder-architecture",
+      "epic-working-agreement-skill"
+    ],
+    "notes": [
+      "epic-skills-folder-architecture and epic-working-agreement-skill are still valuable but must be rewritten against the new canonical design before implementation so they do not drag older structure assumptions forward."
+    ]
+  },
+  "post_evolution": {
+    "description": "Valuable work, but not part of the first canonical build/deploy wave.",
+    "children": [
+      "epic-sharded-lugs-with-index",
+      "task-spoke-self-registry-via-lug",
+      "epic-check-spokes-skill",
+      "epic-dogfood-skill",
+      "task-registry-git-tracking",
+      "task-custom-ai-file-indexing",
+      "task-multi-ai-case-study"
+    ],
+    "notes": [
+      "These improve scale, fleet operations, discovery, and quality, but they should not precede canonical object/state/migration implementation."
+    ]
+  },
+  "execution_sequence": [
+    "1. Lock canonical design and schema targets from the GPT track and goal-state design doc",
+    "2. Implement canonical migration/state work (epic-v1-v2-state-migration + template/state cleanup)",
+    "3. Implement idempotent concurrent closeout and migration receipts",
+    "4. Rewrite older architecture epics to fit the canonical model before executing them",
+    "5. Deploy the canonical refactor to the local spoke fleet",
+    "6. Pull post-evolution epics back in after the first stable deployment"
+  ],
+  "classification_note": "Older epics created before the canonical design session are not automatically in scope for the first build. They must either support the canonical core directly, be rewritten to fit it, or wait until post-evolution."
+}

@@ -1,0 +1,24 @@
+{
+  "i": "task-pull-based-distribution-v1",
+  "ty": "task",
+  "t": "Implement Pull-based distribution (Teach/Learn Pull)",
+  "s": "o",
+  "ca": "2026-03-13T08:20:00Z",
+  "gb": "Gemini CLI",
+  "impact": 8,
+  "priority": "high",
+  "content": {
+    "perceive": "Current teaching is push-based (sender-initiated). Multi-agent wakeup needs a pull-based model where spokes check the hub for 'broadcast' updates.",
+    "execute": [
+      "Update WAI-State.json with hub_broadcast_path (default: {hub_path}/broadcast)",
+      "Update wakeup protocol (wai.md) to check hub/broadcast/teachings/ for new .teaching files",
+      "Update wakeup protocol to check hub/broadcast/lugs/ for global signals",
+      "Implement sync logic in wai-learn: copy from hub/broadcast/ → local seed/ingest/"
+    ],
+    "verify": "Wakeup briefing detects and pulls 1 new teaching file from hub broadcast without manual /wai-teach."
+  },
+  "_behavior_directive": {
+    "what_this_is": "Requirement for spoke-side pull distribution logic.",
+    "what_this_is_NOT": "The Hub-side implementation."
+  }
+}

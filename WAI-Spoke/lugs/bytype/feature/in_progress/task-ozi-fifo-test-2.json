@@ -1,0 +1,20 @@
+{
+  "id": "task-ozi-fifo-test-2",
+  "type": "feature",
+  "title": "Second FIFO test item",
+  "status": "in_progress",
+  "description": "Later-created ready lug to confirm FIFO ordering.",
+  "impact": 3,
+  "priority": "medium",
+  "created_at": "2026-03-19T02:00:00+00:00",
+  "created_by": "OpenCode GPT-5.4",
+  "updated_at": "2026-03-19T23:40:56.324434+00:00",
+  "workflow": {
+    "current_owner": "ozi:cubic-river",
+    "assigned_at": "2026-03-19T23:40:56.321767+00:00",
+    "updated_at": "2026-03-19T23:40:56.321775+00:00",
+    "dispatch_method": "auto",
+    "auto_session_key": "cubic-river",
+    "subagent_prompt": "You are a builder sub-agent dispatched by Ozi.\n\nYour ONLY job: Complete feature task-ozi-fifo-test-2\n\nTitle: Second FIFO test item\n\nDescription:\nLater-created ready lug to confirm FIFO ordering.\n\nInstructions:\n1. Read the full lug from WAI-Lugs.jsonl (id=\"task-ozi-fifo-test-2\")\n2. Stay in scope\n3. Update the lug with progress\n4. When complete, set status to ready_for_recheck\n"
+  }
+}

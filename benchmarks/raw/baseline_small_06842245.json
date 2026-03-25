@@ -1,0 +1,164 @@
+[
+  {
+    "timestamp": "2026-03-23T09:34:50.657648",
+    "run_id": "06842245",
+    "tier": "small",
+    "agent_type": "baseline",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "BRIEF.md",
+          "size_bytes": 640,
+          "is_reference_file": false
+        },
+        {
+          "path": "EXTENSION.md",
+          "size_bytes": 782,
+          "is_reference_file": false
+        },
+        {
+          "path": "README.md",
+          "size_bytes": 375,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_formatter.py",
+          "size_bytes": 671,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/__init__.py",
+          "size_bytes": 53,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-State.json",
+          "size_bytes": 766,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Ledger.jsonl",
+          "size_bytes": 288,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Manifest.yaml",
+          "size_bytes": 433,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Lugs.jsonl",
+          "size_bytes": 4066,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Lugs.jsonl.v1-backup",
+          "size_bytes": 4066,
+          "is_reference_file": false
+        },
+        {
+          "path": "reference/api_reference_v1.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v6.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v2.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v9.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v4.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v8.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v7.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v3.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v10.md",
+          "size_bytes": 2096919,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v5.md",
+          "size_bytes": 2096918,
+          "is_reference_file": true
+        },
+        {
+          "path": "tests/__pycache__/test_formatter.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 2239,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/formatters/__init__.py",
+          "size_bytes": 87,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/formatters/data.py",
+          "size_bytes": 1668,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/logger.py",
+          "size_bytes": 1044,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__init__.py",
+          "size_bytes": 94,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 25,
+      "total_bytes": 20986453,
+      "tokens": 5246602
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:34:50.657685",
+    "run_id": "06842245",
+    "tier": "small",
+    "agent_type": "baseline",
+    "event": "token_used",
+    "data": {
+      "count": 1000,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:34:50.657691",
+    "run_id": "06842245",
+    "tier": "small",
+    "agent_type": "baseline",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 5000,
+      "tokens_used": 5247602
+    }
+  }
+]

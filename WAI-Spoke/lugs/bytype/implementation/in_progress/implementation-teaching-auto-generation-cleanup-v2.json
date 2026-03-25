@@ -1,0 +1,102 @@
+{
+  "i": "implementation-teaching-auto-generation-cleanup-v2",
+  "t": "Auto-generate, version, and cleanup teaching files during closeout",
+  "ty": "implementation",
+  "s": "ready_to_implement",
+  "impact": 9,
+  "ca": "2026-03-19T23:18:00Z",
+  "gb": "OpenCode GPT-5.4",
+  "description": "Enhance closeout Step 9b so framework changes automatically produce versioned teaching files and retire superseded ones. Teachings are mini migration scripts that carry framework object changes - skills, advisors, lugs, templates, and state schema - from framework to spokes. The system must generate the latest teaching set and keep the repo clean by archiving or deleting stale versions deterministically.",
+  "problem_statement": "Canonical evolution work can land without corresponding teaching updates. Current closeout only auto-teaches signals, which leaves framework object changes undistributed or manually maintained. Old teaching versions also accumulate and create ambiguity about which migration script is current.",
+  "object_coverage": {
+    "framework_objects": [
+      "Skills",
+      "Advisors",
+      "Lugs/schema",
+      "Templates",
+      "State schema",
+      "Closeout/wakeup protocol changes"
+    ],
+    "principle": "Any framework object change that affects spoke behavior or migration expectations must be teachable through a generated teaching artifact."
+  },
+  "versioning_rules": {
+    "teaching_identity": "Each teaching belongs to a stable family key derived from object type + object name, for example skill-wai-closeout, advisor-wai-complexity, template-spoke-CLAUDE, state-schema, lug-schema, protocol-track-chain.",
+    "filename_pattern": "{family_key}-v{semantic_or_migration_version}.md.teaching",
+    "version_bump_policy": {
+      "major": "Breaking migration or incompatible behavior change requiring explicit operator review",
+      "minor": "Backward-compatible feature or behavior addition",
+      "patch": "Clarification, bug fix, or non-breaking correction to an existing teaching"
+    },
+    "single_current_rule": "Only one current teaching file may exist per family key in the active publish location.",
+    "current_marker": "The highest version for a family key is current unless an explicit index marks another file as superseded or withdrawn."
+  },
+  "cleanup_rules": {
+    "on_generation": "Before writing a newly generated teaching, scan existing teachings for the same family key.",
+    "retain_current": "Keep only the newly generated latest version in the active publish location.",
+    "archive_old": "Move superseded versions to an archive location rather than leaving them alongside the current version.",
+    "archive_location": "teachings/archive/{family_key}/",
+    "delete_policy": "Delete only duplicate-byte-identical files or failed partial generations; do not delete historically distinct versions if archival succeeds.",
+    "partial_failure_rule": "If generation fails after writing a partial file, remove the partial artifact and preserve the previous current version.",
+    "idempotency_rule": "Re-running closeout without source changes must not create a new version or duplicate archive entries."
+  },
+  "detection_rules": {
+    "changed_inputs": [
+      "Modified files under templates/commands/",
+      "Modified files under templates/spoke/",
+      "Schema-relevant changes to WAI-Spoke/WAI-State.json templates or canonical state definitions",
+      "Lug schema/object contract changes captured in framework metadata",
+      "Protocol behavior changes in wakeup/closeout/shipit skills"
+    ],
+    "change_gate": "Generate or bump a teaching only when the normalized migration-relevant content for a family key has changed.",
+    "normalization": "Ignore whitespace-only diffs, timestamp noise, and non-semantic formatting churn when deciding whether to bump a version."
+  },
+  "generation_rules": {
+    "content_requirements": [
+      "State what changed",
+      "Explain why it matters to spokes",
+      "Provide exact migration/apply instructions",
+      "Declare safe_to_auto_adopt with reasoning",
+      "Reference source files and originating lug(s)",
+      "State superseded teaching family/version if applicable"
+    ],
+    "provenance": {
+      "source_lugs": "Generated teachings should record the lug(s) that justified or introduced the change when available.",
+      "source_files": "Generated teachings should list the framework files that triggered generation.",
+      "generated_by": "Record closeout session id and agent/model."
+    },
+    "safe_to_auto_adopt_policy": {
+      "true_when": "Change is additive or idempotent and can be safely applied without operator judgment.",
+      "false_when": "Change is breaking, ambiguous, destructive, or changes behavioral contracts materially."
+    }
+  },
+  "publish_and_distribution": {
+    "publish_source": "Framework writes generated teachings to local teachings/ first.",
+    "hub_distribution": "After generation and cleanup, copy the current published teachings to hub teachings distribution using the copy-based hub flow, not symlinks.",
+    "indexing": "Maintain an index of current teachings with family_key, current_version, source_files, generated_at, and superseded_versions."
+  },
+  "success_criteria": [
+    "Closeout automatically generates teachings for migration-relevant framework object changes",
+    "Exactly one current teaching per family key exists in the active publish location",
+    "Superseded versions are archived deterministically",
+    "No duplicate or no-op versions are created on repeat closeout",
+    "Generated teachings clearly act as mini migration scripts for spokes",
+    "Distribution works with hub copy flow instead of symlink assumptions"
+  ],
+  "dependencies": [
+    "closeout_step_9b_operational",
+    "implementation-hub-teachings-copy or equivalent copy-based hub distribution",
+    "stable family-key mapping for framework object types"
+  ],
+  "related_lugs": [
+    "implementation-ozi-working-agreement-enforcement",
+    "epic-hub-evolution-structure"
+  ],
+  "tags": [
+    "teaching-generation",
+    "closeout-enhancement",
+    "versioning",
+    "cleanup",
+    "migration",
+    "framework-distribution"
+  ]
+}

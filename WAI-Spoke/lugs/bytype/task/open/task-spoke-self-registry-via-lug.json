@@ -1,0 +1,10 @@
+{
+  "i": "task-spoke-self-registry-via-lug",
+  "t": "Spokes generate self-registry entry and send to hub via lug",
+  "ty": "task",
+  "s": "o",
+  "impact": 7,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[distribution] Each spoke generates its own registry entry on closeout. Sends to hub via outbox lug. Hub replaces (not merges) and tracks changes over time. Hub sets minimum expectations in closeout skill. Drives foundation completion visibility."
+}

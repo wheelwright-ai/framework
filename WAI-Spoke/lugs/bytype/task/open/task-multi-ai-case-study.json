@@ -1,0 +1,10 @@
+{
+  "i": "task-multi-ai-case-study",
+  "t": "Add multi-AI case study to framework README + model tracking in session log",
+  "ty": "task",
+  "s": "o",
+  "impact": 7,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[documentation] ezorg-email-website: 5 AI models, 35 sessions. Document as case study. Session track should subsume model_log pattern benefits — capture model identity per turn so we can evaluate model performance from track data."
+}

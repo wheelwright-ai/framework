@@ -1,0 +1,459 @@
+[
+  {
+    "timestamp": "2026-03-23T09:38:06.771276",
+    "run_id": "ca982c46",
+    "tier": "medium",
+    "agent_type": "baseline",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "BRIEF.md",
+          "size_bytes": 736,
+          "is_reference_file": false
+        },
+        {
+          "path": "EXTENSION.md",
+          "size_bytes": 886,
+          "is_reference_file": false
+        },
+        {
+          "path": "CREATION-SUMMARY.md",
+          "size_bytes": 11380,
+          "is_reference_file": false
+        },
+        {
+          "path": "README.md",
+          "size_bytes": 4221,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_category_service.py",
+          "size_bytes": 2377,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_cache.py",
+          "size_bytes": 1493,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_auth.py",
+          "size_bytes": 3185,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_review_service.py",
+          "size_bytes": 4227,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__init__.py",
+          "size_bytes": 39,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_order_service.py",
+          "size_bytes": 3640,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_user_service.py",
+          "size_bytes": 3497,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_product_service.py",
+          "size_bytes": 3755,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_validation.py",
+          "size_bytes": 2771,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/__init__.py",
+          "size_bytes": 233,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/config.py",
+          "size_bytes": 1927,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-State.json",
+          "size_bytes": 5029,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Ledger.jsonl",
+          "size_bytes": 289,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Manifest.yaml",
+          "size_bytes": 496,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Lugs.jsonl",
+          "size_bytes": 8451,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Lugs.jsonl.v1-backup",
+          "size_bytes": 8451,
+          "is_reference_file": false
+        },
+        {
+          "path": "reference/api_reference_v1.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v6.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v2.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v9.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v4.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v8.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v7.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v3.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v10.md",
+          "size_bytes": 10485429,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v5.md",
+          "size_bytes": 10485428,
+          "is_reference_file": true
+        },
+        {
+          "path": "tests/__pycache__/test_category_service.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 8402,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/test_cache.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 8309,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/__init__.cpython-312.pyc",
+          "size_bytes": 233,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/test_product_service.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 9843,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/test_order_service.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 11035,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/test_auth.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 6437,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/test_review_service.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 10581,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/test_validation.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 16451,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/__pycache__/test_user_service.cpython-312-pytest-7.4.4.pyc",
+          "size_bytes": 9249,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/__pycache__/config.cpython-312.pyc",
+          "size_bytes": 4208,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/__pycache__/__init__.cpython-312.pyc",
+          "size_bytes": 440,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/middleware/__init__.py",
+          "size_bytes": 59,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/middleware/error_handler.py",
+          "size_bytes": 2162,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/models/database.py",
+          "size_bytes": 2917,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/models/__init__.py",
+          "size_bytes": 1460,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/orders.py",
+          "size_bytes": 4996,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/products.py",
+          "size_bytes": 4520,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/__init__.py",
+          "size_bytes": 31,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/payments.py",
+          "size_bytes": 2592,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/categories.py",
+          "size_bytes": 2715,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/users.py",
+          "size_bytes": 2562,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/reviews.py",
+          "size_bytes": 3342,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/auth.py",
+          "size_bytes": 4011,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/health.py",
+          "size_bytes": 1121,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/response.py",
+          "size_bytes": 2319,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/cache.py",
+          "size_bytes": 2088,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/logger.py",
+          "size_bytes": 1874,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__init__.py",
+          "size_bytes": 50,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/string_utils.py",
+          "size_bytes": 1539,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/password.py",
+          "size_bytes": 1487,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/datetime_utils.py",
+          "size_bytes": 1431,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/validation.py",
+          "size_bytes": 2535,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/notification_service.py",
+          "size_bytes": 4039,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/review_service.py",
+          "size_bytes": 4144,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/payment_service.py",
+          "size_bytes": 3397,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/__init__.py",
+          "size_bytes": 56,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/user_service.py",
+          "size_bytes": 4746,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/category_service.py",
+          "size_bytes": 3564,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/product_service.py",
+          "size_bytes": 5240,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/order_service.py",
+          "size_bytes": 4404,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/models/__pycache__/__init__.cpython-312.pyc",
+          "size_bytes": 2858,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/__pycache__/__init__.cpython-312.pyc",
+          "size_bytes": 230,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/routes/__pycache__/auth.cpython-312.pyc",
+          "size_bytes": 5077,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__pycache__/__init__.cpython-312.pyc",
+          "size_bytes": 248,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__pycache__/password.cpython-312.pyc",
+          "size_bytes": 2549,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__pycache__/cache.cpython-312.pyc",
+          "size_bytes": 4116,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__pycache__/logger.cpython-312.pyc",
+          "size_bytes": 3456,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/utils/__pycache__/validation.cpython-312.pyc",
+          "size_bytes": 3914,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/__pycache__/user_service.cpython-312.pyc",
+          "size_bytes": 6490,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/__pycache__/__init__.cpython-312.pyc",
+          "size_bytes": 257,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/__pycache__/product_service.cpython-312.pyc",
+          "size_bytes": 6567,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/__pycache__/review_service.cpython-312.pyc",
+          "size_bytes": 5584,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/__pycache__/order_service.cpython-312.pyc",
+          "size_bytes": 6027,
+          "is_reference_file": false
+        },
+        {
+          "path": "src/services/__pycache__/category_service.cpython-312.pyc",
+          "size_bytes": 4803,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 84,
+      "total_bytes": 105134129,
+      "tokens": 26283504
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:38:06.771317",
+    "run_id": "ca982c46",
+    "tier": "medium",
+    "agent_type": "baseline",
+    "event": "token_used",
+    "data": {
+      "count": 1000,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:38:06.771324",
+    "run_id": "ca982c46",
+    "tier": "medium",
+    "agent_type": "baseline",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 5000,
+      "tokens_used": 26284504
+    }
+  }
+]

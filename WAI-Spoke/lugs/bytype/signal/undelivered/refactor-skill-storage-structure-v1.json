@@ -1,0 +1,13 @@
+{
+  "id": "refactor-skill-storage-structure-v1",
+  "type": "signal",
+  "title": "Skills storage migrated: commands/ → skills/, WAI-Skills.jsonl moved inside folder",
+  "event": "Skill storage structure redesigned — commands/ renamed to skills/, index file moved inside",
+  "what_changed": "Before: WAI-Spoke/commands/ (skill files), WAI-Spoke/WAI-Skills.jsonl (index at root). After: WAI-Spoke/skills/ (skill files + index co-located). templates/commands/ is UNCHANGED (framework authoring source). hub/WAI-Hub/skills/WAI-Skills.jsonl created for hub-coordination skills (separate from hub spoke skills). hub/WAI-Spoke/skills/ created for hub spoke-role skills. templates/spoke/commands/ merged into templates/spoke/skills/.",
+  "why": "Skills should mirror the lugs pattern: folder named after what is inside, index lives inside the folder. Hub-role skills (wakeup/closeout) and hub-coordination skills (registry verification, health monitor) are now cleanly separated. Eliminates WAI-Spoke/commands/ name confusion — these are skills, not commands.",
+  "impact": 8,
+  "fw_ver": "3.0.0",
+  "status": "open",
+  "created_at": "2026-03-24T01:00:00Z",
+  "created_by": "claude-sonnet-4-6"
+}

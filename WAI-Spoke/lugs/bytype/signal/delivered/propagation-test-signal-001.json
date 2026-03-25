@@ -1,0 +1,16 @@
+{
+  "i": "propagation-test-signal-001",
+  "t": "[TEST] Propagation verified - auto-adopted teaching on wakeup",
+  "ty": "signal",
+  "s": "c",
+  "ca": "2026-03-14T22:30:00Z",
+  "gb": "teaching-file",
+  "impact": 5,
+  "content": {
+    "what": "Test teaching auto-adopted on spoke wakeup",
+    "success": true,
+    "spoke": "Wheelwright",
+    "timestamp": "2026-03-18T00:00:26Z",
+    "teaching": "propagation-test-auto-adopt.md.teaching"
+  }
+}

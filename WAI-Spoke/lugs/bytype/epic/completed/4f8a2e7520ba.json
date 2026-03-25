@@ -1,0 +1,21 @@
+{
+  "id": "4f8a2e7520ba",
+  "type": "epic",
+  "title": "Session Epic: Shipit Quality Gates + Performance Validation",
+  "status": "completed",
+  "_v1_status": "published",
+  "description": "Work cycle goal: Implement quality enforcement and validate performance metrics.\n\n**Scope:**\n1. Implement shipit quality gate enforcement (policy lug 1ef9b813ca6d)\n   - Update shipit command to run quality gates (tests, linting, benchmarks)\n   - Enforce README.md sync before commit\n   - Add failure ",
+  "impact": 9,
+  "created_by": "lug_system",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-05T03:31:33.435477",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "Quality gates enforced in wai-shipit.md: (1) Mandatory test execution with abort on failure, (2) Mandatory linting with abort on failure, (3) Optional type checking (warnings only), (4) Benchmark regression detection with user acknowledgment, (5) Override mechanism for emergencies. README.md sync already present in Step 7.",
+  "scope": "framework",
+  "modules": [],
+  "category": "",
+  "completed_at": "2026-03-18T10:54:51.003948Z"
+}

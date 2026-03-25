@@ -1,0 +1,18 @@
+{
+  "id": "task-octo-hub-lug-chain-of-custody-v1",
+  "type": "task",
+  "title": "Define Octo hub lug chain-of-custody links",
+  "status": "published",
+  "description": "Define the hub-side controller/work lug pattern and chain-of-custody fields such as dispatched_by_hub_lug and spoke_record_ids.",
+  "impact": 8,
+  "tags": [
+    "octo",
+    "hub",
+    "traceability"
+  ],
+  "parent_implementation": "implementation-octo-gardener-dispatch-v1",
+  "created_by": "OpenCode GPT-5.4",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-20T06:25:41.895497+00:00",
+  "priority": "high"
+}

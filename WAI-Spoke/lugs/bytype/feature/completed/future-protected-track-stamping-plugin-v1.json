@@ -1,0 +1,35 @@
+{
+  "id": "future-protected-track-stamping-plugin-v1",
+  "type": "feature",
+  "title": "Future: protected track stamping and restore plugin for external agents",
+  "status": "published",
+  "description": "Capture the later opportunity to build a plugin/service that securely captures tracks and provides stamped restores into other agents and tools. Tracks are highly valuable and sensitive, so this feature stays out of the current build wave until privacy, protection, and community demand are clearer.",
+  "impact": 9,
+  "created_by": "OpenCode GPT-5.4",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-20T07:57:47.240093+00:00",
+  "priority": "medium",
+  "tags": [
+    "future",
+    "tracks",
+    "plugin",
+    "security",
+    "restoration"
+  ],
+  "category": "future-product",
+  "non_goals": [
+    "Do not implement protected track handling in the current build wave"
+  ],
+  "follow_up_when": [
+    "Community demand is validated",
+    "Protection and trust model are mature",
+    "Handles product base is established"
+  ],
+  "ownership": {
+    "tracks_who_worked_on_it": true,
+    "current_owner": "OpenCode GPT-5.4",
+    "contributors": [
+      "OpenCode GPT-5.4"
+    ]
+  }
+}

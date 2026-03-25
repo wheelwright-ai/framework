@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-02-08T19:47:45.578197",
+  "session_id": "cli-v1-parity-20260208",
+  "signal_type": "learning",
+  "impact": 9,
+  "title": "Bash context wrapper required for git",
+  "lesson": "All bash/git commands must use: bash -c \"command\"",
+  "applies_to": "All future Amp agent work",
+  "id": "rescued-signal-2026-02-08T1947455",
+  "type": "signal",
+  "status": "published",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-02-08T19:47:45.578197",
+  "created_at": "2026-02-08T19:47:45.578197"
+}

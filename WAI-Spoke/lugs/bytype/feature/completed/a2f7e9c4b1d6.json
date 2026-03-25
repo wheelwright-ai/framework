@@ -1,0 +1,28 @@
+{
+  "id": "a2f7e9c4b1d6",
+  "type": "feature",
+  "title": "Implement Teaching Reconciliation on Session Events",
+  "status": "completed",
+  "_v1_status": "resolved",
+  "description": "Add automatic reconciliation trigger for teach files on: (1) New session start - detect .teaching files, show briefing, propose adoption, (2) WAI wakeup hook - list pending teachings, (3) Closeout - process taught files into reference/auto, reconcile with current versions, prompt for adoption decisions. Success: Users see pending teachings on session start and can adopt or defer.",
+  "impact": 3,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-01T18:16:00.000000",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "Implemented teaching reconciliation on session start, wakeup, and closeout; added teach adopt subcommand. Testing to be addressed as separate task.",
+  "priority": "high",
+  "tags": [
+    "teach-learn",
+    "reconciliation",
+    "session-start"
+  ],
+  "blocks": [
+    "c7f2e9a4b1d6"
+  ],
+  "blocked_by": [],
+  "completed_at": "2026-03-18T10:54:51.003752Z"
+}

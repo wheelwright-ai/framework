@@ -1,0 +1,40 @@
+{
+  "i": "session-20260314-pev-dogfood",
+  "ty": "session-summary",
+  "t": "Session 16: PEV + dogfooding driven into framework skills",
+  "s": "c",
+  "ca": "2026-03-14T19:05:00Z",
+  "gb": "claude-opus-4-6",
+  "session_number": 16,
+  "accomplished": [
+    "Added PEV fields section to wai-lug-advisor.md (both framework and spoke template)",
+    "Added dogfooding section to wai-lug-advisor.md",
+    "Added Step 8 (Lug Dogfooding) to wai-closeout.md (both framework and spoke template)",
+    "Updated success criteria in both closeout skills",
+    "Created signal lug for PEV + dogfooding advancement (impact 9)",
+    "Copied updated lug advisor to spoke template"
+  ],
+  "files_touched": [
+    "templates/commands/wai-lug-advisor.md",
+    "templates/commands/wai-closeout.md",
+    "templates/spoke/commands/wai-closeout.md",
+    "templates/spoke/commands/wai-lug-advisor.md",
+    "WAI-Spoke/WAI-Lugs.jsonl",
+    "WAI-Spoke/WAI-Signals.jsonl",
+    "WAI-Spoke/WAI-State.json"
+  ],
+  "decisions": [
+    "PEV fields required on all actionable lugs (task, bug, feature, review, epic)",
+    "Dogfooding step added as Step 8 in closeout, before git commit",
+    "Signal threshold met: impact 9 for this protocol advancement"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Enrich 15 existing actionable lugs with PEV fields",
+      "Skills folder architecture epic (#7)"
+    ],
+    "next_steps": [
+      "Run through WAI-Lugs.jsonl and add perceive/execute/verify to all open task/bug/feature/review/epic lugs"
+    ]
+  }
+}

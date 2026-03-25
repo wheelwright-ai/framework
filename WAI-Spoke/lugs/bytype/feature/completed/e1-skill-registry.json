@@ -1,0 +1,20 @@
+{
+  "id": "e1-skill-registry",
+  "type": "feature",
+  "title": "E1: Skill Registry — WAI-Skills.jsonl schema + 24 registered skills",
+  "status": "completed",
+  "description": "Created WAI-Skills.jsonl with JSONL schema. Registered all 24 existing commands as skills with full metadata (lifecycle, scope, safety_level, advisory, watchers, objects, use_cases). Created both templates/WAI-Spoke/WAI-Skills.jsonl and WAI-Spoke/WAI-Skills.jsonl (live copy). Updated templates/commands/manifest.json to v2.1.0 with skill registry reference.",
+  "impact": 9,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-18T06:00:00Z",
+  "priority": "high",
+  "tags": [
+    "skill-system",
+    "kb-migration",
+    "governance",
+    "e1"
+  ],
+  "resolution": "completed",
+  "resolution_reason": "Skill registry implemented with 24 skills. Schema: id, name, type, lifecycle, scope, safety_level, advisory, watchers, objects, use_cases, command_file, description."
+}

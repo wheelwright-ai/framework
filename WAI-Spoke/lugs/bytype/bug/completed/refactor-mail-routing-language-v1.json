@@ -1,0 +1,17 @@
+{
+  "id": "refactor-mail-routing-language-v1",
+  "type": "bug",
+  "title": "Standardize mail routing language: incoming/outgoing throughout (rename inbox/outbox)",
+  "status": "completed",
+  "priority": "P4",
+  "impact": 3,
+  "description": "Language inconsistency across hub and spoke: some places say inbox/outbox, others say incoming/outgoing. Goal: standardize on incoming/outgoing everywhere. Separately: signal content model should shift to notice-style (event + what_changed + why) rather than prescriptive instructions. Hub bulletin folder WAI-Hub/Signals/incoming/ stays put for now — no structural rename this pass.",
+  "perceive": "grep -rn 'inbox\\|outbox' templates/commands/ WAI-Spoke/commands/ — list all occurrences to rename",
+  "execute": "1. Replace inbox/outbox with incoming/outgoing in all protocol files (wai.md, wai-closeout.md, wai-lug-advisor.md, wai-status.md). 2. Update signal schema note in wai-lug-advisor.md — signal type should use event/what_changed/why fields, not prescriptive signal text.",
+  "verify": "grep -rn 'inbox\\|outbox' templates/commands/ WAI-Spoke/commands/ | grep -v 'processed' | wc -l — should be 0",
+  "created_at": "2026-03-24T02:40:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "resolution": "implemented",
+  "resolution_reason": "Standardized inbox→incoming and outbox→outgoing across templates/commands/ (wai.md, wai-closeout.md, wai-lug-advisor.md, wai-improve.md). Verified 0 remaining occurrences. No structural dir rename this pass (lugs/incoming vs lugs/inbox dirs need separate migration).",
+  "completed_at": "2026-03-24T00:13:00Z"
+}

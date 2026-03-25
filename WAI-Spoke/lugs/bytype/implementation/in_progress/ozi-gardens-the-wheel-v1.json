@@ -1,0 +1,277 @@
+{
+  "i": "ozi-gardens-the-wheel-v1",
+  "t": "Ozi gardens the spoke: automation history through work lugs and paired test lugs",
+  "ty": "implementation",
+  "s": "ready_to_implement",
+  "impact": 9,
+  "ca": "2026-03-19T23:50:00Z",
+  "gb": "OpenCode GPT-5.4",
+  "description": "Replace receipt-first automation history with Ozi-managed spoke history. Every framework or spoke automation change should be enumerated as a durable work lug under an Ozi implementation controller, and each work lug should correspond to one or more paired test lugs. This makes spoke evolution visible, replayable, dogfoodable, and verifiable: Ozi gardens the spoke by turning behavior changes into work, and work into tests.",
+  "status_note": "Dogfood in this context means refine the implementation lug during this session until it is cold-readable, governance-complete, and ready_to_implement. Naive-agent review findings should be folded back into this lug rather than leaving it in a provisional dogfood state.",
+  "problem_statement": "Plain receipts in WAI-State.json are useful for replay safety but weak as the authoritative history of framework automation changes. They do not fully capture why a change exists, which Ozi work item created it, how it should be verified, or how later agents should continue it. Canonical Wheelwright needs automation history to live in lugs, with test coverage attached, while WAI-State.json remains minimal runtime truth.",
+  "canonical_direction": {
+    "history_model": "Automation history lives in Ozi implementation/work/test lugs, not primarily in opaque state receipts.",
+    "runtime_model": "WAI-State.json keeps only minimal runtime and recovery state required for safe execution, replay, and coordination.",
+    "verification_model": "Each automation work lug links to one or more test lugs that prove the change.",
+    "operational_model": "Ozi is the gardener of spoke evolution: he owns the local implementation controller and orchestrates child work and test lugs inside a spoke."
+  },
+  "lug_graph_model": {
+    "parent_controller": "Ozi implementation lug controls a batch or feature area",
+    "child_work_lugs": "Enumerate concrete automation changes with scope, rationale, touched files, and success criteria",
+    "paired_test_lugs": "Each work lug links to one or more verification lugs covering behavior, idempotency, and regression checks",
+    "traceability_rules": [
+      "Every work lug records parent Ozi implementation lug",
+      "Every test lug records the work lug(s) it verifies",
+      "Every merged automation change can be traced from implementation controller -> work lug -> test lug -> resulting protocol/file updates"
+    ]
+  },
+  "initial_target_area": {
+    "focus": "Teaching generation and hub publish flow",
+    "sequence": [
+      "1. Define child work/test lug schema and linking fields",
+      "2. Author child work lugs for teaching generation and hub publish automation",
+      "3. Author paired test lugs for idempotency, archive behavior, copy skipping, and wakeup discovery",
+      "4. Update closeout policy/spec to reconcile against Ozi-controlled lugs rather than receipt-first history"
+    ],
+    "controller_children": [
+      {
+        "id_hint": "work-teaching-family-detection-v1",
+        "type": "work",
+        "goal": "detect migration-relevant framework changes",
+        "success": "changed objects are deterministically grouped into teaching families"
+      },
+      {
+        "id_hint": "work-teaching-version-generation-v1",
+        "type": "work",
+        "goal": "generate family-keyed versioned teachings",
+        "success": "exactly one current teaching version exists per family"
+      },
+      {
+        "id_hint": "work-teaching-archive-cleanup-v1",
+        "type": "work",
+        "goal": "archive superseded teachings deterministically",
+        "success": "superseded versions move to archive without deleting distinct history"
+      },
+      {
+        "id_hint": "work-hub-teachings-copy-v1",
+        "type": "work",
+        "goal": "copy current teachings to hub teachings_repo",
+        "success": "hub current/archive state matches local publish state without symlinks"
+      },
+      {
+        "id_hint": "work-hub-index-rewrite-v1",
+        "type": "work",
+        "goal": "rewrite hub/spoke teaching indexes atomically",
+        "success": "hub indexes reflect current state and survive interrupted writes"
+      },
+      {
+        "id_hint": "test-teaching-noop-rerun-v1",
+        "type": "test",
+        "goal": "no-op rerun does not create new version",
+        "success": "unchanged rerun produces no new current or archive artifacts"
+      },
+      {
+        "id_hint": "test-teaching-current-archive-split-v1",
+        "type": "test",
+        "goal": "current/archive split stays correct",
+        "success": "one current per family and correct archive placement"
+      },
+      {
+        "id_hint": "test-hub-copy-hash-skip-v1",
+        "type": "test",
+        "goal": "hub copy skips identical hashes",
+        "success": "publish avoids unnecessary recopy and index churn"
+      },
+      {
+        "id_hint": "test-wakeup-hub-index-discovery-v1",
+        "type": "test",
+        "goal": "wakeup discovery reads hub indexes without symlink assumptions",
+        "success": "teachings are discoverable from hub index files only"
+      }
+    ]
+  },
+  "dogfood_requirements": {
+    "goal": "Prove the model is cold-readable and implementable before adopting it as a framework rule.",
+    "review_agent": "Naive subagent with no framework context beyond the lug text and any directly referenced files",
+    "must_validate": [
+      "The distinction between WAI-State runtime truth and lug-based automation history is clear",
+      "The parent/child/paired-test relationship is unambiguous",
+      "A future implementer can tell when to create a work lug vs a test lug vs a runtime state marker",
+      "The initial teaching/hub example is sufficient to execute the pattern without chat context"
+    ],
+    "expected_output": "STUCK points, ambiguity list, missing schema/field guidance, and any governance gaps"
+  },
+  "review_questions": [
+    "Should every Ozi implementation lug require at least one paired test lug before ready_for_recheck?",
+    "What is the minimal runtime-only state that still belongs in WAI-State.json after this shift?",
+    "How should child work/test lug IDs be named or linked for easy traversal?",
+    "Should closeout emit/update work and test lugs directly, or only reconcile state against existing Ozi-controlled lugs?"
+  ],
+  "success_criteria": [
+    "A dogfooded Ozi-centered pattern exists for automation history",
+    "Framework changes are represented as explicit work lugs rather than only state receipts",
+    "Work lugs and test lugs form a consistent traceable chain",
+    "WAI-State.json role is reduced to runtime truth and recovery markers, not primary historical narrative"
+  ],
+  "dependencies": [
+    "implementation-ozi-working-agreement-enforcement",
+    "implementation-teaching-auto-generation-cleanup-v2",
+    "implementation-hub-teachings-repo-schema-v1",
+    "implementation-hub-teachings-copy-v1",
+    "epic-dogfood-skill"
+  ],
+  "related_files_for_review": [
+    "templates/spoke/WAI-State.json",
+    "WAI-Spoke/WAI-State.json",
+    "templates/commands/wai-closeout.md",
+    "WAI-Spoke/commands/wai-closeout.md",
+    "templates/commands/wai.md",
+    "WAI-Spoke/commands/wai.md",
+    "WAI-Spoke/WAI-Lugs.jsonl",
+    "WAI-Spoke/WAI-Skills.jsonl"
+  ],
+  "tags": [
+    "ozi",
+    "automation-history",
+    "dogfood",
+    "work-lugs",
+    "test-lugs",
+    "canonical-evolution",
+    "spoke-gardener"
+  ],
+  "dogfood_result": {
+    "goal": "Improve this implementation lug to ready_to_implement in the current session",
+    "definition": "Dogfood = tighten scope, remove ambiguity, clarify WAI-State boundaries, and make work/test lug pairing executable by a future builder without chat context",
+    "exit_criteria": [
+      "Cold agent can distinguish Ozi controller lug vs child work lug vs paired test lug",
+      "WAI-State.json role is bounded to runtime/recovery truth only",
+      "Initial teaching-generation and hub-publish example is concrete enough to implement",
+      "Lug is marked ready_to_implement rather than left in dogfood state"
+    ]
+  },
+  "link_schema": {
+    "controller_required_fields": [
+      "i",
+      "ty",
+      "t",
+      "s",
+      "ca",
+      "gb",
+      "description",
+      "parent_scope",
+      "child_work_lugs",
+      "paired_test_policy",
+      "runtime_state_boundary",
+      "closeout_policy",
+      "success_criteria"
+    ],
+    "work_required_fields": [
+      "i",
+      "ty",
+      "t",
+      "s",
+      "ca",
+      "gb",
+      "parent_implementation",
+      "perceive",
+      "execute",
+      "verify",
+      "target_files_or_objects",
+      "success_criteria"
+    ],
+    "test_required_fields": [
+      "i",
+      "ty",
+      "t",
+      "s",
+      "ca",
+      "gb",
+      "verifies_lugs",
+      "perceive",
+      "execute",
+      "verify",
+      "pass_condition"
+    ]
+  },
+  "creation_rules": {
+    "controller_lug": "Create an Ozi implementation controller for any non-trivial automation batch that spans multiple work items, modifies behavior across files, or needs durable orchestration/history.",
+    "work_lug": "Create one child work lug per concrete automation change with a distinct success criterion or touched object boundary.",
+    "test_lug": "Create at least one paired test lug for every work lug before that work lug may advance to ready_for_recheck.",
+    "runtime_only_state_marker": "Use WAI-State.json only for runtime coordination, recovery, duplicate-detection, locks, active session/runtime mode, and migration/adoption facts required for safe replay."
+  },
+  "runtime_state_boundary": {
+    "allowed_in_WAI_State": [
+      "active session/runtime mode",
+      "duplicate-detection keys",
+      "lock/recovery markers",
+      "migration adoption markers",
+      "hub connection and wheel identity",
+      "current runtime pointers such as track_path"
+    ],
+    "not_authoritative_in_WAI_State": [
+      "automation rationale",
+      "implementation history",
+      "test history",
+      "why a change exists",
+      "cross-session behavioral narrative"
+    ]
+  },
+  "lifecycle_gates": {
+    "before_ready_for_recheck": [
+      "each child work lug has at least one paired test lug",
+      "paired test lugs are at least drafted and linked",
+      "runtime-only WAI-State markers are distinguished from historical lugs"
+    ],
+    "before_implemented": [
+      "child work lugs completed",
+      "paired test lugs executed or ready_for_recheck with evidence",
+      "closeout reconciliation policy followed"
+    ],
+    "before_accepted": [
+      "paired test lugs pass",
+      "traceability chain controller -> work -> test is intact"
+    ]
+  },
+  "closeout_policy": {
+    "default": "Closeout reconciles and updates runtime state plus existing Ozi-controlled lugs; it does not invent new work/test lugs by default.",
+    "exception": "Closeout may create narrowly scoped stub lugs only when an explicit Ozi policy authorizes automatic stub creation for a known controller."
+  },
+  "dependency_semantics": {
+    "blockers": [
+      "implementation-ozi-working-agreement-enforcement"
+    ],
+    "prerequisite_context": [
+      "implementation-teaching-auto-generation-cleanup-v2",
+      "implementation-hub-teachings-repo-schema-v1",
+      "implementation-hub-teachings-copy-v1"
+    ],
+    "process_dependency": [
+      "epic-dogfood-skill"
+    ],
+    "fleet_boundary": [
+      "Octo owns wheel-level scanning and dispatch; Ozi owns local spoke history and execution."
+    ]
+  },
+  "naming_and_linking": {
+    "controller_to_child": "Child lugs must include parent_implementation = ozi-gardens-the-wheel-v1",
+    "test_linking": "Test lugs must include verifies_lugs = [work_lug_id, ...]",
+    "id_convention": "Prefer relationship-readable IDs such as work-teaching-family-detection-v1 and test-teaching-family-detection-idempotency-v1"
+  },
+  "dogfood_review": {
+    "verdict": "ready with fixes",
+    "fixes_applied": [
+      "Added explicit controller/work/test lug field contracts",
+      "Added creation rules for controller lugs, child work lugs, test lugs, and runtime-only state markers",
+      "Enumerated WAI-State runtime-only boundary",
+      "Added lifecycle gates tying work lugs to paired test lugs",
+      "Specified closeout reconciliation policy",
+      "Added dependency semantics and naming/linking convention",
+      "Expanded the initial teaching/hub example into a sequenced mini-spec"
+    ]
+  },
+  "alignment_notes": [
+    "Renamed from wheel gardening to spoke gardening so Octo can own hub-level wheel dispatch.",
+    "Canonical implementation record lives in implementation-ozi-gardens-the-spoke-v1; keep this compact lug as design/source material."
+  ],
+  "successor_implementation": "implementation-ozi-gardens-the-spoke-v1"
+}

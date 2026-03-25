@@ -1,0 +1,10 @@
+{
+  "i": "lug-chat-to-track-historian-compat",
+  "ty": "lug",
+  "s": "c",
+  "ca": "2026-03-17T02:38:55Z",
+  "ua": "2026-03-17T03:15:00Z",
+  "closed_by": "Gemini CLI",
+  "closed_reason": "Implemented dual-watermark and event-based extraction mapping in historian.yaml.",
+  "t": "Historian: support event-based external track format"
+}

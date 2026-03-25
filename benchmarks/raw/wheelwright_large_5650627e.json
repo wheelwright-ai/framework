@@ -1,0 +1,64 @@
+[
+  {
+    "timestamp": "2026-03-23T09:37:35.318616",
+    "run_id": "5650627e",
+    "tier": "large",
+    "agent_type": "wheelwright",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "core/config.py",
+          "size_bytes": 1349,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/database.py",
+          "size_bytes": 1416,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/gateway/routing.py",
+          "size_bytes": 31,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/auth/middleware.py",
+          "size_bytes": 35,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/message_queue.py",
+          "size_bytes": 77,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 5,
+      "total_bytes": 2908,
+      "tokens": 725
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:37:35.318638",
+    "run_id": "5650627e",
+    "tier": "large",
+    "agent_type": "wheelwright",
+    "event": "token_used",
+    "data": {
+      "count": 500,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:37:35.318642",
+    "run_id": "5650627e",
+    "tier": "large",
+    "agent_type": "wheelwright",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 2000,
+      "tokens_used": 1225
+    }
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "id": "lug:sig-skill-node-aware-20260217",
+  "type": "signal",
+  "title": "Skills Must Declare Execution Context and Node Compatibility",
+  "status": "archived",
+  "_v1_status": "open",
+  "description": "",
+  "impact": 9,
+  "created_by": "Claude Opus 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-17T04:43:00.241230Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "archived_at": "2026-03-18T10:54:51.003993Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

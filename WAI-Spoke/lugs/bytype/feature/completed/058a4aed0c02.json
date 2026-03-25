@@ -1,0 +1,26 @@
+{
+  "id": "058a4aed0c02",
+  "type": "feature",
+  "title": "E2: Advisory Skills — 5 new advisory skill command files + register them",
+  "status": "completed",
+  "_v1_status": "published",
+  "description": "Create 5 new advisory skill command files: wai-complexity-advisor.md, wai-stewardship-advisor.md, wai-context-advisor.md, wai-foundation-advisor.md, wai-signal-advisor.md. Register all in WAI-Skills.jsonl. complexity_advisor replaces Complexity Gate, exempts utility commands.",
+  "impact": 3,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-08T09:42:05.860743+00:00",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "Verified complete during lug cleanup Session 42",
+  "priority": "high",
+  "tags": [
+    "skill-system",
+    "kb-migration",
+    "governance"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "completed_at": "2026-03-18T10:54:51.003875Z"
+}

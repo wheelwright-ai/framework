@@ -1,0 +1,17 @@
+{
+  "i": "395fea9e1f1d",
+  "ty": "learning",
+  "t": "Always run naive agent test before finalizing lugs",
+  "s": "c",
+  "ca": "2026-03-17T02:45:39Z",
+  "gb": "code-puppy-f16663",
+  "description": "The lug-advisor protocol includes a naive agent test: send the lug BRIEF.md to a sub-agent (e.g. planning-agent) with no project context and ask it to draft an implementation plan. Where it gets STUCK = where the lug is incomplete. This test caught 3 critical bugs and 5 medium issues that manual review missed entirely. Manual 'dogfood audits' (checking for vague verbs, feelings-as-verification) catch surface wording problems but miss structural bugs like sort-order breaks, divergent file overwrites, and drifting copies.",
+  "action": "Before marking any lug as dogfood_pass=true, invoke the planning-agent with the BRIEF.md content and the prompt: 'You are a cold agent with NO prior context. Draft an implementation plan. Say STUCK: where you need clarification.' Fix every STUCK point. Repeat until zero STUCKs.",
+  "origin": "session — code-puppy-f16663 skipped naive agent test, shipped lugs with a critical ASCII sort-order bug that would have silently skipped external tracks forever",
+  "impact": 9,
+  "tags": [
+    "dogfood",
+    "lug-quality",
+    "process"
+  ]
+}

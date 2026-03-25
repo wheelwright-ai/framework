@@ -1,0 +1,9 @@
+{
+  "i": "idea-agent-friction-detector-v1",
+  "ty": "idea",
+  "s": "c",
+  "reconciled": true,
+  "ua": "2026-03-16T07:48:00Z",
+  "closed_by": "Claude Sonnet 4.6",
+  "resolution": "Epic epic-friction-detector-v1 executed and closed in Session 31. Pattern-scan is live in historian.yaml and all 3 wai.md files."
+}

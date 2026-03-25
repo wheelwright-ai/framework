@@ -1,0 +1,66 @@
+{
+  "i": "epic-hub-evolution-structure",
+  "t": "Hub folder/structure evolution for canonical Wheelwright",
+  "ty": "epic",
+  "s": "ready_to_implement",
+  "impact": 9,
+  "ca": "2026-03-19T22:31:00Z",
+  "gb": "claude-sonnet-4-5",
+  "description": "Evolve hub directory structure to support canonical Wheelwright model. Current hub has minimal structure (symlink to framework teachings). Canonical hub needs: teachings_repo/ for multi-spoke distribution, signals/incoming/ and signals/processed/ for signal routing, lugs/inbox/ for lug delivery, registry/ for spoke tracking, and metadata for hub operations.",
+  "problem_statement": "Hub structure was designed pre-canonical. Needs evolution to support: multi-spoke teaching distribution (no symlinks), signal routing, lug inbox, spoke registry, hub metadata tracking.",
+  "canonical_hub_structure": {
+    "teachings_repo/": {
+      "purpose": "Teaching distribution from all spokes",
+      "structure": "teachings_repo/{spoke_id}/*.teaching",
+      "metadata": "index.json tracking teaching provenance"
+    },
+    "signals/": {
+      "incoming/": "High-impact lugs (impact >= 8) from spokes awaiting processing",
+      "processed/": "Archive of processed signals with timestamps"
+    },
+    "lugs/": {
+      "inbox/": "Lug delivery from spokes (inter-spoke communication)"
+    },
+    "registry/": {
+      "spokes.json": "Active spoke registry with metadata",
+      "history/": "Spoke registry change history"
+    },
+    "metadata/": {
+      "hub-state.json": "Hub operational state",
+      "distribution-log.jsonl": "Teaching distribution audit trail"
+    }
+  },
+  "implementation_children": [
+    "implementation-hub-teachings-copy (already created)",
+    "implementation-hub-signal-routing",
+    "implementation-hub-lug-inbox",
+    "implementation-hub-spoke-registry"
+  ],
+  "execution_sequence": [
+    "1. Create hub directory structure (mkdir -p for all canonical dirs)",
+    "2. Implement teachings_repo copy mechanism (implementation-hub-teachings-copy)",
+    "3. Implement signal routing (incoming/processed workflow)",
+    "4. Implement lug inbox for inter-spoke communication",
+    "5. Implement spoke registry with provenance tracking",
+    "6. Update all spoke closeouts to use new hub structure",
+    "7. Migrate existing hub data to canonical structure"
+  ],
+  "success_criteria": [
+    "Hub has canonical directory structure",
+    "All spokes use hub for teaching distribution (no symlinks)",
+    "Signal routing operational (high-impact lugs flow through hub)",
+    "Spoke registry tracks active spokes and their teachings",
+    "Hub metadata provides audit trail"
+  ],
+  "migration_safe": "New structure additive - old symlink approach continues working during transition",
+  "dependencies": [
+    "hub_path exists",
+    "canonical_spoke_closeout operational"
+  ],
+  "tags": [
+    "hub-architecture",
+    "canonical-evolution",
+    "multi-spoke-support",
+    "teaching-distribution"
+  ]
+}

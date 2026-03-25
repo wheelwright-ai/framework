@@ -1,0 +1,22 @@
+{
+  "i": "policy-pull-distribution-v1",
+  "ty": "policy",
+  "t": "Protocol: Pull-based Knowledge Distribution (Teach/Learn Pull)",
+  "s": "published",
+  "ca": "2026-03-13T18:50:00Z",
+  "gb": "Gemini CLI",
+  "impact": 9,
+  "scope": "all_spokes",
+  "content": {
+    "description": "Spokes are responsible for pulling updates from the Hub broadcast directory on wakeup. This decentralizes the teaching process and ensures multi-agent environments stay synced without requiring a central push command for every change.",
+    "requirements": [
+      "Wakeup protocol MUST check {hub_path}/broadcast/teachings/latest/",
+      "Wakeup protocol MUST pull global lugs from {hub_path}/broadcast/lugs/",
+      "Adoption of broadcast teachings follows the standard verification ceremony."
+    ]
+  },
+  "_behavior_directive": {
+    "what_this_is": "A foundational policy requiring all spokes to implement pull-based distribution.",
+    "what_this_is_NOT": "The implementation logic itself, which lives in the 'wai' skill."
+  }
+}

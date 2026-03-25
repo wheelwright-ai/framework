@@ -1,0 +1,16 @@
+{
+  "id": "learning-phase-10-validation-complete",
+  "type": "learning",
+  "title": "Phase 10 Validation Complete: Hub Registry-Refresh & Help Routing Proven",
+  "status": "archived",
+  "description": "Phase 9 architecture validated end-to-end. Hub can read framework spoke metadata and aggregate. Help skill correctly routes all question types. Framework scope boundary respected. Ready for other spoke adoption.",
+  "impact": 7,
+  "created_by": "Claude Haiku 4.5",
+  "created_at": "2026-03-12T19:55:18.701300+00:00",
+  "node": "wheelwright/framework",
+  "perceive": "Phase 9 completed but untested with hub aggregation and help routing. Need to validate that: (1) hub can read spoke metadata, (2) help skill routes questions correctly, (3) framework scope boundary is respected, (4) system is ready for other spoke adoption.",
+  "execute": "Ran two comprehensive test simulations: (1) Hub registry-refresh simulation - read framework .spoke-metadata.yaml, validated against schema, detected changes (expertise grew from 4 to 7 capabilities), aggregated into registry entry. (2) Help routing simulation - tested 4 question scenarios: WAI mechanics (local), cross-spoke patterns (hub), domain knowledge (external, NOT framework), and project lookup (registry).",
+  "verify": "All tests passed: Hub can read and aggregate metadata ✓, Help routing works for all categories ✓, Framework scope boundary respected ✓, Feedback loop preserved ✓, Architecture ready for deployment ✓",
+  "archived_at": "2026-03-18T10:54:51.004166Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

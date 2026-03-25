@@ -65,7 +65,14 @@
       "Bash(WAI-Spoke/WAI-Lugs.jsonl:*)",
       "Bash(WAI-Spoke/sessions/track_20260317-0444.jsonl:*)",
       "Bash(git commit:*)",
-      "Bash(WAI-Spoke/sessions/track_20260318-wakeup.jsonl:*)"
+      "Bash(WAI-Spoke/sessions/track_20260318-wakeup.jsonl:*)",
+      "Bash(du:*)",
+      "Bash(do echo:*)",
+      "Bash(mv: *)",
+      "Read(//home/mario/projects/wheelwright/hub/teachings_repo/framework/current/**)",
+      "Read(//home/mario/projects/wheelwright/hub/cross_spoke/**)",
+      "Bash(WAI-Spoke/lugs/bytype/session-summary/session-20260325-0330.json:*)",
+      "Bash(WAI-Spoke/lugs/bytype/signal/undelivered/signal-template-spoke-sync-gap-v1.json:*)"
     ]
   }
 }

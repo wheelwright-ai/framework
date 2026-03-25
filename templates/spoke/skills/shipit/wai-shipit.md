@@ -11,7 +11,7 @@ Verify this version is ready to ship to users.
 - **Nodes:** spoke, hub, framework
 - **Exposure:** spoke.chat:local, spoke.chat:external
 - **Paths Required:** spoke_path; framework_path + hub_path (for auto-teach)
-- **Lug Storage:** `ty: "shipit"` records in WAI-Lugs.jsonl
+- **Lug Storage:** `ty: "shipit"` records in `lugs/active/WAI-Lugs-active.jsonl`
 
 ---
 
@@ -94,11 +94,23 @@ Record the answer. It determines whether Step 9b runs.
 **If running from the framework repo: keep IDE skills in sync with canonical templates.**
 
 ```bash
+# Keep Claude Code slash commands in sync (flat — Claude Code requirement)
 yes | cp templates/commands/wai*.md .claude/commands/
-for f in templates/spoke/commands/wai*.md; do \cp templates/commands/$(basename "$f") "$f" 2>/dev/null || true; done
+
+# Sync canonical source → template spoke skill subdirs
+for skill_dir in templates/spoke/skills/*/; do
+  id=$(basename "$skill_dir")
+  # Find the command file in this skill dir
+  for f in "$skill_dir"*.md; do
+    [ -f "$f" ] || continue
+    fname=$(basename "$f")
+    src="templates/commands/$fname"
+    [ -f "$src" ] && \cp "$src" "$f" 2>/dev/null || true
+  done
+done
 ```
 
-This prevents the three-copy problem: `templates/commands/` is canonical; `.claude/commands/` is what Claude Code reads; `templates/spoke/commands/` is the spoke template. All must match.
+This prevents the three-copy problem: `templates/commands/` is canonical (authoring source); `.claude/commands/` is flat (Claude Code requirement); `templates/spoke/skills/{id}/` is the spoke install template (subdir-per-skill structure). All must match on canonical content.
 
 **Skip this step** if not running from the framework repo (spokes have no `.claude/commands/`).
 
@@ -276,10 +288,58 @@ fi
    [N] linting errors found
    
    Fix linting errors and run shipit again.
-   Override: Set SHIPIT_SKIP_LINT=1 to bypass (NOT RECOMMENDED)
+    Override: Set SHIPIT_SKIP_LINT=1 to bypass (NOT RECOMMENDED)
 ```
 
-#### 5c. Type Checking (OPTIONAL)
+#### 5c. Idempotency Testing (REQUIRED for Wheelwright projects)
+
+**Purpose:** Verify closeout operations are replay-safe and concurrent-safe.
+
+Detect and run idempotency test suite:
+
+```bash
+# Check if idempotency tests exist
+if [ -d "tests/idempotency" ] && [ -f "tests/idempotency/test_runner.py" ]; then
+    echo "🔄 Running idempotency tests..."
+    python tests/idempotency/test_runner.py --category=all --timeout=300
+    IDEMPOTENCY_EXIT_CODE=$?
+else
+    echo "ℹ️  No idempotency tests found - SKIP (Wheelwright projects should have these)"
+    IDEMPOTENCY_EXIT_CODE=0
+fi
+```
+
+**Exit codes:**
+- `0` = All idempotency tests passed → CONTINUE
+- `non-zero` = Idempotency tests failed → **ABORT SHIPIT**
+
+**Test Categories Verified:**
+- **Closeout Replay (7 tests):** Second closeout detects completion and skips operations
+- **Concurrent Closeout (8 tests):** File locking prevents corruption during concurrent operations
+- **Signal Deduplication (9 tests):** Duplicate signal publication prevention
+- **Migration Resume (10 tests):** Checkpoint-based resume from interruption
+
+**On failure:**
+```
+❌ QUALITY GATE FAILED: Idempotency
+   [X] of 34 idempotency tests failed
+   
+   Failed categories:
+   - Closeout Replay: [details]
+   - Concurrent Safety: [details]
+   
+   ⛔ SHIPIT ABORTED
+   Idempotency failure indicates closeout operations are not replay-safe.
+   This must be fixed before shipping to prevent data corruption.
+```
+
+**Override (NOT RECOMMENDED):**
+```bash
+# Emergency override (logs warning to session)
+export SHIPIT_SKIP_IDEMPOTENCY=1
+```
+
+#### 5d. Type Checking (OPTIONAL)
 
 If type checker is configured, run it:
 
@@ -300,6 +360,7 @@ After all gates:
 ✅ QUALITY GATES PASSED
    Tests:        ✓ [X] passed / [Y] total
    Linting:      ✓ Clean
+   Idempotency:  ✓ 34/34 tests passed (replay-safe verified)
    Type Check:   ⚠️ [N] warnings (non-blocking)
    
    → Safe to proceed with shipit
@@ -314,7 +375,7 @@ export SHIPIT_SKIP_LINT=1       # Skip linting
 export SHIPIT_FORCE=1           # Skip ALL quality gates
 ```
 
-**⚠️ WARNING:** Overrides should be logged to WAI-Signals.jsonl as technical debt.
+**⚠️ WARNING:** Overrides should be logged to the active lugs file as a signal lug (impact >= 8) for technical debt tracking.
 
 ---
 
@@ -324,28 +385,47 @@ export SHIPIT_FORCE=1           # Skip ALL quality gates
 
 #### Benchmark Detection and Execution
 
+**Wheelwright framework benchmark (preferred):**
+
 ```bash
-# Auto-detect benchmarks
-if [ -f "benchmark.py" ]; then
-    python3 benchmark.py --profile=all
-elif [ -d "benchmarks/" ] && [ -f "benchmarks/pytest" ]; then
-    pytest benchmarks/ -v
-elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
-    npm run benchmark
+# Run Wheelwright WEI benchmark if runner exists
+if [ -f "benchmarks/runner/benchmark_runner.py" ]; then
+    echo "Running Wheelwright WEI benchmark (small + medium tiers)..."
+    python3 benchmarks/runner/benchmark_runner.py small --persist
+    python3 benchmarks/runner/benchmark_runner.py medium --persist
+    # Note: large tier generates 400MB reference files — skip in shipit unless explicitly requested
+    echo "WEI scores appended to benchmarks/benchmark-results.jsonl"
 else
-    echo "ℹ️ No benchmarks detected - SKIP"
+    # Fallback: detect other benchmark runners
+    if [ -f "benchmark.py" ]; then
+        python3 benchmark.py --profile=all
+    elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
+        npm run benchmark
+    else
+        echo "No benchmarks detected - SKIP"
+    fi
 fi
 ```
 
 #### Regression Analysis
 
-Compare against baseline:
+Compare latest WEI score against prior run:
 
 ```bash
-# If benchmarks/baseline.json exists, compare
-if [ -f "benchmarks/baseline.json" ]; then
-    # Calculate % change for each metric
-    # Flag regressions > 10% degradation
+# If benchmark-results.jsonl exists, compare last two entries
+if [ -f "benchmarks/benchmark-results.jsonl" ]; then
+    python3 -c "
+import json
+lines = [l for l in open('benchmarks/benchmark-results.jsonl') if l.strip()]
+if len(lines) >= 2:
+    prev = json.loads(lines[-2])
+    curr = json.loads(lines[-1])
+    delta = curr['wei'] - prev['wei']
+    flag = 'REGRESSION' if delta < -2 else 'OK'
+    print(f'WEI: {prev[\"wei\"]:.1f} -> {curr[\"wei\"]:.1f} ({delta:+.1f}) [{flag}]')
+else:
+    print('First run — no baseline to compare')
+"
 fi
 ```
 
@@ -377,7 +457,7 @@ fi
 ```
 
 - **Option 1:** Abort shipit, user fixes regression
-- **Option 2:** Continue but log regression to WAI-Signals.jsonl (impact: 7+)
+- **Option 2:** Continue but log regression to the active lugs file as a signal lug (impact: 7+)
 - **Option 3:** Update baseline if regression is intentional tradeoff
 
 **Benchmark Results Storage:**

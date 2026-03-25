@@ -1,0 +1,26 @@
+{
+  "id": "task-idempotent-closeout-concurrency",
+  "type": "task",
+  "title": "Implement idempotent concurrent closeout protocol for spoke refactor",
+  "status": "published",
+  "description": "Build replay-safe closeout and migration semantics so multiple sessions can close out concurrently without duplicating summaries, signals, or deliveries and without overwriting spoke state incorrectly. This is required for the refactor because Wheelwright will run across many local spokes with concurrent sessions and repeated closeout attempts after crashes or retries.",
+  "impact": 9,
+  "created_by": "Codex GPT-5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-19T00:00:00Z",
+  "priority": "high",
+  "tags": [
+    "refactor",
+    "closeout",
+    "concurrency",
+    "idempotency",
+    "migration",
+    "state"
+  ],
+  "category": "architecture",
+  "blocks": [],
+  "blocked_by": [],
+  "perceive": "1. Read the agreed goal-state design in framework/docs/design/goal-state-wheelwright.md, especially the signal bulletin, smart-update, lug workflow, and compatibility sections. 2. Read the current closeout and wakeup protocols in WAI-Spoke/commands/wai-closeout.md and WAI-Spoke/commands/wai.md plus their template equivalents. 3. Inspect current spoke state mutation points in WAI-Spoke/WAI-State.json, WAI-Spoke/WAI-Lugs.jsonl, teachings/, and any hub signal handling paths. 4. Identify every closeout side effect that can duplicate or race: session-summary creation, signal publication, mail delivery, teaching generation, state updates, migration receipts, and track finalization. 5. Review existing track/session conventions and note where legacy path assumptions or random IDs would break replay safety.",
+  "execute": "Phase 1: Define a closeout transaction model. Introduce stable session_id usage, deterministic IDs for session-summary and derived artifacts, phase receipts (capture/reconcile/publish/finalize), and duplicate-detection keys for deliveries and signal absorption. Phase 2: Add concurrency-safe state mutation. Use revision/hash compare-and-swap or equivalent merge-retry behavior for WAI-State.json so concurrent closeouts do not clobber each other. Phase 3: Make outward publication idempotent. Signal publication to WAI-Hub/Signals/incoming/, movement to processed/, teaching generation, and mail delivery must all record receipts and become safe on rerun. Phase 4: Integrate with refactor migration flow. The temp-folder rebuild and swap process must preserve receipts, prove migrated capabilities, and remain safe to rerun after interruption. Phase 5: Update docs and protocol specs so the behavior is explicit for future agents, then remove or rewrite any logic that assumes one-shot closeout execution.",
+  "verify": "1. Running closeout twice for the same session_id produces exactly one canonical session-summary record and no duplicate published signals. 2. Two concurrent closeouts against the same spoke do not corrupt WAI-State.json and converge to a valid merged state. 3. Replaying publish steps after a crash does not duplicate hub signal bulletin entries, deliveries, or generated teachings. 4. Processed signal receipts preserve source_lug_id plus absorption metadata and are moved to WAI-Hub/Signals/processed/ rather than deleted. 5. A migration interrupted after temp-folder reconstruction can be rerun safely without producing divergent spoke state. 6. Automated tests exist for same-session replay, concurrent closeout race, interrupted closeout resume, duplicate signal absorption, and migration replay safety."
+}

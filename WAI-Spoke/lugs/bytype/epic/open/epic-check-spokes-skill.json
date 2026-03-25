@@ -1,0 +1,10 @@
+{
+  "i": "epic-check-spokes-skill",
+  "t": "Framework skill: check-spokes — fleet health + learn from spoke innovations",
+  "ty": "epic",
+  "s": "o",
+  "impact": 9,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[skills] Framework-only skill. Iterates registered spokes: verifies upgrade status, learns about local WAI innovations to bring back for consideration. Bidirectional: ensures spokes are current AND discovers spoke-originated improvements. Complement to lug-based suggestion pipeline."
+}

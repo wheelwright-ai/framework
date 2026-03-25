@@ -1,0 +1,7 @@
+{
+  "id": "implementation-wheelwright-web-cohort-sharing-v1",
+  "status": "deferred",
+  "defer_reason": "Website product — belongs to wheelwright-ai-website spoke. Spec at website/docs/cohort-sharing-contract.md.",
+  "deferred_at": "2026-03-23T22:30:00Z",
+  "deferred_by": "claude-sonnet-4-6"
+}

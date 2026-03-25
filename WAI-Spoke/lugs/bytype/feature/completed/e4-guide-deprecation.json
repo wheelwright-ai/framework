@@ -1,0 +1,20 @@
+{
+  "id": "e4-guide-deprecation",
+  "type": "feature",
+  "title": "E4: WAI-Guide Deprecation + Versioning Protocol",
+  "status": "completed",
+  "description": "Formal deprecation of verbose WAI-Guide.md. Created v2.0 as skill index with version header, legacy archive reference, and skill directory. Archived v1 content to WAI-Spoke/reference/auto/WAI-Guide-v1.md. Skill versioning enabled via WAI-Skills.jsonl metadata (lifecycle field).",
+  "impact": 7,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-18T06:00:00Z",
+  "priority": "high",
+  "tags": [
+    "skill-system",
+    "versioning",
+    "governance",
+    "e4"
+  ],
+  "resolution": "completed",
+  "resolution_reason": "WAI-Guide.md v2.0 active with deprecation header. v1 archived. Skill versioning in place."
+}

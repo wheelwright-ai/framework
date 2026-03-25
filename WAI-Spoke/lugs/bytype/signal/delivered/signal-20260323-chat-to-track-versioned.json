@@ -1,0 +1,10 @@
+{
+  "id": "signal-20260323-chat-to-track-versioned",
+  "type": "signal",
+  "impact": 8,
+  "timestamp": "2026-03-23T23:05:01Z",
+  "session_id": "session-20260323-2224",
+  "signal": "WAI Track Prompt v3.9 stored as versioned resource in framework. Machine-readable header (prompt_version, updated_at, verify_with). /wai-chat-to-track command displays version on every use. Spokes can verify deployed version with: grep -m1 'prompt_version' skills/chat-to-track.md. User will share updated versions periodically.",
+  "rationale": "Track exporter is now a versioned, verifiable artifact — not just a prompt living in someone's clipboard.",
+  "created_by": "claude-sonnet-4-6"
+}

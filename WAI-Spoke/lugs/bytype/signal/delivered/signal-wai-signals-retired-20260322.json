@@ -1,0 +1,11 @@
+{
+  "id": "signal-wai-signals-retired-20260322",
+  "type": "signal",
+  "impact": 8,
+  "status": "published",
+  "title": "WAI-Signals.jsonl retired — signals now canonical lugs",
+  "description": "WAI-Signals.jsonl removed from WAI-Spoke root. All signals migrated to WAI-Lugs.jsonl as high-impact lugs (impact >= 8). Archived copy at seed/ingest/processed/WAI-Signals-retired-20260322.jsonl.",
+  "created_at": "2026-03-22T00:20:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "node": "wheelwright/framework"
+}

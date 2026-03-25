@@ -15,20 +15,47 @@
 
 **Single source of truth:** This file is the canonical declaration for lug storage. All other protocol files defer here.
 
+**Folder hierarchy:**
+```
+WAI-Spoke/lugs/
+  incoming/                        — inbound deliveries (operational)
+  outgoing/                        — outbound deliveries (operational)
+  bytype/
+    epic/{open,in_progress,completed}/
+    task/{open,in_progress,completed}/
+    feature/{open,in_progress,completed}/
+    bug/{open,in_progress,completed}/
+    implementation/{in_progress,completed}/
+    signal/{undelivered,delivered}/
+    session-summary/               — all completed, no status subfolder
+    other/{open,completed}/        — rare types (idea, policy, learning, etc.)
+```
+
 | What | Where | Notes |
 |------|-------|-------|
-| All lugs | `WAI-Spoke/WAI-Lugs.jsonl` | Append-only JSONL, one object per line |
-| Signals | `WAI-Spoke/WAI-Lugs.jsonl` | Signals ARE lugs with `impact >= 8` — no separate file |
-| Incoming/outgoing | `WAI-Spoke/lugs/incoming/` and `lugs/outgoing/` | Delivery channel only — not durable storage |
-| Hub bulletin | `WAI-Hub/Signals/incoming/` | High-impact lugs copied here at closeout for cross-spoke visibility |
+| Active lugs | `lugs/bytype/*/open/` and `bytype/*/in_progress/` | Scanned at wakeup |
+| Completed lugs | `lugs/bytype/{type}/completed/` | One file per lug |
+| Signals | `lugs/bytype/signal/{undelivered,delivered}/` | Undelivered = not yet sent to hub |
+| Lug index | `WAI-Spoke/WAI-LugIndex.jsonl` | Lightweight lookup — on-demand only |
+| Incoming/outgoing | `WAI-Spoke/lugs/incoming/` and `outgoing/` | Delivery channel only |
+| Hub bulletin | `WAI-Hub/Signals/incoming/` | High-impact lugs copied here at closeout |
+| Reference docs | `WAI-Spoke/reference/` | Top-level, peer to lugs/sessions/skills |
 
-`WAI-Spoke/WAI-Signals.jsonl` is **retired**. Do not create it or write to it.
+**Storage rules:**
+- **New lugs** → write to `lugs/bytype/{type}/open/{id}.json`
+- **In-progress** → move to `lugs/bytype/{type}/in_progress/{id}.json`
+- **Completed** → move to `lugs/bytype/{type}/completed/{id}.json`
+- **Signals delivered** → move from `undelivered/` to `delivered/`
+- **Index** → regenerated at closeout
+- **Wakeup** → scans `bytype/*/open/` and `bytype/*/in_progress/` only
+
+`WAI-Spoke/WAI-Signals.jsonl`, `WAI-Spoke/WAI-Lugs.jsonl`, and `WAI-Spoke/lugs/active/` are all **retired**. Do not create or write to any of them.
 
 ---
 
 ## What Is A Lug
 
-A lug is a JSON object stored in `WAI-Spoke/WAI-Lugs.jsonl` (one per line). Lugs are the persistent memory of the session system — they carry work items, decisions, signals, and protocols across sessions, models, and projects.
+A lug is a JSON file at `WAI-Spoke/lugs/bytype/{type}/{status}/{id}.json`. The folder path tells you what it is and whether it needs attention. Lugs are the persistent memory of the session system — they carry work items, decisions, signals, and protocols across sessions, models, and projects.
 
 **Lugs travel across contexts.** They must be unambiguous enough that ANY agent can interpret them correctly WITHOUT your current conversation history.
 
@@ -78,7 +105,7 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `review` | Something needing review or verification | No — add to tracker |
 | `epic` | Large multi-session effort (blocked until tasks clear) | No — add to tracker |
 | `implementation` | Execution-control lug for non-trivial planned work | No — add to tracker |
-| `signal` | High-impact decision or insight (impact >= 8) | No — signals ARE lugs; store in WAI-Lugs.jsonl (no separate file) |
+| `signal` | High-impact decision or insight (impact >= 8) | No — signals ARE lugs; store in active lugs file (no separate file) |
 | `foundation` | Project identity, boundaries, approach | No — defines the project |
 | `session-summary` | Completed session record (autosaves reconciled) | No — archive only |
 | `autosave` | Crash-recovery checkpoint from mid-session | Reconcile at closeout |
@@ -209,7 +236,7 @@ Minimal required fields: `i`, `ty`, `t` (or `title`):
 }
 ```
 
-Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
+Write to `WAI-Spoke/lugs/bytype/{type}/open/{id}.json` (one JSON file per lug).
 
 ---
 
@@ -502,13 +529,13 @@ All `implementation` lugs must include these canonical fields:
 CREATE → DOGFOOD → DISCUSS → IMPLEMENT → VERIFY → CELEBRATE → ARCHIVE
 ```
 
-1. **CREATE** — Append new lug to `WAI-Lugs.jsonl` with `s: "o"`. Ensure PEV fields are present.
+1. **CREATE** — Write new lug to `lugs/bytype/{type}/open/{id}.json` with `s: "o"`. Ensure PEV fields are present.
 2. **DOGFOOD** — Run the naive agent test. Fix gaps before work begins.
 3. **DISCUSS** — (Optional) For high-impact lugs (impact >= 8), present the implementation strategy to the user. Refine based on feedback.
 4. **IMPLEMENT** — Set `s: "p"`. Follow the `execute` steps in the lug. If reality diverges from the lug's plan, update the lug first.
 5. **VERIFY** — Execute every step in the `verify` field. Run regression tests. Ensure no `TODO` or `FIXME` comments remain in the code.
 6. **CELEBRATE** — Present the **Victory Briefing** (see below). Set `s: "c"`.
-7. **ARCHIVE** — Closed lugs remain in `WAI-Lugs.jsonl` for history. Reconcile in session-summary at closeout.
+7. **ARCHIVE** — Move completed lug from `open/` or `in_progress/` to `completed/`. Index is regenerated at closeout. Reconcile in session-summary.
 
 ---
 
@@ -555,7 +582,7 @@ After a lug or epic is implemented and verified, present a celebratory briefing 
 
 ## WAI-Challenges.jsonl
 
-First-class append-only file alongside `WAI-Lugs.jsonl`. Stores stable problem statements independently of the hypotheses (idea lugs) that address them.
+First-class append-only file alongside the active lugs file. Stores stable problem statements independently of the hypotheses (idea lugs) that address them.
 
 **Schema:**
 ```json
@@ -571,7 +598,7 @@ First-class append-only file alongside `WAI-Lugs.jsonl`. Stores stable problem s
 }
 ```
 
-**Append-only:** Override entries follow the same convention as `WAI-Lugs.jsonl` — append a new line with the same `i` and updated fields. Latest entry per `i` wins.
+**Append-only:** Override entries follow the same convention as the active lugs file — append a new line with the same `i` and updated fields. Latest entry per `i` wins.
 
 **Lifecycle:** Created by `/wai-improve` Step 3b on first intake of a challenge. Updated (override entry) each time a new idea links to it. Resolved when the challenge is addressed.
 
@@ -600,7 +627,7 @@ When creating lugs that travel to other nodes, ALWAYS include `_behavior_directi
   "_behavior_directive": {
     "what_this_is": "A work item to be ADDED to the task tracker",
     "what_this_is_NOT": "An instruction to execute immediately",
-    "processing_agent": "incoming router appends to WAI-Lugs.jsonl",
+    "processing_agent": "incoming router appends to lugs/active/WAI-Lugs-active.jsonl",
     "expected_outcome": "Item appears in task list for user to prioritize"
   },
   "ty": "task",
@@ -674,7 +701,7 @@ If found in `priority` on an existing lug, treat as P1-equivalent.
 | Type | Purpose | AI Execution? | Example |
 |------|---------|--------------|---------|
 | `task` | Track work item | NO — add to tracker | "Implement caching" → task list |
-| `signal` | Share insight (impact >= 8) | NO — record in WAI-Lugs.jsonl | "Found useful pattern" → logged as lug |
+| `signal` | Share insight (impact >= 8) | NO — record in active lugs file | "Found useful pattern" → logged as lug |
 | `phone-home` | Request status | AUTO by learn | incoming processor handles |
 | `foundation` | Project identity | NO — defines project | Identity and boundaries |
 
@@ -706,7 +733,7 @@ If found in `priority` on an existing lug, treat as P1-equivalent.
 
 ## Ozi Gardening Lug Types
 
-Ozi automation history lives in these three lug types in WAI-Lugs.jsonl — **not** in WAI-State.json.
+Ozi automation history lives in these three lug types in the active lugs file — **not** in WAI-State.json.
 
 ### ozi-controller
 One Ozi automation pass or bounded task batch.

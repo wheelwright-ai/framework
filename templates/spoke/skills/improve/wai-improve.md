@@ -76,7 +76,7 @@ From `WAI-Spoke/WAI-State.json`, extract:
 - `_project_foundation.approach.stack_or_tools` — what is it built with?
 - `context.current_phase` — where is the project right now?
 
-Also check `WAI-Spoke/WAI-Lugs.jsonl` for the most recent `ty: "foundation"` lug — it may contain richer or more current context than WAI-State.json.
+Also check `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` for the most recent `ty: "foundation"` lug — it may contain richer or more current context than WAI-State.json.
 
 ### 0b. Foundation Completeness Check
 
@@ -134,7 +134,7 @@ The purpose is not just deduplication — it is *fitting*. An idea doesn't exist
 
 ### 2a. Scan Open Lugs
 
-Read `WAI-Spoke/WAI-Lugs.jsonl`. De-duplicate by ID (latest entry wins). Filter to active lugs: `s` in `o` (open), `p` (in-progress). Skip closed/resolved.
+Read `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl`. De-duplicate by ID (latest entry wins). Filter to active lugs: `s` in `o` (open), `p` (in-progress). Skip closed/resolved.
 
 For each active lug, assess similarity to the incoming idea's **challenge** and **hypothesis**:
 
@@ -151,10 +151,9 @@ Present any matches. Do not suppress findings. One sentence per match is enough:
 
 ### 2b. Scan Existing Skills and Functionality
 
-Check `templates/commands/` (or `WAI-Spoke/commands/` if local overrides exist) for skills that already address any part of the challenge.
+Check `templates/commands/` (framework authoring source) and `WAI-Spoke/skills/` (installed spoke skills) for skills that already address any part of the challenge.
 
 Also check:
-- `WAI-Spoke/skills/` — local skill files
 - `WAI-Spoke/WAI-State.json` → `features[]` — declared existing features
 - `WAI-Spoke/_project_foundation` → `in_scope[]` — committed work that may already be underway
 
@@ -165,7 +164,7 @@ For each relevant file or feature, assess:
 
 ### 2c. Scan Signals and Decisions
 
-Read `WAI-Spoke/WAI-Signals.jsonl`. For signals with impact >= 7, check whether any captured decision:
+Read `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` and filter for signal lugs (`type == "signal"` or `ty == "signal"`) with impact >= 7. Check whether any captured decision:
 - Already resolved the challenge (idea may be stale)
 - Ruled out the proposed mechanism ("we decided not to do X because Y")
 - Established a precedent that the idea should follow
@@ -176,10 +175,10 @@ The most common fitting problem is terminology drift — the user uses one word,
 
 | User's term | System's existing term | Relationship |
 |-------------|----------------------|--------------|
-| "inbox processing" | `wai` (Step 3a: teaching discovery) / inbox protocol | Same concept |
+| "incoming processing" | `wai` (Step 3a: teaching discovery) / incoming protocol | Same concept |
 | "idea queue" | `ty: "idea"` lugs | Same concept |
 | "project memory" | foundation lug + WAI-State.json | Partial — foundation is the structured part |
-| "send to another project" | `/wai (Step 9b: auto-teach on closeout)` outbox delivery | Same concept |
+| "send to another project" | `/wai (Step 9b: auto-teach on closeout)` outgoing delivery | Same concept |
 
 If terminology mismatches are found, name them before proceeding:
 > "You called this [user term] — the system already uses [system term] for this. Are you extending that, or describing something different?"
@@ -282,7 +281,7 @@ Threshold: **0.5**
 Present to user:
 > This challenge overlaps with existing challenge `{i}`: "{statement}" (similarity: {score}). Same problem? [enter=yes / type correction]
 
-On confirmation: set `challenge_id` = existing challenge `i`. Append an override entry to `WAI-Challenges.jsonl` adding the new idea ID to `related_lugs` (same `i`, updated fields — latest entry per `i` wins, same convention as `WAI-Lugs.jsonl`).
+On confirmation: set `challenge_id` = existing challenge `i`. Append an override entry to `WAI-Challenges.jsonl` adding the new idea ID to `related_lugs` (same `i`, updated fields — latest entry per `i` wins, same convention as the active lugs file).
 
 ### If no match
 
@@ -397,7 +396,7 @@ Show final priority as: `P{N} (base P{N}, adjusted for {phase})` so the reasonin
 
 ## Step 5: Output as Idea Lug
 
-Every fully-processed idea becomes a lug in `WAI-Lugs.jsonl`. "Fully processed" means Steps 0–4 complete.
+Every fully-processed idea becomes a lug in `lugs/active/WAI-Lugs-active.jsonl`. "Fully processed" means Steps 0–4 complete.
 
 ```json
 {

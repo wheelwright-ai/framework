@@ -1,0 +1,355 @@
+{"id":"4f8a2e7520ba","type":"epic","status":"completed","title":"Session Epic: Shipit Quality Gates + Performance Validation","folder":"epic/completed"}
+{"id":"8cc5dca50d15","type":"epic","status":"completed","title":"WAI CLI Rebuild v2 \u2014 Zero Contamination","folder":"epic/completed"}
+{"id":"benchmark-system-v1","type":"epic","status":"published","title":"Wheelwright Benchmarking System - Dual-Purpose Validation","folder":"epic/completed"}
+{"id":"d4ad5a0f86ac","type":"epic","status":"completed","title":"Context Optimization: Comprehensive Lazy-Loading Architecture","folder":"epic/completed"}
+{"id":"epic-absorb-learn-teach-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-ac-high-fidelity-v1","type":"epic","status":"c","title":"Implement High-Fidelity Active-Collection Standard for Session Tracks","folder":"epic/completed"}
+{"id":"epic-canonical-evolution-v2","type":"epic","status":"implemented","title":"Canonical Evolution \u2014 Remaining Items","folder":"epic/completed"}
+{"id":"epic-challenge-registry-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-chat-to-track-v1","type":"epic","status":"c","title":"Chat-to-Track: external session capture pipeline","folder":"epic/completed"}
+{"id":"epic-closeout-absorbs-signal-teach-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-friction-detector-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-open-type-field-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-sessions-flat-storage-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-skills-folder-architecture","type":"epic","status":"implemented","title":"Skills folder architecture: spoke/hub namespacing with semantic naming","folder":"epic/completed"}
+{"id":"epic-slimdown-20260227","type":"epic","status":"archived","title":"Framework Slimdown: Skills & Lugs Only","folder":"epic/completed"}
+{"id":"epic-spoke-template-wai-sync-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-sync-claude-commands-20260314","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-teaching-generation-canonical-evolution-v1","type":"epic","status":"implemented","title":"Generate + dogfood teaching files for canonical evolution v2 changes","folder":"epic/completed"}
+{"id":"epic-track-chain-protocol-v1","type":"epic","status":"c","title":"Track Chain Protocol: Predecessor Linking + Cross-Tool Continuity","folder":"epic/completed"}
+{"id":"epic-track-historian-taste-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-track-system-install-and-cleanup-v1","type":"epic","status":"c","title":"","folder":"epic/completed"}
+{"id":"epic-working-agreement-skill","type":"epic","status":"implemented","title":"Working agreement: enforced agent contract as successor to _critical_directives","folder":"epic/completed"}
+{"id":"lug-framework-upgrade-v2","type":"epic","status":"archived","title":"Framework Upgrade: Lugs v2 Specification","folder":"epic/completed"}
+{"id":"epic-check-spokes-skill","type":"epic","status":"o","title":"Framework skill: check-spokes \u2014 fleet health + learn from spoke innovations","folder":"epic/open"}
+{"id":"epic-context-diet-v1","type":"epic","status":"open","title":"Context Diet: lazy-load wakeup, lug index + folder archive, context governor, wakeup slim-down","folder":"epic/open"}
+{"id":"epic-dogfood-skill","type":"epic","status":"o","title":"Spoke skill: dogfood \u2014 sub-agent validation for ideas and modifications","folder":"epic/open"}
+{"id":"epic-hub-evolution-structure","type":"epic","status":"ready_to_implement","title":"Hub folder/structure evolution for canonical Wheelwright","folder":"epic/open"}
+{"id":"epic-session15-fleet-evolution","type":"epic","status":"o","title":"Canonical Wheelwright evolution - object model, behavior, migration, and post-deploy skills","folder":"epic/open"}
+{"id":"epic-sharded-lugs-with-index","type":"epic","status":"o","title":"Sharded lug system with index file for portable access","folder":"epic/open"}
+{"id":"epic-v1-v2-state-migration","type":"epic","status":"o","title":"Create v1\u2192v2 WAI-State.json migration teaching","folder":"epic/open"}
+{"id":"epic-teaching-generation-canonical-evolution-v1","type":"epic","status":"in_progress","title":"Generate + dogfood teaching files for canonical evolution v2 changes","folder":"epic/in_progress"}
+{"id":"6ed194b4add6","type":"signal","status":"published","title":"Teaching Reconciliation Protocol","folder":"signal/delivered"}
+{"id":"gemini-ai-interaction-model","type":"signal","status":"completed","title":"AI Interaction Model Clarification - WAI Commands as Internal Directives","folder":"signal/delivered"}
+{"id":"gemini-ai-onboarding-consolidation","type":"signal","status":"completed","title":"Streamline AI Onboarding with Consolidated Reference Document","folder":"signal/delivered"}
+{"id":"gemini-complex-merge-guidance","type":"signal","status":"completed","title":"Enhanced AI Guidance for Complex JSON Configuration Merges","folder":"signal/delivered"}
+{"id":"gemini-versioning-clarity","type":"signal","status":"completed","title":"Clarify WAI Versioning Scheme - Multiple Version Indicators","folder":"signal/delivered"}
+{"id":"lug-sig-348a9f24","type":"signal","status":"archived","title":"Skills\u2192Lugs Architecture Pattern","folder":"signal/delivered"}
+{"id":"lug:arch-startup-manifest-20260217","type":"signal","status":"archived","title":"Spoke Startup Manifest Architecture - Self-Describing Skill System","folder":"signal/delivered"}
+{"id":"lug:sig-skill-node-aware-20260217","type":"signal","status":"archived","title":"Skills Must Declare Execution Context and Node Compatibility","folder":"signal/delivered"}
+{"id":"propagation-test-signal-001","type":"signal","status":"c","title":"[TEST] Propagation verified - auto-adopted teaching on wakeup","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-02-05T2318587","type":"signal","status":"published","title":"Context Efficiency Through Lazy-Loading Architecture","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-02-08T0952208","type":"signal","status":"published","title":"WAI Skill System architecture: WAI-Skills.jsonl registry + advisory skills replace prose rules. Skil","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-02-08T1947455-2","type":"signal","status":"published","title":"Python module caching obscures code changes","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-02-08T1947455-3","type":"signal","status":"published","title":"CLI v1 parity 100% complete","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-02-08T1947455-4","type":"signal","status":"published","title":"Wheelwright artifact governance implemented","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-02-08T1947455","type":"signal","status":"published","title":"Bash context wrapper required for git","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-02T191924Z-2","type":"signal","status":"published","title":"Hook scripts written on Windows (CRLF) fail on WSL2 bash with exit code 2 and cryptic $'\\r' errors. ","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-02T191924Z","type":"signal","status":"published","title":".claude/commands/ drifted from templates/commands/ \u2014 17/23 skills were stale after Session 11 slimdo","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T074217Z-2","type":"signal","status":"published","title":"Test bench validation caught 3 blocking issues in bootstrap prompt before deployment: wheel.version ","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T074217Z","type":"signal","status":"published","title":"Fleet-wide spoke upgrade executed: 12 spokes upgraded to framework 2.0.18 via bootstrap/spoke-upgrad","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T100000Z-2","type":"signal","status":"published","title":"Track verify criteria based on file/directory existence are insufficient \u2014 all three verify conditio","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T100000Z-3","type":"signal","status":"published","title":"Hub /framework/ symlink already serves Step 3a teaching discovery \u2014 no hub/broadcast/teachings/lates","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T100000Z","type":"signal","status":"published","title":"Core collaboration working agreement established: plan \u2192 create epic lug (announce name) \u2192 dogfood v","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T101800Z","type":"signal","status":"published","title":"Framework spoke now has local WAI-Spoke/commands/wai.md with full 10-step wakeup protocol (installed","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T112000Z","type":"signal","status":"published","title":"wai-improve v1.0 shipped \u2014 improvement idea protocol with six-step pipeline (load context, intake, f","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T200000Z-2","type":"signal","status":"published","title":"Dogfood subagent pattern validated: a naive agent reviewing protocol changes caught 4 critical imple","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-14T200000Z","type":"signal","status":"published","title":"Hub framework symlink must point to teachings/ folder only \u2014 not the entire framework repo. Full-rep","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-15T010500Z","type":"signal","status":"published","title":"core-protocol established: Plan \u2192 Epic \u2192 Dogfood \u2192 Execute. Any change touching 2+ files or 6+ steps","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-15T013000Z","type":"signal","status":"published","title":"Closeout now automatically distributes new signals as teaching files (Step 9b). old_last_closeout ca","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-15T023000Z","type":"signal","status":"published","title":"wai-improve Step 6c replaced with structured three-part dogfood audit (Perceive/Execute/Verify), eac","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-16T004500Z","type":"signal","status":"published","title":"Historian pattern-scan activity_filter_exclude: 22-token blocklist added to filter protocol-routine ","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-16T004501Z","type":"signal","status":"published","title":"Shipit production release intent: wai-shipit.md now asks 'Is this a production release?' as Step 0 b","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-16T053500Z","type":"signal","status":"published","title":"Teaching adoption protocol: safe_to_auto_adopt:true now uses Path A (brief compact table + duplicate","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-16T073751Z","type":"signal","status":"published","title":"Shipit Step 1 now auto-syncs templates/spoke/commands/ alongside .claude/commands/: `for f in templa","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-17T035909Z","type":"signal","status":"published","title":"Always run naive agent test before finalizing lugs - send BRIEF.md to planning-agent with no context","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-17T190000Z","type":"signal","status":"published","title":"Context Optimization epic completed: WAI-File-Index.json created with 4-tier load policy system (alw","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-17T200000Z","type":"signal","status":"published","title":"Shipit Quality Gates enforced: wai-shipit.md Step 5-6 now mandatory with auto-abort on test/lint fai","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T080000Z","type":"signal","status":"published","title":"Track Chain Protocol enables portable session continuity across any tool/environment. Users can load","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T080001Z","type":"signal","status":"published","title":"E1-E7 Skill System Migration complete: WAI-Skills.jsonl registry with 24 skills (2 core, 6 advisory,","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T080002Z","type":"signal","status":"published","title":"Build-test-ship workflow: Track Chain Protocol and E1-E7 both implemented with comprehensive testing","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T113800Z","type":"signal","status":"published","title":"GitHub Actions integration failures diagnosed: 126 lug status validation errors (completed/archived ","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T115200Z","type":"signal","status":"published","title":"Documentation sprawl cleanup pattern: Root docs/ directory contained 16 outdated files (188K) mixing","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T211500Z","type":"signal","status":"published","title":"Teaching verification protocol successfully applied before adopting 6 hub teachings. Prevented misin","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T211600Z","type":"signal","status":"published","title":"Schema drift root cause identified and fixed: Session 42 introduced 'completed' and 'archived' lug s","folder":"signal/delivered"}
+{"id":"rescued-signal-2026-03-18T211800Z","type":"signal","status":"published","title":"Fleet-wide shipit quality gate distribution via hub teaching system. Created shipit-makefile-quality","folder":"signal/delivered"}
+{"id":"shipit-makefile-quality-gate-v1","type":"signal","status":"published","title":"Shipit Quality Gate - Makefile Auto-Detection","folder":"signal/delivered"}
+{"id":"sig-p9-20260217","type":"signal","status":"archived","title":"P9 Intuitive Design: Self-Activating Components","folder":"signal/delivered"}
+{"id":"signal-20260319-2114-hybrid-concurrency-closeout","type":"signal","status":"?","title":"Hybrid concurrency model for AI agent closeout operations","folder":"signal/delivered"}
+{"id":"signal-20260323-benchmark-large-tier-85599x","type":"signal","status":"?","title":"Benchmark large tier complete \u2014 85,599x token efficiency, PASS on critical test","folder":"signal/delivered"}
+{"id":"signal-20260323-chat-to-track-versioned","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-20260323-cluster2-product-architecture","type":"signal","status":"?","title":"Cluster 2 product architecture defined \u2014 Handles, cohort sharing, demand and consultation exchange s","folder":"signal/delivered"}
+{"id":"signal-20260323-priority-p1p4-scale","type":"signal","status":"?","title":"P1/P2/P3/P4 is the canonical priority scale for WAI lugs","folder":"signal/delivered"}
+{"id":"signal-20260323-wai-brief-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-absorb-learn-teach-v1","type":"signal","status":"c","title":"learn/teach absorbed into wakeup/closeout \u2014 standalone commands removed","folder":"signal/delivered"}
+{"id":"signal-anti-hallucination-spec-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-anti-hallucination-validation-20260221","type":"signal","status":"archived","title":"Anti-Hallucination Specification Pattern","folder":"signal/delivered"}
+{"id":"signal-auto-teach-learn-pattern-20260221","type":"signal","status":"archived","title":"Auto-Teach/Learn Protocol: Autonomous Lug Distribution","folder":"signal/delivered"}
+{"id":"signal-behaviors-recorded-in-skills","type":"signal","status":"archived","title":"Behaviors and rules belong in the Skill or Lug file that governs them","folder":"signal/delivered"}
+{"id":"signal-closeout-auto-distributes-signals-20260315","type":"signal","status":"c","title":"Closeout now automatically distributes new signals as teaching files (Step 9b)","folder":"signal/delivered"}
+{"id":"signal-cluster1-hub-orchestration-complete-20260323","type":"signal","status":"published","title":"Cluster 1 Hub Orchestration layer implemented \u2014 full Octo/Ozi/routing/launch stack built","folder":"signal/delivered"}
+{"id":"signal-dogfood-subagent-validated-20260314","type":"signal","status":"c","title":"Dogfood subagent pattern validated: naive agent review caught 4 critical bugs","folder":"signal/delivered"}
+{"id":"signal-explicit-lug-addressing-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-framework-teaching-scope-principle-v1","type":"signal","status":"?","title":"Framework teaching adoption = verify templates/commands/ only; WAI-Spoke/ is spoke infrastructure","folder":"signal/delivered"}
+{"id":"signal-hub-kb-canonical-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-hub-symlink-teachings-only-20260314","type":"signal","status":"c","title":"Hub framework symlink must point to teachings/ folder only \u2014 not full framework repo","folder":"signal/delivered"}
+{"id":"signal-p11-lug-first-memory-20260322","type":"signal","status":"published","title":"P11: Lug-First Memory \u2014 lugs outlive sessions, task tools and md files don't","folder":"signal/delivered"}
+{"id":"signal-p11-lug-first-memory-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-pev-dogfood-20260314","type":"signal","status":"c","title":"PEV fields and pre-closeout dogfooding driven into framework skills","folder":"signal/delivered"}
+{"id":"signal-session-count-concurrency","type":"signal","status":"archived","title":"Session count/turns fields must accumulate, not reset","folder":"signal/delivered"}
+{"id":"signal-step9c-type-filter-fix-20260324","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-vite-define-fallback-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-wai-cli-retired-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"signal-wai-improve-step6c-structured-audit-20260315","type":"signal","status":"c","title":"wai-improve Step 6c replaced with structured three-part dogfood audit (PEV)","folder":"signal/delivered"}
+{"id":"signal-wai-origin-conversation-v1","type":"signal","status":"c","title":"WAI origin conversation: from context fatigue to cognitive infrastructure","folder":"signal/delivered"}
+{"id":"signal-wai-signals-retired-20260322","type":"signal","status":"published","title":"WAI-Signals.jsonl retired \u2014 signals now canonical lugs","folder":"signal/delivered"}
+{"id":"signal-wai-signals-retired-v1","type":"signal","status":"?","title":"","folder":"signal/delivered"}
+{"id":"teaching-chat-to-track-v1","type":"signal","status":"c","title":"Installed wai-chat-to-track v1.0 \u2014 external session capture command","folder":"signal/delivered"}
+{"id":"teaching-closeout-signal-teach-v1","type":"signal","status":"c","title":"Installed closeout v1.0 \u2014 signal teach absorbed into Step 9b","folder":"signal/delivered"}
+{"id":"teaching-lug-auto-learn-protocol","type":"signal","status":"c","title":"Internalized auto-learn protocol \u2014 inbox is mailroom, not executor","folder":"signal/delivered"}
+{"id":"teaching-lug-teach-verification","type":"signal","status":"c","title":"Internalized teaching verification protocol \u2014 mandatory verification ceremony","folder":"signal/delivered"}
+{"id":"teaching-pipeline-verify-v1","type":"signal","status":"c","title":"[TEST] Teach/learn pipeline verified 2026-03-14","folder":"signal/delivered"}
+{"id":"teaching-spoke-wai-update-v1","type":"signal","status":"c","title":"Updated spoke wai.md to full 10-step session track protocol","folder":"signal/delivered"}
+{"id":"teaching-track-encapsulation-v1","type":"signal","status":"c","title":"Installed track encapsulation + historian + taste systems","folder":"signal/delivered"}
+{"id":"teaching-track-reliability-v1","type":"signal","status":"c","title":"Installed track reliability v1.0 \u2014 canonical path + per-turn discipline","folder":"signal/delivered"}
+{"id":"teaching-wai-closeout-step9b-v1","type":"signal","status":"c","title":"Updated wai-closeout.md \u2014 Step 9b sender filename + idempotency","folder":"signal/delivered"}
+{"id":"teaching-wai-improve-v1","type":"signal","status":"c","title":"Installed wai-improve v1.0 \u2014 context-aware improvement idea protocol","folder":"signal/delivered"}
+{"id":"teaching-wai-shipit-release-tag-v1","type":"signal","status":"c","title":"Created wai-shipit.md \u2014 Production release intent + release tag","folder":"signal/delivered"}
+{"id":"teaching-wai-step3a-path-split-v1","type":"signal","status":"c","title":"Updated wai.md Step 3a \u2014 Path A/B adoption split + duplicate check","folder":"signal/delivered"}
+{"id":"teaching-wai-wakeup-integration-check-v2","type":"signal","status":"c","title":"Installed wai-wakeup integration check v2.0","folder":"signal/delivered"}
+{"id":"decision-plan-dogfood-execute-protocol","type":"signal","status":"o","title":"Multi-file changes require Plan \u2192 Epic \u2192 Dogfood \u2192 Execute sequence","folder":"signal/undelivered"}
+{"id":"refactor-skill-storage-structure-v1","type":"signal","status":"open","title":"Skills storage migrated: commands/ \u2192 skills/, WAI-Skills.jsonl moved inside folder","folder":"signal/undelivered"}
+{"id":"signal-skill-hub-override-resolution-v1","type":"signal","status":"open","title":"Hub override skill resolution: WAI-Hub/skills/{id}/ checked before WAI-Spoke/skills/{id}/","folder":"signal/undelivered"}
+{"id":"signal-write-tool-destruction","type":"signal","status":"o","title":"Signal: Write tool file destruction risk (basher secrets.sh incident)","folder":"signal/undelivered"}
+{"id":"2f4b10e30144","type":"task","status":"completed","title":"Clean-slate Initialization for WAI CLI Rebuild v2","folder":"task/completed"}
+{"id":"task-build-and-ship-framework-upgrade-v1-20260218-02","type":"task","status":"archived","title":"Build the framework and generate the upgrade-adoption-plan.json","folder":"task/completed"}
+{"id":"task-canonical-fleet-audit","type":"task","status":"analyzed","title":"Spoke fleet migration audit for canonical evolution","folder":"task/completed"}
+{"id":"task-capability-registry-draft","type":"task","status":"drafted","title":"Draft canonical capability registry aligned to goal-state design","folder":"task/completed"}
+{"id":"task-fix-teach-command-v1-20260218-04","type":"task","status":"archived","title":"The 'teach' command is not correctly delivering lugs. This task updates the script to correctly rout","folder":"task/completed"}
+{"id":"task-hub-intent-taxonomy-v1","type":"task","status":"published","title":"Define hub intent taxonomy for spoke launch","folder":"task/completed"}
+{"id":"task-hub-provider-model-inventory-schema-v1","type":"task","status":"published","title":"Define hub provider/model inventory schema","folder":"task/completed"}
+{"id":"task-hub-startup-profiles-v1","type":"task","status":"published","title":"Define startup profiles and context policies","folder":"task/completed"}
+{"id":"task-hub-work-class-routing-table-v1","type":"task","status":"published","title":"Define work-class routing table","folder":"task/completed"}
+{"id":"task-idempotency-test-harness","type":"task","status":"drafted","title":"Scaffold idempotency tests for replay scenarios","folder":"task/completed"}
+{"id":"task-idempotent-closeout-concurrency","type":"task","status":"published","title":"Implement idempotent concurrent closeout protocol for spoke refactor","folder":"task/completed"}
+{"id":"task-implement-lug-dirs-v1-20260218-01","type":"task","status":"archived","title":"Create the 'lugs/inbox' and 'lugs/outbox' directory structure in the WAI-Spoke folder for all active","folder":"task/completed"}
+{"id":"task-legacy-lug-rewrite-map","type":"task","status":"analyzed","title":"Map legacy lugs against canonical design for evolution","folder":"task/completed"}
+{"id":"task-lug-storage-cleanup-v1","type":"task","status":"implemented","title":"Lug storage cleanup - rescue backup and temp artifacts","folder":"task/completed"}
+{"id":"task-octo-hub-job-queue-schema-v1","type":"task","status":"published","title":"Define Octo hub job queue schema","folder":"task/completed"}
+{"id":"task-octo-hub-lug-chain-of-custody-v1","type":"task","status":"published","title":"Define Octo hub lug chain-of-custody links","folder":"task/completed"}
+{"id":"task-remove-wai-cli-refs","type":"task","status":"c","title":"","folder":"task/completed"}
+{"id":"task-signal-adopt-protocol-v1","type":"task","status":"c","title":"Improve safe_to_auto_adopt signal/teaching adoption protocol","folder":"task/completed"}
+{"id":"task-state-track-path-schema","type":"task","status":"resolved","title":"","folder":"task/completed"}
+{"id":"task-wakeup-clear-stale-next-actions","type":"task","status":"archived","title":"","folder":"task/completed"}
+{"id":"task-wakeup-dedup-lug-ids","type":"task","status":"archived","title":"","folder":"task/completed"}
+{"id":"task-wakeup-hub-connectivity-check","type":"task","status":"archived","title":"","folder":"task/completed"}
+{"id":"test-lug-schema-validation","type":"task","status":"published","title":"Unit Tests: Lug Schema Validation","folder":"task/completed"}
+{"id":"test-session-state-transitions","type":"task","status":"published","title":"Integration Tests: Session State Transitions","folder":"task/completed"}
+{"id":"test-signal-extraction","type":"task","status":"published","title":"Integration Tests: Signal Extraction (Impact >= 8)","folder":"task/completed"}
+{"id":"test-skill-registry-validation","type":"task","status":"published","title":"Unit Tests: Skill Registry Validation","folder":"task/completed"}
+{"id":"test-teaching-reconciliation","type":"task","status":"published","title":"Integration Tests: Teaching Reconciliation Workflow","folder":"task/completed"}
+{"id":"43c7023a0244","type":"task","status":"o","title":"Maintain docs/llm-full.txt and README.md as living closeout artifacts \u2014 update both every session","folder":"task/open"}
+{"id":"hub-broadcast-config-v1","type":"task","status":"o","title":"Hub: Setup Broadcast Directory and Teaching Symlink","folder":"task/open"}
+{"id":"task-cleanup-old-adoption-plans","type":"task","status":"o","title":"Cleanup: incorporate stale file data into current locations then remove","folder":"task/open"}
+{"id":"task-custom-ai-file-indexing","type":"task","status":"o","title":"Index custom AI personality files (SPARKY.md etc) in upgrade/wakeup","folder":"task/open"}
+{"id":"task-framework-version-in-template","type":"task","status":"o","title":"Add wheel.framework_version to spoke template WAI-State.json","folder":"task/open"}
+{"id":"task-gitignore-in-template","type":"task","status":"o","title":"Add base .gitignore to spoke template","folder":"task/open"}
+{"id":"task-multi-ai-case-study","type":"task","status":"o","title":"Add multi-AI case study to framework README + model tracking in session log","folder":"task/open"}
+{"id":"task-pull-based-distribution-v1","type":"task","status":"o","title":"Implement Pull-based distribution (Teach/Learn Pull)","folder":"task/open"}
+{"id":"task-registry-git-tracking","type":"task","status":"o","title":"Hub registry: track whether spokes have git repos","folder":"task/open"}
+{"id":"task-spoke-self-registry-via-lug","type":"task","status":"o","title":"Spokes generate self-registry entry and send to hub via lug","folder":"task/open"}
+{"id":"task-test-auto-dispatch","type":"task","status":"ready_for_recheck","title":"Test Ozi Auto-Dispatch Capability","folder":"task/open"}
+{"id":"task-test-session-local-auto-mode","type":"task","status":"ready_for_recheck","title":"Test session-local Ozi auto mode","folder":"task/open"}
+{"id":"task-upgrade-script-git-detection","type":"task","status":"o","title":"Upgrade script: detect git repo, skip git steps if missing","folder":"task/open"}
+{"id":"task-wsl-path-unification","type":"task","status":"o","title":"Unify workspace paths: WSL only, convert /mnt/c/code/ \u2192 ~/projects/","folder":"task/open"}
+{"id":"2927e1d16743","type":"bug","status":"completed","title":"Fix session start hook paths for _framework files","folder":"bug/completed"}
+{"id":"refactor-chat-to-track-skill-location","type":"bug","status":"completed","title":"Refactor: chat-to-track prompt into skills/commands pattern correctly","folder":"bug/completed"}
+{"id":"refactor-mail-routing-language-v1","type":"bug","status":"completed","title":"Standardize mail routing language: incoming/outgoing throughout (rename inbox/outbox)","folder":"bug/completed"}
+{"id":"a3f4c8b2d1e9","type":"bug","status":"ready_for_recheck","title":"Code cleanup: Remove deprecated/vestigial code from framework","folder":"bug/open"}
+{"id":"task-ozi-fifo-test-1","type":"bug","status":"in_progress","title":"Code cleanup: Remove deprecated/vestigial code from framework","folder":"bug/in_progress"}
+{"id":"058a4aed0c02","type":"feature","status":"completed","title":"E2: Advisory Skills \u2014 5 new advisory skill command files + register them","folder":"feature/completed"}
+{"id":"152f4a8a8fbc","type":"feature","status":"completed","title":"E5: Mode System \u2014 wai-mode.md command + _session_state.mode in WAI-State.json","folder":"feature/completed"}
+{"id":"211368de27e3","type":"feature","status":"completed","title":"E6: Wakeup Integration \u2014 briefing loads WAI-Skills.jsonl, reports active advisory watches","folder":"feature/completed"}
+{"id":"350368f4b9b6","type":"feature","status":"completed","title":"E3: KB Migration \u2014 move WAI-Guide.md sections into skill Context blocks","folder":"feature/completed"}
+{"id":"39990feb7223","type":"feature","status":"completed","title":"Module-Level Version Tracking with Sub-versioning and Controlled Vocabulary","folder":"feature/completed"}
+{"id":"4d6ec5a3f1d1","type":"feature","status":"completed","title":"E1: Skill Registry \u2014 WAI-Skills.jsonl schema + register 10 existing commands","folder":"feature/completed"}
+{"id":"6ed194b4add6","type":"feature","status":"completed","title":"Teaching Discovery Reconciliation - Auto-detect Already-Implemented Teachings","folder":"feature/completed"}
+{"id":"70c9f771342d","type":"feature","status":"completed","title":"Wheel Momentum Visualization Enhancements (Phase 2)","folder":"feature/completed"}
+{"id":"7585b0c00544","type":"feature","status":"completed","title":"E4: WAI-Guide Deprecation + Versioning Protocol","folder":"feature/completed"}
+{"id":"a2f7e9c4b1d6","type":"feature","status":"completed","title":"Implement Teaching Reconciliation on Session Events","folder":"feature/completed"}
+{"id":"b362e6b9f491","type":"feature","status":"completed","title":"E7: Hub Distribution \u2014 skills in teach/learn + upgrade-adoption-plan","folder":"feature/completed"}
+{"id":"e1-skill-registry","type":"feature","status":"completed","title":"E1: Skill Registry \u2014 WAI-Skills.jsonl schema + 24 registered skills","folder":"feature/completed"}
+{"id":"e2-advisory-skills","type":"feature","status":"completed","title":"E2: Advisory Skills \u2014 6 existing advisory skills verified and registered","folder":"feature/completed"}
+{"id":"e3-kb-migration","type":"feature","status":"completed","title":"E3: KB Migration \u2014 WAI-Guide.md sections moved to skill Context blocks","folder":"feature/completed"}
+{"id":"e4-guide-deprecation","type":"feature","status":"completed","title":"E4: WAI-Guide Deprecation + Versioning Protocol","folder":"feature/completed"}
+{"id":"e5-mode-system","type":"feature","status":"completed","title":"E5: Mode System \u2014 wai-mode.md command + _session_state.mode in WAI-State.json","folder":"feature/completed"}
+{"id":"e6-wakeup-integration","type":"feature","status":"completed","title":"E6: Wakeup Integration \u2014 briefing loads WAI-Skills.jsonl, reports active advisory watches","folder":"feature/completed"}
+{"id":"e7-hub-distribution","type":"feature","status":"completed","title":"E7: Hub Distribution \u2014 skills in teach/learn + teaching file","folder":"feature/completed"}
+{"id":"feature-lug-compat-skill-v1","type":"feature","status":"completed","title":"New skill: wai-lug-compat \u2014 version-aware lug currency scoring and hub return loop","folder":"feature/completed"}
+{"id":"future-protected-track-stamping-plugin-v1","type":"feature","status":"published","title":"Future: protected track stamping and restore plugin for external agents","folder":"feature/completed"}
+{"id":"g5h8j2k9m3n7","type":"feature","status":"completed","title":"Upgrade Adoption Plan with Hub Fingerprint Verification","folder":"feature/completed"}
+{"id":"gemini-signals-implemented","type":"feature","status":"completed","title":"Implemented Gemini Cross-Tool Learnings","folder":"feature/completed"}
+{"id":"hub-state-jit-context","type":"feature","status":"completed","title":"Hub Just-In-Time Context - Tool Quotas and Push Notifications","folder":"feature/completed"}
+{"id":"m8n3p7q2r6s4","type":"feature","status":"completed","title":"Phase 4: Implement Spoke ID System for Cross-Project Integrity","folder":"feature/completed"}
+{"id":"n9o4p8q3r7s5","type":"feature","status":"published","title":"Phase 4: Spoke Auto-Discovery Scanner","folder":"feature/completed"}
+{"id":"p2q6r9s4t8u1","type":"feature","status":"completed","title":"Hub Templates - Extend Templates to HUB Directory","folder":"feature/completed"}
+{"id":"v3w7x1y5z9a4","type":"feature","status":"ready_for_recheck","title":"Universal Teach/Learn Protocol - Hub + Spokes Unified","folder":"feature/open"}
+{"id":"task-ozi-fifo-test-2","type":"feature","status":"in_progress","title":"Second FIFO test item","folder":"feature/in_progress"}
+{"id":"1ef9b813ca6d","type":"policy","status":"completed","title":"Shipit Quality Gate Protocol - Pre-Commit Verification","folder":"other/completed"}
+{"id":"395fea9e1f1d","type":"learning","status":"c","title":"Always run naive agent test before finalizing lugs","folder":"other/completed"}
+{"id":"55db4152f693","type":"policy","status":"completed","title":"Policy: `WAI-Spoke` Integrity During Testing","folder":"other/completed"}
+{"id":"58621a68a309","type":"learning","status":"completed","title":"Test Signal: Hub Learn Integration Verification","folder":"other/completed"}
+{"id":"617e09f2010a","type":"policy","status":"completed","title":"Specification Persistence and Protection Protocol","folder":"other/completed"}
+{"id":"7d25ff95999c","type":"policy","status":"completed","title":"Policy Update: Enhanced Lug Structure for Actionability & Verifiability","folder":"other/completed"}
+{"id":"adoption-2026-02-25","type":"maintenance","status":"resolved","title":"Adopted Framework v3.0 Teachings","folder":"other/completed"}
+{"id":"adoption-2026-03-12","type":"maintenance","status":"c","title":"Adopted 24 WAI Skill Teachings","folder":"other/completed"}
+{"id":"agent-learning-2026-02-15-file-mod-brittleness","type":"learning","status":"completed","title":"Agent Failure Mode: Brittle Code Modification & File Integrity Management","folder":"other/completed"}
+{"id":"as-impl-complete","type":"autosave","status":"c","title":"Red Light / Green Light + Autosave Protocol: COMPLETE","folder":"other/completed"}
+{"id":"as-skill-handoff","type":"autosave","status":"c","title":"Handoff: WAI Skill System \u2014 KB/SOP Migration in progress","folder":"other/completed"}
+{"id":"as-test1234abcd","type":"autosave","status":"c","title":"Implemented Red Light / Green Light command files","folder":"other/completed"}
+{"id":"b9e3c7f2a5d4","type":"review","status":"completed","title":"Security & Input Validation Audit","folder":"other/completed"}
+{"id":"benchmark-design-v1","type":"lug","status":"archived","title":"Benchmark Design Specification v1.0","folder":"other/completed"}
+{"id":"c7f2e9a4b1d6","type":"refactor","status":"completed","title":"Reimplement WAI CLI with cleaner architecture","folder":"other/completed"}
+{"id":"core-hub-protocol-v1","type":"core-protocol","status":"archived","title":"Hub-Spoke Communication Protocol","folder":"other/completed"}
+{"id":"core-lug-authoring-v1","type":"core-protocol","status":"archived","title":"Lug Authoring Protocol","folder":"other/completed"}
+{"id":"d08eb1c7ce84","type":"learning","status":"completed","title":"Learning: `run_shell_command` & Multi-line Python Script Execution Issue","folder":"other/completed"}
+{"id":"d4a7f1b6e8c2","type":"review","status":"completed","title":"Codebase Structure & Architecture Review","folder":"other/completed"}
+{"id":"decision-framework-role-boundaries-mission","type":"decision","status":"archived","title":"Framework Role Corrected: Protocol Authority, Not Prescriber","folder":"other/completed"}
+{"id":"decision-framework-teaching-vs-inbox-protocol","type":"decision","status":"archived","title":"Framework Internal Protocol: Teaching Files vs Inbox Lugs","folder":"other/completed"}
+{"id":"decision-framework-upgrade-protocol","type":"decision","status":"archived","title":"Framework Upgrade & Evolution Protocol","folder":"other/completed"}
+{"id":"decision-help-internal-feedback-loop","type":"decision","status":"resolved","title":"Internal Help Capability: Agent Self-Navigation and Wheel Improvement","folder":"other/completed"}
+{"id":"decision-hub-registry-refresh-skill","type":"decision","status":"resolved","title":"Hub Aggregates Spoke Metadata on Wakeup via Registry-Refresh Skill","folder":"other/completed"}
+{"id":"decision-model-task-awareness-protocol","type":"decision","status":"archived","title":"Model-Task Awareness: Agents must detect task-model mismatch and prompt user","folder":"other/completed"}
+{"id":"decision-phase-12-spoke-implementation-pattern","type":"decision","status":"archived","title":"SUPERSEDED: Phase 12 spoke implementation pattern replaced by protocol-authority model","folder":"other/completed"}
+{"id":"decision-phase-9-documentation-strategy","type":"decision","status":"resolved","title":"Phase 9 Documentation Strategy: Living Objects, Not Markdown Files","folder":"other/completed"}
+{"id":"decision-phase-9-self-documenting-wheel","type":"decision","status":"resolved","title":"Phase 9 Complete: Self-Documenting, Self-Improving Wheel Architecture","folder":"other/completed"}
+{"id":"decision-plan-dogfood-execute-protocol","type":"core-protocol","status":"o","title":"Multi-file changes require Plan \u2192 Epic \u2192 Dogfood \u2192 Execute sequence","folder":"other/completed"}
+{"id":"decision-self-registry-skill","type":"decision","status":"resolved","title":"Each Spoke Maintains Its Own Metadata via Self-Registry Skill","folder":"other/completed"}
+{"id":"decision-teaching-test-bench-skill","type":"decision","status":"archived","title":"Teaching Test Bench: Framework validates teaching files via naive agent simulation","folder":"other/completed"}
+{"id":"deferred-cluster2-website-specs","type":"deferred","status":"deferred","title":"Cluster 2 product specs deferred to wheelwright-ai-website spoke","folder":"other/completed"}
+{"id":"e6c2f9a4b8d1","type":"review","status":"published","title":"Documentation & Help System Review","folder":"other/completed"}
+{"id":"f8e2c5a3d9b1","type":"review","status":"completed","title":"Test Coverage Review & Gap Analysis","folder":"other/completed"}
+{"id":"gemini-ledger-verified","type":"decision","status":"archived","title":"WAI-Ledger.jsonl append-only pattern verified","folder":"other/completed"}
+{"id":"gemini-manifest-inference","type":"decision","status":"archived","title":"Inferred node_path and framework_version due to missing WAI-Spoke/WAI-Manifest.yaml","folder":"other/completed"}
+{"id":"idea-agent-friction-detector-v1","type":"idea","status":"c","title":"","folder":"other/completed"}
+{"id":"idea-open-type-field-v1","type":"idea","status":"c","title":"open_type field on track points \u2014 mark intentional vs friction open items","folder":"other/completed"}
+{"id":"idea-shipit-release-tag-v1","type":"idea","status":"c","title":"","folder":"other/completed"}
+{"id":"idea-wai-dogfood-skill-v1","type":"idea","status":"c","title":"","folder":"other/completed"}
+{"id":"implementation-handles-consultation-exchange-v1","type":"?","status":"deferred","title":"","folder":"other/completed"}
+{"id":"implementation-handles-demand-exchange-v1","type":"?","status":"deferred","title":"","folder":"other/completed"}
+{"id":"implementation-wheelwright-handles-v1","type":"?","status":"deferred","title":"","folder":"other/completed"}
+{"id":"implementation-wheelwright-web-cohort-sharing-v1","type":"?","status":"deferred","title":"","folder":"other/completed"}
+{"id":"learning-help-internal-feedback-loop","type":"learning","status":"archived","title":"Help System Creates Feedback Loop for Wheel Improvement","folder":"other/completed"}
+{"id":"learning-phase-10-validation-complete","type":"learning","status":"archived","title":"Phase 10 Validation Complete: Hub Registry-Refresh & Help Routing Proven","folder":"other/completed"}
+{"id":"learning-phase-11-spoke-adoption-pattern","type":"learning","status":"archived","title":"SUPERSEDED: Phase 11 spoke adoption pattern replaced by protocol-authority model","folder":"other/completed"}
+{"id":"learning-phase-12-implementation-readiness","type":"learning","status":"archived","title":"SUPERSEDED: Phase 12 readiness replaced by test-bench validation model","folder":"other/completed"}
+{"id":"learning-phase-9-validation-framework-dogfood","type":"learning","status":"archived","title":"Phase 9 Validation: Framework Spoke Successfully Uses Self-Registry Pattern","folder":"other/completed"}
+{"id":"learning-teaching-file-design-2026-03-12","type":"learning","status":"completed","title":"Testing Teaching Files: Test Once, Improve Always","folder":"other/completed"}
+{"id":"lug-2026-02-14-cleanup","type":"session","status":"archived","title":"Project cleanup: Structure hygiene + documentation expansion","folder":"other/completed"}
+{"id":"lug-2026-02-14-docs-expanded","type":"session","status":"archived","title":"Documentation expansion: Complete WAI tale with specs, skills, benchmarks","folder":"other/completed"}
+{"id":"lug-2026-02-14-session-001","type":"session","status":"archived","title":"Communication protocol layer + automatic upgrades + benchmarks","folder":"other/completed"}
+{"id":"lug-chat-to-track-historian-compat","type":"lug","status":"c","title":"Historian: support event-based external track format","folder":"other/completed"}
+{"id":"lug-chat-to-track-propagation","type":"lug","status":"c","title":"Propagate chat-to-track command to all spokes","folder":"other/completed"}
+{"id":"lug-chat-to-track-wakeup-ingest","type":"lug","status":"c","title":"Wakeup ingest: detect and absorb WAI_Track-*.jsonl files","folder":"other/completed"}
+{"id":"lug-fnd-f0aa32c5","type":"foundation","status":"archived","title":"Initial Foundation","folder":"other/completed"}
+{"id":"lug-wai-paths","type":"config","status":"archived","title":"WAI Network Paths","folder":"other/completed"}
+{"id":"ozi-ctrl-20260323-1616-teach-gen","type":"ozi-controller","status":"completed","title":"Generate and publish skill-wai-lug-advisor-v2 teaching (demonstration)","folder":"other/completed"}
+{"id":"ozi-test-20260323-1618-publish-hub","type":"ozi-test","status":"?","title":"","folder":"other/completed"}
+{"id":"ozi-test-20260323-1618-verify-teaching","type":"ozi-test","status":"?","title":"","folder":"other/completed"}
+{"id":"ozi-work-20260323-1616-gen-teaching","type":"ozi-work","status":"completed","title":"","folder":"other/completed"}
+{"id":"ozi-work-20260323-1617-publish-hub","type":"ozi-work","status":"skipped","title":"","folder":"other/completed"}
+{"id":"policy-git-stewardship-001","type":"policy","status":"completed","title":"Policy: AI Git Responsibility","folder":"other/completed"}
+{"id":"policy-hub-jit-awareness","type":"policy","status":"completed","title":"Hub Just-In-Time Awareness - Top-Level Feature Protection","folder":"other/completed"}
+{"id":"policy-pull-distribution-v1","type":"policy","status":"published","title":"Protocol: Pull-based Knowledge Distribution (Teach/Learn Pull)","folder":"other/completed"}
+{"id":"research-handles-consultation-market-analysis-v1","type":"research","status":"published","title":"Research market analysis for Handles consultation exchange and provenance service","folder":"other/completed"}
+{"id":"response-stale-spokes-v1","type":"response","status":"c","title":"Hub registry: 1 spoke(s) stale (>30d since last teach)","folder":"other/completed"}
+{"id":"shipit-20260312-060423","type":"shipit","status":"archived","title":"Shipit Production Readiness Verification","folder":"other/completed"}
+{"id":"sig_2026-02-08","type":"protocol","status":"archived","title":"Autosave Protocol: Red Light / Green Light crash recovery for AI sessions","folder":"other/completed"}
+{"id":"skill-model-task-advisor-v1","type":"learning","status":"c","title":"Model-Task Awareness Advisor installed","folder":"other/completed"}
+{"id":"ss-e3-e7","type":"lug","status":"archived","title":"Session 28 Complete: E3-E7","folder":"other/completed"}
+{"id":"task-ozi-fifo-test-1","type":"?","status":"completed","title":"","folder":"other/completed"}
+{"id":"task-ozi-fifo-test-2","type":"?","status":"closed","title":"","folder":"other/completed"}
+{"id":"idea-challenge-registry-v1","type":"idea","status":"proposed","title":"WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file","folder":"other/open"}
+{"id":"idea-fit-check-caching-v1","type":"idea","status":"proposed","title":"Fit-check caching \u2014 stamp idea lugs with corpus hash to skip redundant scans","folder":"other/open"}
+{"id":"implementation-canonical-runtime-baseline-v1","type":"implementation","status":"accepted","title":"Implement canonical runtime baseline for Wheelwright evolution","folder":"implementation/completed"}
+{"id":"implementation-canonical-state-migration-v1","type":"implementation","status":"implemented","title":"Implement canonical state migration and adoption baseline","folder":"implementation/completed"}
+{"id":"implementation-handles-consultation-exchange-v1","type":"implementation","status":"published","title":"Implement Handles consultation eject and return-with-provenance exchange","folder":"implementation/completed"}
+{"id":"implementation-handles-demand-exchange-v1","type":"implementation","status":"published","title":"Implement Handles demand exchange and rewarded insight marketplace","folder":"implementation/completed"}
+{"id":"implementation-hub-intent-based-spoke-launch-v1","type":"implementation","status":"implemented","title":"Implement hub intent-based spoke launch and context shaping","folder":"implementation/completed"}
+{"id":"implementation-hub-model-routing-table-v1","type":"implementation","status":"implemented","title":"Implement hub model routing table and budget intelligence advisor","folder":"implementation/completed"}
+{"id":"implementation-hub-provider-grabber-layer-v1","type":"implementation","status":"implemented","title":"Implement hub provider grabber layer for usage, limits, and availability telemetry","folder":"implementation/completed"}
+{"id":"implementation-idempotent-closeout-concurrency-v1","type":"implementation","status":"implemented","title":"Implement deterministic closeout receipts and replay detection","folder":"implementation/completed"}
+{"id":"implementation-lug-review-workflow-v1","type":"implementation","status":"implemented","title":"Canonicalize implementation-lug review/reconciliation workflow","folder":"implementation/completed"}
+{"id":"implementation-octo-gardener-dispatch-v1","type":"implementation","status":"implemented","title":"Octo gardens the wheel: fleet dispatch with spoke-local Ozi execution","folder":"implementation/completed"}
+{"id":"implementation-ozi-gardens-the-spoke-v1","type":"implementation","status":"implemented","title":"Ozi gardens the spoke: automation history through work lugs and paired test lugs","folder":"implementation/completed"}
+{"id":"implementation-ozi-session-local-auto-mode-v1","type":"implementation","status":"accepted","title":"Implement session-local Ozi auto mode and builder-focused status","folder":"implementation/completed"}
+{"id":"implementation-ozi-watch-mode-fifo-v1","type":"implementation","status":"accepted","title":"Implement Ozi watch mode, FIFO dispatch, and lug start summaries","folder":"implementation/completed"}
+{"id":"implementation-ozi-work-queue-v1","type":"implementation","status":"accepted","title":"Implement Ozi Work Queue Monitor - Autonomous Dispatch System","folder":"implementation/completed"}
+{"id":"implementation-rewrite-precanonical-architecture-lugs-v1","type":"implementation","status":"implemented","title":"Rewrite pre-canonical architecture epics before execution","folder":"implementation/completed"}
+{"id":"implementation-wheelwright-handles-v1","type":"implementation","status":"published","title":"Implement Wheelwright Handles: model intelligence and telemetry exchange service","folder":"implementation/completed"}
+{"id":"implementation-wheelwright-web-cohort-sharing-v1","type":"implementation","status":"published","title":"Implement wheel registration and delayed cohort reporting for Wheelwright web","folder":"implementation/completed"}
+{"id":"implementation-hub-teachings-copy-v1","type":"implementation","status":"ready_to_implement","title":"Implement copy-based hub teaching publish flow","folder":"implementation/in_progress"}
+{"id":"implementation-hub-teachings-repo-schema-v1","type":"implementation","status":"ready_to_implement","title":"Define canonical hub teachings_repo structure and index schema","folder":"implementation/in_progress"}
+{"id":"implementation-ozi-working-agreement-enforcement","type":"implementation","status":"ready_to_implement","title":"Ozi Working Agreement: Behavioral contract enforcement with traceable advisor amendments","folder":"implementation/in_progress"}
+{"id":"implementation-teaching-auto-generation-cleanup-v2","type":"implementation","status":"ready_to_implement","title":"Auto-generate, version, and cleanup teaching files during closeout","folder":"implementation/in_progress"}
+{"id":"ozi-gardens-the-wheel-v1","type":"implementation","status":"ready_to_implement","title":"Ozi gardens the spoke: automation history through work lugs and paired test lugs","folder":"implementation/in_progress"}
+{"id":"lug-2026-02-15-055742","type":"session-summary","status":"archived","title":"Session Summary: Initial Setup, Git Status, Lug Reconciliation","folder":"session-summary"}
+{"id":"lug-sess-b6d55c2a","type":"session-summary","status":"archived","title":"Session 6: Foundation skill, Skills\u2192Lugs architecture, Shipit auto-teach","folder":"session-summary"}
+{"id":"lug-session-summary-20260221-004700","type":"session-summary","status":"archived","title":"WAI Session 9: Auto-Teach/Learn Protocol Implementation","folder":"session-summary"}
+{"id":"sess-317b1fd1","type":"session-summary","status":"archived","title":"Session 5: WAI Principles P9 + Closeout/Shipit Protocol Consolidation","folder":"session-summary"}
+{"id":"session-20260302-closeout","type":"session-summary","status":"archived","title":"Session 12: Shipit quality gates + .claude/commands sync","folder":"session-summary"}
+{"id":"session-20260303-closeout","type":"session-summary","status":"archived","title":"Session 13: Principles doc + epic close + shipit","folder":"session-summary"}
+{"id":"session-20260303-p10","type":"session-summary","status":"archived","title":"Session 14: P10 Autonomy principle","folder":"session-summary"}
+{"id":"session-20260303-push-closeout","type":"session-summary","status":"archived","title":"Session 15: Push-on-closeout protocol + skill updates","folder":"session-summary"}
+{"id":"session-20260304-024804","type":"session-summary","status":"archived","title":"Session 16 summary","folder":"session-summary"}
+{"id":"session-20260312-043206","type":"session-summary","status":"archived","title":"Session summary","folder":"session-summary"}
+{"id":"session-20260312-060423","type":"session-summary","status":"archived","title":"Session summary","folder":"session-summary"}
+{"id":"session-20260312-234500","type":"session-summary","status":"c","title":"Session 7 summary","folder":"session-summary"}
+{"id":"session-20260314-0925","type":"session-summary","status":"c","title":"Session 18 summary","folder":"session-summary"}
+{"id":"session-20260314-0959","type":"session-summary","status":"c","title":"Session 19: Absorb learn/teach \u2014 simplify protocol","folder":"session-summary"}
+{"id":"session-20260314-100000","type":"session-summary","status":"c","title":"Session 19 summary \u2014 track system live, spoke template synced","folder":"session-summary"}
+{"id":"session-20260314-1012-summary","type":"session-summary","status":"c","title":"Session 21+22 summary","folder":"session-summary"}
+{"id":"session-20260314-1012","type":"session-summary","status":"c","title":"Session 20 summary","folder":"session-summary"}
+{"id":"session-20260314-200000","type":"session-summary","status":"c","title":"Session 17 summary","folder":"session-summary"}
+{"id":"session-20260314-fleet-upgrade","type":"session-summary","status":"c","title":"Session 15: Fleet upgrade \u2014 12 spokes to framework 2.0.18","folder":"session-summary"}
+{"id":"session-20260314-pev-dogfood","type":"session-summary","status":"c","title":"Session 16: PEV + dogfooding driven into framework skills","folder":"session-summary"}
+{"id":"session-20260315-0029","type":"session-summary","status":"c","title":"Session 23 summary","folder":"session-summary"}
+{"id":"session-20260315-0151","type":"session-summary","status":"c","title":"Session 24 summary","folder":"session-summary"}
+{"id":"session-20260315-0506","type":"session-summary","status":"c","title":"Session 25 summary","folder":"session-summary"}
+{"id":"session-20260315-0527","type":"session-summary","status":"c","title":"Session 26 summary","folder":"session-summary"}
+{"id":"session-20260315-0545","type":"session-summary","status":"c","title":"Session 27 summary","folder":"session-summary"}
+{"id":"session-20260315-1906","type":"session-summary","status":"c","title":"Session 28 summary","folder":"session-summary"}
+{"id":"session-20260316-004500","type":"session-summary","status":"c","title":"Session 30 summary","folder":"session-summary"}
+{"id":"session-20260316-073751","type":"session-summary","status":"c","title":"Session 32 summary","folder":"session-summary"}
+{"id":"session-20260316-191421","type":"session-summary","status":"c","title":"Session 33 summary","folder":"session-summary"}
+{"id":"session-20260316-1945","type":"session-summary","status":"c","title":"Session 34: Dogfooded epic-chat-to-track-v1 lugs using naive agent test","folder":"session-summary"}
+{"id":"session-20260316-2156","type":"session-summary","status":"c","title":"Session 35 summary: Chat-to-Track Epic Complete","folder":"session-summary"}
+{"id":"session-20260317-0815-active-collection-upgrade-complete","type":"session-summary","status":"c","title":"Session 37 summary: Successfully implemented High-Fidelity Active-Collection Standard","folder":"session-summary"}
+{"id":"session-20260317-2349","type":"session-summary","status":"archived","title":"Session 39: Teaching Adoption + Context Optimization + Shipit Quality Gates","folder":"session-summary"}
+{"id":"session-20260318-0100","type":"session-summary","status":"c","title":"Session 41: Track Chain Protocol + E1-E7 Skill System Migration","folder":"session-summary"}
+{"id":"session-20260318-closeout","type":"session-summary","status":"c","title":"Session 42: Teaching Reconciliation + Test Coverage Prep","folder":"session-summary"}
+{"id":"session-20260322-233926","type":"session-summary","status":"completed","title":"Session 50 summary \u2014 closeout-only session after canonical evolution commit","folder":"session-summary"}
+{"id":"session-20260323-0128","type":"session-summary","status":"c","title":"Session 53: Hub canonical evolution migration complete","folder":"session-summary"}
+{"id":"session-20260323-162700","type":"session-summary","status":"c","title":"Session 52 \u2014 Cluster 1 Hub Orchestration: all 5 epics implemented","folder":"session-summary"}
+{"id":"session-20260324-0419","type":"session-summary","status":"c","title":"Session 61 \u2014 chat-to-track v0.10 integration","folder":"session-summary"}
+{"id":"session-43-lug-cleanup-2026-03-18","type":"session-summary","status":"completed","title":"Session 43: Complete Lug Cleanup & Reviews","folder":"session-summary"}
+{"id":"session-8-summary-20260218","type":"session-summary","status":"published","title":"WAI Session 8: Implemented full teach/learn automation cycle","folder":"session-summary"}
+{"id":"session-summary-20260313-181446","type":"session-summary","status":"c","title":"WAI Wakeup/Closeout & Historian/Taste Integration","folder":"session-summary"}
+{"id":"session-summary-20260313-182127","type":"session-summary","status":"c","title":"Pull-based Distribution Architecture Initialized","folder":"session-summary"}
+{"id":"ss-20260317-0444","type":"session-summary","status":"c","title":"Session 36 summary","folder":"session-summary"}
+{"id":"ss-20260319-0815","type":"session-summary","status":"completed","title":"Session 48: Canonical Wheelwright evolution support - four workstreams complete","folder":"session-summary"}
+{"id":"ss-20260319-0855","type":"session-summary","status":"completed","title":"Session 48: Canonical runtime baseline implementation complete","folder":"session-summary"}
+{"id":"ss-20260319-0915","type":"session-summary","status":"completed","title":"Session 49: Implementation-lug review/reconciliation workflow canonicalized","folder":"session-summary"}
+{"id":"ss-20260319-1000","type":"session-summary","status":"ready_for_recheck","title":"Session 50: Canonical state migration and adoption baseline implemented","folder":"session-summary"}
+{"id":"ss-20260319-1407","type":"session-summary","status":"c","title":"Session 47: confirmed docs/llm-full.txt + README.md lug exists, ready for next executor","folder":"session-summary"}
+{"id":"ss-20260319-1819","type":"session-summary","status":"implemented","title":"Session 48: Implementation-lug workflow evolution - rubric, remediation, action tracker","folder":"session-summary"}
+{"id":"ss-20260319-2113","type":"session-summary","status":"completed","title":"Session 51: Canonical closeout concurrency + epic rewrites completed","folder":"session-summary"}
+{"id":"ss-e48218a6","type":"session-summary","status":"archived","title":"Session 10: Foundation + Bug Fixes + Code Cleanup","folder":"session-summary"}
+{"id":"ss-redlight-greenlight-impl","type":"session-summary","status":"archived","title":"Session: Red Light / Green Light + Autosave Protocol","folder":"session-summary"}
+{"id":"ss-session-20260323-0806","type":"session-summary","status":"closed","title":"Session 58: Priority standardization, benchmark large tier, Cluster 2 product architecture","folder":"session-summary"}
+{"id":"ss-session-20260323-2224","type":"session-summary","status":"completed","title":"Session 59 summary","folder":"session-summary"}
+{"id":"ss-session-20260324-0013","type":"session-summary","status":"c","title":"Session 63: Skill storage redesign, wai-lug-compat, Spoke ID, hub override protocol","folder":"session-summary"}
+{"id":"ss-session-20260324-0235","type":"session-summary","status":"c","title":"Session 60: Hub bulletin type-filter bug fix, teaching adoption, mail routing analysis","folder":"session-summary"}
+{"id":"ss-session-20260324-0540","type":"session-summary","status":"c","title":"Session 62 summary","folder":"session-summary"}
+{"id":"ss-session-20260324-2340","type":"session-summary","status":"c","title":"Sessions 64-65: Template sync, teachings, hub-coord skills, hub override protocols","folder":"session-summary"}
+{"id":"ss-skill-migration-2026-02-08","type":"session-summary","status":"archived","title":"Session: WAI Skill System \u2014 KB/SOP Migration (partial)","folder":"session-summary"}

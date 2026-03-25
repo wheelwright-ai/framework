@@ -1,0 +1,12 @@
+{
+  "id": "rescued-signal-2026-03-14T100000Z-3",
+  "type": "signal",
+  "status": "published",
+  "impact": 8,
+  "title": "Hub /framework/ symlink already serves Step 3a teaching discovery — no hub/broadcast/teachings/lates",
+  "description": "Closes a false architectural concern. Prevents future effort spent creating broadcast/ scaffolding that isn't needed.",
+  "created_at": "2026-03-14T10:00:00Z",
+  "created_by": "Claude Sonnet 4.6",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-03-14T10:00:00Z"
+}

@@ -9,7 +9,7 @@
 - **Nodes:** spoke, hub
 - **Exposure:** spoke.chat:local, spoke.chat:external
 - **Paths Required:** spoke_path (current directory)
-- **Lug Storage:** `WAI-Spoke/WAI-Lugs.jsonl` with `ty: "foundation"`
+- **Lug Storage:** `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` with `ty: "foundation"`
 
 ---
 
@@ -24,7 +24,7 @@
 ## Prerequisites
 
 - WAI-Spoke/ directory exists
-- WAI-Lugs.jsonl exists (or will be created)
+- `lugs/active/WAI-Lugs-active.jsonl` exists (or will be created)
 
 ## Follow-ons
 
@@ -126,7 +126,7 @@
 ### 1. Check Existing Foundation
 
 ```
-Query WAI-Lugs.jsonl:
+Query lugs/active/WAI-Lugs-active.jsonl:
   foundation_lugs = lugs where ty="foundation"
   current = foundation_lugs | sort by created_at desc | first
 ```
@@ -160,7 +160,7 @@ After gathering answers:
 1. Generate `id`: `lug-fnd-{random-8-hex}`
 2. Set `v: 1`, `ty: "foundation"`
 3. Populate identity, boundaries, approach from answers
-4. Append to `WAI-Lugs.jsonl`
+4. Append to `lugs/active/WAI-Lugs-active.jsonl`
 5. Update `WAI-State.json` cache (see below)
 
 ### 4. Verify or Evolve (Returning Session)
@@ -191,7 +191,7 @@ When scope/goals change:
    - `rationale`: why the change
    - `changes`: diff of what changed
    - `full_state`: complete current state
-3. Append to `WAI-Lugs.jsonl`
+3. Append to `lugs/active/WAI-Lugs-active.jsonl`
 4. Update `WAI-State.json` cache
 
 ---

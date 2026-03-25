@@ -1,0 +1,29 @@
+{
+  "i": "ss-20260319-1407",
+  "ty": "session-summary",
+  "t": "Session 47: confirmed docs/llm-full.txt + README.md lug exists, ready for next executor",
+  "s": "c",
+  "ca": "2026-03-19T14:07:18Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 47,
+  "accomplished": [
+    "Confirmed lug 43c7023a0244 (docs/llm-full.txt + README.md maintenance) is open and wakeup-visible with priority before_next_epic",
+    "Committed prior-session uncommitted changes (WAI-State.json, framework/docs/index.md, docs/design/, signal teaching)"
+  ],
+  "files_touched": [
+    "WAI-Spoke/WAI-State.json",
+    "framework/docs/index.md",
+    "teachings/signal-20260318-1044-from-waiweb.md.teaching"
+  ],
+  "decisions": [],
+  "incomplete_work": {
+    "tasks": [
+      "Execute lug 43c7023a0244: update README.md (frozen at session 15), create docs/llm-full.txt, add Step 7b to wai-closeout.md"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Pick up lug 43c7023a0244 — it is priority before_next_epic and wakeup_visibility:true"
+    ]
+  },
+  "autosaves_reconciled": []
+}

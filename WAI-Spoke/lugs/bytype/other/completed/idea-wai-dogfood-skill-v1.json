@@ -1,0 +1,10 @@
+{
+  "i": "idea-wai-dogfood-skill-v1",
+  "ty": "idea",
+  "s": "c",
+  "reconciled": true,
+  "reconciled_at": "2026-03-15T02:05:00Z",
+  "reconciled_by": "Claude Sonnet 4.6",
+  "resolution": "reframed-and-folded-in",
+  "resolution_notes": "Hypothesis reframed: standalone wai-dogfood.md → improved Step 6c in wai-improve.md. Challenge valid. Better solution is improving existing skill, not adding a new file. Updated templates/commands/wai-improve.md and WAI-Spoke/commands/wai-improve.md Step 6c with structured Perceive/Execute/Verify audit sections and explicit pass/fail criteria."
+}

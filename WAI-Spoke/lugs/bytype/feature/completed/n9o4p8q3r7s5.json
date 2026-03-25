@@ -1,0 +1,28 @@
+{
+  "id": "n9o4p8q3r7s5",
+  "type": "feature",
+  "title": "Phase 4: Spoke Auto-Discovery Scanner",
+  "status": "published",
+  "_v1_status": "published",
+  "description": "Implement spoke auto-discovery to scan hub for all wheel projects and assign/verify spoke_ids. (1) ✓ wai/discovery.py - find all WAI-Spoke/ directories in hub recursively (9 unit tests passing). (2) ✓ Assign spoke_id to projects missing one (deterministic generation). (3) ✓ Create hub spoke registry at .WAI-registry/spokes.json. (4) ✓ Detect orphaned spokes (WAI-Spoke/ without matching hub entry). (5) ✓ Integrate into 'WAI hub scan' command in core.py. Success: User runs 'WAI hub scan', discovers all wheels, auto-assigns spoke_ids, builds registry.",
+  "impact": 3,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-02T03:00:00.000000",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "priority": "high",
+  "tags": [
+    "phase-4",
+    "discovery",
+    "hub",
+    "registry"
+  ],
+  "blocks": [],
+  "blocked_by": [
+    "m8n3p7q2r6s4"
+  ]
+}

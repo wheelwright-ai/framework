@@ -1,0 +1,30 @@
+{
+  "id": "55db4152f693",
+  "type": "policy",
+  "title": "Policy: `WAI-Spoke` Integrity During Testing",
+  "status": "completed",
+  "_v1_status": "resolved",
+  "description": "During testing and development, the contents of the `WAI-Spoke/` folder (including `WAI-State.json`) are to be treated as read-only unless explicit instructions are given to modify specific files. The CLI and framework must be designed to inform and empower the `WAI-Spoke` content, not modify or destroy it without explicit user interaction and confirmation. Testing procedures that involve modifying `WAI-Spoke` files will be explicitly defined and confirmed by the user. Automatic modification of `WAI-Spoke/WAI-State.json` (e.g., for persisting `hub_path`) is prohibited in testing contexts without explicit user directive.",
+  "impact": 10,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-11T00:02:51Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "accepted",
+  "resolution_reason": "Policy reviewed and incorporated into agent operational guidelines.",
+  "priority": "critical",
+  "tags": [
+    "policy",
+    "wai-spoke",
+    "data-integrity",
+    "agent-behavior",
+    "testing",
+    "trust"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "scope": "framework",
+  "completed_at": "2026-03-18T10:54:51.003926Z"
+}

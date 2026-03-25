@@ -11,9 +11,51 @@
 
 ---
 
+## Canonical Storage
+
+**Single source of truth:** This file is the canonical declaration for lug storage. All other protocol files defer here.
+
+**Folder hierarchy:**
+```
+WAI-Spoke/lugs/
+  incoming/                        — inbound deliveries (operational)
+  outgoing/                        — outbound deliveries (operational)
+  bytype/
+    epic/{open,in_progress,completed}/
+    task/{open,in_progress,completed}/
+    feature/{open,in_progress,completed}/
+    bug/{open,in_progress,completed}/
+    implementation/{in_progress,completed}/
+    signal/{undelivered,delivered}/
+    session-summary/               — all completed, no status subfolder
+    other/{open,completed}/        — rare types (idea, policy, learning, etc.)
+```
+
+| What | Where | Notes |
+|------|-------|-------|
+| Active lugs | `lugs/bytype/*/open/` and `bytype/*/in_progress/` | Scanned at wakeup |
+| Completed lugs | `lugs/bytype/{type}/completed/` | One file per lug |
+| Signals | `lugs/bytype/signal/{undelivered,delivered}/` | Undelivered = not yet sent to hub |
+| Lug index | `WAI-Spoke/WAI-LugIndex.jsonl` | Lightweight lookup — on-demand only |
+| Incoming/outgoing | `WAI-Spoke/lugs/incoming/` and `outgoing/` | Delivery channel only |
+| Hub bulletin | `WAI-Hub/Signals/incoming/` | High-impact lugs copied here at closeout |
+| Reference docs | `WAI-Spoke/reference/` | Top-level, peer to lugs/sessions/skills |
+
+**Storage rules:**
+- **New lugs** → write to `lugs/bytype/{type}/open/{id}.json`
+- **In-progress** → move to `lugs/bytype/{type}/in_progress/{id}.json`
+- **Completed** → move to `lugs/bytype/{type}/completed/{id}.json`
+- **Signals delivered** → move from `undelivered/` to `delivered/`
+- **Index** → regenerated at closeout
+- **Wakeup** → scans `bytype/*/open/` and `bytype/*/in_progress/` only
+
+`WAI-Spoke/WAI-Signals.jsonl`, `WAI-Spoke/WAI-Lugs.jsonl`, and `WAI-Spoke/lugs/active/` are all **retired**. Do not create or write to any of them.
+
+---
+
 ## What Is A Lug
 
-A lug is a JSON object stored in `WAI-Spoke/WAI-Lugs.jsonl` (one per line). Lugs are the persistent memory of the session system — they carry work items, decisions, signals, and protocols across sessions, models, and projects.
+A lug is a JSON file at `WAI-Spoke/lugs/bytype/{type}/{status}/{id}.json`. The folder path tells you what it is and whether it needs attention. Lugs are the persistent memory of the session system — they carry work items, decisions, signals, and protocols across sessions, models, and projects.
 
 **Lugs travel across contexts.** They must be unambiguous enough that ANY agent can interpret them correctly WITHOUT your current conversation history.
 
@@ -30,6 +72,7 @@ A lug is a JSON object stored in `WAI-Spoke/WAI-Lugs.jsonl` (one per line). Lugs
 | `ca` | `created_at` | ISO-8601 creation timestamp |
 | `gb` | `gathered_by` | Agent or session that created it |
 | `v` | `version` | Version number (foundation, core-protocol lugs) |
+| `fw_ver` | `fw_ver` | **Framework version when lug was authored** (e.g. "3.0.0"). Set once at creation — never updated. Enables currency scoring. See `wai-lug-compat.md`. |
 
 **Title Policy:**
 - **No generic session summaries:** "Session 35 summary" is BANNED.
@@ -61,7 +104,8 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `feature` | New capability or enhancement | No — add to tracker |
 | `review` | Something needing review or verification | No — add to tracker |
 | `epic` | Large multi-session effort (blocked until tasks clear) | No — add to tracker |
-| `signal` | High-impact decision or insight (impact >= 8) | No — record in WAI-Signals.jsonl |
+| `implementation` | Execution-control lug for non-trivial planned work | No — add to tracker |
+| `signal` | High-impact decision or insight (impact >= 8) | No — signals ARE lugs; store in active lugs file (no separate file) |
 | `foundation` | Project identity, boundaries, approach | No — defines the project |
 | `session-summary` | Completed session record (autosaves reconciled) | No — archive only |
 | `autosave` | Crash-recovery checkpoint from mid-session | Reconcile at closeout |
@@ -75,6 +119,81 @@ Both short and full key forms are valid. Prefer short keys for storage efficienc
 | `config` | Configuration update for node | Applied during learn |
 | `session` | Historical session record (legacy) | No — archive only |
 | `challenge` | Problem-centric anchor for idea lugs — stable problem statement with linked hypotheses | No — append-only record in WAI-Challenges.jsonl |
+
+---
+
+## PEV Chain Pattern
+
+For work requiring structured perceive→execute→verify reasoning, use linked lugs instead of PEV fields on a single record.
+
+### Link Schema
+
+Each lug in a PEV chain carries:
+- `pev_role`: one of `perceive` | `execute` | `verify`
+- `pev_chain_id`: shared identifier for the chain (e.g. `pev-feature-auth-20260322`)
+
+### Chain Structure
+
+| Role | Purpose | Key Fields |
+|------|---------|-----------|
+| `perceive` | Frames the problem: evidence, conditions, unknowns | `pev_role`, `pev_chain_id`, `evidence[]`, `conditions[]` |
+| `execute` | Records intended action or implementation plan | `pev_role`, `pev_chain_id`, `plan`, `target_files[]` |
+| `verify` | Defines proof the work is correct | `pev_role`, `pev_chain_id`, `criteria[]`, `verified_at` |
+
+### Example
+
+```json
+{"id": "pev-auth-perceive", "type": "work", "pev_role": "perceive", "pev_chain_id": "pev-auth-20260322", "title": "Auth system: problem framing", "evidence": ["Users can bypass 2FA via API"], "conditions": ["Only affects API endpoints, not web UI"]}
+{"id": "pev-auth-execute", "type": "work", "pev_role": "execute", "pev_chain_id": "pev-auth-20260322", "title": "Auth system: implementation plan", "plan": "Add 2FA enforcement middleware to API router"}
+{"id": "pev-auth-verify", "type": "work", "pev_role": "verify", "pev_chain_id": "pev-auth-20260322", "title": "Auth system: verification criteria", "criteria": ["API requests without valid 2FA token receive 403", "Existing web UI 2FA flow unchanged"]}
+```
+
+### When to Use
+
+Use PEV chains for: architectural decisions, bug investigations, features with clear acceptance criteria.
+Skip for: simple tasks, signal lugs, session summaries.
+
+### Compatibility
+
+Existing lugs with `perceive`/`execute`/`verify` as plain fields remain valid. Dual-read: both patterns are acceptable. New structured work should prefer the chain pattern.
+
+---
+
+## Canonical Type System
+
+### Top-Level Types (use these for new lugs)
+
+| Type | Purpose |
+|------|---------|
+| `epic` | Large work body spanning multiple sessions |
+| `work` | Executable work item (replaces task/bug/feature) |
+| `decision` | Architectural or directional choice |
+| `finding` | Investigation result or discovered fact |
+| `test` | Test specification or result |
+| `session-summary` | End-of-session record |
+| `signal` | High-impact learning (impact >= 8) |
+
+### work.kind Field
+
+When creating a `work` lug, set `work.kind` to classify the work:
+
+| work.kind | Replaces | Use when |
+|-----------|---------|---------|
+| `task` | type: "task" | Defined unit of work |
+| `bug` | type: "bug" | Defect or broken behavior |
+| `feature` | type: "feature" | New capability |
+| `implementation` | type: "implementation" | Capability rollout |
+
+**Example:**
+```json
+{"id": "work-fix-auth-20260322", "type": "work", "work": {"kind": "bug"}, "title": "Fix auth bypass"}
+```
+
+### Dual-Read Compatibility
+
+Existing lugs with `type: "task"`, `type: "bug"`, or `type: "feature"` remain valid and are read correctly. Do not bulk-rewrite existing lugs. New lugs should use canonical types.
+
+**Reading old lugs:** treat `type: "task"` as equivalent to `type: "work", work.kind: "task"`.
 
 ---
 
@@ -117,7 +236,7 @@ Minimal required fields: `i`, `ty`, `t` (or `title`):
 }
 ```
 
-Append to `WAI-Spoke/WAI-Lugs.jsonl` (one JSON object per line).
+Write to `WAI-Spoke/lugs/bytype/{type}/open/{id}.json` (one JSON file per lug).
 
 ---
 
@@ -156,7 +275,7 @@ Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (sessio
 
 ## PEV Fields (Required for Actionable Lugs)
 
-**Every `task`, `epic`, `bug`, `feature`, and `review` lug MUST include PEV fields.** These transform a lug from a decision record into a workable ticket that any agent can pick up cold.
+**Every `task`, `epic`, `bug`, `feature`, `review`, and `implementation` lug MUST include PEV fields.** These transform a lug from a decision record into a workable ticket that any agent can pick up cold.
 
 | Field | Purpose | Example |
 |-------|---------|---------|
@@ -180,6 +299,224 @@ Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (sessio
 
 ---
 
+## `implementation` Lugs
+
+`implementation` is a first-class lug type for **non-trivial execution batches**.
+
+Use an `implementation` lug when:
+- work spans multiple files or multiple child lugs
+- work sits under an `epic` and needs ordered execution
+- the implementer needs a review gate before editing
+- multiple agents or sub-agents may participate and need one control record
+- you want durable implementation feedback, not just a one-shot task description
+
+**Default expectation:** If work is non-trivial, especially if it is epic-backed and requires a plan, create an `implementation` lug.
+
+An `implementation` lug should:
+- link the child work lugs it composes
+- state sequence: what is sequential, what may parallelize safely, what is deferred
+- require implementer review before editing begins
+- record whether the implementer is satisfied to proceed
+- bounce back to the user if concerns or ambiguities remain
+- record who worked on it and any contributing sub-agents
+- capture completion feedback, implementation observations, and follow-up risks
+
+Recommended fields in addition to the normal lug fields:
+- `parent_epic`
+- `composes`
+- `target_files`
+- `non_goals`
+- `sequence`
+- `implementer_review`
+- `subagent_policy`
+- `verification_requirements`
+- `implementation_feedback`
+- `ownership`
+
+**Canonical Lifecycle:**
+```text
+planned → review_pending → approved_to_implement → in_progress → in_remediation → ready_for_recheck → implemented → accepted
+```
+
+**Status Definitions:**
+- `planned`: Initial creation, ready for review
+- `review_pending`: Under review by implementer
+- `approved_to_implement`: Review passed, ready for implementation
+- `in_progress`: Implementation in progress  
+- `in_remediation`: Review found gaps, being fixed
+- `ready_for_recheck`: Remediation complete, needs re-review
+- `implemented`: Implementation complete but pending final acceptance
+- `accepted`: Fully complete with all review notes resolved
+
+**Review/Reconciliation Workflow:**
+
+All `implementation` lugs must include these canonical fields:
+
+```json
+{
+  "ready_to_build_gate": {
+    "required": true,
+    "checks": [
+      "Scope is bounded and non-goals are explicit",
+      "Dependencies, blockers, and target files or target objects are named",
+      "Sequence is clear enough to execute without chat context",
+      "Verification requirements are concrete and relevant",
+      "Review sources and review questions are present"
+    ]
+  },
+  "review_rubric": {
+    "self_review_required": true,
+    "ready_to_build": [
+      "Is this lug mature enough to build without filling architectural gaps from chat?",
+      "Are sequence, non-goals, and dependencies explicit?",
+      "Are target files or target objects named?",
+      "Is verification concrete rather than aspirational?"
+    ],
+    "acceptance_checks": [
+      {
+        "id": "scope",
+        "question": "Did the implementation stay within the lug's scope and non-goals?",
+        "pass_condition": "No unauthorized file or architecture expansion occurred",
+        "failure_action": "Move to in_remediation and add review note"
+      },
+      {
+        "id": "canonical_alignment",
+        "question": "Do the changes align with the goal-state design and parent epic?",
+        "pass_condition": "No contradiction with the canonical object model or behavior remains in touched files",
+        "failure_action": "Move to in_remediation and add review note"
+      },
+      {
+        "id": "persistence",
+        "question": "Was review, progress, and completion written back to the lug?",
+        "pass_condition": "The implementation lug and session-summary reflect the real work performed",
+        "failure_action": "Treat work as incomplete until persisted"
+      },
+      {
+        "id": "verification",
+        "question": "Was actual verification performed and recorded?",
+        "pass_condition": "Claims are backed by concrete checks, not just assertions",
+        "failure_action": "Require remediation or downgrade completion claim"
+      },
+      {
+        "id": "handoff_quality",
+        "question": "Could a new agent continue from the lug alone?",
+        "pass_condition": "Next steps, blockers, observations, and remaining work are durable",
+        "failure_action": "Require lug update before acceptance"
+      }
+    ]
+  },
+  "remediation_plan": {
+    "required_when_in_remediation": true,
+    "version": 1,
+    "authored_at": "ISO-8601",
+    "authored_by": "agent-name",
+    "model": "model-id",
+    "addresses_note_ids": ["rn-001-example"],
+    "problem_summary": "Why the prior attempt failed or was kicked back.",
+    "planned_changes": [
+      "What will be changed to address the review note",
+      "What will remain out of scope during remediation"
+    ],
+    "verification_plan": [
+      "How the remediation will be checked",
+      "What evidence will be gathered before recheck"
+    ],
+    "risks": [
+      "Known uncertainty, dependency, or likely follow-up"
+    ],
+    "needs_user_review": false
+  },
+  "workflow": {
+    "current_phase": "plan|work|verify|accept",
+    "current_owner": "planner|builder|validator|user",
+    "current_state": "open|in_progress|complete",
+    "handoff_reason": "Why the ball moved to this owner",
+    "next_expected_transition": "What should happen next",
+    "steps": {
+      "plan": {
+        "type": "plan",
+        "owner": "planner",
+        "state": "open|in_progress|complete"
+      },
+      "work": {
+        "type": "work",
+        "owner": "builder",
+        "state": "open|in_progress|complete"
+      },
+      "verify": {
+        "type": "verify",
+        "owner": "validator",
+        "state": "open|in_progress|complete"
+      },
+      "accept": {
+        "type": "accept",
+        "owner": "user",
+        "state": "open|in_progress|complete"
+      }
+    }
+  },
+  "review_notes": [
+    {
+      "id": "rn-001-example",
+      "at": "2026-03-19T09:05:00Z", 
+      "by": "agent-name",
+      "model": "claude-sonnet-4-20250514",
+      "type": "concern|gap|suggestion|acceptance-note|blocked",
+      "scope": "signals|tracks|state|verification|etc",
+      "message": "Detailed description of issue",
+      "file_refs": ["path/to/file.md:123", "other/file.md:456"],
+      "status": "open|acknowledged|resolved|rejected",
+      "resolution_note": "How this was addressed"
+    }
+  ],
+  "review_cycles": [
+    {
+      "cycle": 1,
+      "reviewed_at": "2026-03-19T09:05:00Z",
+      "reviewed_by": "agent-name", 
+      "model": "claude-sonnet-4-20250514",
+      "result": "approved|needs_remediation|accepted",
+      "summary": "Brief review outcome description",
+      "blocking_note_ids": ["rn-001-example"],
+      "non_blocking_note_ids": []
+    }
+  ],
+  "acceptance": {
+    "status": "pending|ready_for_acceptance|accepted",
+    "accepted_at": null,
+    "accepted_by": null,
+    "model": null,
+    "notes": "Final acceptance notes"
+  }
+}
+```
+
+**Review Gate Rules:**
+1. **Pre-Implementation Review**: Before any implementation, create review cycle documenting approval/concerns
+2. **Persistent Review Notes**: All review findings must be recorded as `review_notes[]`, not just in chat
+3. **Remediation Tracking**: If review finds gaps, status moves to `in_remediation` with blocking note IDs
+4. **Recheck Required**: After fixes, implementer moves to `ready_for_recheck`, reviewer confirms resolution
+5. **Final Acceptance**: Only after all review notes are resolved can status move to `accepted`
+6. **Lug-Centered Interaction**: For non-trivial implementation work, reviewer/implementer back-and-forth should be written to the lug itself whenever possible; chat should mainly tell an agent which lug to load and what state to inspect
+7. **Ready-To-Build Gate**: Before implementation starts, the implementer must explicitly check and record that the lug is ready to build using the `ready_to_build_gate` and `review_rubric.ready_to_build` criteria
+8. **Self-Grading Requirement**: Before requesting recheck, the implementer must run the `review_rubric.acceptance_checks` against its own work and persist the result on the lug
+9. **Remediation Plan Requirement**: If a quality review kicks the lug back to `in_remediation`, the builder must write a `remediation_plan` to the same lug before retrying. The plan should state what failed, what will change, how it will be verified, and whether any user review is needed before reimplementation.
+10. **Workflow Action Tracker**: Update `workflow.current_phase`, `workflow.current_owner`, and `workflow.current_state` at major handoffs so future agents can instantly see who has the ball and what phase is active without parsing the full audit trail.
+
+**Persistence Gate Rule:** Review is not complete until it is written back to the `implementation` lug. Before editing any target file, the implementer must update the lug with review cycle entry, any review notes, and the intended next step. If review only exists in chat, it is incomplete.
+
+**Completion gate rule:** Implementation is not complete until the same lug is updated with what changed, verification actually performed, contributors/sub-agents used, completion notes, observations, and follow-up candidates, and a session-summary lug is appended.
+
+**Remediation planning rule:** When a lug is in `in_remediation`, do not silently retry. First persist a `remediation_plan` that addresses the open review note IDs. If the remediation materially changes scope or architecture, set `needs_user_review: true` and return to the user before implementing.
+
+**Workflow handoff rule:** At major transitions (plan complete, implementation complete, verification complete, acceptance recorded), update the `workflow` action tracker so the lug shows exactly who has the ball. This helps continuation agents identify their role without reading the full history.
+
+**Sub-agent rule:** Sub-agents may help with bounded analysis, comparison, or verification, but they do not replace the primary implementer's judgment on architecture, scope, or final reconciliation unless the lug explicitly allows it.
+
+**Storage note:** `implementation` lugs improve traceability for complex work, but they do not solve scaling limits of a single large JSONL file. If JSONL maintenance friction rises, treat that as a separate architecture problem to address rather than skipping durable planning records.
+
+---
+
 ## Dogfooding Lugs (Required Before Closeout)
 
 **Before finalizing any lug intended for another agent (including future-you), validate it:**
@@ -192,13 +529,13 @@ Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (sessio
 CREATE → DOGFOOD → DISCUSS → IMPLEMENT → VERIFY → CELEBRATE → ARCHIVE
 ```
 
-1. **CREATE** — Append new lug to `WAI-Lugs.jsonl` with `s: "o"`. Ensure PEV fields are present.
+1. **CREATE** — Write new lug to `lugs/bytype/{type}/open/{id}.json` with `s: "o"`. Ensure PEV fields are present.
 2. **DOGFOOD** — Run the naive agent test. Fix gaps before work begins.
 3. **DISCUSS** — (Optional) For high-impact lugs (impact >= 8), present the implementation strategy to the user. Refine based on feedback.
 4. **IMPLEMENT** — Set `s: "p"`. Follow the `execute` steps in the lug. If reality diverges from the lug's plan, update the lug first.
 5. **VERIFY** — Execute every step in the `verify` field. Run regression tests. Ensure no `TODO` or `FIXME` comments remain in the code.
 6. **CELEBRATE** — Present the **Victory Briefing** (see below). Set `s: "c"`.
-7. **ARCHIVE** — Closed lugs remain in `WAI-Lugs.jsonl` for history. Reconcile in session-summary at closeout.
+7. **ARCHIVE** — Move completed lug from `open/` or `in_progress/` to `completed/`. Index is regenerated at closeout. Reconcile in session-summary.
 
 ---
 
@@ -245,7 +582,7 @@ After a lug or epic is implemented and verified, present a celebratory briefing 
 
 ## WAI-Challenges.jsonl
 
-First-class append-only file alongside `WAI-Lugs.jsonl`. Stores stable problem statements independently of the hypotheses (idea lugs) that address them.
+First-class append-only file alongside the active lugs file. Stores stable problem statements independently of the hypotheses (idea lugs) that address them.
 
 **Schema:**
 ```json
@@ -261,7 +598,7 @@ First-class append-only file alongside `WAI-Lugs.jsonl`. Stores stable problem s
 }
 ```
 
-**Append-only:** Override entries follow the same convention as `WAI-Lugs.jsonl` — append a new line with the same `i` and updated fields. Latest entry per `i` wins.
+**Append-only:** Override entries follow the same convention as the active lugs file — append a new line with the same `i` and updated fields. Latest entry per `i` wins.
 
 **Lifecycle:** Created by `/wai-improve` Step 3b on first intake of a challenge. Updated (override entry) each time a new idea links to it. Resolved when the challenge is addressed.
 
@@ -290,7 +627,7 @@ When creating lugs that travel to other nodes, ALWAYS include `_behavior_directi
   "_behavior_directive": {
     "what_this_is": "A work item to be ADDED to the task tracker",
     "what_this_is_NOT": "An instruction to execute immediately",
-    "processing_agent": "inbox router appends to WAI-Lugs.jsonl",
+    "processing_agent": "incoming router appends to lugs/active/WAI-Lugs-active.jsonl",
     "expected_outcome": "Item appears in task list for user to prioritize"
   },
   "ty": "task",
@@ -320,9 +657,25 @@ If any answer is "yes or maybe" → add more clarity.
 
 ## Priority Flags
 
-- `priority: "before_next_epic"` — Must complete before starting any new epic
-- `priority: "session_focus"` — Current session's primary epic
-- `priority: "high"` / `"medium"` / `"low"` — Standard priority
+Standard scale (use these for all new lugs):
+
+| Value | Meaning |
+|-------|---------|
+| `"P1"` | High — urgent, blocking, or critical path |
+| `"P2"` | Medium — important, scheduled work |
+| `"P3"` | Low — backlog, non-blocking |
+| `"P4"` | Trivial — nice-to-have, no deadline |
+
+**Migration:** Existing lugs with `"high"` or `"critical"` = P1; `"medium"` = P2; `"low"` = P3. No bulk rewrite required — old values remain readable. New lugs MUST use P1–P4.
+
+**Workflow qualifiers** (scheduling context, not priority — store in `workflow_flag`, not `priority`):
+
+| Value | Meaning |
+|-------|---------|
+| `"before_next_epic"` | Must clear before any new epic starts |
+| `"session_focus"` | Primary focus of the current session |
+
+If found in `priority` on an existing lug, treat as P1-equivalent.
 
 ---
 
@@ -348,8 +701,8 @@ If any answer is "yes or maybe" → add more clarity.
 | Type | Purpose | AI Execution? | Example |
 |------|---------|--------------|---------|
 | `task` | Track work item | NO — add to tracker | "Implement caching" → task list |
-| `signal` | Share insight (impact >= 8) | NO — record in Signals | "Found useful pattern" → logged |
-| `phone-home` | Request status | AUTO by learn | inbox processor handles |
+| `signal` | Share insight (impact >= 8) | NO — record in active lugs file | "Found useful pattern" → logged as lug |
+| `phone-home` | Request status | AUTO by learn | incoming processor handles |
 | `foundation` | Project identity | NO — defines project | Identity and boundaries |
 
 ---
@@ -378,11 +731,64 @@ If any answer is "yes or maybe" → add more clarity.
 
 ---
 
+## Ozi Gardening Lug Types
+
+Ozi automation history lives in these three lug types in the active lugs file — **not** in WAI-State.json.
+
+### ozi-controller
+One Ozi automation pass or bounded task batch.
+
+| Field | Value |
+|-------|-------|
+| `id` | `ozi-ctrl-{YYYYMMDD-HHMM}-{task-slug}` |
+| `type` | `"ozi-controller"` |
+| `title` | What Ozi is orchestrating |
+| `session_id` | Session that created this controller |
+| `target_lug_id` | Implementation or task lug being worked |
+| `status` | `active \| completed \| failed` |
+| `work_lug_ids` | Child ozi-work lug ids |
+| `test_lug_ids` | Paired ozi-test lug ids |
+| `created_at` | ISO-8601 |
+| `completed_at` | ISO-8601 or null |
+
+### ozi-work
+One discrete unit of work dispatched by an Ozi controller.
+
+| Field | Value |
+|-------|-------|
+| `id` | `ozi-work-{YYYYMMDD-HHMM}-{task-slug}` |
+| `type` | `"ozi-work"` |
+| `controller_id` | Parent ozi-controller lug id |
+| `task` | Concise description of what was done |
+| `target_file` | File or resource modified |
+| `status` | `completed \| failed \| skipped` |
+| `result` | Short outcome note |
+| `created_at` | ISO-8601 |
+| `completed_at` | ISO-8601 or null |
+
+### ozi-test
+Paired verification record. Required before any ozi-work lug can move to `ready_for_recheck`.
+
+| Field | Value |
+|-------|-------|
+| `id` | `ozi-test-{YYYYMMDD-HHMM}-{task-slug}` |
+| `type` | `"ozi-test"` |
+| `work_lug_id` | Parent ozi-work lug id |
+| `test_command` | Runnable shell or Python verification command |
+| `expected` | Expected output or behaviour |
+| `actual` | Observed result |
+| `result` | `pass \| fail \| skip` |
+| `tested_at` | ISO-8601 |
+
+**Rule:** Every ozi-work lug must have a paired ozi-test lug. WAI-State.json must not accumulate automation history keys.
+
+---
+
 ## Related Skills
 
 - `/wai-closeout` — Reconciles autosaves, creates session-summary
-- `/wai (Step 3a: auto-discovery)` — Processes incoming lugs from inbox
-- `/wai (Step 9b: auto-teach on closeout)` — Delivers outbox lugs to target nodes
+- `/wai (Step 3a: auto-discovery)` — Processes incoming lugs from incoming folder
+- `/wai (Step 9b: auto-teach on closeout)` — Delivers outgoing lugs to target nodes
 
 ---
 

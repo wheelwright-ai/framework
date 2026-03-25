@@ -1,0 +1,92 @@
+{
+  "id": "epic-teaching-generation-canonical-evolution-v1",
+  "type": "epic",
+  "status": "implemented",
+  "title": "Generate + dogfood teaching files for canonical evolution v2 changes",
+  "created_at": "2026-03-22T23:55:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "priority": "P1",
+  "brief": "The canonical evolution v2 session made significant protocol changes (P11, lug-advisor overhaul, closeout steps 5b+9c, WAI-Guide fix) but generated zero teaching files. Other spokes cannot learn these changes without teachings. This epic generates, validates, and prepares those teachings for distribution.",
+  "plan_ref": "WAI-Spoke/lugs/epic-teaching-generation-canonical-evolution-v1/plan.md",
+  "acceptance_criteria": [
+    "All 6 teaching files generated in teachings/ with correct content",
+    "Dry-run dogfood sub-agent simulates a naive spoke receiving the teachings",
+    "All gaps identified in dry-run are documented",
+    "Improvements applied before teachings are activated in other spokes",
+    "Teaching inventory index updated"
+  ],
+  "items": [
+    {
+      "id": "T-01",
+      "family": "skill-wai-lug-advisor-v2",
+      "status": "complete",
+      "covers": "Canonical Storage declaration, signal routing fix, PEV chain pattern, canonical type system"
+    },
+    {
+      "id": "T-02",
+      "family": "skill-wai-closeout-v2",
+      "status": "complete",
+      "covers": "Step 5b (adoption marker sync) + Step 9c (hub signal bulletin)"
+    },
+    {
+      "id": "T-03",
+      "family": "skill-wai-principles-p11-v1",
+      "status": "complete",
+      "covers": "P11 Lug-First Memory — new principle, trigger conditions, example"
+    },
+    {
+      "id": "T-04",
+      "family": "skill-wai-guide-filter-fix-v1",
+      "status": "complete",
+      "covers": "WAI-Guide.md stale filter fix: published → open/in_progress"
+    },
+    {
+      "id": "T-05",
+      "family": "signal-wai-signals-retired-v1",
+      "status": "complete",
+      "covers": "WAI-Signals.jsonl retirement signal — spokes still using this file need to migrate"
+    },
+    {
+      "id": "T-06",
+      "family": "skill-wai-wakeup-hub-bulletin-v1",
+      "status": "complete",
+      "covers": "Step 3a hub bulletin check added to wakeup protocol"
+    },
+    {
+      "id": "T-DRY",
+      "family": "dogfood-dry-run",
+      "status": "complete",
+      "covers": "Sub-agent cold-start simulation of a naive spoke receiving all 6 teachings"
+    }
+  ],
+  "workflow": {
+    "phase": "dry-run-complete",
+    "completed_steps": [
+      "T-01 generated: skill-wai-lug-advisor-v2.md.teaching",
+      "T-02 generated: skill-wai-closeout-v2.md.teaching",
+      "T-03 generated: signal-p11-lug-first-memory-v1.md.teaching",
+      "T-04 generated: skill-wai-guide-filter-fix-v1.md.teaching",
+      "T-05 generated: signal-wai-signals-retired-v1.md.teaching",
+      "T-06 generated: skill-wai-wakeup-hub-bulletin-v1.md.teaching",
+      "T-DRY dry-run complete: 1 functional bug fixed, 6 cross-cutting issues resolved"
+    ],
+    "next_step": "Commit teachings/ — ready for distribution to spokes",
+    "dogfood_prompt": "You are an AI assistant that has just woken up on a spoke project that uses the Wheelwright framework. You have NO prior knowledge of recent framework changes. You have received 6 new teaching files in your seed/ingest/ folder. Your job is to: (1) read each teaching file, (2) extract what changed and what action you should take, (3) identify anything unclear, missing, or that could mislead you, (4) report gaps. Be a skeptical naive reader — flag anything that assumes context you do not have."
+  },
+  "dry_run_result": {
+    "overall": "PASS-WITH-NOTES (pre-fix) → PASS (post-fix)",
+    "functional_bug_fixed": "Teaching 5: $(date) shell substitution inside python3 -c replaced with datetime.now()",
+    "cross_cutting_fixes": [
+      "framework_path resolution clause added to all 4 file-copy teachings",
+      "Application order documented: T-01 → T-05 → T-03 → T-04 → T-02 → T-06",
+      "Adoption marker derivation algorithm documented in Teaching 2",
+      "Manual sync script added to Teaching 2 (one-time fix)",
+      "All grep verifications standardized to && echo PASS || echo FAIL",
+      "Teaching 6: node field clarified, who-moves-incoming-to-processed documented, prereq check step added",
+      "Teaching 3: session_id note added (replace with current session id)",
+      "Teaching 4: zero-lugs warning clarified, sed command added for automated fix",
+      "Teaching 5: Step 4.5 added (append signal lug even when WAI-Signals.jsonl absent)",
+      "Teaching 5: templates/ grep marked as optional (framework-only path)"
+    ]
+  }
+}

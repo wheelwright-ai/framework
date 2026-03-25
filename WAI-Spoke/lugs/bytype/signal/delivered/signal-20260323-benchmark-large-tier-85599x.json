@@ -1,0 +1,11 @@
+{
+  "id": "signal-20260323-benchmark-large-tier-85599x",
+  "type": "signal",
+  "title": "Benchmark large tier complete — 85,599x token efficiency, PASS on critical test",
+  "description": "benchmark-system-v1 is now complete across all 3 tiers. Large tier: 63 source files + 8 services, 400MB runtime-generated reference files (never committed), WAI selective load of 5 files vs baseline 75. Results: small=73.8 WEI (3,902x), medium=74.4 WEI (7,844x), large=85,599x token efficiency. All tiers PASS reference-file-avoidance critical test. benchmark-results.jsonl now tracks longitudinal WEI scores. Shipit runs small+medium with --persist automatically.",
+  "impact": 9,
+  "created_by": "claude-sonnet-4-6",
+  "created_at": "2026-03-23T10:15:00Z",
+  "session_id": "session-20260323-0806",
+  "rationale": "The large tier (85,599x) is the headline proof-of-value number for Wheelwright's selective loading claim. This is the publishable benchmark result."
+}

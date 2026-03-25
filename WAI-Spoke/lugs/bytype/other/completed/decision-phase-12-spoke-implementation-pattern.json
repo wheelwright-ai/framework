@@ -1,0 +1,20 @@
+{
+  "id": "decision-phase-12-spoke-implementation-pattern",
+  "type": "decision",
+  "title": "SUPERSEDED: Phase 12 spoke implementation pattern replaced by protocol-authority model",
+  "status": "archived",
+  "resolution": "superseded",
+  "resolution_reason": "Implementation checklists and example metadata were prescriptive. Framework teaches protocols via teaching files (validated by test bench), not prescriptive guides.",
+  "impact": 0,
+  "created_by": "Claude Opus 4.6",
+  "created_at": "2026-03-12T20:57:36.087999+00:00",
+  "node": "wheelwright/framework",
+  "reconciled": true,
+  "superseded_by": "decision-framework-role-boundaries-mission",
+  "tags": [
+    "reconciled",
+    "superseded"
+  ],
+  "archived_at": "2026-03-18T10:54:51.004202Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

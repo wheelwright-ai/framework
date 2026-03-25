@@ -1,0 +1,26 @@
+{
+  "id": "signal-session-count-concurrency",
+  "type": "signal",
+  "title": "Session count/turns fields must accumulate, not reset",
+  "status": "archived",
+  "_v1_status": "o",
+  "description": "When multiple sessions run concurrently or a new session writes WAI-State.json, counters like meta.total_sessions and analytics.sessions.total_turns must be additive (read-then-increment), not set to a fixed value. Prevents count resets from concurrent writes.",
+  "impact": 7,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-06T20:35:00Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "tags": [
+    "protocol",
+    "session-state",
+    "concurrency"
+  ],
+  "_v1_type_code": "Session count/turns fields must accumulate, not reset",
+  "_v1_status_code": "o",
+  "archived_at": "2026-03-18T10:54:51.004129Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

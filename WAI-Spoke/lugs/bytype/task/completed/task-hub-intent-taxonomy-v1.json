@@ -1,0 +1,18 @@
+{
+  "id": "task-hub-intent-taxonomy-v1",
+  "type": "task",
+  "title": "Define hub intent taxonomy for spoke launch",
+  "status": "published",
+  "description": "Enumerate supported user intents and map them to spoke selection, work class, and startup profile choices.",
+  "impact": 7,
+  "tags": [
+    "hub",
+    "intent",
+    "launcher"
+  ],
+  "parent_implementation": "implementation-hub-intent-based-spoke-launch-v1",
+  "created_by": "OpenCode GPT-5.4",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-20T06:25:41.895497+00:00",
+  "priority": "high"
+}

@@ -174,6 +174,45 @@ The user has granted permission for routine operations. Do not ask for confirmat
 
 ---
 
+## P11: Lug-First Memory
+
+**If you store work state anywhere other than a lug, the next agent starts blind.**
+
+Lugs are JSONL records in `WAI-Spoke/lugs/active/WAI-Lugs-active.jsonl` (active) or individual files in `WAI-Spoke/lugs/{type}/` (archived). The active lugs file is the only storage the wakeup protocol reads at session start. When a session ends or is interrupted, lugs survive. Everything else is gone.
+
+**Claude Code Task tools (TaskCreate, etc.) do not survive session ends.** They are not read on wakeup and are invisible to any future agent or tool.
+
+**Standalone `.md` files are not indexed at wakeup.** They require knowing they exist to find them. They go stale. They are not recoverable without manual search.
+
+**Put these in lugs, not tasks or scratch files:**
+- Work to be done (intent, scope, acceptance criteria)
+- Decisions and rationale
+- Progress and handoff state
+- Prompts for sub-agents (`workflow.subagent_prompt`)
+- Open questions and blockers
+
+**When to apply this:** Any time you are about to call `TaskCreate`, write a scratch `.md` file, or hold state "in your head" across a planned multi-step operation — stop. Put it in a lug instead.
+
+**Minimal example — work-in-progress lug with embedded subagent prompt:**
+```json
+{
+  "id": "work-my-feature-20260322",
+  "type": "work",
+  "title": "My feature implementation",
+  "status": "in-progress",
+  "workflow": {
+    "subagent_prompt": "You are implementing X. Context: ... Task: ... Acceptance criteria: ...",
+    "completed_steps": ["step 1", "step 2"],
+    "next_step": "step 3"
+  }
+}
+```
+If this session ends now, the next agent reads this lug on wakeup and knows exactly where to resume. A `TaskCreate` entry or scratch file would be gone.
+
+**Demonstrated:** A subagent dispatch prompt was fully recovered after session interruption because it was stored in `workflow.subagent_prompt` on a lug. The next agent found it cold, reproduced it, and resumed work. The equivalent stored in a Task would have been unrecoverable.
+
+---
+
 ## Principle Summary
 
 | # | Name | Core Idea |
@@ -188,6 +227,7 @@ The user has granted permission for routine operations. Do not ask for confirmat
 | P8 | Documentation | Document when known |
 | P9 | Intuitive Design | Self-activating, self-improving |
 | P10 | Autonomy | Trust is the default — proceed, don't pause |
+| P11 | Lug-First Memory | Lugs outlive sessions; tasks and md files don't |
 
 ---
 

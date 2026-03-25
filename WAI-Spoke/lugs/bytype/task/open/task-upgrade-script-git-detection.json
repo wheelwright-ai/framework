@@ -1,0 +1,10 @@
+{
+  "i": "task-upgrade-script-git-detection",
+  "t": "Upgrade script: detect git repo, skip git steps if missing",
+  "ty": "task",
+  "s": "o",
+  "impact": 4,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[infrastructure] Script already handles no-git gracefully. Formalize: don't require .gitignore, skip snapshot/commit cleanly, warn in output."
+}

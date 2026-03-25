@@ -1,0 +1,12 @@
+{
+  "id": "rescued-signal-2026-03-18T211800Z",
+  "type": "signal",
+  "status": "published",
+  "impact": 9,
+  "title": "Fleet-wide shipit quality gate distribution via hub teaching system. Created shipit-makefile-quality",
+  "description": "Systemic quality gap affects all spokes, not just framework. Hub teaching distribution scales to entire fleet without manual spoke updates. Teaches spokes to fish (create own Makefile) rather than giving them fish (direct file copy). Establishes pattern for distributing critical protocol fixes.",
+  "created_at": "2026-03-18T21:18:00Z",
+  "created_by": "Claude Sonnet 4.5",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-03-18T21:18:00Z"
+}

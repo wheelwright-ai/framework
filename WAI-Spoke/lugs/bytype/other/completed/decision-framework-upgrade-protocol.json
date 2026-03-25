@@ -1,0 +1,16 @@
+{
+  "id": "decision-framework-upgrade-protocol",
+  "type": "decision",
+  "title": "Framework Upgrade & Evolution Protocol",
+  "status": "archived",
+  "description": "How framework evolves: new teaching files published, hub broadcasts, spokes absorb, framework documents changes.",
+  "impact": 9,
+  "created_by": "Claude Haiku 4.5",
+  "created_at": "2026-03-12T20:29:37.717264+00:00",
+  "node": "wheelwright/framework",
+  "perceive": "Framework must upgrade gracefully, teaching spokes new protocols, documenting changes, maintaining compatibility.",
+  "execute": "Documented upgrade workflow: Framework identifies need → creates teaching file → hub broadcasts → spokes absorb → framework documents as lug.",
+  "verify": "Protocol workflow documented. Communication flow clear. Versioning strategy defined.",
+  "archived_at": "2026-03-18T10:54:51.004188Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

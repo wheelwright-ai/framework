@@ -1,0 +1,10 @@
+{
+  "i": "task-wsl-path-unification",
+  "t": "Unify workspace paths: WSL only, convert /mnt/c/code/ → ~/projects/",
+  "ty": "task",
+  "s": "o",
+  "impact": 5,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[cleanup] All projects live in ~/projects/. /mnt/c/code/projects is archived. Convert any stale Windows/mnt paths in WAI-State.json workspace configs across fleet."
+}

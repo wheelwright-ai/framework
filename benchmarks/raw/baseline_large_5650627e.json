@@ -1,0 +1,414 @@
+[
+  {
+    "timestamp": "2026-03-23T09:37:35.301889",
+    "run_id": "5650627e",
+    "tier": "large",
+    "agent_type": "baseline",
+    "event": "context_loaded",
+    "data": {
+      "files": [
+        {
+          "path": "core/health_checker.py",
+          "size_bytes": 79,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/database.py",
+          "size_bytes": 1416,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/logging_config.py",
+          "size_bytes": 79,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/event_bus.py",
+          "size_bytes": 69,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/message_queue.py",
+          "size_bytes": 77,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/cache_manager.py",
+          "size_bytes": 77,
+          "is_reference_file": false
+        },
+        {
+          "path": "core/config.py",
+          "size_bytes": 1349,
+          "is_reference_file": false
+        },
+        {
+          "path": "infra/terraform_vars.py",
+          "size_bytes": 39,
+          "is_reference_file": false
+        },
+        {
+          "path": "infra/health_probes.py",
+          "size_bytes": 38,
+          "is_reference_file": false
+        },
+        {
+          "path": "infra/deploy_config.py",
+          "size_bytes": 38,
+          "is_reference_file": false
+        },
+        {
+          "path": "infra/k8s_manifest.py",
+          "size_bytes": 37,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_scheduler.py",
+          "size_bytes": 32,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_notifications.py",
+          "size_bytes": 36,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_auth.py",
+          "size_bytes": 27,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_analytics.py",
+          "size_bytes": 32,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_gateway.py",
+          "size_bytes": 30,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_search.py",
+          "size_bytes": 29,
+          "is_reference_file": false
+        },
+        {
+          "path": "tests/test_payments.py",
+          "size_bytes": 31,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-State.json",
+          "size_bytes": 348,
+          "is_reference_file": false
+        },
+        {
+          "path": "WAI-Spoke/WAI-Manifest.yaml",
+          "size_bytes": 492,
+          "is_reference_file": false
+        },
+        {
+          "path": "reference/api_reference_v1.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v6.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v2.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v9.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v4.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v8.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v7.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v3.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v10.md",
+          "size_bytes": 41942577,
+          "is_reference_file": true
+        },
+        {
+          "path": "reference/api_reference_v5.md",
+          "size_bytes": 41942576,
+          "is_reference_file": true
+        },
+        {
+          "path": "services/notifications/push_service.py",
+          "size_bytes": 38,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/notifications/email_service.py",
+          "size_bytes": 39,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/notifications/sms_service.py",
+          "size_bytes": 37,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/notifications/main.py",
+          "size_bytes": 30,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/notifications/template_engine.py",
+          "size_bytes": 41,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/notifications/queue_consumer.py",
+          "size_bytes": 40,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/payments/billing.py",
+          "size_bytes": 28,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/payments/main.py",
+          "size_bytes": 25,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/payments/webhook_handler.py",
+          "size_bytes": 36,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/payments/stripe_integration.py",
+          "size_bytes": 39,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/payments/subscription_manager.py",
+          "size_bytes": 41,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/payments/invoice_service.py",
+          "size_bytes": 36,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/analytics/event_collector.py",
+          "size_bytes": 37,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/analytics/main.py",
+          "size_bytes": 26,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/analytics/aggregator.py",
+          "size_bytes": 32,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/analytics/data_pipeline.py",
+          "size_bytes": 35,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/analytics/export_service.py",
+          "size_bytes": 36,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/analytics/report_generator.py",
+          "size_bytes": 38,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/auth/middleware.py",
+          "size_bytes": 35,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/auth/routes.py",
+          "size_bytes": 31,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/auth/token_service.py",
+          "size_bytes": 38,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/auth/main.py",
+          "size_bytes": 29,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/auth/models.py",
+          "size_bytes": 31,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/gateway/proxy_handler.py",
+          "size_bytes": 37,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/gateway/cache.py",
+          "size_bytes": 29,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/gateway/circuit_breaker.py",
+          "size_bytes": 39,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/gateway/routing.py",
+          "size_bytes": 31,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/gateway/main.py",
+          "size_bytes": 28,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/gateway/rate_limiter.py",
+          "size_bytes": 36,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/search/query_engine.py",
+          "size_bytes": 31,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/search/indexer.py",
+          "size_bytes": 26,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/search/main.py",
+          "size_bytes": 23,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/search/embedding_service.py",
+          "size_bytes": 36,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/search/filter_service.py",
+          "size_bytes": 33,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/search/ranking.py",
+          "size_bytes": 26,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/audit/retention_policy.py",
+          "size_bytes": 34,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/audit/event_logger.py",
+          "size_bytes": 30,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/audit/main.py",
+          "size_bytes": 22,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/audit/compliance_checker.py",
+          "size_bytes": 36,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/audit/report_exporter.py",
+          "size_bytes": 33,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/scheduler/job_runner.py",
+          "size_bytes": 32,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/scheduler/main.py",
+          "size_bytes": 26,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/scheduler/task_queue.py",
+          "size_bytes": 32,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/scheduler/retry_policy.py",
+          "size_bytes": 34,
+          "is_reference_file": false
+        },
+        {
+          "path": "services/scheduler/cron_parser.py",
+          "size_bytes": 33,
+          "is_reference_file": false
+        }
+      ],
+      "total_files": 75,
+      "total_bytes": 419431601,
+      "tokens": 104857877
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:37:35.301970",
+    "run_id": "5650627e",
+    "tier": "large",
+    "agent_type": "baseline",
+    "event": "token_used",
+    "data": {
+      "count": 1000,
+      "operation": "task_execution"
+    }
+  },
+  {
+    "timestamp": "2026-03-23T09:37:35.301976",
+    "run_id": "5650627e",
+    "tier": "large",
+    "agent_type": "baseline",
+    "event": "task_completed",
+    "data": {
+      "success": true,
+      "duration_ms": 5000,
+      "tokens_used": 104858877
+    }
+  }
+]

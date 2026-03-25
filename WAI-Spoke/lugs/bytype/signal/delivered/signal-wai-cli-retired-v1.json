@@ -1,0 +1,8 @@
+{
+  "id": "signal-wai-cli-retired-v1",
+  "type": "signal",
+  "impact": 8,
+  "timestamp": "2026-03-23T01:30:00Z",
+  "signal": "WAI CLI Retired: Removal of all references to the non-existent CLI.",
+  "by": "Hub"
+}

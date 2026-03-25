@@ -4,7 +4,7 @@ Resume execution from last autosave checkpoint.
 
 ## Instructions
 
-1. **Read last unreconciled autosave lug** from WAI-Lugs.jsonl
+1. **Read last unreconciled autosave lug** from `lugs/active/WAI-Lugs-active.jsonl`
    (ty=autosave, reconciled=false, latest by created_at)
    If none: "Nothing to resume — starting fresh"
 
