@@ -70,6 +70,25 @@ Write a final track point (phase: `review`). Do NOT delete the track file — it
 
 Update `CHANGELOG.md` if applicable. Generate descriptive commit message.
 
+### 7b. Docs Sync (When Protocol Changes)
+
+**Trigger:** After any session that modifies skills, protocol files, architecture, or lug schema.
+
+1. **Update README.md:**
+   - Check `wheel.version` in WAI-State.json — update version string if changed
+   - If skills were added/removed: update skill list in README
+   - If architecture changed: update architecture diagram
+
+2. **Regenerate docs/llm-full.txt:**
+   - Concatenate source files: WAI-State.json, wai.md, wai-closeout.md, wai-lug-schema.md, key utilities, CHANGELOG top entries
+   - Format: header + `=== FILE: {path} ===` delimiters for each file
+   - Target size: under 200KB
+   - Purpose: Single-file LLM context loader for external agents
+
+3. **If no protocol changes this session:** Note "Skip 7b: no protocol changes" in session summary.
+
+This step is skippable but must be explicitly noted if skipped.
+
 ### 8. Lug Dogfooding
 
 Validate lugs created/modified this session (excluding session-summary and autosave). Check: PEV fields present? `perceive` points to real files? `execute` has concrete steps? `verify` defines done state? Self-contained (no "see above")? Present validation plan to user, wait for approval, fix gaps found. Skip if no actionable lugs were created.

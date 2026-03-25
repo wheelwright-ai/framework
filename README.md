@@ -4,6 +4,8 @@
 
 Your AI picks up exactly where you left off — every session, every project, any model.
 
+> **v2.0.69** | Framework v3.0.0 | Production-ready for autonomous dispatch
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -106,17 +108,16 @@ Skills are markdown files in `templates/commands/`. They define what the agent d
 
 | Skill | Command | Purpose |
 |-------|---------|---------|
-| `wai.md` | `/wai` | Wakeup — produces full WAI Point briefing |
-| `wai-closeout.md` | `/wai-closeout` | Session end — reconcile, signal, commit |
-| `wai-shipit.md` | `/wai-shipit` | Quality gates + closeout + commit |
-| `wai-teach.md` | `/wai-teach` | Push templates/lugs to target nodes |
-| `wai-learn.md` | `/wai-learn` | Force recheck inbox (auto-runs on wakeup) |
-| `wai-lug-schema.md` | `/wai-lug-schema` | Lug schema, lifecycle, authoring |
+| `wai.md` | `/wai` | Session start — wakeup briefing, teaching discovery, recovery |
+| `wai-closeout.md` | `/wai-closeout` | Session end — reconcile, signals, metadata |
+| `wai-shipit.md` | `/wai-shipit` | Quality gates + closeout + git commit |
+| `wai-lug-schema.md` | `/wai-lug-schema` | Lug schema, lifecycle, routing fields |
 | `wai-foundation.md` | `/wai-foundation` | Project identity and boundaries |
-| `wai-ide-setup.md` | `/wai-ide-setup` | Hook configuration for Claude/Gemini/Cursor |
 | `wai-complexity-gate.md` | `/wai-complexity-gate` | Planning gate (2+ files OR 6+ steps) |
-| `wai-rules.md` | `/wai-rules` | Project boundaries |
+| `wai-rules.md` | `/wai-rules` | Project boundaries and constraints |
 | `wai-principles.md` | `/wai-principles` | WAI principles P1-P9 |
+| `wai-time.md` | `/wai-time` | Token usage estimate and capacity warnings |
+| `wai-status.md` | `/wai-status` | Quick health check with recommendations |
 
 Skills are the **authoritative source of truth**. All behavioral rules live there.
 
@@ -145,6 +146,30 @@ Lugs are JSON objects in `WAI-Lugs.jsonl` (one per line, append-only).
 **Types:** `task`, `bug`, `feature`, `signal`, `epic`, `autosave`, `session-summary`, `core-protocol`, `foundation`, `phone-home`
 
 Lugs travel across sessions, models, and projects. They must be self-contained — no "see above" references.
+
+---
+
+## Session Tracking (Track Encapsulation)
+
+Every session captures a turn-by-turn **track** — high-fidelity session history:
+
+```json
+{
+  "turn": 1,
+  "ts": "2026-03-25T10:15:00Z",
+  "focus": "Context estimation fix",
+  "action": "Added /context tool measurement to wakeup",
+  "thinking": "Token estimates were unreliable. Measured via tool instead.",
+  "activity": ["Read wakeup protocol", "Added Step 7 context gate"],
+  "decisions": ["Use /context tool not file-size guess"],
+  "insights": ["Accurate measurement enables better capacity planning"],
+  "phase": "execution"
+}
+```
+
+**Historian:** Tracks are reviewed periodically by an advisor at `WAI-Spoke/advisors/historian/` to identify patterns and signal high-impact learnings.
+
+**Taste Files:** Preference files (`taste.spoke.yaml`, `taste.user.yaml`) capture communication style, workflow, and boundary preferences. Updated incrementally as nudges are accepted/rejected.
 
 ---
 
@@ -280,6 +305,17 @@ The framework is pure template assets:
 - **Agent** = your AI (Claude, Gemini, Cursor, etc.)
 
 There is no CLI, no runtime, no package to install.
+
+---
+
+## Live Examples
+
+Real projects using Wheelwright for session continuity:
+
+- **PathFinder** (`/home/mario/projects/pathfinder`) — v0.4.0 | 18+ sessions | AI-powered career placement engine. Multiple models (Claude, Gemini) resume mid-work seamlessly.
+- **Tracks** (`/home/mario/projects/wheelwright/tracks`) — v0.1.0 | Progress tracking system. Bootstrap project demonstrating early-stage spoke setup.
+
+Both speak the same protocol. Any AI picks up where the last one left off.
 
 ---
 
