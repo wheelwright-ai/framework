@@ -4,6 +4,7 @@
   "title": "Apply Skill Thrift Principle to all WAI skills — lean primary files, reference files for verbose content",
   "status": "open",
   "created_at": "2026-03-25T05:30:00Z",
+  "updated_at": "2026-03-25T03:45:00Z",
   "created_by": "claude-opus-4-6",
   "session_id": "session-20260325-0500",
   "impact": 9,
@@ -11,65 +12,124 @@
     "what_this_is": "Epic to systematically slim every WAI skill file. Primary files carry behavioral instructions only. Verbose content (examples, schemas, deferred specs, onboarding prose, report templates) moves to secondary reference files loaded on-demand.",
     "what_this_is_NOT": "Not removing functionality. Every behavioral instruction is preserved. Only the token cost of loading the skill changes."
   },
-  "perceive": [
-    "templates/commands/wai*.md — all skill files, sorted by size",
-    "templates/commands/wai-closeout.md — already done (650→137 lines, -77%)",
-    "templates/commands/wai-shipit.md — already done (680→113 lines, -79%)"
+  "principle": "Primary skill file = behavioral instructions only. Secondary {skill}-reference.md in same folder = examples, schemas, verbose specs. Reference files are loaded on-demand, not at wakeup.",
+  "already_done": [
+    "wai-closeout.md (650→137 lines, -77%) — wai-closeout-reference.md created",
+    "wai-shipit.md (680→113 lines, -79%)",
+    "wai-lug-schema.md (795→421 lines, -47%) — wai-lug-schema-reference.md created (349L). Duplicate dogfooding section fixed. All 6 sync targets updated.",
+    "wai-improve.md (656→380 lines, -42%) — wai-improve-reference.md created (182L). All 6 sync targets updated."
   ],
-  "execute": {
-    "principle": "Primary skill file = behavioral instructions only. No onboarding prose, no use-case catalogs, no JSON/bash examples the agent already knows, no descriptions of unimplemented features. Secondary {skill}-reference.md files in same folder carry reference material.",
-    "tiers": {
-      "tier1_high_impact": {
-        "description": "Skills >200 lines — largest token savings",
-        "items": [
-          {"file": "wai-lug-schema.md", "lines": 795, "bytes": 34342, "notes": "Biggest skill. Schema examples, PEV chain examples, type system docs, lifecycle diagrams — most can move to reference"},
-          {"file": "wai-improve.md", "lines": 656, "bytes": 28378, "notes": "Backlog review protocol. Scoring rubrics, fit-check examples, priority tables — reference material"},
-          {"file": "wai-ozi-work-queue-monitor.md", "lines": 364, "bytes": 9275, "notes": "Queue monitor with detailed state machine docs"},
-          {"file": "wai-lug-compat.md", "lines": 277, "bytes": 9108, "notes": "Compat layer with migration examples"},
-          {"file": "wai.md", "lines": 220, "bytes": 7866, "notes": "Already trimmed from 568. May have more to cut."},
-          {"file": "wai-ide-setup.md", "lines": 262, "bytes": 7379, "notes": "Hook setup with per-tool examples"},
-          {"file": "wai-track-generate.md", "lines": 274, "bytes": 6811, "notes": "Track generation with format examples"},
-          {"file": "wai-principles.md", "lines": 234, "bytes": 6601, "notes": "P1-P9+ principles with rationale sections"},
-          {"file": "wai-foundation.md", "lines": 261, "bytes": 6465, "notes": "Foundation questionnaire with examples"}
-        ]
-      },
-      "tier2_medium": {
-        "description": "Skills 100-200 lines — moderate savings",
-        "items": [
-          {"file": "wai-brief.md", "lines": 182, "bytes": 5658},
-          {"file": "wai-status.md", "lines": 131, "bytes": 3789},
-          {"file": "wai-chat-to-track.md", "lines": 134, "bytes": 3649},
-          {"file": "wai-mode.md", "lines": 134, "bytes": 3434},
-          {"file": "wai-stewardship-framework.md", "lines": 106, "bytes": 2578},
-          {"file": "wai-complexity-gate.md", "lines": 95, "bytes": 3300}
-        ]
-      },
-      "tier3_already_lean": {
-        "description": "Skills <100 lines — likely already lean, review only",
-        "items": [
-          "wai-closeout.md (137 — DONE)", "wai-shipit.md (113 — DONE)",
-          "wai-init-v2.md (97)", "wai-sync-v2.md (95)", "wai-rules.md (81)",
-          "wai-red-light.md (80)", "wai-benchmark.md (67)", "wai-signal-capture.md (55)",
-          "wai-stewardship-guard.md (50)", "wai-auto-on.md (46)", "wai-foundation-gate.md (46)",
-          "wai-context-guard.md (45)", "wai-auto-status.md (39)", "wai-auto-parallel.md (37)",
-          "wai-green-light.md (31)", "wai-auto-off.md (27)", "wai-time.md (17)"
-        ]
-      }
+  "tier1_plan": {
+    "wai-lug-schema.md": {
+      "current_lines": 795,
+      "estimated_primary_lines": 330,
+      "estimated_savings_pct": 58,
+      "stays_in_primary": [
+        "Canonical Storage section — folder hierarchy, storage rules, what/where table",
+        "What Is A Lug — 2 para definition",
+        "Key Mapping table (short↔full field names) + Title Policy",
+        "Status values table",
+        "Type catalog table (all types)",
+        "PEV Chain Pattern — when to use, field names, compatibility note (NO JSON examples)",
+        "Canonical Type System — type table + work.kind table + dual-read note (NO JSON example)",
+        "Lug ID generation — formula only (sha256[:12])",
+        "Required Field Defaults table",
+        "gb field rules — model ID required, examples of correct/wrong",
+        "PEV fields requirement + one minimal JSON example",
+        "implementation lug — when to use, lifecycle states, 10 review gate rules (prose only, NO JSON schema)",
+        "Lug Lifecycle (CREATE→DOGFOOD→...→ARCHIVE steps)",
+        "Dogfooding — the golden rule + naive agent test steps (MERGE duplicate sections — two exist at L520 and L542)",
+        "Cross-spoke _behavior_directive — requirement + misinterpretation test + checklist (NO JSON example)",
+        "Priority Flags table + migration note",
+        "Scope Flags",
+        "Conditional Loading Fields",
+        "Signal vs Task vs Phone-Home table",
+        "Anti-patterns — rules only (NO JSON examples)",
+        "Related Skills"
+      ],
+      "moves_to_reference": [
+        "PEV Chain Pattern — full JSON example (3-lug chain)",
+        "PEV Chain Pattern — chain structure table with key fields",
+        "Canonical Type System — work.kind JSON example",
+        "Lug ID generation — extended example with sha256 output",
+        "Lug Creation Template — full JSON block (lines 222-237)",
+        "implementation lug — full JSON schema (ready_to_build_gate, review_rubric, remediation_plan, workflow tracker, review_notes, review_cycles, acceptance) — ~140 lines",
+        "Victory Briefing format section",
+        "WAI-Challenges.jsonl section (schema + lifecycle + slug generation)",
+        "AI Workflow with Lugs (wakeup/session/autosave/closeout steps)",
+        "Ozi Gardening Lug Types (ozi-controller, ozi-work, ozi-test schemas)",
+        "Anti-patterns — full JSON examples",
+        "Cross-spoke _behavior_directive — JSON example"
+      ],
+      "bug_to_fix": "Duplicate 'Dogfooding Lugs' section — lines 520-523 is a broken fragment of the real section at lines 542-553. Merge into one clean section.",
+      "output_files": [
+        "templates/commands/wai-lug-schema.md (slimmed primary)",
+        "templates/commands/wai-lug-schema-reference.md (new reference file)",
+        "templates/spoke/skills/lug-schema/wai-lug-schema.md (sync)",
+        "templates/spoke/skills/lug-schema/wai-lug-schema-reference.md (sync)",
+        "WAI-Spoke/commands/wai-lug-schema.md (sync)",
+        "WAI-Spoke/commands/wai-lug-schema-reference.md (sync)"
+      ]
     },
-    "per_skill_process": [
-      "1. Read the skill file",
-      "2. Identify: onboarding prose, use-case catalogs, JSON/bash examples, report templates, deferred/unimplemented features",
-      "3. Write slimmed primary file preserving all behavioral instructions",
-      "4. Write {skill}-reference.md with moved content (only if content has value — don't create empty reference files)",
-      "5. Sync to template spoke: templates/spoke/skills/{id}/{command_file}",
-      "6. Verify: diff before/after line counts"
-    ]
+    "wai-improve.md": {
+      "current_lines": 656,
+      "estimated_primary_lines": 250,
+      "estimated_savings_pct": 62,
+      "stays_in_primary": [
+        "Core Principle (challenge vs hypothesis separation)",
+        "Execution Flow diagram (Step 0→5)",
+        "Step 0: Load Spoke Context — what to read, completeness check signals, scoring context setup",
+        "Step 1: Intake — 4 required fields, trivial path",
+        "Step 2: Similarity and Fit Check — 5 sub-steps (2a-2e), similarity type table",
+        "Step 3: Refinement Questions — question types and when to ask",
+        "Step 3b: Challenge Matching — WAI-Challenges.jsonl link rule",
+        "Step 4: Evaluation and Scoring — 4 dimensions, scoring protocol",
+        "Step 5: Output as idea lug — lug fields required",
+        "Backlog Review mode — trigger conditions and process"
+      ],
+      "moves_to_reference": [
+        "Fit Report template (lines ~192-210)",
+        "Scoring rubric table with detailed criteria and worked examples",
+        "Priority decision tree with examples",
+        "Terminology reconciliation examples table",
+        "Idea lug example JSON",
+        "Backlog review output format/template",
+        "Worked example of challenge→hypothesis→lug flow"
+      ],
+      "output_files": [
+        "templates/commands/wai-improve.md (slimmed primary)",
+        "templates/commands/wai-improve-reference.md (new reference file)",
+        "templates/spoke/skills/improve/wai-improve.md (sync)",
+        "templates/spoke/skills/improve/wai-improve-reference.md (sync)",
+        "WAI-Spoke/commands/wai-improve.md (sync)",
+        "WAI-Spoke/commands/wai-improve-reference.md (sync)"
+      ]
+    }
   },
-  "verify": [
-    "Every skill's primary file contains all behavioral instructions (no behavior lost)",
-    "Reference files exist only where verbose content was moved",
-    "Template spoke skills are in sync with templates/commands/",
-    "Total token savings reported per tier"
+  "per_skill_process": [
+    "1. Read the skill file in full",
+    "2. Write slimmed primary: behavioral instructions only — keep all rules, drop all examples/schemas/templates that an agent doesn't need loaded unless authoring",
+    "3. Write reference file: all moved content, prefaced with a note pointing back to the primary",
+    "4. Fix any bugs encountered while editing (e.g. duplicate sections)",
+    "5. Sync both files: cp to templates/spoke/skills/{id}/ and WAI-Spoke/commands/",
+    "6. Verify line counts and no behavior lost"
   ],
-  "estimated_savings": "Tier 1 alone: ~15,000-20,000 tokens. Full epic: ~25,000+ tokens across all skills."
+  "verify": [
+    "wc -l templates/commands/wai-lug-schema.md — DONE: 421 (795→421, -47%; target was 350, behavioral density justifies 421)",
+    "grep -c 'canonical storage\\|bytype\\|storage rules' templates/commands/wai-lug-schema.md — storage rules present",
+    "grep -c 'implementation.*lifecycle\\|review gate\\|remediation' templates/commands/wai-lug-schema.md — implementation rules present",
+    "grep 'ready_to_build_gate' templates/commands/wai-lug-schema-reference.md — JSON schema moved to reference",
+    "diff templates/commands/wai-lug-schema.md templates/spoke/skills/lug-schema/wai-lug-schema.md — in sync",
+    "diff templates/commands/wai-lug-schema.md WAI-Spoke/commands/wai-lug-schema.md — in sync",
+    "wc -l templates/commands/wai-improve.md — must be ≤280",
+    "diff templates/commands/wai-improve.md templates/spoke/skills/improve/wai-improve.md — in sync",
+    "diff templates/commands/wai-improve.md WAI-Spoke/commands/wai-improve.md — in sync"
+  ],
+  "tier2_items": ["wai-ozi-work-queue-monitor.md (364L)", "wai-lug-compat.md (277L)", "wai-track-generate.md (274L)", "wai-ide-setup.md (262L)", "wai-foundation.md (261L)", "wai-principles.md (234L)", "wai.md (220L)"],
+  "estimated_savings": {
+    "tier1_wai_lug_schema": "~465 lines, ~20KB",
+    "tier1_wai_improve": "~406 lines, ~17KB",
+    "tier1_total": "~871 lines saved — largest two files alone",
+    "full_epic": "~25,000+ tokens across all skills"
+  }
 }

@@ -111,7 +111,7 @@ For each discovered teaching:
 1. Check if already adopted (filename exists in `WAI-Spoke/seed/ingest/processed/`)
 2. If new, split by `safe_to_auto_adopt` flag:
 
-**Path A — `safe_to_auto_adopt: true`:**
+**Path A — `safe_to_auto_adopt: true` (brief prompt, no ceremony):**
 1. Extract: what it affects, behavioral implication, challenge solved
 2. If teaching has `## Batch Sequence` block: respect apply order — note dependencies before offering adoption
 3. Present compact table, one row per teaching, with apply order if present

@@ -8,7 +8,10 @@ WAI gives you persistent memory, structured work tracking, and cross-session con
 
 1. Read `WAI-Spoke/WAI-State.json` — project identity, session state, hub connection
 2. Read `WAI-Spoke/commands/wai.md` — follow its steps to produce the WAI Point briefing
-3. Check `WAI-Spoke/seed/ingest/` — if `.teaching` files exist, present them for review before other work
+3. Discover teachings (wai.md Step 5 covers this, but if skipped — do it here):
+   - Local: check `WAI-Spoke/seed/ingest/` for `.teaching` files not yet in `processed/`
+   - Hub: read `wheel.hub_path` from WAI-State.json → scan `{hub_path}/teachings_repo/framework/current/*.teaching`
+   - Present any new teachings for review before other work
 4. Then respond to the user's message
 
 ## Key Paths
@@ -17,9 +20,9 @@ WAI gives you persistent memory, structured work tracking, and cross-session con
 |------|-----------|
 | `WAI-Spoke/WAI-State.json` | Project state — identity, sessions, hub connection |
 | `WAI-Spoke/commands/` | Skills — behavioral rules as `.md` files (source of truth) |
-| `WAI-Spoke/WAI-Lugs.jsonl` | Work tracker — tasks, bugs, signals, decisions (append-only) |
-| `WAI-Spoke/lugs/inbox/` | Incoming lugs from hub or other spokes |
-| `WAI-Spoke/lugs/outbox/` | Outbound lugs for hub or other spokes |
+| `WAI-Spoke/lugs/bytype/` | Work tracker — tasks, bugs, epics, signals by type and status |
+| `WAI-Spoke/lugs/incoming/` | Incoming lugs from hub or other spokes |
+| `WAI-Spoke/lugs/outgoing/` | Outbound lugs for hub or other spokes |
 | `WAI-Spoke/seed/ingest/` | Pending teachings from framework |
 
 ## Tool-Specific Files

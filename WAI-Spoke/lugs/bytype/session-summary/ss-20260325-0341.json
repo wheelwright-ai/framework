@@ -1,0 +1,61 @@
+{
+  "id": "ss-20260325-0341",
+  "type": "session-summary",
+  "title": "Session 72: Skill Thrift Tier 1 — wai-lug-schema + wai-improve slimmed, templates sync gap fixed, AGENTS.md fallback added",
+  "status": "completed",
+  "created_at": "2026-03-25T04:30:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "session_number": 72,
+  "session_id": "session-20260325-0341",
+  "accomplished": [
+    "templates/spoke/skills/ sync gap fixed: 6 missing folders created (auto-on/off/parallel/status, lug-compat, ozi-work-queue-monitor), 4 files updated to match templates/commands/ masters. 32 skill folders now match WAI-Skills.jsonl.",
+    "AGENTS.md Bootstrap step 3 updated: explicit hub path teaching discovery added as fallback. Stale paths (WAI-Lugs.jsonl, inbox/, outbox/) corrected to bytype/, incoming/, outgoing/.",
+    "wai-lug-schema.md slimmed 795→421 lines (-47%). wai-lug-schema-reference.md created (349L). Duplicate dogfooding section bug fixed. All 6 sync targets updated.",
+    "wai-improve.md slimmed 656→380 lines (-42%). wai-improve-reference.md created (182L). All 6 sync targets updated.",
+    "epic-skill-thrift-v1 lug improved with concrete content analysis, target line counts, runnable verify steps, explicit sync targets per skill.",
+    "Combined Tier 1 savings: 770 lines removed from primary skill load context."
+  ],
+  "files_touched": [
+    "templates/commands/wai-lug-schema.md",
+    "templates/commands/wai-lug-schema-reference.md (new)",
+    "templates/commands/wai-improve.md",
+    "templates/commands/wai-improve-reference.md (new)",
+    "templates/spoke/AGENTS.md",
+    "templates/spoke/skills/lug-schema/wai-lug-schema.md",
+    "templates/spoke/skills/lug-schema/wai-lug-schema-reference.md (new)",
+    "templates/spoke/skills/improve/wai-improve.md",
+    "templates/spoke/skills/improve/wai-improve-reference.md (new)",
+    "templates/spoke/skills/auto-on/ (new)",
+    "templates/spoke/skills/auto-off/ (new)",
+    "templates/spoke/skills/auto-parallel/ (new)",
+    "templates/spoke/skills/auto-status/ (new)",
+    "templates/spoke/skills/lug-compat/ (new)",
+    "templates/spoke/skills/ozi-work-queue-monitor/ (new)",
+    "templates/spoke/skills/chat-to-track/wai-chat-to-track.md",
+    "templates/spoke/skills/closeout/wai-closeout.md",
+    "templates/spoke/skills/shipit/wai-shipit.md",
+    "templates/spoke/skills/wai/wai.md",
+    "WAI-Spoke/commands/wai-lug-schema.md",
+    "WAI-Spoke/commands/wai-lug-schema-reference.md (new)",
+    "WAI-Spoke/commands/wai-improve.md",
+    "WAI-Spoke/commands/wai-improve-reference.md (new)",
+    "WAI-Spoke/lugs/bytype/epic/open/epic-skill-thrift-v1.json"
+  ],
+  "decisions": [
+    "421 lines acceptable for wai-lug-schema primary — 10 implementation review gate rules are behavioral, not reference material",
+    "wai-improve Step 6 promotion protocol kept in primary — too behavioral to move to reference",
+    "Implementation lug JSON schema (~140L) is the single biggest reference candidate — moved out cleanly",
+    "Skill Thrift principle confirmed: primary files carry instructions, reference files carry examples/schemas/templates"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "epic-skill-thrift-v1 Tier 2: wai-ozi-work-queue-monitor.md (364L), wai-lug-compat.md (277L), wai-track-generate.md (274L), wai-ide-setup.md (262L), wai-foundation.md (261L), wai-principles.md (234L), wai.md (220L)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Continue Tier 2 of epic-skill-thrift-v1 — start with wai-ozi-work-queue-monitor.md",
+      "epic-prompt-validation-bench-move on wheelwright-ai-website spoke (separate session)"
+    ]
+  },
+  "autosaves_reconciled": []
+}

@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.66",
+    "version": "2.0.67",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-25T10:39:03Z",
+    "last_modified_at": "2026-03-25T04:30:00Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-0337",
+    "last_session_id": "session-20260325-0341",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-25T10:39:03Z",
-    "last_closeout": "2026-03-25T10:39:03Z",
-    "session_count": 71,
-    "track_path": "WAI-Spoke/sessions/session-20260325-0337/track.jsonl",
+    "last_modified_at": "2026-03-25T04:30:00Z",
+    "last_closeout": "2026-03-25T04:30:00Z",
+    "session_count": 72,
+    "track_path": "WAI-Spoke/sessions/session-20260325-0341/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 71 complete. WAI-Spoke/commands/ structural fix \u2014 33 real file copies created, shipit Step 1 updated to sync them. 3 teachings applied. Next: (1) Verify templates/spoke/commands/ sync gap. (2) epic-skill-thrift-v1 Tier 1 \u2014 wai-lug-schema (795L) or wai-improve (656L). (3) AGENTS.md teaching discovery fallback (pending since S69). (4) epic-prompt-validation-bench-move on wheelwright-ai-website spoke.",
+    "next_session_recommendation": "Session 72 complete. Skill Thrift Tier 1: wai-lug-schema (795→421, -47%) + wai-improve (656→380, -42%) — 770 lines removed from primary context load. Reference files created for both. templates/spoke/skills/ sync gap fixed (6 folders + 4 files). AGENTS.md hub teaching discovery fallback added. Next: (1) epic-skill-thrift-v1 Tier 2 — wai-ozi-work-queue-monitor (364L), wai-lug-compat (277L), wai-track-generate (274L). (2) epic-prompt-validation-bench-move on wheelwright-ai-website spoke.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-25T10:37:12Z",
+    "protocol_last_run": "2026-03-25T04:30:00Z",
     "mode": "execution"
   },
   "_critical_directives": {
@@ -124,7 +124,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

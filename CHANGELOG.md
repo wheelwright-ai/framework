@@ -1,5 +1,21 @@
 
 
+## [2.0.67] - 2026-03-25
+
+### Changed
+- `wai-lug-schema.md` slimmed 795→421 lines (-47%): implementation lug JSON schema, PEV chain examples, victory briefing, Ozi types, WAI-Challenges schema moved to `wai-lug-schema-reference.md`. Duplicate dogfooding section fixed.
+- `wai-improve.md` slimmed 656→380 lines (-42%): fit report template, idea lug JSON, approval template, backlog output template, dogfood audit criteria moved to `wai-improve-reference.md`.
+
+### Added
+- `wai-lug-schema-reference.md` — companion reference file (349L) for on-demand loading
+- `wai-improve-reference.md` — companion reference file (182L) for on-demand loading
+- `templates/spoke/skills/` sync: 6 missing skill folders created (auto-on/off/parallel/status, lug-compat, ozi-work-queue-monitor)
+- `templates/spoke/AGENTS.md` Bootstrap step 3: explicit hub path teaching discovery fallback added
+
+### Fixed
+- `templates/spoke/skills/` was missing 6 skill folders registered in WAI-Skills.jsonl
+- 4 spoke template skill files (wai.md, wai-closeout.md, wai-shipit.md, wai-chat-to-track.md) were behind templates/commands/ masters — synced
+
 ## [2.0.56] - 2026-03-24
 
 ### Fixed
