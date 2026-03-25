@@ -72,7 +72,17 @@
       "Read(//home/mario/projects/wheelwright/hub/teachings_repo/framework/current/**)",
       "Read(//home/mario/projects/wheelwright/hub/cross_spoke/**)",
       "Bash(WAI-Spoke/lugs/bytype/session-summary/session-20260325-0330.json:*)",
-      "Bash(WAI-Spoke/lugs/bytype/signal/undelivered/signal-template-spoke-sync-gap-v1.json:*)"
+      "Bash(WAI-Spoke/lugs/bytype/signal/undelivered/signal-template-spoke-sync-gap-v1.json:*)",
+      "Bash(WAI-Spoke/lugs/bytype/epic/open/epic-skill-thrift-v1.json:*)",
+      "Read(//home/mario/projects/wheelwright/wheelwright-ai-website/WAI-Spoke/seed/**)",
+      "Read(//home/mario/projects/wheelwright-ai-website/WAI-Spoke/seed/ingest/**)",
+      "Read(//home/mario/projects/**)",
+      "Bash(rm:*)",
+      "Bash(for d in complexity-advisor context-advisor foundation-advisor lug-advisor signal-advisor stewardship-advisor)",
+      "Read(//home/mario/projects/wheelwright/framework/WAI-Spoke/skills/**)",
+      "Bash(for d in complexity-gate context-guard foundation-gate lug-schema signal-capture stewardship-guard)",
+      "Read(//home/mario/projects/wheelwright/framework/templates/spoke/skills/**)",
+      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/)"
     ]
   }
 }

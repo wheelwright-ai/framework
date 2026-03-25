@@ -27,6 +27,9 @@ If running from the framework repo, sync canonical source to IDE and template sp
 # Claude Code slash commands (flat)
 yes | cp templates/commands/wai*.md .claude/commands/
 
+# Framework spoke commands (real copies — framework dogfoods teaching workflow)
+yes | cp templates/commands/wai*.md WAI-Spoke/commands/
+
 # Template spoke skill subdirs
 for skill_dir in templates/spoke/skills/*/; do
   for f in "$skill_dir"*.md; do

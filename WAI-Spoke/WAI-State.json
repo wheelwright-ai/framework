@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.65",
+    "version": "2.0.66",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-25T02:40:00Z",
+    "last_modified_at": "2026-03-25T10:39:03Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-0211",
+    "last_session_id": "session-20260325-0337",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-25T02:40:00Z",
-    "last_closeout": "2026-03-25T02:40:00Z",
-    "session_count": 70,
-    "track_path": "WAI-Spoke/sessions/session-20260325-0211/track.jsonl",
+    "last_modified_at": "2026-03-25T10:39:03Z",
+    "last_closeout": "2026-03-25T10:39:03Z",
+    "session_count": 71,
+    "track_path": "WAI-Spoke/sessions/session-20260325-0337/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 70 complete. Hub teachings backlog cleared (4 teachings applied). 5 implementation lugs closed. Track Prompt upgraded to v0.18. Next: (1) AGENTS.md teaching discovery fallback \u2014 add hub path validation + batch sequence handling (discussed S69, still pending). (2) epic-skill-thrift-v1 Tier 1 \u2014 wai-lug-schema (795L) or wai-improve (656L). (3) epic-prompt-validation-bench-move needs applying on wheelwright-ai-website spoke.",
+    "next_session_recommendation": "Session 71 complete. WAI-Spoke/commands/ structural fix \u2014 33 real file copies created, shipit Step 1 updated to sync them. 3 teachings applied. Next: (1) Verify templates/spoke/commands/ sync gap. (2) epic-skill-thrift-v1 Tier 1 \u2014 wai-lug-schema (795L) or wai-improve (656L). (3) AGENTS.md teaching discovery fallback (pending since S69). (4) epic-prompt-validation-bench-move on wheelwright-ai-website spoke.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-25T09:38:24Z",
+    "protocol_last_run": "2026-03-25T10:37:12Z",
     "mode": "execution"
   },
   "_critical_directives": {

@@ -10,6 +10,21 @@
 
 ---
 
+## Prerequisites
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| Path split applied | `grep -q "safe_to_auto_adopt: true.*brief prompt" WAI-Spoke/commands/wai.md && echo PASS \|\| echo FAIL` | Step 0a requires Path A/B split already in place |
+
+## Batch Sequence
+**Batch:** wai-core-fixes
+**Apply order:** 3 of 3
+**Depends on:** wai-step3a-path-split-v1
+**Required before:** none
+**Parallel safe:** no — final step in wakeup core fix chain
+**Full batch order:** skill-wai-wakeup-discovery-fix-v1 → wai-step3a-path-split-v1 → wai-wakeup-integration-check-v2
+
+---
+
 ## What This Teaching Does
 
 Adds **Step 0a: Check Integration File** to the wakeup protocol to ensure every agent reads their tool-specific configuration file (CLAUDE.md, GEMINI.md, etc.) during wakeup.

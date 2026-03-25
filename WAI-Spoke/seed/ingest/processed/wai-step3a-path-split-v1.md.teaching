@@ -8,6 +8,21 @@
 
 ---
 
+## Prerequisites
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| Discovery fix applied | `grep -q "Do NOT skip silently" WAI-Spoke/commands/wai.md && echo PASS \|\| echo FAIL` | Wakeup must have correct discovery before adoption flow changes |
+
+## Batch Sequence
+**Batch:** wai-core-fixes
+**Apply order:** 2 of 3
+**Depends on:** skill-wai-wakeup-discovery-fix-v1
+**Required before:** wai-wakeup-integration-check-v2
+**Parallel safe:** no — sequential with wakeup core fixes
+**Full batch order:** skill-wai-wakeup-discovery-fix-v1 → wai-step3a-path-split-v1 → wai-wakeup-integration-check-v2
+
+---
+
 ## What This Teaching Does
 
 Updates the spoke's `WAI-Spoke/commands/wai.md` Step 3a (Hub teaching adoption) with:

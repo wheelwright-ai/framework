@@ -8,6 +8,19 @@
 
 ---
 
+## Prerequisites
+None — updates wai-shipit.md independently.
+
+## Batch Sequence
+**Batch:** closeout-upgrades
+**Apply order:** 2 of 2 (parallel with wai-closeout-step9b-sender-v1)
+**Depends on:** none
+**Required before:** none
+**Parallel safe:** yes — touches wai-shipit.md only; wai-closeout-step9b-sender-v1 touches wai-closeout.md only
+**Full batch order:** wai-closeout-step9b-sender-v1 + wai-shipit-release-tag-v1 (either order or parallel)
+
+---
+
 ## What This Teaching Does
 
 Replaces the spoke's `WAI-Spoke/commands/wai-shipit.md` with the current version, which adds:
