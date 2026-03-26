@@ -108,9 +108,9 @@ For each signal lug with `impact > 7` and `status != "archived"`: if not already
 Output this block exactly after git push confirms — fill in real values, no placeholders:
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 WAI CLOSEOUT ✓  Session {N} · v{old} → v{new}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Done:
   ✓ {each accomplishment, one per line}
 
@@ -120,7 +120,7 @@ Signals:  {N extracted (impact N) | none}
 Track:    WAI-Spoke/sessions/{session-dir}/track.jsonl
 Commit:   {short hash} — pushed to main
 Next:     {next_session_recommendation, one line}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
 Then stop. Do not add prose after the block.
