@@ -100,10 +100,10 @@
     "session_count": 79,
     "track_path": "WAI-Spoke/sessions/session-20260325-1914/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 79: Q&A only \u2014 explained teaching file verification mechanism. No code changes. Next: distribute skill-wai-teaching-adoption-audit-v1 to hub spokes. Then Tier 2 epics: ozi-work-queue-orchestration, interruption-recovery, routing-awareness.",
+    "next_session_recommendation": "Session 79: Q&A only — explained teaching file verification mechanism. No code changes. Next: distribute skill-wai-teaching-adoption-audit-v1 to hub spokes. Then Tier 2 epics: ozi-work-queue-orchestration, interruption-recovery, routing-awareness.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-26T03:32:37Z",
+    "protocol_last_run": "2026-03-26T04:53:48Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
@@ -128,7 +128,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

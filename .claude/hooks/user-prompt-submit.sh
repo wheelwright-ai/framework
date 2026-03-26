@@ -45,6 +45,9 @@ CRITICAL: This is your first turn in a new session. Before responding to the use
    Prioritize review before other work. Follow (deprecated - auto-discovery on wakeup) skill.
 
 4. Then respond to the user's message.
+
+EXCEPTION: If the user's message is a closeout command ("closeout", "/wai-closeout", "/wai-shipit"),
+skip the wakeup briefing entirely and proceed directly to closeout. Do NOT say "Wake complete."
 </wai-session-start>
 EOF
 
