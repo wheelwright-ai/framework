@@ -114,6 +114,8 @@ WAI CLOSEOUT ✓  Session {N} · v{old} → v{new}
 Done:
   ✓ {each accomplishment, one per line}
 
+Turns:    {N turns this session}
+Context:  {Nk}/{maxk} tokens ({N}%) at close
 Signals:  {N extracted (impact N) | none}
 Commit:   {short hash} — pushed to main
 Next:     {next_session_recommendation, one line}

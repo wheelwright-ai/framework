@@ -442,7 +442,7 @@ WAI POINT ✓  Session {N} · {date} · {model}
 Project:  {name} v{version}
 Phase:    {current_phase}
 Hub:      {✓ Connected | ✗ Missing}
-Context:  {GREEN|YELLOW|ORANGE|RED} {N}%
+Context:  {GREEN|YELLOW|ORANGE|RED} {Nk}/{maxk} tokens ({N}%)
 
 Active Work:
   → {top 3 open/in_progress lugs by title}
