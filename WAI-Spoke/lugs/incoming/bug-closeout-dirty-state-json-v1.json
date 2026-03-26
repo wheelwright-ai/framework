@@ -1,0 +1,55 @@
+{
+  "id": "bug-closeout-dirty-state-json-v1",
+  "ty": "b",
+  "t": "Closeout does not reliably commit WAI-State.json — file appears dirty at next wakeup",
+  "s": "o",
+  "ca": "2026-03-25T22:25:00Z",
+  "gb": "Claude Sonnet 4.6 (PathFinder spoke — Historian first pass)",
+  "priority": "high",
+  "impact": 7,
+  "source": "historian-review-20260325-2215 (vector-20260325-2215-01)",
+
+  "description": "The closeout protocol is expected to commit all WAI-Spoke changes (including WAI-State.json) before ending the session. In practice, WAI-State.json appears as modified (M) in git status at the start of 4 of the last ~8 PathFinder sessions. This means either: (a) context exhaustion causes the session to end before the closeout commit step is reached, or (b) the closeout protocol's commit step does not consistently stage WAI-State.json. The result is a persistent 'dirty spoke' state that each new session dismisses as 'low risk' without investigating root cause.",
+
+  "repro_steps": [
+    "1. Complete a normal work session on a WAI spoke.",
+    "2. Run /wai-closeout to end the session.",
+    "3. In a new terminal or new session, run: git status",
+    "4. Observe: WAI-Spoke/WAI-State.json is listed as M (modified) — uncommitted.",
+    "5. Repeat across 3-4 sessions — the pattern recurs, particularly after sessions that hit context limits."
+  ],
+
+  "actual_behavior": "WAI-State.json is modified after closeout in approximately 50% of observed sessions on PathFinder. Each subsequent wakeup notes it as 'uncommitted, low risk' and proceeds without investigation or resolution. The state accumulates across sessions.",
+
+  "desired_behavior": "After closeout, WAI-State.json and all WAI-Spoke/ files are committed and the spoke is in a clean git state. If context is too low to reach the commit step, closeout should either: (a) warn early ('context at X% — I may not reach the commit step; consider /wai-shipit now'), or (b) detect at wakeup that the prior closeout was incomplete and surface a recovery prompt rather than dismissing as 'low risk'.",
+
+  "proposed_fix": {
+    "file": "WAI-Spoke/commands/wai-closeout.md (and framework template)",
+    "two_part": true,
+    "part_1": {
+      "location": "Early in closeout protocol (before Step 3 or 4)",
+      "description": "Add a context pressure check. If estimated context > 70%, surface: 'Context is high ({%}). Completing closeout commit may be at risk. Recommend /wai-shipit now or compacting before continuing.'"
+    },
+    "part_2": {
+      "location": "Wakeup Step 7 (Session Check) or Step 3 (Git health)",
+      "description": "If git status shows WAI-State.json as modified AND prior session's protocol_completed = true, surface: 'Prior closeout may have been incomplete — WAI-State.json is uncommitted. Stage and commit now? (yes/skip)' This converts a silent observation into an actionable prompt."
+    }
+  },
+
+  "evidence": {
+    "sessions_with_dirty_wai_state": [
+      "track_session-20260323-2148 turn 1: 'WAI-State.json uncommitted — prior session artifact, low risk'",
+      "track_session-20260325-0316 turn 1: '2 modified files: .env.template, WAI-State.json'",
+      "track_session-20260325-0748 turn 1: dirty WAI-State.json noted in git status",
+      "track_session-20260326-0300 turn 1: 'M WAI-State.json' in git status"
+    ],
+    "pattern": "Occurs after sessions that reach context pressure or skip /wai-shipit in favor of /wai-closeout"
+  },
+
+  "why_high_priority": "A spoke that routinely has an uncommitted WAI-State.json loses session history fidelity — if the repo is cloned or reset, the last session's state is missing. The 'low risk' dismissal normalizes incomplete closeouts instead of surfacing them as anomalies.",
+
+  "_behavior_directive": {
+    "what_this_is": "Bug report from PathFinder Historian first pass — protocol gap in wai-closeout.md and wakeup session health check.",
+    "what_this_is_NOT": "An instruction to implement immediately or modify framework files without review."
+  }
+}

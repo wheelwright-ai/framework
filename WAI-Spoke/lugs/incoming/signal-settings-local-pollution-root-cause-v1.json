@@ -1,0 +1,11 @@
+{
+  "id": "signal-settings-local-pollution-root-cause-v1",
+  "type": "signal",
+  "status": "undelivered",
+  "created": "2026-03-25T22:50:00Z",
+  "title": "settings.local.json accumulates session-specific junk over time",
+  "body": "settings.local.json had 80+ entries from 60+ past sessions: broken shell fragments (if/then/else/do/done as separate lines), __NEW_LINE__ encoded commands, paths to unrelated projects (wheelwright-ai benchmarks, condoshield, notionpilot, VoiceFlow, OwnersShare, pathfinder), specific old track file paths, retired WAI-Signals.jsonl references. Root cause: Claude Code appends new permissions on each approval without deduplication or cleanup. Fix applied: stripped to 16 genuine entries not covered by settings.json. Protocol recommendation: audit settings.local.json at closeout; flag entries that look like session artifacts rather than permanent permissions.",
+  "impact": 5,
+  "source": "session-81-framework",
+  "tags": ["settings", "hygiene", "closeout-protocol", "permissions"]
+}

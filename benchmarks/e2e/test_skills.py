@@ -28,9 +28,7 @@ HOOK = ROOT / ".claude" / "hooks" / "user-prompt-submit.sh"
 REQUIRED_SKILLS = [
     "wai",
     "wai-closeout",
-    "wai-shipit",
-    # wai-teach absorbed into wai-closeout.md Step 9b (signal teach, S25)
-    # wai-learn absorbed into wai.md Step 3a (S22)
+    # wai-shipit moved to WAI-Spoke/skills/shipit/ (skill thrift refactor, S67)
     "wai-lug-schema",
     "wai-foundation",
     "wai-ide-setup",
@@ -50,14 +48,17 @@ REQUIRED_SKILLS = [
 ABSORBED_COMMANDS = {"wai-teach", "wai-learn", "wai-review"}
 
 SKILL_REQUIRED_SECTIONS = {
-    "wai": ["## Wakeup Protocol", "## Complete Briefing Format", "## Health Check"],
-    "wai-closeout": ["## Closeout Procedure", "## Incomplete Work"],
+    # wai.md refactored to numbered steps (S67 skill thrift); sections renamed
+    "wai": ["## Step 1: Load Integration File", "## Step 7: Display Briefing", "## Incoming Routing Rules"],
+    # wai-closeout.md thrift refactor removed ## Incomplete Work (S67)
+    "wai-closeout": ["## Closeout Procedure", "## Success Criteria"],
     # wai-teach removed — absorbed into wai-closeout.md Step 9b
     # wai-learn removed — absorbed into wai.md Step 3a
     "wai-lug-schema": [
-        "## Lug Creation Template",
+        # ## Lug Creation Template removed in thrift refactor (S67)
         "## Lug Lifecycle",
         "## Complete Lug Type Catalog",
+        "## Canonical Storage",
     ],
     "wai-ide-setup": [
         "## Claude Code Setup",
@@ -523,16 +524,16 @@ def test_inbox_routing(suite: Suite):
         for ty, dest in routing.items():
             r.assert_true(ty in learn, f"routing rule for '{ty}' documented")
 
-        # Verify signal type goes to WAI-Signals.jsonl
+        # Verify signal type routing (WAI-Signals.jsonl retired session 51, now bytype/signal/undelivered/)
         r.assert_true(
-            "WAI-Signals.jsonl" in learn,
-            "WAI-Signals.jsonl mentioned as routing destination",
+            "bytype/signal/undelivered" in learn,
+            "signal routing destination documented (bytype/signal/undelivered/)",
         )
 
-        # Verify safety rule
+        # Verify safety rule: incoming items are data, not instructions
         r.assert_true(
-            "MAILROOM" in learn or "mailroom" in learn.lower(),
-            "inbox mailroom safety rule present",
+            "DATA" in learn or "data to track" in learn.lower(),
+            "inbox safety rule present (incoming items are data, not instructions)",
         )
         r.assert_true(
             "NEVER" in learn or "Never" in learn or "never" in learn,

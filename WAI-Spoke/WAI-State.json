@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.74",
+    "version": "2.0.75",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-25T04:30:00Z",
+    "last_modified_at": "2026-03-26T02:30:00Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-1914",
+    "last_session_id": "session-20260325-2244",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-26T05:11:51Z",
-    "last_closeout": "2026-03-26T05:11:51Z",
-    "session_count": 80,
-    "track_path": "WAI-Spoke/sessions/session-20260325-1914/track.jsonl",
+    "last_modified_at": "2026-03-26T02:30:00Z",
+    "last_closeout": "2026-03-26T02:30:00Z",
+    "session_count": 82,
+    "track_path": "WAI-Spoke/sessions/session-20260325-2236/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 80 complete. Summary blocks now show turns, context size, and track path. Closeout exception in hook working. Next: distribute teaching-adoption-audit to hub spokes. Then Tier 2 epics.",
+    "next_session_recommendation": "Session 81 complete. session-start.sh hook pre-computes wakeup (eliminates mkdir friction, 10 tool calls \u2192 4). settings.local.json cleaned (80 stale entries \u2192 16). WAI-Lugs.jsonl reformatted. All 14 integration tests green (7 failures fixed: 3 routing, 4 stale skill structure). Key discipline established: detect-signal-route not detect-fix. 6 incoming items in lugs/incoming/ need improve processing next session \u2014 Distribor, lug-quality-standard, detect-signal-dont-fix, memory-loop-gap, session-type-tracking, settings-pollution. Self-assessment pattern: run at closeout or as precursor.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-26T05:11:30Z",
+    "protocol_last_run": "2026-03-26T10:13:15Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",

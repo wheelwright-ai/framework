@@ -4,6 +4,19 @@ Execute the wakeup protocol to initialize the spoke and get ready for work.
 
 ---
 
+## Pre-check: Session Init Data Available?
+
+**Check if `<wai-session-init>` is present in context** (injected by `session-start.sh` hook).
+
+If YES:
+- **Skip Steps 2, 4, 5, 6, and the session-dir creation in Step 8** — the hook pre-computed this data.
+- Use the `<wai-session-init>` block as the source for: active lug counts/names, teaching discovery results, hub status, git status, next actions, and track path.
+- Still run Step 1 (integration file), Step 3 (skills), and Step 7 (display briefing using hook data).
+
+If NO (hook did not run): Execute all steps normally.
+
+---
+
 ## Step 1: Load Integration File
 
 Detect environment and read the corresponding integration file:
@@ -168,23 +181,35 @@ Surface in briefing under Context Health:
 
 Do NOT skip silently. Both errors must appear in the Step 7 briefing.
 
-**If hub path is valid**, scan:
+**If hub path is valid**, capture before-state and scan:
+
 ```bash
+# Before-state: count already-adopted teachings
+BEFORE_COUNT=$(ls -1 WAI-Spoke/seed/ingest/processed/*.teaching 2>/dev/null | wc -l)
+
 ls -1 "${HUB_PATH}/teachings_repo/framework/current/"*.teaching 2>/dev/null
 ls -1 "${HUB_PATH}/cross_spoke/current/"*.teaching 2>/dev/null
 ```
 
 For each discovered teaching:
 1. Check if already adopted (filename exists in `WAI-Spoke/seed/ingest/processed/`)
-2. If new, split by `safe_to_auto_adopt` flag:
+2. Track discovery counts: `total_found`, `pre_existing`, `new_auto`, `new_manual`, `unprocessed` (with reason)
+3. If new, split by `safe_to_auto_adopt` flag:
 
 **Path A — `safe_to_auto_adopt: true` (brief prompt, no ceremony):**
 1. Extract: what it affects, behavioral implication, challenge solved
 2. If teaching has `## Batch Sequence` block: respect apply order — note dependencies before offering adoption
 3. Present compact table, one row per teaching, with apply order if present
-4. Duplicate check: skip if same `timestamp` exists in active lugs or index
+4. Duplicate check: skip if same `timestamp` OR `id` exists in active lugs or index — log "Signal already known; skipping duplicate append" — still move to `processed/`
 5. Present: "Apply all / Skip all / Apply [specific]?" — wait for response
-6. Adopt approved items, move originals to `seed/ingest/processed/`
+6. **Prerequisite check:** If teaching declares a `Prerequisites` section, verify each condition before adopting. If any fail: skip adoption, add to `unprocessed` list with reason "Prerequisite failed: {specific check}". Do NOT adopt partial prerequisites.
+7. Adopt approved items, move originals to `seed/ingest/processed/`
+
+**After scan — delta report (required, report in Step 7 briefing):**
+```
+Teaching Discovery: hub found {total_found}, pre-existing {pre_existing}, new auto-adopt {new_auto}, manual review {new_manual}, unprocessed {unprocessed}
+```
+If `unprocessed > 0`: list each file and WHY (prerequisite failed, `safe_to_auto_adopt: false`, unknown type, etc.).
 
 **Path B — `safe_to_auto_adopt: false`:**
 1. List new `.teaching` files
@@ -215,7 +240,17 @@ Show unified WAI Point briefing:
 - Active work (from `bytype/*/open/` and `bytype/*/in_progress/`)
   - **Include routing info:** Group by `routed_to` (LOCAL, FRAMEWORK, SIGNAL)
   - Announce: "Routing: X LOCAL (this project), Y FRAMEWORK (hub), Z SIGNAL (broadcast)"
-- Teaching discovery results
+- **Teaching absorption report** (from Step 5 delta):
+  ```
+  Teaching absorption:
+    Hub teachings found:        {total_found}
+    Already adopted (spoke):    {pre_existing}
+    Newly adopted this session: {new_auto}
+    Requiring manual review:    {new_manual}  [list filenames]
+    Unprocessed (with reason):  {unprocessed} [filename — reason]
+  ```
+  If all counts are zero and hub path valid: report "Teachings: up to date".
+  **Never silently omit unprocessed count** — zero is acceptable but must be stated.
 - Context health (git, hub, session state, **context budget**)
 - Next actions (from `_session_state.next_session_recommendation`)
 
