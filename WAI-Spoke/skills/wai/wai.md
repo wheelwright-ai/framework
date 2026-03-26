@@ -433,9 +433,28 @@ Per-turn point capture schema:
 
 ## Step 10: Ready Prompt
 
-After completing all steps, ask:
+Output this block exactly — fill in real values, no placeholders:
 
-"Wake complete. Ready to work. What would you like to do next?"
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WAI POINT ✓  Session {N} · {date} · {model}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Project:  {name} v{version}
+Phase:    {current_phase}
+Hub:      {✓ Connected | ✗ Missing}
+Context:  {GREEN|YELLOW|ORANGE|RED} {N}%
+
+Active Work:
+  → {top 3 open/in_progress lugs by title}
+
+Teachings:  {N new | none}
+Signals:    {N undelivered | none}
+
+Next: {next_session_recommendation, one line}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Then stop. Do not add prose after the block.
 
 ---
 

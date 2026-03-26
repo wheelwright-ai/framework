@@ -225,7 +225,28 @@ touch "$SESSION_DIR/track.jsonl"
 
 ## Step 9: Ready
 
-"Wake complete. Ready to work."
+Output this block exactly — fill in real values, no placeholders:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WAI POINT ✓  Session {N} · {date} · {model}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Project:  {name} v{version}
+Phase:    {current_phase}
+Hub:      {✓ Connected | ✗ Missing}
+Context:  {GREEN|YELLOW|ORANGE|RED} {N}%
+
+Active Work:
+  → {top 3 open/in_progress lugs by title}
+
+Teachings:  {N new | none}
+Signals:    {N undelivered | none}
+
+Next: {next_session_recommendation, one line}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Then stop. Do not add prose after the block.
 
 ---
 
