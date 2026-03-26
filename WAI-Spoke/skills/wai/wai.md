@@ -449,6 +449,7 @@ Active Work:
 
 Teachings:  {N new | none}
 Signals:    {N undelivered | none}
+Track:      WAI-Spoke/sessions/{session-dir}/track.jsonl
 
 Next: {next_session_recommendation, one line}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

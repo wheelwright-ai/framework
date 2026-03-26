@@ -117,6 +117,7 @@ Done:
 Turns:    {N turns this session}
 Context:  {Nk}/{maxk} tokens ({N}%) at close
 Signals:  {N extracted (impact N) | none}
+Track:    WAI-Spoke/sessions/{session-dir}/track.jsonl
 Commit:   {short hash} — pushed to main
 Next:     {next_session_recommendation, one line}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
