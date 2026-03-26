@@ -50,7 +50,16 @@
       "Bash(diff *)",
       "Bash(curl *)",
       "Bash(touch *)",
-      "Write(*)"
+      "Write(*)",
+      "Read(*)",
+      "Skill(*)",
+      "Bash(jq *)",
+      "Bash(python3 *)",
+      "Bash(test *)",
+      "Bash(date *)",
+      "Bash(for *)",
+      "Bash(HUB_PATH=*)",
+      "Bash(SESSION_DIR=*)"
     ]
   }
 }

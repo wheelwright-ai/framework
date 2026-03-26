@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.75",
+    "version": "2.0.76",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-26T02:30:00Z",
+    "last_modified_at": "2026-03-26T20:54:14Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-2244",
+    "last_session_id": "session-20260326-0937",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-26T02:30:00Z",
-    "last_closeout": "2026-03-26T02:30:00Z",
-    "session_count": 82,
-    "track_path": "WAI-Spoke/sessions/session-20260325-2236/track.jsonl",
+    "last_modified_at": "2026-03-26T20:54:14Z",
+    "last_closeout": "2026-03-26T20:54:14Z",
+    "session_count": 83,
+    "track_path": "WAI-Spoke/sessions/session-20260326-0937/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 81 complete. session-start.sh hook pre-computes wakeup (eliminates mkdir friction, 10 tool calls \u2192 4). settings.local.json cleaned (80 stale entries \u2192 16). WAI-Lugs.jsonl reformatted. All 14 integration tests green (7 failures fixed: 3 routing, 4 stale skill structure). Key discipline established: detect-signal-route not detect-fix. 6 incoming items in lugs/incoming/ need improve processing next session \u2014 Distribor, lug-quality-standard, detect-signal-dont-fix, memory-loop-gap, session-type-tracking, settings-pollution. Self-assessment pattern: run at closeout or as precursor.",
+    "next_session_recommendation": "Session 82 complete. Fixed 2 issues: (1) wakeup permission prompts \u2014 added Read(*), Skill(*), Bash(jq*), Bash(python3*), Bash(for*), Bash(HUB_PATH=*), Bash(SESSION_DIR=*), Bash(test*), Bash(date*) to .claude/settings.json; (2) CI exit 126 \u2014 run-integration-tests.sh missing execute bit, fixed with git update-index --chmod=+x, committed and pushed. Pending next session: process 10 incoming lugs via /wai-improve (Distribor, lug-quality-standard, detect-signal-dont-fix, memory-loop-gap, session-type-tracking, settings-pollution + 4 others); review session70-distribution-improvements teaching (safe_to_auto_adopt: false); 14 undelivered signals awaiting hub delivery.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-26T10:13:15Z",
+    "protocol_last_run": "2026-03-26T20:41:31Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
