@@ -3,7 +3,7 @@
 **Type:** {Protocol Enhancement | Protocol Correction | Bug Fix | Migration Signal | Principle + Signal}
 **Version:** {major}.{minor}.{patch}
 **Created:** {YYYY-MM-DD}
-**Safe to Auto-Adopt:** {true | false}
+**Safe to Auto-Adopt:** true ← DEFAULT (change to false only if teaching should NOT auto-apply; if unsure, escalate to framework team)
 **Affects:** {list of affected components}
 **Supersedes:** {prior teaching id or "nothing"}
 

@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.70",
+    "version": "2.0.71",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -8,7 +8,7 @@
     "description": null,
     "created": "2026-02-08T13:28:21.240569",
     "last_modified": "2026-02-21T00:48:00+00:00",
-    "hub_path": "/home/mario/projects/wheelwright/hub/",
+    "hub_path": "/home/mario/projects/wheelwright/hub",
     "abbrev": null,
     "type": null,
     "repository": null,
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-1240",
+    "last_session_id": "session-20260325-1834",
     "last_modified_by": "claude-haiku-4-5",
-    "last_modified_at": "2026-03-25T20:43:11Z",
-    "last_closeout": "2026-03-25T20:53:57Z",
-    "session_count": 76,
-    "track_path": "WAI-Spoke/sessions/session-20260325-1352/track.jsonl",
+    "last_modified_at": "2026-03-25T18:45:00Z",
+    "last_closeout": "2026-03-25T18:50:00Z",
+    "session_count": 77,
+    "track_path": "WAI-Spoke/sessions/session-20260325-1834/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 76 complete. Enhanced wakeup/closeout markers deployed. Next: Publish 5 signals as teachings (Session 77 priority). Markers now show: WAKEUP = project context, CLOSEOUT = track stats + version changes. Ready for spoke distribution.",
+    "next_session_recommendation": "Session 77 complete. Teaching adoption audit protocol finalized: auto-adopt=true is now default for all teachings. Blocking rule enforces audit before other teachings. Audit teaching ready for hub distribution. Next (Session 78): Distribute teaching-adoption-audit to all spokes. Each spoke auto-adopts + runs audit on first wakeup. Then focus Tier 2 epics: ozi-work-queue, interruption-recovery, routing-awareness.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-25T21:21:11Z",
+    "protocol_last_run": "2026-03-26T01:34:03Z",
     "mode": "execution"
   },
   "_critical_directives": {
@@ -195,7 +195,8 @@
       "Begin development with clear context"
     ],
     "blockers": [],
-    "insights": []
+    "insights": [],
+    "hub_path_corrected_at": "2026-03-25T13:05:00Z"
   },
   "stack": [],
   "features": [],

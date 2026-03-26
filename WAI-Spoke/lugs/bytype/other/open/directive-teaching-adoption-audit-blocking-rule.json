@@ -1,0 +1,42 @@
+{
+  "id": "directive-teaching-adoption-audit-blocking-rule",
+  "type": "other",
+  "status": "open",
+  "created_at": "2026-03-25T13:30:00Z",
+  "created_by": "claude-haiku-4-5",
+  "timestamp": "2026-03-25T13:30:00Z",
+  "fw_version": "3.0.0",
+  "category": "critical-directive",
+  "title": "CRITICAL: Teaching Adoption Audit Blocks All Other Teachings",
+  "priority": "BLOCKING",
+  "summary": "Teaching adoption audit (skill-wai-teaching-adoption-audit-v1.md.teaching) is foundational infrastructure. If spokes cannot verify teaching adoption, the entire framework breaks silently. This directive enforces blocking: no other teachings are offered/processed until audit is verified.",
+  "directive": {
+    "principle": "Teaching infrastructure before application",
+    "rule": "If skill-wai-teaching-adoption-audit-v1.md.teaching is not verified as adopted on a spoke, ALL other teaching processing is BLOCKED.",
+    "enforcement": "Wakeup Step 5 (teaching discovery) must check: has audit teaching been verified? If NO: surface CRITICAL warning and do NOT offer other teachings.",
+    "blocking_trigger": "IF adopted teaching status for audit teaching is false OR unverified → block all teaching processing",
+    "unblock_path": "User (or Ozi with approval) must run the audit, confirm results, mark as verified before other teachings are processed",
+    "not_optional": "This is non-negotiable framework infrastructure. Without it, spokes cannot reliably adopt teachings."
+  },
+  "implementation_checklist": [
+    "☐ skill-wai-teaching-adoption-audit-v1.md.teaching marked: safe_to_auto_adopt=true, priority=CRITICAL",
+    "☐ Batch Sequence updated: 'Required before: ALL other teachings'",
+    "☐ Blocking rule added: blocks wakeup Step 5 if not verified",
+    "☐ Wakeup Step 5 modified to check audit verification status",
+    "☐ If unverified: surface '⚠️ CRITICAL: Teaching adoption audit required'",
+    "☐ WAI-State.json extended with `_teaching_audit_verified: boolean` flag per spoke"
+  ],
+  "enforcement_points": [
+    "Wakeup Step 5: Check `_teaching_audit_verified` flag. If false/missing → BLOCK other teaching discovery",
+    "Teaching discovery: Do NOT present other teachings until audit verified",
+    "Closeout: Mark teaching adoption audit as 'verified' only after audit completes successfully"
+  ],
+  "testing": "Deploy to one spoke first. Verify: (1) audit teaching auto-adopted, (2) other teachings blocked until audit passed, (3) after audit, other teachings offered normally",
+  "rationale": "If a spoke cannot verify teaching adoption, it should assume it's broken and not accept framework updates. Better to be loud about needing repair than silent about being broken.",
+  "related_artifacts": [
+    "skill-wai-teaching-adoption-audit-v1.md.teaching (the blocking teaching)",
+    "signal-teaching-adoption-audit-protocol-complete-v1.json (delivery signal)"
+  ],
+  "routed_to": "framework",
+  "scope_verified_by": "user insight: 'if this doesnt work...we are building a broken wheel'"
+}

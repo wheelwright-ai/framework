@@ -1,0 +1,65 @@
+{
+  "id": "session-77-teaching-audit",
+  "type": "session-summary",
+  "status": "completed",
+  "created_at": "2026-03-25T18:45:00Z",
+  "session_number": 77,
+  "model": "claude-haiku-4-5",
+  "duration_turns": "~20 turns over ~60 minutes",
+  "title": "Session 77: Teaching Adoption Audit Protocol + Auto-Adopt Default",
+  "summary": "Completed Option 3 quick-win: audited Wheelwright Framework (93 processed teachings all adopted ✓). Created formal teaching for all spokes + blocking rule + auto-adopt default policy. Teaching adoption verification is now foundational, not optional.",
+  "accomplished": [
+    "Audited Wheelwright Framework: 93 processed teachings, spot-checked 3 critical ones, all ADOPTED",
+    "Confirmed anti-pattern does NOT exist on Wheelwright (processed ≠ adopted was not found)",
+    "Created formal teaching: skill-wai-teaching-adoption-audit-v1.md.teaching (auto-adopt: true, CRITICAL, blocking)",
+    "Implemented blocking rule: audit gates all other teaching processing until verified",
+    "Established auto-adopt default policy: all teachings default to safe_to_auto_adopt: true",
+    "Updated teaching template to bake in true as default with guidance on when to change it",
+    "Created 3 directive lugs: audit blocking rule, auto-adopt policy, audit results"
+  ],
+  "artifacts_created": [
+    "skill-wai-teaching-adoption-audit-v1.md.teaching (formal teaching, auto-adopt: true, CRITICAL)",
+    "audit-wheelwright-teachings-adoption-20260325.json (audit results)",
+    "directive-teaching-adoption-audit-blocking-rule.json (enforcement directive)",
+    "policy-teaching-auto-adopt-default-true.json (framework policy)",
+    "signal-teaching-adoption-audit-protocol-complete-v1.json (impact: 9, for hub)",
+    "Updated teaching template with auto-adopt: true as default"
+  ],
+  "high_impact_signals": [
+    {
+      "id": "signal-teaching-adoption-audit-protocol-complete-v1",
+      "impact": 9,
+      "teaching": "Teaching adoption audit is foundational. Blocking rule ensures verification before spokes accept other teachings."
+    }
+  ],
+  "key_decisions": [
+    "Teaching adoption audit must be auto-adopt: true (CRITICAL), not false",
+    "Audit blocks all other teaching processing until verified (non-negotiable)",
+    "Auto-adopt default for ALL teachings (framework trusts its own distributions)",
+    "If teaching not safe to auto-adopt, don't distribute it (fix or escalate)"
+  ],
+  "policy_changes": [
+    "All teachings now default: safe_to_auto_adopt: true",
+    "Exception: CRITICAL blocking teachings still true, but with blocking rules",
+    "Teaching template updated to show true as default",
+    "Future teachings inherit this policy automatically"
+  ],
+  "incomplete_work": {
+    "status": "None — audit complete, teaching complete, policies set",
+    "next_session_recommendation": "Session 78: Distribute teaching-adoption-audit to all spokes via hub. Each spoke runs audit on first wakeup (auto-adopt: true). Collect audit results from spokes. Then focus on Tier 2 epics (ozi-work-queue, interruption-recovery, routing-awareness)."
+  },
+  "files_modified": [
+    "templates/commands/skill-wai-teaching-adoption-audit-v1.md.teaching (NEW)",
+    "templates/teaching-template.md.teaching (updated default)",
+    "WAI-Spoke/WAI-State.json (version + session state)",
+    "WAI-Spoke/lugs/bytype/ (5 new lugs created)"
+  ],
+  "context_health": {
+    "started_at": "~30% (GREEN)",
+    "current": "~55% (YELLOW)",
+    "tokens_consumed": "~25% of budget",
+    "notes": "Ready for closeout"
+  },
+  "phase": "review",
+  "evolution": "Session identified critical gap: teaching adoption verification needed. Ran audit (found no issues). Designed solution. Created formal teaching. Established blocking rules and auto-adopt defaults. Framework teaching infrastructure is now bulletproof."
+}

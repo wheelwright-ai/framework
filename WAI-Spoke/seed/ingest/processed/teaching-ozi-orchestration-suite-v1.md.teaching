@@ -1,0 +1,353 @@
+# Teaching: Ozi Work Queue Orchestration Suite v1
+
+**Timestamp:** 2026-03-25T21:30:00Z
+**Framework Version:** 3.0.0
+**Created by:** claude-haiku-4-5
+**Routed to:** FRAMEWORK
+**Safe to auto-adopt:** false
+**Impact:** 9
+
+## Prerequisites
+
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| Lug schema exists | test -f WAI-Spoke/lugs/reference/lug-schema.md && echo PASS || echo FAIL | Schema extension |
+| WAI-State.json exists | test -f WAI-Spoke/WAI-State.json && echo PASS || echo FAIL | Queue state section |
+| wai.md wakeup skill exists | test -f templates/commands/wai.md && echo PASS || echo FAIL | Wakeup Steps 4.5 + 9 |
+| wai-closeout.md exists | test -f templates/commands/wai-closeout.md && echo PASS || echo FAIL | Closeout Steps 5c + 10 |
+
+## Batch Sequence
+
+**Batch:** Ozi Orchestration Foundation
+**Apply order:** 1 of 1 (standalone, all 3 phases must apply together)
+**Depends on:** None
+**Required before:** Auto-mode enablement (`/wai-auto-on` command), cross-spoke teaching distribution
+**Parallel safe:** No — sequential, single teaching unit
+**Full batch order:** Teaching-ozi-orchestration-suite-v1 (comprehensive, no dependencies)
+
+---
+
+## What This Teaching Provides
+
+Complete implementation of three interdependent framework features:
+
+1. **Routing Awareness** (Phase 1) — Ozi-driven lug routing gate
+2. **Work Queue Orchestration** (Phase 2) — Priority queue, ready/needs_refinement states, auto-mode job chaining
+3. **Queue Auto-Discovery** (Phase 3) — Bootstrap queue from existing lugs on first run
+
+**User Outcome:**
+> "Build the queue of lugs. Ozi works through it. I get UAT + implementation notes in track. Approve auto mode and it chains: implement → closeout → load next, minimal context, repeat until queue empty."
+
+**Framework Outcome:**
+- Autonomous work dispatch with governance
+- Clear queue visibility and burndown tracking
+- Minimal context auto-chains (57% reduction: 46k → 20k tokens)
+- Cross-spoke teaching distribution with batch sequencing
+
+---
+
+## How to Apply This Teaching
+
+### Step 1: Review the Plan
+Read the full implementation plan (embedded below in "Implementation Details"). Confirm:
+- [ ] Routing gate (new skill) responsibility is clear
+- [ ] Auto-discovery fallback behavior (needs_refinement) is acceptable
+- [ ] Auto-mode is full-chain (no per-job interruptions)
+- [ ] Both `status` (work state) and `queue_state` (queue state) fields understood
+- [ ] Token budget check at closeout (not invasive)
+
+### Step 2: Create New Skill File
+Create `templates/commands/wai-ozi-routing-gate.md` with:
+- Routing decision logic (LOCAL | FRAMEWORK | SIGNAL)
+- Called BEFORE lug creation
+- Records `routed_to` field in lug
+- Announces routing decision
+- [See Phase 1.2 Implementation Details below]
+
+### Step 3: Extend Lug Schema
+Update `WAI-Spoke/lugs/reference/lug-schema.md`:
+- Add `status` field (open | in_progress | completed)
+- Add `queue_state` field (ready | needs_refinement | blocked | done | null)
+- Add `estimated_steps` field (number)
+- Add `blocker_list` field ([lug_ids])
+- Add `routed_to` field (LOCAL | FRAMEWORK | SIGNAL | null)
+- Update examples to show both fields
+
+### Step 4: Extend WAI-State.json
+Add `_work_queue` section to WAI-State.json:
+```json
+{
+  "_work_queue": {
+    "current_job_id": null,
+    "current_job_priority": null,
+    "auto_mode_enabled": false,
+    "queue": [],
+    "completed_this_session": [],
+    "blocked_reasons": {}
+  }
+}
+```
+
+### Step 5: Update Wakeup Protocol (wai.md)
+Add **Step 4.5** (after loading active lugs):
+```
+## Step 4.5: Work Queue Bootstrap
+
+If `_work_queue` missing from WAI-State.json:
+  Trigger queue auto-discovery:
+  - Scan lugs: teachings → inbound → signals → local
+  - Assess readiness: ready vs needs_refinement
+  - Create `_work_queue` with discovered items
+  - Present to user: "[X] items discovered. Work it / Review refinements / Adjust?"
+Else:
+  Continue to Step 5
+```
+
+Add **Step 9** (before ready check):
+```
+## Step 9: Work Queue Status
+
+If `_work_queue` exists and not empty:
+- Count ready, needs_refinement, blocked items
+- Display:
+  "Work Queue: [X] ready, [Y] need refinement, [Z] blocked
+   [Work next ready] [Review refinement] [Auto-chain off/on] [Skip]"
+- Offer options or skip to normal execution
+```
+
+### Step 6: Update Closeout Protocol (wai-closeout.md)
+Modify **Step 5c** (lug status sync):
+```
+For each completed lug, check `routed_to` field:
+  - LOCAL: move to bytype/{type}/completed/
+  - FRAMEWORK: move to bytype/{type}/completed/ AND copy to hub teachings
+  - SIGNAL: move to bytype/signal/delivered/ AND copy to hub signal bulletin
+```
+
+Add **Step 10** (after Step 5c, before session end):
+```
+## Step 10: Work Queue Update & Token Budget Check
+
+If `_work_queue` exists:
+1. Find current_job_id in queue, mark as done if completed
+2. If auto_mode_enabled:
+   a. Check token budget: "Token usage: XXX/YYYY. Safe to continue? [yes/no]"
+   b. If yes: auto-load next ready item, update current_job_id
+   c. If no: pause auto-mode, warn user, defer to next session
+3. Display: "[Job X/Y done] [Next: Job Y — {title}] [Status: {running/paused}]"
+```
+
+### Step 7: Create Auto-Mode Skill
+Create/update `templates/commands/wai-auto-on.md`:
+```
+## `/wai-auto-on`
+
+Enable Ozi auto-mode for current session.
+
+**What it does:**
+- Sets `_work_queue.auto_mode_enabled: true` in WAI-State.json
+- Ozi will auto-load next ready item after closeout Step 10
+- No per-job approval gates (one approval enables full chain)
+- Stops on: queue empty, blocker hit, error, user cancel
+
+**How to use:**
+/wai-auto-on              # Enable auto-mode
+/wai-auto-status          # Check current mode
+/wai-auto-off             # Disable (safe anytime)
+```
+
+### Step 8: Test Readiness Heuristics
+Verify auto-discovery can classify existing lugs:
+- [ ] Lug with acceptance_criteria + estimated_steps + no blockers → ready
+- [ ] Lug missing acceptance_criteria → needs_refinement
+- [ ] Lug with blocker_list → blocked until blocker done
+- [ ] Dogfood fallback: incomplete lugs → needs_refinement (not skip/error)
+
+### Step 9: Token Budget Verification
+Implement token check at closeout Step 10:
+- [ ] Load `ai_context.context_limit` from WAI-State.json
+- [ ] Count tokens used in current session (approximate: WAI files + conversation + lugs)
+- [ ] If remaining < 10k for next job: pause auto-mode
+- [ ] Log budget check in track.jsonl
+
+---
+
+## Implementation Details
+
+### Phase 1: Routing Awareness (6-8 steps)
+
+**Step 1.1:** Extend lug schema (see Step 3 above)
+
+**Step 1.2:** Create `wai-ozi-routing-gate.md` skill
+```markdown
+# Ozi Routing Gate Skill
+
+Ozi calls this before creating any lug to determine routing destination.
+
+## Usage
+
+Before lug creation, ask user:
+"This lug is [LOCAL (stays here) | FRAMEWORK (hub teaching) | SIGNAL (broadcast)?]"
+
+## Logic
+
+1. Load `_project_foundation` + `wheel.name` from WAI-State.json
+2. Determine scope: is this work in-scope for THIS project, or framework-wide?
+3. Ask user or decide based on heuristics
+4. Record in lug: `routed_to: LOCAL|FRAMEWORK|SIGNAL`
+5. Announce: "Creating {type} → {routed_to}"
+
+## Examples
+
+- User asks "optimize wakeup for small projects" → FRAMEWORK (affects all spokes)
+- User asks "add feature to my local project" → LOCAL (stays here)
+- User discovers "token counting needs calibration" → SIGNAL (learning, broadcast to spokes)
+```
+
+**Step 1.3:** Update closeout Step 5c (see Step 6 above)
+
+**Step 1.4:** Update wakeup briefing Step 7 (show routed_to in active lug table)
+
+**Step 1.5:** Update lug-advisor reference docs (routing examples)
+
+---
+
+### Phase 2: Work Queue Orchestration (10-15 steps)
+
+**Step 2.1:** Extend WAI-State.json (see Step 4 above)
+
+**Step 2.2:** Extend lug schema (see Step 3 above — includes `status`, `queue_state`, `estimated_steps`, `blocker_list`)
+
+**Step 2.3:** Add wakeup Step 9 (see Step 5 above)
+
+**Step 2.4:** Implement queue job loader
+```
+When loading next queue item for execution:
+- Load only: WAI-State.json (core identity), named lug, prev 2 turns track
+- Target: ~20k tokens (measure at load time)
+- Skip: full lug index, all signals, WAI-State.md (extended), skills registry
+```
+
+**Step 2.5:** Extend track schema (add to track.jsonl every turn):
+```json
+{
+  "turn": N,
+  "implementation_notes": "What was built/changed (diffs, files modified)",
+  "uat_recording": "Testing done, issues found, acceptance confirmation",
+  "queue_context": "Which queue item (id, priority), what's next",
+  "lug_status_change": "If lug moved to done/blocked, why"
+}
+```
+
+**Step 2.6:** Add closeout Step 10 (see Step 6 above)
+
+**Step 2.7:** Implement auto-mode (see Step 7 above)
+
+---
+
+### Phase 3: Queue Auto-Discovery (3-4 steps)
+
+**Step 3.1:** Add wakeup Step 4.5 (see Step 5 above)
+
+**Step 3.2:** Implement auto-discovery logic
+```
+When `_work_queue` missing:
+1. Scan lugs by priority:
+   - Priority 1: hub/teachings_repo/framework/current/*.teaching
+   - Priority 2: hub/WAI-Hub/Signals/incoming/ (inbound lugs)
+   - Priority 3: lugs/bytype/signal/undelivered/
+   - Priority 4: lugs/bytype/{epic,task,feature,bug}/open/
+
+2. For each lug, assess readiness:
+   - ready: has acceptance_criteria + estimated_steps + no unclear blockers
+   - needs_refinement: missing criteria OR blocker list unclear OR plan incomplete
+                       (If lug failed dogfooding, default to needs_refinement)
+
+3. Create `_work_queue` with discovered items in priority order
+
+4. Present: "Built queue from X items. [Work it] [Review refinements] [Adjust]"
+```
+
+**Step 3.3:** Allow user adjustment (optional: reorder, mark blocked, change readiness)
+
+---
+
+## What This Does NOT Change
+
+- Lug storage or retrieval (bytype/ structure unchanged)
+- Session continuity protocol (core wakeup/closeout unchanged)
+- Single-model assumptions (multi-AI support unaffected)
+- Teaching discovery pipeline (priority 1 in queue, but logic unchanged)
+
+---
+
+## Files Modified (Summary)
+
+| File | Changes |
+|------|---------|
+| `templates/commands/wai-ozi-routing-gate.md` | NEW — routing gate skill |
+| `templates/commands/wai.md` | Add Steps 4.5, 9; update Step 7 briefing |
+| `templates/commands/wai-closeout.md` | Modify Step 5c; add Step 10 |
+| `templates/commands/wai-auto-on.md` | Create/update auto-mode skill |
+| `templates/commands/wai-auto-status.md` | Display auto-mode status |
+| `WAI-Spoke/WAI-State.json` | Add `_work_queue` section |
+| `WAI-Spoke/lugs/reference/lug-schema.md` | Extend with queue fields |
+| `WAI-Spoke/lugs/reference/lug-advisor-reference.md` | Update routing examples |
+| `templates/commands/wai-track-generate.md` | Document track extensions |
+
+---
+
+## Acceptance Criteria
+
+- [ ] Routing gate (new skill) created and callable
+- [ ] Lug schema extended (both `status` and `queue_state` present)
+- [ ] WAI-State.json has `_work_queue` section (can be empty initially)
+- [ ] Wakeup displays queue at Step 9 with ready/needs_refinement distinction
+- [ ] Closeout Step 10 marks jobs done and token-checks before auto-load
+- [ ] First run auto-discovers queue from existing lugs (discovers ~47 items)
+- [ ] Auto-mode chains jobs with minimal context (~20k tokens verified)
+- [ ] Track captures implementation_notes + uat_recording + queue_context
+- [ ] Incomplete lugs default to needs_refinement (not skip/error)
+- [ ] All 3 phases (routing + orchestration + discovery) work together
+
+---
+
+## Known Limitations & Deferred
+
+- **Parallel job execution:** Deferred (sequential only for now)
+- **Cross-session auto-chains:** Deferred (single-session only)
+- **Job dependency graphs:** Deferred (simple blocker_list only, no complex DAGs)
+- **Hub lug inbox:** Deferred (signals route via bulletin, lug-to-lug routing deferred)
+
+---
+
+## Signal: Implementation Complete
+
+When a spoke completes this teaching, it should publish a signal:
+```json
+{
+  "id": "signal-ozi-orchestration-applied-{spoke_id}",
+  "title": "Ozi Work Queue Orchestration Applied",
+  "summary": "All 3 phases implemented: routing gate, orchestration, auto-discovery",
+  "impact": 8,
+  "routed_to": "SIGNAL"
+}
+```
+
+This signals to hub that spoke is ready for queue-based work.
+
+---
+
+## Dogfood Validation Result
+
+✅ **GREEN LIGHT** — Plan validated by naive subagent without framework knowledge.
+
+**Critical decisions verified:**
+1. ✅ Routing gate: new skill, called at lug creation, records `routed_to`
+2. ✅ Auto-discovery fallback: incomplete lugs → `needs_refinement` (no errors/skips)
+3. ✅ Token budget: closeout Step 10 checks before auto-load
+4. ✅ Auto-approval: full chain, single approval, stops on: empty/blocker/error/cancel
+5. ✅ Status vs queue_state: both fields, semantically separated
+
+**No blockers remain.** Ready for implementation by any spoke.
+
