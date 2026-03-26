@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.71",
+    "version": "2.0.72",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,18 +93,22 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260325-1834",
-    "last_modified_by": "claude-haiku-4-5",
-    "last_modified_at": "2026-03-25T18:45:00Z",
-    "last_closeout": "2026-03-25T18:50:00Z",
-    "session_count": 77,
-    "track_path": "WAI-Spoke/sessions/session-20260325-1834/track.jsonl",
+    "last_session_id": "session-20260325-1914",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-26T03:08:05Z",
+    "last_closeout": "2026-03-26T03:08:05Z",
+    "session_count": 78,
+    "track_path": "WAI-Spoke/sessions/session-20260325-1914/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 77 complete. Teaching adoption audit protocol finalized: auto-adopt=true is now default for all teachings. Blocking rule enforces audit before other teachings. Audit teaching ready for hub distribution. Next (Session 78): Distribute teaching-adoption-audit to all spokes. Each spoke auto-adopts + runs audit on first wakeup. Then focus Tier 2 epics: ozi-work-queue, interruption-recovery, routing-awareness.",
+    "next_session_recommendation": "Session 78 complete. Teaching adoption audit: 94 teachings verified, audit skill created, Step 7a wired into wakeup as per-adoption verification (not full re-audit). Next (Session 79): Distribute skill-wai-teaching-adoption-audit-v1 to all hub spokes. Then Tier 2 epics: ozi-work-queue-orchestration, interruption-recovery, routing-awareness.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-26T01:34:03Z",
-    "mode": "execution"
+    "protocol_last_run": "2026-03-26T03:07:01Z",
+    "mode": "execution",
+    "teaching_audit_completed": true,
+    "teaching_audit_date": "2026-03-25",
+    "teaching_audit_result": "all_94_teachings_verified_adopted",
+    "teaching_audit_wired_to_wakeup": true
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -124,7 +128,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

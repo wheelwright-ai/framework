@@ -171,6 +171,29 @@ Estimate cumulative context consumption as a percentage of the model's context w
 
 ---
 
+## Step 7a: New Teaching Verification (Per-adoption, not full re-audit)
+
+**The one-time full audit was completed 2026-03-25 (94 teachings verified).**
+**This step only verifies teachings adopted THIS session — not re-scans all prior ones.**
+
+### For Each Teaching Adopted This Session (Step 5 adoptions):
+
+1. **Extract the teaching's `## Verification Fingerprint` section** (or `### Verification` bash block)
+2. **Run the fingerprint check immediately after adoption:**
+   - String fingerprint → grep for it in the target file
+   - Bash block → run the commands
+   - File existence → check the file was created
+3. **On PASS** → mark adopted, move to `processed/`, continue
+4. **On FAIL** → do NOT move to `processed/`. Re-apply, re-verify, then move.
+
+**Surface in briefing (only if teachings were adopted this session):**
+- `✓ Teaching adopted + verified: {teaching-id}`
+- `⚠️ Teaching repaired before marking processed: {teaching-id}`
+
+**If no new teachings this session:** Omit from briefing entirely.
+
+---
+
 ## Step 8: Initialize Session
 
 **Session check:**
