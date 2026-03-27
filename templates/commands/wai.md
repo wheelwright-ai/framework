@@ -156,6 +156,33 @@ done
 - **Resume:** Set status back to open, continue work
 - **Extend:** Update timestamp, continue next session
 
+## Step 4b: Historian Threshold Check
+
+If `WAI-Spoke/advisors/historian/` exists:
+
+```bash
+# Find last reviewed session watermark
+LAST_SCAN=$(jq -r '.scan_state.last_scan_session // ""' WAI-Spoke/advisors/historian/scan_state.json 2>/dev/null)
+
+# Count track files newer than watermark
+UNREVIEWED_SESSIONS=$(ls -1 WAI-Spoke/sessions/ 2>/dev/null | grep "^session-" | sort | awk -v w="$LAST_SCAN" '$0 > w' | wc -l)
+
+# Sum points across those sessions
+UNREVIEWED_POINTS=0
+for session_dir in WAI-Spoke/sessions/session-*/; do
+    sname=$(basename "$session_dir")
+    if [[ "$sname" > "$LAST_SCAN" ]]; then
+        count=$(wc -l < "$session_dir/track.jsonl" 2>/dev/null || echo 0)
+        UNREVIEWED_POINTS=$((UNREVIEWED_POINTS + count))
+    fi
+done
+```
+
+If `UNREVIEWED_POINTS >= 30`: surface in briefing:
+> `Historian: {N} unreviewed points across {M} sessions. Run Historian? (yes/skip)`
+
+If `UNREVIEWED_POINTS < 30` or directory missing: **silent** — no mention in briefing.
+
 ---
 
 ## Step 5: Discover Teachings
@@ -275,6 +302,12 @@ Display budget status using actual token measurement and traffic-light tiers:
 
 **During the session:** Before loading large files on-demand, check if loading would exceed 200KB of additional tokens. If so, warn before loading. Do not load if it would cross into RED tier without user approval.
 
+**Closeout readiness line (add to Context Health section of Step 7 briefing):**
+```
+Closeout readiness: XX% context used → [Full/Standard/Essential/Minimal] ceremony available
+```
+Thresholds: <60% = Full, 60–79% = Standard, 80–89% = Essential, ≥90% = Minimal.
+
 ---
 
 ## Step 8: Initialize Session
@@ -283,6 +316,14 @@ Display budget status using actual token measurement and traffic-light tiers:
 - Note `last_modified_by` / `last_modified_at`
 - Surface `requires_review` reason if true
 - Detect environment (tool, machine, OS)
+
+**Incomplete closeout detection:**
+```bash
+git status --short WAI-Spoke/WAI-State.json
+```
+If `WAI-State.json` is listed as modified (`M`) AND `_session_state.protocol_completed = true` in WAI-State.json:
+> `Prior closeout may be incomplete — WAI-State.json is uncommitted. Stage and commit now? (yes/skip)`
+This converts a silent observation into an actionable recovery prompt. Do NOT dismiss as "low risk".
 
 **Create session track:**
 ```bash

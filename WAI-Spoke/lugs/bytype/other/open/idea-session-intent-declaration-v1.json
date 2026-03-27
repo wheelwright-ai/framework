@@ -1,0 +1,28 @@
+{
+  "i": "idea-session-intent-declaration-v1",
+  "ty": "idea",
+  "t": "Wakeup Ready step asks for session intent if none given",
+  "s": "proposed",
+  "ca": "2026-03-26T16:30:00Z",
+  "gb": "PathFinder Historian first pass (2026-03-25) via incoming signal",
+  "challenge": "Sessions with no stated goal at the start sprawl across multiple threads, generate weaker track entries, and are harder to closeout. Sessions that start exploratory drift rather than deliver.",
+  "hypothesis": "At the end of wakeup Step 9 (Ready), if the user's opening message doesn't specify a goal, agent asks: 'What's the focus for this session?' If a goal is specified (even vaguely), agent confirms: 'Got it — [goal]. Starting there.' This anchors the track's focus field and the session context.",
+  "origin": "signal",
+  "challenge_id": "chal-session-intent-declaration",
+  "scope": "protocol",
+  "spoke_context_loaded": true,
+  "fit_classification": "extends",
+  "related_lugs": [],
+  "scores": {
+    "velocity_lift": "medium",
+    "implementation_cost": "low",
+    "system_fit": "aligned",
+    "generality": "all-spokes"
+  },
+  "priority": "P2",
+  "next_step": "update wai.md Step 9 (Ready) to add conditional intent prompt",
+  "_behavior_directive": {
+    "what_this_is": "Improvement idea: session intent declaration at wakeup Ready step.",
+    "what_this_is_NOT": "An instruction to implement immediately without user direction."
+  }
+}

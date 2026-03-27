@@ -1,3 +1,20 @@
+## [2.0.77] - 2026-03-26
+
+### Changed - Protocol Improvements + Incoming Queue (Session 84)
+
+- **templates/commands/wai.md:** Added Step 4b (Historian threshold check — surfaces when ≥30 unreviewed track points; silent otherwise). Added incomplete-closeout detection to Step 8 (dirty WAI-State.json with protocol_completed=true triggers recovery prompt). Added closeout readiness line to Context Budget Governor.
+- **templates/commands/wai-closeout.md:** Added Step 0 (Context Assessment — determines ceremony level: Full/Standard/Essential/Minimal). Renamed quality gates to Step 0b. Updated Step 11 (Summary Generation → mandatory banner hard stop before commit; explicit user confirmation required).
+- **templates/commands/wai-complexity-gate.md:** Added Plan Validation section — self-validate implementation plans against checklist (behavior_spec, test_requirements, acceptance_criteria, dependencies) before showing to user.
+- **WAI-Spoke/lugs/:** Consumed 10 incoming lugs — 2 bugs to bytype/bug/open/, 1 task to completed/, 11 idea lugs to bytype/other/open/, 7 signals to bytype/signal/undelivered/. Incoming folder cleared.
+- **Teachings adopted:** skill-wai-closeout-context-aware-v1 (applied), teaching-session70-distribution-improvements (already absorbed), teaching-implementation-plan-validation-protocol-v1 (applied to complexity gate).
+
+### Deliverables
+- Historian threshold check is now active — fires automatically when 30+ unreviewed points accumulate
+- Dirty-closeout detection converts silent WAI-State observation into actionable recovery prompt
+- Closeout ceremony level declared at session start based on context %
+- Mandatory confirmation banner before every git commit
+- 11 improvement ideas captured as scored idea lugs (P1-P3)
+
 ## [2.0.70] - 2026-03-25
 
 ### Changed - Documentation + Skill Consolidation (Session 75)

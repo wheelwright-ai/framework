@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.76",
+    "version": "2.0.77",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-26T20:54:14Z",
+    "last_modified_at": "2026-03-26T16:48:00Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260326-0937",
+    "last_session_id": "session-20260326-1621",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-26T20:54:14Z",
-    "last_closeout": "2026-03-26T20:54:14Z",
-    "session_count": 83,
-    "track_path": "WAI-Spoke/sessions/session-20260326-0937/track.jsonl",
+    "last_modified_at": "2026-03-26T16:48:00Z",
+    "last_closeout": "2026-03-26T16:48:00Z",
+    "session_count": 84,
+    "track_path": "WAI-Spoke/sessions/session-20260326-1621/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 82 complete. Fixed 2 issues: (1) wakeup permission prompts \u2014 added Read(*), Skill(*), Bash(jq*), Bash(python3*), Bash(for*), Bash(HUB_PATH=*), Bash(SESSION_DIR=*), Bash(test*), Bash(date*) to .claude/settings.json; (2) CI exit 126 \u2014 run-integration-tests.sh missing execute bit, fixed with git update-index --chmod=+x, committed and pushed. Pending next session: process 10 incoming lugs via /wai-improve (Distribor, lug-quality-standard, detect-signal-dont-fix, memory-loop-gap, session-type-tracking, settings-pollution + 4 others); review session70-distribution-improvements teaching (safe_to_auto_adopt: false); 14 undelivered signals awaiting hub delivery.",
+    "next_session_recommendation": "Session 84 complete. Accomplished: (1) adopted 3 hub teachings (closeout context-aware ceremony, plan validation protocol, session70 distribution improvements); (2) processed all 10 incoming lugs — 2 bugs routed, 1 task closed, 11 idea lugs created, 7 signals routed to undelivered; (3) applied 2 wai.md bug fixes — Historian threshold check (Step 4b) and dirty-closeout detection (Step 8). Pending next session: deliver 14+ undelivered signals to hub (bytype/signal/undelivered/); promote P1 ideas: detect-signal-dont-fix, lug-quality-golden-rule, memory-read-apply-loop, preflight-data-mutations; design P2 epics: distribor-advisor, taste-spoke-schema.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-26T20:41:31Z",
+    "protocol_last_run": "2026-03-27T03:34:11Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
@@ -128,7 +128,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

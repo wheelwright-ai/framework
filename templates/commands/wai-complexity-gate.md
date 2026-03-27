@@ -89,6 +89,35 @@ Model switches are recorded in `WAI-State.json` under `model_log`. On closeout, 
 
 See lug: `decision-model-task-awareness-protocol` for full protocol and incident record.
 
+## Plan Validation (Before Showing to User)
+
+When creating an implementation plan (epic + child lugs), self-validate before presenting:
+
+**Required on each implementation lug:**
+- `behavior_specification` — input schema, process steps, output schema, state changes
+- `test_requirements` — at least unit tests + integration tests, with one concrete example test case
+- `acceptance_criteria` — specific, testable, objective (not "looks good")
+- `dependencies` — `requires` (blocks), `blocks` (blocked-by), valid DAG
+
+**Required on epic:**
+- Child tasks ordered by sequence
+- Parallelization declared (which tasks can run in parallel)
+- Dependency graph with no circular deps
+
+**Validation gates:**
+- No vague language ("make it better", "refactor", "improve" without specifics)
+- Each acceptance criterion maps to a named test
+- Behavior spec has all three: input + process + output
+
+**Only present plan to user after self-validation passes.** Append to plan:
+```
+✅ Plan validated — behavior, tests, acceptance criteria, and dependencies complete.
+```
+
+**Scope thresholds for when validation is required:**
+- Always: epics, implementation lugs, 3+ files affected, anything with test requirements
+- Optional: small bug fixes (<20 lines, 1 file), documentation updates, config changes
+
 ## Related Skills
 
 - /wai-rules — Show scope boundaries

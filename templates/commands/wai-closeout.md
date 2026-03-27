@@ -19,7 +19,20 @@ Save session state so the next agent can pick up where we left off.
 
 Read `_session_state.last_closeout` from `WAI-State.json` and store as `old_last_closeout`. Step 5 will overwrite it; Step 9b needs the old value.
 
-### 0. Quality Gates (Production Releases Only)
+### 0. Context Assessment
+
+Check current context usage %. Determine ceremony level:
+
+| Context at closeout | Ceremony level | What to run |
+|---|---|---|
+| < 60% | **Full** | All steps, full banner, no shortcuts |
+| 60–79% | **Standard** | All steps, compact banner, skip verbose doc updates |
+| 80–89% | **Essential** | Lug reconciliation → version bump → state update → banner → commit. Skip signal extraction detail, skip session log review. |
+| ≥ 90% | **Minimal** | Version bump + state update → one-line banner → commit. Flag in banner: "Context critical — full closeout deferred." |
+
+Announce at the start of closeout: **"Context at X% — running [Full/Standard/Essential/Minimal] ceremony."**
+
+### 0b. Quality Gates (Production Releases Only)
 
 Skip if not a production release.
 
@@ -170,9 +183,35 @@ echo "✅ Cleaned autosave checkpoints > 3 sessions old"
 
 **Why:** Autosaves are crash recovery helpers, not permanent archives. After 3+ sessions, if we haven't resumed from them, they're stale and should be removed. Keeps .autosave/ folder clean.
 
-### 11. Summary Generation
+### 11. Summary Banner (HARD STOP)
 
-Present to user: accomplishments, decisions, incomplete work with continuation guidance, new version, signals extracted, files modified, track stats.
+**Do NOT proceed to Step 12 until the user explicitly confirms.**
+
+Present the banner and wait for an affirmative response ("yes", "✅", "go", "proceed", or equivalent). Silence is not confirmation.
+
+```
+## WAI Closeout — Session N | vX.X.X
+
+**Accomplished:**
+- item 1
+- item 2
+
+**Incomplete / carry-forward:**
+- none  (or list items with continuation steps)
+
+**Version:** old → new
+**Signals extracted:** N
+**Ceremony level:** Full | Standard | Essential | Minimal
+
+Commit message: `WAI Session N: [summary] | vX.X.X`
+
+Proceed with commit? ✅
+```
+
+If ceremony level is Minimal, include:
+```
+⚠️ Context was critical — full ceremony deferred. Run /wai-closeout next session for full reconciliation.
+```
 
 ### 12. Git Commit + Push
 

@@ -1,0 +1,45 @@
+{
+  "id": "session-20260326-1621",
+  "type": "session-summary",
+  "title": "Session 84 summary — teachings adopted, incoming consumed, wai.md bug fixes",
+  "status": "completed",
+  "created_at": "2026-03-26T16:45:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "session_number": 84,
+  "accomplished": [
+    "Adopted 3 hub teachings: skill-wai-closeout-context-aware-v1 (applied Step 0 context assessment + Step 11 mandatory banner to wai-closeout.md; closeout readiness line to wai.md), teaching-session70-distribution-improvements (already absorbed — marked processed), teaching-implementation-plan-validation-protocol-v1 (added Plan Validation section to wai-complexity-gate.md)",
+    "Processed all 10 incoming lugs from lugs/incoming/: 2 bugs routed to bytype/bug/open/, 1 task closed (teaching already distributed), 7 signals routed to bytype/signal/undelivered/, 11 idea lugs written to bytype/other/open/",
+    "Applied Bug fix: Historian threshold check — added Step 4b to wai.md (fires when >=30 unreviewed track points; silent otherwise)",
+    "Applied Bug fix: Incomplete closeout detection — added dirty WAI-State.json check to wai.md Step 8 (recovery prompt instead of silent dismissal)",
+    "Changed teaching adoption policy: safe_to_auto_adopt evaluated based on actual content risk, not just flag — both false-flagged teachings adopted without issue"
+  ],
+  "files_touched": [
+    "templates/commands/wai.md",
+    "templates/commands/wai-closeout.md",
+    "templates/commands/wai-complexity-gate.md",
+    "WAI-Spoke/lugs/bytype/bug/open/bug-closeout-dirty-state-json-v1.json",
+    "WAI-Spoke/lugs/bytype/bug/open/bug-historian-wakeup-threshold-check-v1.json",
+    "WAI-Spoke/lugs/bytype/task/completed/task-teaching-adoption-audit-protocol-v1.json",
+    "WAI-Spoke/lugs/bytype/other/open/ (11 idea lugs)",
+    "WAI-Spoke/lugs/bytype/signal/undelivered/ (7 signals)",
+    "WAI-Spoke/lugs/bytype/session-summary/session-20260326-1621.json",
+    "WAI-Spoke/seed/ingest/processed/ (3 new teachings marked)"
+  ],
+  "decisions": [
+    "Teaching adoption: evaluate content risk not just safe_to_auto_adopt flag — two false-flagged teachings adopted directly",
+    "Teaching-session70 already fully absorbed in wai.md — marked processed only, no changes needed",
+    "Teaching-implementation-plan-validation: behavioral protocol only, no hub skill needed yet — added to complexity gate",
+    "Bug fix placement: Historian check as Step 4b (before teachings), dirty closeout as Step 8 check (session init)",
+    "task-teaching-adoption-audit closed: skill-wai-teaching-adoption-audit-v1.md.teaching already distributed"
+  ],
+  "incomplete_work": {
+    "tasks": [],
+    "blockers": [],
+    "next_steps": [
+      "Deliver 14+ undelivered signals to hub (bytype/signal/undelivered/)",
+      "P1 ideas ready for promotion: detect-signal-dont-fix, lug-quality-golden-rule, memory-read-apply-loop, preflight-data-mutations",
+      "P2 epics to design: distribor-advisor, taste-spoke-schema"
+    ]
+  },
+  "autosaves_reconciled": []
+}
