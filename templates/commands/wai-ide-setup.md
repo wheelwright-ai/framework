@@ -226,7 +226,7 @@ This project uses Wheelwright session continuity.
 Read `templates/commands/wai.md` for your behavioral protocols.
 Available skills: `templates/commands/wai-*.md`
 
-Session commands: /wai, /wai-closeout, /wai-shipit, /wai (Step 9b: auto-teach on closeout), /wai (Step 3a: auto-discovery), /wai-time, /wai-rules
+Session commands: /wai, /wai-closeout, /wai (Step 9b: auto-teach on closeout), /wai (Step 3a: auto-discovery), /wai-time, /wai-rules
 ```
 
 **GEMINI.md** should contain:

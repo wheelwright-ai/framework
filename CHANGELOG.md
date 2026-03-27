@@ -1,3 +1,16 @@
+## [2.0.80] - 2026-03-27
+
+### Fixed — Teaching Protocol + Shipit Cleanup (Session 87)
+
+- **Teaching flag format:** Standardized `safe_to_auto_adopt` flag to `**safe_to_auto_adopt:** true|false` across all 30 hub teachings — fixed 4-variant format chaos that caused wakeup grep to silently miss valid flags on ~12 teachings
+- **`templates/commands/wai.md` Step 5:** Updated teaching discovery to use case-insensitive grep; added explicit missing-flag fallback rule (missing = `false`, surfaced as "unprocessed" in delta report)
+- **`templates/teaching-template.md.teaching`:** Header now uses canonical snake_case format to match protocol grep
+- **3 legacy teachings:** Added missing `safe_to_auto_adopt` flag to `lug-auto-learn-protocol`, `lug-teach-verification-protocol`, `teaching-implementation-plan-validation-protocol-v1`
+- **`wai-closeout.md` Step 0e:** Expanded from one-liner stub to full WEI benchmark runner detection with regression analysis (was silently skipping since shipit deprecation)
+- **`skill-wai-shipit-benchmark-v1.md.teaching`:** Retargeted from dead `wai-shipit.md` to `wai-closeout.md` Step 0e
+- **`SKILL-EXAMPLES.md`:** Removed `/wai-shipit` section and step; "End Session" is now one step (closeout only)
+- **`wai-ide-setup.md`:** Removed `/wai-shipit` from session commands list
+
 ## [2.0.79] - 2026-03-27
 
 ### Fixed — Protocol Maintenance (Session 86)

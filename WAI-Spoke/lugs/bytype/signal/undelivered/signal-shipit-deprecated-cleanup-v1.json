@@ -1,0 +1,12 @@
+{
+  "id": "signal-shipit-deprecated-cleanup-v1",
+  "type": "signal",
+  "title": "Shipit fully excised: WEI benchmark migrated to closeout Step 0e",
+  "description": "wai-shipit.md was deleted but 4 files still referenced it: SKILL-EXAMPLES.md (2 entries), wai-ide-setup.md (session commands), and skill-wai-shipit-benchmark-v1.md.teaching (targeted dead file). The WEI benchmark detection was never migrated when shipit was deprecated — closeout Step 0e was a one-liner stub. Fixed: WEI detection added to closeout Step 0e, shipit references purged from all files, teaching retargeted to closeout.",
+  "impact": 8,
+  "created_by": "claude-sonnet-4-6",
+  "created_at": "2026-03-27T01:40:00Z",
+  "session": "session-20260327-0124",
+  "rationale": "Silent regression: benchmark tracking was broken after shipit deprecation. Anyone running closeout on a WEI-enabled project would skip benchmark runs entirely.",
+  "files_affected": ["templates/commands/wai-closeout.md", "templates/commands/SKILL-EXAMPLES.md", "templates/commands/wai-ide-setup.md", "hub/teachings_repo/framework/current/skill-wai-shipit-benchmark-v1.md.teaching"]
+}

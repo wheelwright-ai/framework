@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.79",
+    "version": "2.0.80",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-26T20:48:00Z",
+    "last_modified_at": "2026-03-27T02:00:00Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260326-2225",
+    "last_session_id": "session-20260327-0124",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-27T00:35:00Z",
-    "last_closeout": "2026-03-27T00:35:00Z",
-    "session_count": 86,
-    "track_path": "WAI-Spoke/sessions/session-20260326-2225/track.jsonl",
+    "last_modified_at": "2026-03-27T02:00:00Z",
+    "last_closeout": "2026-03-27T02:00:00Z",
+    "session_count": 87,
+    "track_path": "WAI-Spoke/sessions/session-20260327-0124/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 86 complete. Accomplished: (1) wai-closeout.md — added context % to Step 11 banner, fixed banner stall (inverted confirmation logic), added Step 9c bytype/signal/undelivered/ backlog sweep; (2) three minder bug lugs processed: Bug 2 (bytype capability check) and Bug 3 (Session-Log retired) fixed in canonical; Bug 1 (health-check template) documented in reference.md — needs distribution teaching. Pending: (A) adopt 5 hub teachings (4 auto + 1 manual); (B) distribute health-check.jsonl to spokes (teaching); (C) promote P1 ideas to epics; (D) verify bug fixes at next real closeout.",
+    "next_session_recommendation": "Session 87 complete. Accomplished: (1) Standardized safe_to_auto_adopt flag across all 30 hub teachings \u2014 fixed 4-variant format chaos, updated wai.md Step 5 with case-insensitive grep and missing-flag fallback (false); (2) Excised deprecated wai-shipit from SKILL-EXAMPLES, wai-ide-setup, and teaching; migrated WEI benchmark detection to closeout Step 0e. Pending: (A) adopt 5 hub teachings (4 auto + 1 manual); (B) distribute health-check.jsonl template to spokes (teaching); (C) promote P1 ideas to epics; (D) verify bug fixes at next real closeout.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-27T07:56:12Z",
+    "protocol_last_run": "2026-03-27T08:52:39Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
@@ -128,7 +128,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

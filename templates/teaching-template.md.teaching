@@ -3,7 +3,7 @@
 **Type:** {Protocol Enhancement | Protocol Correction | Bug Fix | Migration Signal | Principle + Signal}
 **Version:** {major}.{minor}.{patch}
 **Created:** {YYYY-MM-DD}
-**Safe to Auto-Adopt:** true ← DEFAULT (change to false only if teaching should NOT auto-apply; if unsure, escalate to framework team)
+**safe_to_auto_adopt:** true  ← DEFAULT (change to false only if teaching should NOT auto-apply; if unsure, escalate to framework team)
 **Affects:** {list of affected components}
 **Supersedes:** {prior teaching id or "nothing"}
 
@@ -120,5 +120,5 @@ Append to `WAI-Lugs.jsonl` (idempotent — skip if id already present):
 ---
 
 **Teaching Package:** {package-id}
-**Safe to Auto-Adopt:** {Yes | No — reason}
+**safe_to_auto_adopt:** {true | false — reason}
 **Impact:** {description of impact scope and severity}

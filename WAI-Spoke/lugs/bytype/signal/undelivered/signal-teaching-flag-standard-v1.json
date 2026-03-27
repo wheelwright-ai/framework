@@ -1,0 +1,12 @@
+{
+  "id": "signal-teaching-flag-standard-v1",
+  "type": "signal",
+  "title": "Teaching flag canonicalized: **safe_to_auto_adopt:** snake_case everywhere",
+  "description": "The safe_to_auto_adopt flag had 4 format variants across 30 hub teachings, causing wakeup grep (case-sensitive snake_case) to silently miss ~12 valid flags. Root cause: template used Title Case hyphenated format, protocol grepped snake_case. Fixed by: (1) standardizing template and all hub teachings to **safe_to_auto_adopt:** true/false, (2) updating wai.md Step 5 to use case-insensitive grep and define missing-flag fallback as false (require manual review).",
+  "impact": 9,
+  "created_by": "claude-sonnet-4-6",
+  "created_at": "2026-03-27T01:30:00Z",
+  "session": "session-20260327-0124",
+  "rationale": "Teaching recipients were confused because wakeup presented some teachings as auto-adopt and others as ambiguous. Protocol and template were out of sync from the start.",
+  "files_affected": ["templates/teaching-template.md.teaching", "templates/commands/wai.md", "hub/teachings_repo/framework/current/*.teaching (30 files)"]
+}

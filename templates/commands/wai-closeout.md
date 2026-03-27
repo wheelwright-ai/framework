@@ -44,7 +44,32 @@ Skip if not a production release.
 
 **0d. Linting:** Auto-detect and run (`ruff`, `eslint`). Non-zero exit = abort.
 
-**0e. Benchmarks:** Run if available. On regression: offer abort / acknowledge / update baseline.
+**0e. Benchmarks:** Detect and run available benchmarks. On regression: offer abort / acknowledge / update baseline.
+
+```bash
+# Wheelwright WEI benchmark (preferred)
+if [ -f "benchmarks/runner/benchmark_runner.py" ]; then
+    python3 benchmarks/runner/benchmark_runner.py small --persist
+    python3 benchmarks/runner/benchmark_runner.py medium --persist
+    # Regression check
+    python3 -c "
+import json
+lines = [l for l in open('benchmarks/benchmark-results.jsonl') if l.strip()]
+if len(lines) >= 2:
+    prev, curr = json.loads(lines[-2]), json.loads(lines[-1])
+    delta = curr['wei'] - prev['wei']
+    print(f'WEI: {prev[\"wei\"]:.1f} -> {curr[\"wei\"]:.1f} ({delta:+.1f}) [{\"REGRESSION\" if delta < -2 else \"OK\"}]')
+else:
+    print('First run — no baseline to compare')
+" 2>/dev/null
+elif [ -f "benchmark.py" ]; then
+    python3 benchmark.py --profile=all
+elif [ -f "package.json" ] && grep -q "benchmark" package.json; then
+    npm run benchmark
+else
+    echo "No benchmarks detected — SKIP"
+fi
+```
 
 Report gate results. Proceed only after user confirms all gates pass or are acknowledged.
 

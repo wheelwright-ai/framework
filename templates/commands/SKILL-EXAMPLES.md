@@ -36,12 +36,6 @@ AI: (Shows project boundaries, AI collaboration style, behavioral guidelines)
 User: Done for today
 AI: (Extracts signals, logs high-impact decisions, updates WAI-State.json, clears session log)
 
-### /wai-shipit (Shipit)
-**When:** Ready to close session and commit to git
-**Example:**
-User: Ship it
-AI: (Runs closeout, then commits WAI files with session summary)
-
 ## Hub Synchronization
 
 ### /wai (Step 9b: auto-teach on closeout) (Teach)
@@ -120,8 +114,7 @@ AI: Use lugs (task graph). Create with: /wai-lug create [task-name]
 3. At closeout, decision flows to hub via /wai (Step 3a: auto-discovery)
 
 ### End Session
-1. Run /wai-closeout (extract signals, update state)
-2. Run /wai-shipit (commit WAI files with summary)
+1. Run /wai-closeout (extract signals, update state, commit)
 
 ### Resume After Crash
 1. Run /wai-red-light (inspect checkpoint)

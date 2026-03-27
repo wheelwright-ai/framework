@@ -221,7 +221,12 @@ ls -1 "${HUB_PATH}/cross_spoke/current/"*.teaching 2>/dev/null
 For each discovered teaching:
 1. Check if already adopted (filename exists in `WAI-Spoke/seed/ingest/processed/`)
 2. Track discovery counts: `total_found`, `pre_existing`, `new_auto`, `new_manual`, `unprocessed` (with reason)
-3. If new, split by `safe_to_auto_adopt` flag:
+3. Detect the `safe_to_auto_adopt` flag using case-insensitive grep:
+   ```bash
+   grep -im1 "safe.to.auto.adopt" {teaching_file}
+   ```
+   Parse the value (true/false) from whatever format is present. **If the flag is absent: treat as `false` — require manual review.** Surface this in the delta report as `unprocessed` with reason "Flag missing — defaulting to manual review."
+4. If new, split by flag value:
 
 **Path A — `safe_to_auto_adopt: true` (brief prompt, no ceremony):**
 1. Extract: what it affects, behavioral implication, challenge solved
