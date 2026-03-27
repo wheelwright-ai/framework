@@ -1,0 +1,11 @@
+{
+  "id": "bug-closeout-banner-stall-v1",
+  "type": "bug",
+  "title": "Closeout banner confirmation creates stall loop \u2014 non-affirmative responses halt the commit indefinitely",
+  "summary": "Step 10 hard-stop banner waits for explicit confirmation before committing. When user responds with anything other than an affirmative (e.g. a question, a complaint, a new instruction), the agent treats it as non-confirmation and stalls. Closeout never completes. Recurred across sessions 47 and 48.",
+  "impact": 9,
+  "fix_suggestion": "Add a rule: if user responds to the banner with anything other than an explicit 'no', 'cancel', or 'stop', treat it as confirmation and proceed. Alternatively, auto-commit after banner is shown with a 10-second countdown unless explicitly cancelled.",
+  "source_spoke": "minder",
+  "session_id": "claude-sonnet-4-6-2026-03-26-s48",
+  "created_at": "2026-03-26T22:20:00Z"
+}

@@ -85,7 +85,11 @@ Placement: after first `---`, before `## What This Teaching Provides`.
 
 ## Spoke Health Report (Step 9d — DEFERRED)
 
-Not yet implemented. Requires `templates/health-check.jsonl` questionnaire file.
+**Template exists** at `framework/templates/health-check.jsonl` — 16 machine-runnable PASS/FAIL checks.
+
+**Gap:** Teaching `skill-wai-closeout-health-report-v1` distributed the Step 9d instructions to spokes but did NOT distribute the `health-check.jsonl` file. Spokes with Step 9d silently skip because the file isn't found. Step 9d was also removed from the canonical `templates/commands/wai-closeout.md` during the thrift rewrite.
+
+**To activate:** Create a teaching that plants `health-check.jsonl` at `WAI-Spoke/health-check.jsonl` on target spokes and updates Step 9d's load path accordingly.
 
 When implemented: run health checks, score PASS/total, write health lug to hub. Thresholds: healthy=100%, degraded=80-99%, critical=<80%.
 

@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.78",
+    "version": "2.0.79",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260326-2037",
+    "last_session_id": "session-20260326-2225",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-26T20:48:00Z",
-    "last_closeout": "2026-03-26T20:48:00Z",
-    "session_count": 85,
-    "track_path": "WAI-Spoke/sessions/session-20260326-2037/track.jsonl",
+    "last_modified_at": "2026-03-27T00:35:00Z",
+    "last_closeout": "2026-03-27T00:35:00Z",
+    "session_count": 86,
+    "track_path": "WAI-Spoke/sessions/session-20260326-2225/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 85 complete (short session). Accomplished: (1) diagnosed closeout Step 9c signal backlog gap — undelivered/ not swept on closeout, only newly-extracted signals delivered; (2) removed teaching-ozi-orchestration-suite-v1.md.teaching from hub current folder; (3) 5 new hub teachings pending adoption (4 auto-adoptable: hub-wakeup-corrections batch + basher signal; 1 manual: hub-kb-librarian-gardener). Pending next session: (A) adopt the 5 hub teachings; (B) apply Step 9c fix to wai-closeout.md (add explicit sweep of bytype/signal/undelivered/); (C) deliver 26+ undelivered signals to hub; (D) promote P1 ideas: detect-signal-dont-fix, lug-quality-golden-rule, memory-read-apply-loop, preflight-data-mutations.",
+    "next_session_recommendation": "Session 86 complete. Accomplished: (1) wai-closeout.md — added context % to Step 11 banner, fixed banner stall (inverted confirmation logic), added Step 9c bytype/signal/undelivered/ backlog sweep; (2) three minder bug lugs processed: Bug 2 (bytype capability check) and Bug 3 (Session-Log retired) fixed in canonical; Bug 1 (health-check template) documented in reference.md — needs distribution teaching. Pending: (A) adopt 5 hub teachings (4 auto + 1 manual); (B) distribute health-check.jsonl to spokes (teaching); (C) promote P1 ideas to epics; (D) verify bug fixes at next real closeout.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-27T04:57:21Z",
+    "protocol_last_run": "2026-03-27T07:56:12Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",

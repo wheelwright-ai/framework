@@ -80,6 +80,12 @@ Update `WAI-State.json`:
 
 If capability adoptions or migrations occurred: update extended state (`WAI-State-extended.json`) migration receipts and adoption markers accordingly.
 
+**Capability check — bytype/ structure:** Before Steps 5b/5c, run:
+```bash
+test -d WAI-Spoke/lugs/bytype && echo BYTYPE_OK || echo FLAT_LUG
+```
+If `FLAT_LUG`: skip Steps 5b and 5c entirely. Log: "flat-lug spoke — bytype steps skipped."
+
 ### 5b. Adoption Marker Sync
 
 For each implementation lug with `status = "implemented"`: check `_migration_state.adoption_markers` in extended state. If `adopted = false`, update to `true` with timestamp. Log result.
@@ -160,7 +166,9 @@ For each lug with `routed_to = "SIGNAL"`: if not already at `{hub_path}/WAI-Hub/
 
 **Also include** any signal lug with `impact > 7` and `routed_to = "SIGNAL"` that wasn't already caught by routing.
 
-Report: "Delivered N lugs to hub bulletin."
+**Backlog sweep (always):** Also copy ALL files currently in `bytype/signal/undelivered/` to hub incoming if not already present. This drains accumulated backlog from prior sessions regardless of `routed_to` or session scope.
+
+Report: "Delivered N lugs to hub bulletin (M new, K already present)."
 
 ### 10. Autosave Cleanup (Interruption Recovery Hygiene)
 
@@ -185,9 +193,9 @@ echo "✅ Cleaned autosave checkpoints > 3 sessions old"
 
 ### 11. Summary Banner (HARD STOP)
 
-**Do NOT proceed to Step 12 until the user explicitly confirms.**
+**Do NOT proceed to Step 12 unless the user explicitly cancels.**
 
-Present the banner and wait for an affirmative response ("yes", "✅", "go", "proceed", or equivalent). Silence is not confirmation.
+Present the banner. If user responds with **anything other than** an explicit "no", "cancel", or "stop" — proceed. Questions, new instructions, or a thumbs-up all count as confirmation. Do not re-ask; do not stall.
 
 ```
 ## WAI Closeout — Session N | vX.X.X
@@ -200,6 +208,7 @@ Present the banner and wait for an affirmative response ("yes", "✅", "go", "pr
 - none  (or list items with continuation steps)
 
 **Version:** old → new
+**Context:** X% at closeout
 **Signals extracted:** N
 **Ceremony level:** Full | Standard | Essential | Minimal
 

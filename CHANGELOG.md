@@ -1,3 +1,20 @@
+## [2.0.79] - 2026-03-27
+
+### Fixed — Protocol Maintenance (Session 86)
+
+- **Closeout Step 11:** Added `Context: X% at closeout` field to summary banner
+- **Closeout Step 11:** Inverted banner confirmation logic — "proceed unless explicit cancel" replaces "wait for affirmative"; fixes systematic stall on spoke sessions
+- **Closeout Step 9c:** Added explicit `bytype/signal/undelivered/` backlog sweep — drains accumulated signals on every closeout regardless of session scope
+- **Closeout Steps 5b/5c:** Added bytype capability check — flat-lug spokes now explicitly log "skipped" instead of silently N/A-ing
+- **`WAI-Spoke/skills/wai/wai.md`:** Retired `WAI-Session-Log.jsonl` entry in Core Files table — replaced by `sessions/{id}/track.jsonl`
+- **`wai-closeout-reference.md` Step 9d:** Updated to document that `health-check.jsonl` template exists but was never distributed; activation path documented
+
+### Bugs Routed
+- `bug-closeout-banner-stall-v1` — fixed (Step 11 inversion)
+- `bug-closeout-bytype-assumption-v1` — fixed (capability check added)
+- `bug-session-log-never-populated-v1` — fixed (retired in old skill)
+- `bug-health-check-template-missing-v1` — open (needs distribution teaching)
+
 ## [2.0.78] - 2026-03-26
 
 ### Changed - Protocol Diagnosis (Session 85)

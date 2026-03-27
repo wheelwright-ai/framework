@@ -470,7 +470,7 @@ Then stop. Do not add prose after the block.
 | `WAI-Skills.jsonl` | Skill registry with metadata | READ |
 | `WAI-Lugs.jsonl` | Active task/dependency graph | UPDATE |
 | `WAI-Lugs.jsonl` | High-impact learnings (as high-impact lugs) | APPEND |
-| `WAI-Session-Log.jsonl` | Conversation turns (cleared on closeout) | APPEND |
+| ~~`WAI-Session-Log.jsonl`~~ | **Retired** — replaced by `sessions/{id}/track.jsonl`. File may exist at 0 lines. Do not write to it. | — |
 
 ---
 

@@ -1,0 +1,11 @@
+{
+  "id": "bug-health-check-template-missing-v1",
+  "type": "bug",
+  "title": "Step 9d references framework/templates/health-check.jsonl \u2014 file does not exist in any spoke",
+  "summary": "wai-closeout.md Step 9d instructs: load templates/health-check.jsonl from the framework path. Template not found at hub or any inspected spoke. Step silently skips every session, making spoke health reporting a dead letter.",
+  "impact": 6,
+  "fix_suggestion": "Either create the health-check.jsonl template in framework/templates/ or remove Step 9d from closeout until the template exists. If template is intentionally absent, add a note to skip silently.",
+  "source_spoke": "minder",
+  "session_id": "claude-sonnet-4-6-2026-03-26-s48",
+  "created_at": "2026-03-26T22:20:00Z"
+}
