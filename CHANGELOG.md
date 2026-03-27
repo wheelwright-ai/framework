@@ -1,3 +1,15 @@
+## [2.0.78] - 2026-03-26
+
+### Changed - Protocol Diagnosis (Session 85)
+
+- **Diagnosis:** Identified Step 9c signal delivery gap — `bytype/signal/undelivered/` backlog not swept on closeout; only newly-extracted signals delivered. Fix pending next session.
+- **Hub cleanup:** Removed `teaching-ozi-orchestration-suite-v1.md.teaching` from hub `teachings_repo/framework/current/`.
+- **Signal extracted:** `signal-closeout-9c-backlog-gap-v1` (impact 8) — documents the gap and fix.
+
+### Deliverables
+- Protocol gap documented: 26+ undelivered signals accumulated due to Step 9c scoping bug
+- 5 hub teachings queued for adoption next session
+
 ## [2.0.77] - 2026-03-26
 
 ### Changed - Protocol Improvements + Incoming Queue (Session 84)

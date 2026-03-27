@@ -1,0 +1,17 @@
+{
+  "id": "signal-closeout-9c-backlog-gap-v1",
+  "type": "signal",
+  "title": "Closeout Step 9c does not sweep pre-existing undelivered signal backlog",
+  "description": "Step 9c ('Hub Signal Bulletin') only delivers signals extracted this session (routed_to=SIGNAL, status changed this session). Pre-existing signals sitting in bytype/signal/undelivered/ from prior sessions are never swept. Result: signal backlog accumulates indefinitely and is never delivered to hub. Fix: at Step 9c, add explicit sweep — for ALL files currently in bytype/signal/undelivered/, deliver any not already present in {hub_path}/WAI-Hub/Signals/incoming/. This drains the persistent backlog on every closeout.",
+  "impact": 8,
+  "created_by": "claude-sonnet-4-6",
+  "created_at": "2026-03-26T20:45:00Z",
+  "session_id": "session-20260326-2037",
+  "rationale": "Discovered by examining session 84 closeout track: only 2 newly extracted signals were delivered despite 25+ sitting in undelivered/. The protocol's 'for each lug with routed_to=SIGNAL' clause is interpreted as session-scoped in practice. Root cause confirmed by reading Step 5c which only scans open/in_progress for status-changed lugs — undelivered/ signals are invisible to it.",
+  "fix": {
+    "file": "templates/commands/wai-closeout.md",
+    "step": "9c",
+    "addition": "Also sweep ALL files in bytype/signal/undelivered/ — deliver any not already present in hub incoming. This drains the backlog."
+  },
+  "hub_candidate": true
+}

@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.77",
+    "version": "2.0.78",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-26T16:48:00Z",
+    "last_modified_at": "2026-03-26T20:48:00Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260326-1621",
+    "last_session_id": "session-20260326-2037",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-26T16:48:00Z",
-    "last_closeout": "2026-03-26T16:48:00Z",
-    "session_count": 84,
-    "track_path": "WAI-Spoke/sessions/session-20260326-1621/track.jsonl",
+    "last_modified_at": "2026-03-26T20:48:00Z",
+    "last_closeout": "2026-03-26T20:48:00Z",
+    "session_count": 85,
+    "track_path": "WAI-Spoke/sessions/session-20260326-2037/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 84 complete. Accomplished: (1) adopted 3 hub teachings (closeout context-aware ceremony, plan validation protocol, session70 distribution improvements); (2) processed all 10 incoming lugs — 2 bugs routed, 1 task closed, 11 idea lugs created, 7 signals routed to undelivered; (3) applied 2 wai.md bug fixes — Historian threshold check (Step 4b) and dirty-closeout detection (Step 8). Pending next session: deliver 14+ undelivered signals to hub (bytype/signal/undelivered/); promote P1 ideas: detect-signal-dont-fix, lug-quality-golden-rule, memory-read-apply-loop, preflight-data-mutations; design P2 epics: distribor-advisor, taste-spoke-schema.",
+    "next_session_recommendation": "Session 85 complete (short session). Accomplished: (1) diagnosed closeout Step 9c signal backlog gap — undelivered/ not swept on closeout, only newly-extracted signals delivered; (2) removed teaching-ozi-orchestration-suite-v1.md.teaching from hub current folder; (3) 5 new hub teachings pending adoption (4 auto-adoptable: hub-wakeup-corrections batch + basher signal; 1 manual: hub-kb-librarian-gardener). Pending next session: (A) adopt the 5 hub teachings; (B) apply Step 9c fix to wai-closeout.md (add explicit sweep of bytype/signal/undelivered/); (C) deliver 26+ undelivered signals to hub; (D) promote P1 ideas: detect-signal-dont-fix, lug-quality-golden-rule, memory-read-apply-loop, preflight-data-mutations.",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-27T03:34:11Z",
+    "protocol_last_run": "2026-03-27T04:57:21Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
