@@ -233,38 +233,9 @@ echo "✅ Cleaned autosave checkpoints > 3 sessions old"
 
 **Why:** Autosaves are crash recovery helpers, not permanent archives. After 3+ sessions, if we haven't resumed from them, they're stale and should be removed. Keeps .autosave/ folder clean.
 
-### 11. Summary Banner (HARD STOP)
+### 11. Git Commit + Push
 
-**Do NOT proceed to Step 12 unless the user explicitly cancels.**
-
-Present the banner. If user responds with **anything other than** an explicit "no", "cancel", or "stop" — proceed. Questions, new instructions, or a thumbs-up all count as confirmation. Do not re-ask; do not stall.
-
-```
-## WAI Closeout — Session N | vX.X.X
-
-**Accomplished:**
-- item 1
-- item 2
-
-**Incomplete / carry-forward:**
-- none  (or list items with continuation steps)
-
-**Version:** old → new
-**Context:** X% at closeout
-**Signals extracted:** N
-**Ceremony level:** Full | Standard | Essential | Minimal
-
-Commit message: `WAI Session N: [summary] | vX.X.X`
-
-Proceed with commit? ✅
-```
-
-If ceremony level is Minimal, include:
-```
-⚠️ Context was critical — full ceremony deferred. Run /wai-closeout next session for full reconciliation.
-```
-
-### 12. Git Commit + Push
+Commit and push **immediately** — no user confirmation required. The summary banner displays AFTER, not before.
 
 ```bash
 git add WAI-Spoke/ [other session files]
@@ -272,9 +243,38 @@ git commit -m "WAI Session [N]: [accomplishments] | [version]"
 git push origin main
 ```
 
-Push is mandatory. Do not ask for confirmation.
+If ceremony level is Minimal, include in commit message: `(minimal closeout — full deferred)`
 
-### 13. Release Tag (Production Releases Only)
+### 12. Verification + Completion Banner
+
+```bash
+git status          # Must be clean
+git log --oneline -1  # Verify commit
+git tag -l | tail -1  # Verify tag (if production release)
+```
+
+Then display the visual completion marker:
+
+```
+┌─ CLOSEOUT Session-{N} [{track_name}] {timestamp}
+│
+│  Accomplished: {bullet list}
+│  Incomplete: {list or "none"}
+│  Version: v{old} → v{new}
+│  Context: {X}% at closeout
+│  Signals: {N} extracted
+│  Ceremony: Full | Standard | Essential | Minimal
+│  Commits: {N} files pushed to origin/main
+│
+└─ Session saved. Next wakeup loads exactly where we left off.
+```
+
+If Minimal ceremony:
+```
+⚠️  Context was critical — full ceremony deferred. Run /wai-closeout next session.
+```
+
+### 13. Release Tag (Production Releases Only — skip otherwise)
 
 Skip if not a production release (confirmed in Step 0).
 
@@ -313,34 +313,3 @@ git tag -l | tail -1  # Verify tag (if production release)
 ---
 
 *Closeout = Save game. Next agent continues the adventure.*
-
----
-
-## Visual Completion Marker
-
-When closeout succeeds, display this to signal completion distinctly:
-
-```
-┌─ CLOSEOUT Session-{N} [{track_name}] {timestamp}
-│
-│  Track stats: {turns} turns, {phase_distribution}
-│  Context: {context_percent}% ({context_used}K/{context_limit}K tokens)
-│  Version: v{old_version} → v{new_version}
-│  Session count: {old_count} → {new_count}
-│  Commits: {N} files pushed to origin/main
-│
-└─ Session saved. Next wakeup loads exactly where we left off.
-```
-
-**Values to fill:**
-- `{N}` = `_session_state.session_count` from WAI-State.json (before increment)
-- `{track_name}` = session directory name (e.g., `session-20260325-1326`)
-- `{timestamp}` = current UTC time (ISO-8601)
-- `{turns}` = total track points written (count lines in track.jsonl)
-- `{phase_distribution}` = breakdown of phases in track (e.g., "execution (70%) + review (30%)")
-- `{context_percent}`, `{context_used}`, `{context_limit}` = final context measurement from closeout (run `/context` before Step 11 if available)
-- `{old_version}` → `{new_version}` = version before and after closeout
-- `{old_count}` → `{new_count}` = session_count before and after increment
-- `{N}` = number of files committed and pushed
-
-**Distinction:** **WAKEUP** = shows project + active work. **CLOSEOUT** = shows track stats + context usage + version changes. Unmistakable when tab-switching.
