@@ -17,29 +17,12 @@
       "Read(/home/mario/projects/**)",
       "Read(/home/mario/projects/wheelwright/hub/teachings_repo/framework/current/**)",
       "Read(/home/mario/projects/wheelwright/hub/cross_spoke/**)",
-      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/sessions/session-20260325-2236/track.jsonl:*)",
-      "Read(//home/mario/projects/wheelwright/hub/WAI-Hub/**)",
-      "Read(//home/mario/projects/wheelwright/hub/WAI-Hub/Signals/**)",
-      "Bash(cp /home/mario/projects/wheelwright/framework/WAI-Spoke/lugs/bytype/signal/undelivered/signal-session-type-tracking-v1.json /home/mario/projects/wheelwright/hub/WAI-Hub/Signals/incoming/signal-session-type-tracking-v1.json)",
-      "Bash(__NEW_LINE_4dcfddf71aabfbd1__ cp:*)",
-      "Bash(__NEW_LINE_4dcfddf71aabfbd1__ echo:*)",
-      "Bash(HUB_PATH=/home/mario/projects/wheelwright/hub ls -1 $HUB_PATH/teachings_repo/framework/current/*.teaching)",
-      "Bash(/dev/null echo:*)",
+      "Read(/home/mario/projects/wheelwright/hub/WAI-Hub/**)",
+      "Read(/home/mario/projects/wheelwright/hub/WAI-Hub/Signals/**)",
+      "Read(/home/mario/projects/wheelwright/hub/teachings_repo/framework/current/**)",
       "Skill(update-config)",
       "Bash(gh run:*)",
-      "Bash(python3.10 -c \"import ast; ast.parse\\(open\\(''benchmarks/e2e/test_skills.py''\\).read\\(\\)\\)\")",
-      "Bash(python3.11 -c \"import ast; ast.parse\\(open\\(''benchmarks/e2e/test_skills.py''\\).read\\(\\)\\)\")",
-      "Bash(python3.12 -c \"import ast; ast.parse\\(open\\(''benchmarks/e2e/test_skills.py''\\).read\\(\\)\\)\")",
-      "Bash(WAI-Spoke/sessions/session-20260326-0937/track.jsonl:*)",
-      "Bash(/dev/null ls:*)",
-      "Bash(\"/home/mario/projects/wheelwright/framework/WAI-Spoke/sessions/session-20260326-1621/track.jsonl\":*)",
-      "Bash(do)",
-      "Read(//home/mario/projects/wheelwright/hub/teachings_repo/framework/current/**)",
-      "Bash(done)",
-      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/sessions/session-20260326-2037/track.jsonl:*)",
-      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/sessions/session-20260326-2221/track.jsonl:*)",
-      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/sessions/session-20260326-2225/track.jsonl:*)",
-      "Bash(/home/mario/projects/wheelwright/framework/WAI-Spoke/lugs/bytype/signal/undelivered/signal-closeout-banner-stall-fix-v1.json:*)"
+      "Bash(CLAUDE_PROJECT_DIR=\".\" bash WAI-Spoke/_hooks/session-start.sh)"
     ]
   }
 }

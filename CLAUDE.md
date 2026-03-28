@@ -12,9 +12,20 @@ On your first turn, run the WAI wakeup protocol:
 
 The hook in `.claude/hooks/user-prompt-submit.sh` injects this directive automatically.
 
+## Critical Rules (survive compaction — always in context)
+
+- **P1 Persistence:** Nothing survives without explicit save. Git commit = persistence complete.
+- **P2 Verification:** Never assume success. Run the command, check the file, report what was verified.
+- **P3 Stewardship:** Detect scope drift and flag before proceeding. Require acknowledgment for direction changes.
+- **P10 Autonomy:** Trust is the default. Run safe commands without asking. Pause only for destructive/irreversible actions.
+- **P11 Lug-First:** Store work state in lugs, not TaskCreate or scratch files. Lugs survive sessions; tasks don't.
+- **Track:** Every turn must append to the session track (track.jsonl).
+- **Deny:** Never `rm -rf /`, never `git push --force`.
+- **Closeout:** Always run `/wai-closeout` before ending a session.
+
 ## Behavioral Protocols
 
-**All behavioral rules live in skills.** Read the relevant skill file when you need guidance.
+**Full behavioral rules live in skills.** Read the relevant skill file when you need guidance.
 
 Skills are in `templates/commands/`:
 
@@ -29,6 +40,7 @@ Skills are in `templates/commands/`:
 | `wai-ide-setup.md` | Hook configuration for Claude Code and other tools |
 | `wai-rules.md` | Project boundaries |
 | `wai-principles.md` | WAI principles P1-P9 |
+| `wai-claude-maximizer.md` | CC config audit — Ozi runs proactively on underweight configs |
 
 When in doubt: read the relevant skill file. Don't memorize rules.
 

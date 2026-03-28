@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.85",
+    "version": "2.0.86",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-28T04:56:00Z",
+    "last_modified_at": "2026-03-28T01:40:00Z",
     "last_modified_by": "claude-opus-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260328-1200",
-    "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-28T13:00:00Z",
-    "last_closeout": "2026-03-28T13:00:00Z",
-    "session_count": 92,
-    "track_path": "WAI-Spoke/sessions/session-20260328-1200/track.jsonl",
-    "next_session_recommendation": "Session 90+90b: Hook fix (WAI-State.json dirty), Track v0.21, closeout auto-commit fix (removed HARD STOP gate). Teachings published to hub. Pending: (A) 9 framework task-from-signal lugs need implementation; (B) 10 hub signals in by-target/hub/ need hub incorporation; (C) 78 active lugs need PEV remediation; (D) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
+    "last_session_id": "session-20260328-0052",
+    "last_modified_by": "claude-opus-4-6",
+    "last_modified_at": "2026-03-28T01:40:00Z",
+    "last_closeout": "2026-03-28T01:40:00Z",
+    "session_count": 93,
+    "track_path": "WAI-Spoke/sessions/session-20260328-0052/track.jsonl",
+    "next_session_recommendation": "Session 92: Created /wai-claude-maximizer skill (guard/advisory). Ozi now detects CC config gaps on every SessionStart. Completed: deny rules, CLAUDE.md enrichment, settings.local cleanup, post-compact WAI essentials injection. Remaining: (1) PreToolUse guard hook; (2) subagent definitions in .claude/agents/; (3) 2 pending teachings (hook-session-guard-runtime-v1, skill-wai-closeout-autocommit-v1) not adopted this session.",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",

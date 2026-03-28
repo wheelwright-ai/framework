@@ -104,6 +104,33 @@ GIT_DIRTY=$(git -C "$PROJECT_DIR" status --porcelain 2>/dev/null | wc -l | tr -d
 GIT_STATUS="clean"
 [[ "$GIT_DIRTY" -gt 0 ]] && GIT_STATUS="$GIT_DIRTY file(s) modified"
 
+# ── 8. CC health check (claude-maximizer trigger) ────────────────────────────
+CC_GAPS=""
+SETTINGS_FILE="$PROJECT_DIR/.claude/settings.json"
+CLAUDE_MD="$PROJECT_DIR/CLAUDE.md"
+
+# Check deny rules
+DENY_COUNT=$(jq '.permissions.deny // [] | length' "$SETTINGS_FILE" 2>/dev/null || echo 0)
+[[ "$DENY_COUNT" -eq 0 ]] && CC_GAPS="${CC_GAPS}  - No deny rules in .claude/settings.json\n"
+
+# Check CLAUDE.md weight
+if [[ -f "$CLAUDE_MD" ]]; then
+  CMD_LINES=$(wc -l < "$CLAUDE_MD" | tr -d ' ')
+  [[ "$CMD_LINES" -lt 50 ]] && CC_GAPS="${CC_GAPS}  - CLAUDE.md underweight (${CMD_LINES} lines, ideal 50+)\n"
+else
+  CC_GAPS="${CC_GAPS}  - CLAUDE.md missing\n"
+fi
+
+# Check PreToolUse hook
+HAS_PRETOOL=$(jq '.hooks.PreToolUse // empty' "$SETTINGS_FILE" 2>/dev/null)
+[[ -z "$HAS_PRETOOL" ]] && CC_GAPS="${CC_GAPS}  - No PreToolUse guard hook configured\n"
+
+# Check subagent definitions
+AGENTS_DIR="$PROJECT_DIR/.claude/agents"
+if [[ ! -d "$AGENTS_DIR" ]] || [[ -z "$(ls -A "$AGENTS_DIR" 2>/dev/null)" ]]; then
+  CC_GAPS="${CC_GAPS}  - No subagent definitions in .claude/agents/\n"
+fi
+
 # ── Output ────────────────────────────────────────────────────────────────────
 cat << BRIEF
 <wai-session-init>
@@ -128,7 +155,7 @@ HUB SIGNALS INBOX: ${HUB_SIGNALS} items
 CONTEXT HEALTH
   Git: ${GIT_STATUS}
   Hub path: ${HUB_STATUS}
-
+$(if [[ -n "$CC_GAPS" ]]; then printf "\nCC OPTIMIZATION (run /wai-claude-maximizer for details)\n%b" "$CC_GAPS"; fi)
 NEXT ACTIONS (from session $((SESSION_COUNT - 1)))
   ${NEXT_REC}
 </wai-session-init>

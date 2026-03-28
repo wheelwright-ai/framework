@@ -36,8 +36,24 @@ if [[ -z "$GUARD_SESSION_ID" || "$GUARD_SESSION_ID" == "$LAST_SESSION_ID" ]]; th
   GUARD_COMPLETED="false"
 fi
 
-# Skip if protocol already ran this session
-[[ "$GUARD_COMPLETED" == "true" ]] && exit 0
+# If protocol already ran, emit compact WAI essentials (survives /compact)
+if [[ "$GUARD_COMPLETED" == "true" ]]; then
+  TRACK_PATH=$(jq -r '._session_state.track_path // ""' "$STATE_FILE" 2>/dev/null)
+  cat << ESSENTIALS
+<wai-essentials>
+WAI project: Wheelwright Framework. State: WAI-Spoke/WAI-State.json
+Active lugs: WAI-Spoke/lugs/bytype/{type}/{open,in_progress}/*.json
+Signals: WAI-Spoke/lugs/bytype/signal/undelivered/*.json
+Track: ${TRACK_PATH} (append every turn)
+
+Rules: P1-Persist (save or lose), P2-Verify (check don't assume), P3-Steward (flag drift),
+P10-Autonomy (proceed don't pause for safe ops), P11-Lug-First (lugs survive, tasks don't).
+Deny: rm -rf /, git push --force. Closeout: /wai-closeout. Status: /wai-status.
+Skills: templates/commands/wai-*.md. Read skill file when in doubt.
+</wai-essentials>
+ESSENTIALS
+  exit 0
+fi
 
 # Mark protocol as triggered (in runtime file only — WAI-State.json stays clean)
 TMP=$(mktemp)
