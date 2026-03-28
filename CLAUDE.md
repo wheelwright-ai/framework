@@ -48,6 +48,8 @@ Plan mode (Shift+Tab twice) before execution. Required for:
 | `WAI-Spoke/_hooks/session-start.sh` | SessionStart | Pre-compute wakeup data, CC health check |
 | `.claude/hooks/user-prompt-submit.sh` | UserPromptSubmit | Session guard + WAI essentials injection |
 | `.claude/hooks/pre-tool-guard.sh` | PreToolUse | Block destructive commands (rm -rf, force-push) |
+| `.claude/hooks/stop-test-runner.sh` | Stop | Run pytest when Python files changed |
+| `.claude/hooks/pre-compact.sh` | PreCompact | Preserve WAI state summary before context compaction |
 
 ## Anti-Patterns
 
@@ -59,6 +61,12 @@ Living document. Add entries when Claude does something wrong.
 - **settings.local.json junk:** Do not approve one-off session-specific paths into settings.local.json. Keep only reusable entries.
 - **Memorizing rules:** Read the skill file. Don't carry rules in conversation context when the file is the source of truth.
 - **TaskCreate for persistent state:** Tasks don't survive sessions. Use lugs (P11).
+
+## Formatting Rules: Lists
+
+- Use numbered lists only for one top-level sequence per answer.
+- Never restart numbering mid-answer.
+- Use bullets for sub-points.
 
 ## Standing Rules
 
@@ -95,6 +103,7 @@ Skills are in `templates/commands/`:
 - `/wai-rules` — Show boundaries
 - `/wai-status` — Quick health check
 - `/wai-claude-maximizer` — CC optimization audit
+- `/wai-next` — Closeout + transition to fresh session
 
 ## Subagents
 

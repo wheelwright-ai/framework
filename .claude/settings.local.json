@@ -2,27 +2,16 @@
   "permissions": {
     "allow": [
       "Bash(rm:*)",
-      "Bash(python3:*)",
-      "Bash(python -m pytest:*)",
-      "Bash(python ./wai-orchestrate upgrade:*)",
       "Bash(bash:*)",
       "Bash(truncate:*)",
       "Bash(ssh:*)",
       "Bash(ln:*)",
       "Bash(tree:*)",
       "Bash(du:*)",
-      "Bash(jq:*)",
-      "Bash(date:*)",
       "Bash(xargs:*)",
-      "Read(/home/mario/projects/**)",
-      "Read(/home/mario/projects/wheelwright/hub/teachings_repo/framework/current/**)",
-      "Read(/home/mario/projects/wheelwright/hub/cross_spoke/**)",
-      "Read(/home/mario/projects/wheelwright/hub/WAI-Hub/**)",
-      "Read(/home/mario/projects/wheelwright/hub/WAI-Hub/Signals/**)",
-      "Read(/home/mario/projects/wheelwright/hub/teachings_repo/framework/current/**)",
-      "Skill(update-config)",
-      "Bash(gh run:*)",
-      "Bash(CLAUDE_PROJECT_DIR=\".\" bash WAI-Spoke/_hooks/session-start.sh)"
+      "Bash(python -m pytest:*)",
+      "Bash(python ./wai-orchestrate upgrade:*)",
+      "Bash(gh run:*)"
     ]
   }
 }
