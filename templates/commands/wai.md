@@ -89,18 +89,8 @@ fi
 
 **If STATUS = "CLEAN":**
 - Continue with normal wakeup flow
-- Update `_session_status: "clean"` in WAI-State.json
 
-**Marker:** Set `_session_status` in WAI-State.json:
-```json
-{
-  "_session_status": {
-    "interruption_state": "clean|interrupted|stale",
-    "last_interrupted_at": "ISO-8601 or null",
-    "autosave_checkpoint": "path/to/turn-N.json or null"
-  }
-}
-```
+**Note:** Session guard state (protocol_completed, protocol_last_run) lives in `WAI-Spoke/runtime/session-guard.json` (gitignored). Do NOT write session-tracking markers to WAI-State.json — it must stay clean between commits.
 
 ---
 
@@ -333,9 +323,11 @@ Thresholds: <60% = Full, 60–79% = Standard, 80–89% = Essential, ≥90% = Min
 ```bash
 git status --short WAI-Spoke/WAI-State.json
 ```
-If `WAI-State.json` is listed as modified (`M`) AND `_session_state.protocol_completed = true` in WAI-State.json:
-> `Prior closeout may be incomplete — WAI-State.json is uncommitted. Stage and commit now? (yes/skip)`
+If `WAI-State.json` is listed as modified (`M`):
+> `WAI-State.json has uncommitted changes. Stage and commit now? (yes/skip)`
 This converts a silent observation into an actionable recovery prompt. Do NOT dismiss as "low risk".
+
+**Note:** The session guard hook now uses `WAI-Spoke/runtime/session-guard.json` (gitignored) instead of writing to WAI-State.json. If you see WAI-State.json dirty after a clean closeout, the hook may need updating.
 
 **Create session track:**
 ```bash

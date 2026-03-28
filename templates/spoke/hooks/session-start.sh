@@ -114,20 +114,12 @@ if [[ "$NEW_SESSION" == "true" ]]; then
   rm -f "$CONVERSATION_LOG"
 fi
 
-# Update session state to mark protocol completed and initialize current_session
-TMP_STATE=$(mktemp)
-jq --arg session_id "$SESSION_ID" \
-   --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-   '._session_state.protocol_completed = true |
-    ._session_state.protocol_last_run = (now | strftime("%Y-%m-%dT%H:%M:%SZ")) |
-    ._session_state.briefing_provided = true |
-    ._session_state.current_session = {
-      "session_id": $session_id,
-      "started_at": $timestamp,
-      "turn_count": 0,
-      "conversation_log_path": "WAI-Spoke/WAI-Session-Log.jsonl"
-    }' "$STATE_FILE" > "$TMP_STATE"
-mv "$TMP_STATE" "$STATE_FILE"
+# Write session guard to runtime file (gitignored) — keeps WAI-State.json clean between commits
+RUNTIME_DIR="$PROJECT_DIR/WAI-Spoke/runtime"
+GUARD_FILE="$RUNTIME_DIR/session-guard.json"
+mkdir -p "$RUNTIME_DIR"
+printf '{"session_id":"%s","protocol_completed":true,"protocol_last_run":"%s","started_at":"%s"}\n' \
+  "$SESSION_ID" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$GUARD_FILE"
 
 # Output briefing to Claude
 echo "$BRIEFING"

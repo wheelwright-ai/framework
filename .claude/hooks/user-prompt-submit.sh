@@ -11,24 +11,38 @@ STATE_FILE="$PROJECT_DIR/WAI-Spoke/WAI-State.json"
 # Exit silently if not a WAI project
 [[ ! -f "$STATE_FILE" ]] && exit 0
 
-# Detect new session: compare last_session_id vs current_session_id
-LAST_SESSION_ID=$(jq -r '._session_state.last_session_id // ""' "$STATE_FILE" 2>/dev/null || echo "")
-CURRENT_SESSION_ID=$(jq -r '._session_state.current_session.session_id // ""' "$STATE_FILE" 2>/dev/null || echo "")
+# Session guard uses a runtime file (gitignored) to avoid dirtying WAI-State.json
+RUNTIME_DIR="$PROJECT_DIR/WAI-Spoke/runtime"
+GUARD_FILE="$RUNTIME_DIR/session-guard.json"
+mkdir -p "$RUNTIME_DIR"
 
-# If no current session OR current matches last, this is a new session — reset protocol flag
-if [[ -z "$CURRENT_SESSION_ID" || "$LAST_SESSION_ID" == "$CURRENT_SESSION_ID" ]]; then
-  TMP=$(mktemp)
-  jq '._session_state.protocol_completed = false' "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"
+# Read guard state (if exists)
+GUARD_SESSION_ID=""
+GUARD_COMPLETED="false"
+if [[ -f "$GUARD_FILE" ]]; then
+  GUARD_SESSION_ID=$(jq -r '.session_id // ""' "$GUARD_FILE" 2>/dev/null || echo "")
+  GUARD_COMPLETED=$(jq -r '.protocol_completed // false' "$GUARD_FILE" 2>/dev/null || echo "false")
+fi
+
+# Detect new session: compare guard's session_id vs state's last_session_id
+LAST_SESSION_ID=$(jq -r '._session_state.last_session_id // ""' "$STATE_FILE" 2>/dev/null || echo "")
+
+# New session if guard is empty or matches the last committed session
+if [[ -z "$GUARD_SESSION_ID" || "$GUARD_SESSION_ID" == "$LAST_SESSION_ID" ]]; then
+  # Generate a fresh session ID for this session
+  NEW_SESSION_ID="session-$(date +%Y%m%d-%H%M)"
+  printf '{"session_id":"%s","protocol_completed":false,"started_at":"%s"}\n' \
+    "$NEW_SESSION_ID" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$GUARD_FILE"
+  GUARD_COMPLETED="false"
 fi
 
 # Skip if protocol already ran this session
-PROTOCOL_COMPLETED=$(jq -r '._session_state.protocol_completed // false' "$STATE_FILE" 2>/dev/null || echo "false")
-[[ "$PROTOCOL_COMPLETED" == "true" ]] && exit 0
+[[ "$GUARD_COMPLETED" == "true" ]] && exit 0
 
-# Mark protocol as triggered
+# Mark protocol as triggered (in runtime file only — WAI-State.json stays clean)
 TMP=$(mktemp)
-jq '._session_state.protocol_completed = true |
-    ._session_state.protocol_last_run = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"
+jq '.protocol_completed = true |
+    .protocol_last_run = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' "$GUARD_FILE" > "$TMP" && mv "$TMP" "$GUARD_FILE"
 
 # Inject wakeup directive — agent follows /wai skill (wai.md), no bash script needed
 cat << 'EOF'

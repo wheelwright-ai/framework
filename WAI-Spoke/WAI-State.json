@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.83",
+    "version": "2.0.84",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,17 +93,15 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260327-2053",
-    "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-28T04:56:00Z",
-    "last_closeout": "2026-03-28T04:56:00Z",
-    "session_count": 90,
-    "track_path": "WAI-Spoke/sessions/session-20260327-2053/track.jsonl",
-    "protocol_completed": true,
-    "next_session_recommendation": "Session 89b: Hub signal bulletin reorganized with target-routed lifecycle. Teaching distributed. Pending: (A) 9 framework task-from-signal lugs need implementation; (B) 10 hub signals in by-target/hub/ need hub incorporation; (C) 78 active lugs need PEV remediation; (D) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
+    "last_session_id": "session-20260328-0000",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-28T12:00:00Z",
+    "last_closeout": "2026-03-28T12:00:00Z",
+    "session_count": 91,
+    "track_path": "WAI-Spoke/sessions/session-20260328-0000/track.jsonl",
+    "next_session_recommendation": "Session 90: Fixed hook bug (WAI-State.json dirty after commit — moved session guard to runtime/session-guard.json, gitignored). Updated track prompt to v0.21. Adopted signal-lifecycle-target-routing teaching. Configured statusline. Pending: (A) 9 framework task-from-signal lugs need implementation; (B) 10 hub signals in by-target/hub/ need hub incorporation; (C) 78 active lugs need PEV remediation; (D) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-28T04:53:17Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",

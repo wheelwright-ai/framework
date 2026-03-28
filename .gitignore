@@ -87,7 +87,8 @@ AGENTS.md
 benchmarks/*.json
 benchmarks/benchmark-*.json
 
-# Runtime artifacts
+# Runtime artifacts (session-local, never committed)
+WAI-Spoke/runtime/session-guard.json
 test_results.txt
 benchmark_epic008.json
 _custom/

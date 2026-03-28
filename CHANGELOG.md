@@ -1,3 +1,23 @@
+## [2.0.84] - 2026-03-28
+
+### Fixed — Hook No Longer Dirties WAI-State.json (Session 90)
+
+- **`.claude/hooks/user-prompt-submit.sh`:** Session guard state moved from `WAI-State.json` to `WAI-Spoke/runtime/session-guard.json` (gitignored). Root cause: hook was writing `protocol_completed` and `protocol_last_run` to WAI-State.json on every session start, immediately re-dirtying it after closeout committed it.
+- **`templates/spoke/.claude/hooks/user-prompt-submit.sh`:** Same fix propagated to spoke template.
+- **`templates/spoke/hooks/session-start.sh`:** Same fix for legacy session-start hook format.
+- **`.gitignore`:** Added `WAI-Spoke/runtime/session-guard.json` to gitignore.
+- **`WAI-Spoke/WAI-State.json`:** Removed `protocol_completed` and `protocol_last_run` fields (now in runtime guard).
+- **`templates/commands/wai.md`:** Removed instruction to write `_session_status` to WAI-State.json during wakeup. Added note that session guard is runtime-only.
+
+### Updated — Track Prompt v0.21 (Session 90)
+
+- **`.claude/commands/wai-track-generate.md`:** Replaced legacy track-generate procedure with full WAI Track v0.21 prompt (session codename, ledger record types, artifact manifest, provenance manifest, export protocol, line/station definitions, WAI domain vocabulary).
+- **`templates/spoke/skills/track-generate/wai-track-generate.md`:** Same update for spoke template deployment.
+
+### Teaching Adopted
+
+- **`signal-lifecycle-target-routing-v1.md.teaching`:** Hub signal bulletin target-routing lifecycle (already implemented in Session 89b, now formally adopted).
+
 ## [2.0.81] - 2026-03-28
 
 ### Added — Canonical Verification Epic (Session 88)
