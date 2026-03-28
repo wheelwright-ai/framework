@@ -1,0 +1,15 @@
+{
+  "id": "task-from-signal-signal-cross-spoke-routing-protocol-v1",
+  "type": "task",
+  "title": "Cross-Spoke Idea Routing: ideas captured in one spoke must be routed to their target spoke at closeo",
+  "status": "open",
+  "created_at": "2026-03-26T22:15:00Z",
+  "created_by": "hub-signal-triage",
+  "impact": 9,
+  "source_signal": "signal-cross-spoke-routing-protocol-v1",
+  "description": "",
+  "_behavior_directive": {
+    "what_this_is": "Task derived from hub signal signal-cross-spoke-routing-protocol-v1. Needs framework implementation.",
+    "action": "implement"
+  }
+}

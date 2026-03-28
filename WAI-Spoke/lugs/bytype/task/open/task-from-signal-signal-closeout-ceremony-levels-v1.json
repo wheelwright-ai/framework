@@ -1,0 +1,15 @@
+{
+  "id": "task-from-signal-signal-closeout-ceremony-levels-v1",
+  "type": "task",
+  "title": "Closeout ceremony level announced at Step 0; summary banner at Step 10 is a hard stop before git com",
+  "status": "open",
+  "created_at": "2026-03-26T22:15:00Z",
+  "created_by": "hub-signal-triage",
+  "impact": 8,
+  "source_signal": "signal-closeout-ceremony-levels-v1",
+  "description": "",
+  "_behavior_directive": {
+    "what_this_is": "Task derived from hub signal signal-closeout-ceremony-levels-v1. Needs framework implementation.",
+    "action": "implement"
+  }
+}

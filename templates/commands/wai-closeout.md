@@ -193,15 +193,24 @@ Check `WAI-Spoke/lugs/outgoing/` for queued deliveries. If found and hub connect
 
 Teaching format details: see `wai-closeout-reference.md` in this skill's folder.
 
-### 9c. Hub Signal Bulletin (Routing-Aware)
+### 9c. Hub Signal Bulletin (Target-Routed)
 
-For each lug with `routed_to = "SIGNAL"`: if not already at `{hub_path}/WAI-Hub/Signals/incoming/{id}.json`, write it there. Skip if hub not connected.
+Deliver signals to `{hub_path}/WAI-Hub/Signals/incoming/` with a `target` field so hub triage can route them.
 
-**Also include** any signal lug with `impact > 7` and `routed_to = "SIGNAL"` that wasn't already caught by routing.
+For each signal lug to deliver, include a `target` field:
+- `"hub"` — hub architecture, KB, advisor changes
+- `"framework"` — framework skill/template/tool changes
+- `"spokes"` — cross-spoke patterns, general learnings
+- `"spokes/{id}"` — specific spoke
 
-**Backlog sweep (always):** Also copy ALL files currently in `bytype/signal/undelivered/` to hub incoming if not already present. This drains accumulated backlog from prior sessions regardless of `routed_to` or session scope.
+**What to deliver:**
+1. Each lug with `routed_to = "SIGNAL"`: write to `{hub_path}/WAI-Hub/Signals/incoming/{id}.json` if not already present
+2. Any signal lug with `impact > 7` not already caught by routing
+3. **Backlog sweep (always):** All files in `bytype/signal/undelivered/` — drains accumulated backlog
 
-Report: "Delivered N lugs to hub bulletin (M new, K already present)."
+**Signal lifecycle:** Signals delivered here enter the hub triage queue. Hub routes them to `by-target/{target}/`. Target node incorporates and clears to `processed/`. Signals should not accumulate indefinitely — the lifecycle is: arrive → triage → incorporate → teach → clear.
+
+Report: "Delivered N signals to hub (M new, K already present). Targets: X hub, Y framework, Z spokes."
 
 ### 10. Autosave Cleanup (Interruption Recovery Hygiene)
 

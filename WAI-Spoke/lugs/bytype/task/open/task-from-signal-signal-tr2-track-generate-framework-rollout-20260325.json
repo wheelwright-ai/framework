@@ -1,0 +1,15 @@
+{
+  "id": "task-from-signal-signal-tr2-track-generate-framework-rollout-20260325",
+  "type": "task",
+  "title": "TR2 wai-track-generate should be distributed wheel-wide via framework teaching",
+  "status": "open",
+  "created_at": "2026-03-25T20:08:14Z",
+  "created_by": "claude-sonnet-4-6",
+  "impact": 7,
+  "source_signal": "signal-tr2-track-generate-framework-rollout-20260325",
+  "description": "track-chain-protocol-v1 (TR2) is wheel-wide scope \u2014 minder deferred adoption pending formal framework teaching distribution. track-encapsulation.yaml and wai-track-generate.md exist in framework but no spoke-targeted teaching packages the install steps for non-framework spokes. Framework should produce a skill-wai-track-generate-v1.md.teaching with install steps (copy wai-track-generate.md to WAI-Spoke/commands/, add Step 5b to wai.md) so all spokes receive it via normal pipeline.",
+  "_behavior_directive": {
+    "what_this_is": "Task derived from hub signal signal-tr2-track-generate-framework-rollout-20260325. Needs framework implementation.",
+    "action": "implement"
+  }
+}

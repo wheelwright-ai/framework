@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.82",
+    "version": "2.0.83",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-28T03:55:00Z",
+    "last_modified_at": "2026-03-28T04:56:00Z",
     "last_modified_by": "claude-opus-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -95,15 +95,15 @@
   "_session_state": {
     "last_session_id": "session-20260327-2053",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-28T03:55:00Z",
-    "last_closeout": "2026-03-28T03:55:00Z",
-    "session_count": 89,
+    "last_modified_at": "2026-03-28T04:56:00Z",
+    "last_closeout": "2026-03-28T04:56:00Z",
+    "session_count": 90,
     "track_path": "WAI-Spoke/sessions/session-20260327-2053/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 89 (light): 9 teachings adopted. Pending: (A) 78 active lugs need PEV remediation; (B) voice framework (advisor framing, communication contracts); (C) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
+    "next_session_recommendation": "Session 89b: Hub signal bulletin reorganized with target-routed lifecycle. Teaching distributed. Pending: (A) 9 framework task-from-signal lugs need implementation; (B) 10 hub signals in by-target/hub/ need hub incorporation; (C) 78 active lugs need PEV remediation; (D) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-28T04:03:04Z",
+    "protocol_last_run": "2026-03-28T04:53:17Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",

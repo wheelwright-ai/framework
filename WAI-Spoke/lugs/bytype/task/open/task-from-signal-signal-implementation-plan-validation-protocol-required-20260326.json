@@ -1,0 +1,15 @@
+{
+  "id": "task-from-signal-signal-implementation-plan-validation-protocol-required-20260326",
+  "type": "task",
+  "title": "Framework Directive: All implementation plans must validate against design spec FIRST",
+  "status": "open",
+  "created_at": "2026-03-27T00:00:00Z",
+  "created_by": "hub-signal-triage",
+  "impact": 9,
+  "source_signal": "signal-implementation-plan-validation-protocol-required-20260326",
+  "description": "",
+  "_behavior_directive": {
+    "what_this_is": "Task derived from hub signal signal-implementation-plan-validation-protocol-required-20260326. Needs framework implementation.",
+    "action": "implement"
+  }
+}
