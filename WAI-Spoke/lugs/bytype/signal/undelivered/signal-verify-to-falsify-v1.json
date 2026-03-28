@@ -1,0 +1,13 @@
+{
+  "id": "signal-verify-to-falsify-v1",
+  "type": "signal",
+  "title": "Post-execution falsification: verify by proving wrong, not confirming right",
+  "status": "undelivered",
+  "created_at": "2026-03-28T03:10:00Z",
+  "created_by": "claude-opus-4-6",
+  "session": "session-20260327-0156",
+  "impact": 9,
+  "rationale": "Three rounds of 'done' were proven wrong by user challenge. Agent verified to confirm (green tool output) instead of to falsify (filesystem search). Codified in complexity-gate (post-execution falsification section) and closeout (quality gate 0f). Principle: the registry is not the truth — the filesystem is.",
+  "routed_to": "SIGNAL",
+  "_behavior_directive": {"action": "track_only"}
+}

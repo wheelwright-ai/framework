@@ -5,9 +5,14 @@ Signal Publication Deduplication Tests
 Tests that signal publishing operations (wai-closeout.md Step 9b) properly
 deduplicate at both source and destination to prevent duplicate signal entries.
 
+Updated for canonical bytype/ storage:
+- Signals stored as individual JSON files in lugs/bytype/signal/{undelivered,delivered}/
+- WAI-Signals.jsonl is RETIRED — not used
+- Deduplication checks for existing signal files by ID in bytype/signal/ dirs
+
 Focus areas:
 - Teaching file creation deduplication
-- WAI-Signals.jsonl append deduplication
+- bytype/signal/ file deduplication
 - Hub distribution idempotency
 - Cross-session signal consistency
 """
@@ -25,7 +30,13 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent / "utils"))
 
-from spoke_factory import create_test_spoke, create_test_hub
+from spoke_factory import (
+    create_test_spoke,
+    create_test_hub,
+    write_lug_to_bytype,
+    load_all_lugs_from_bytype,
+    load_lugs_by_type_status,
+)
 from assertions import assert_no_duplicate_signals, assert_teaching_files_unique
 
 
@@ -104,7 +115,7 @@ class SignalDeduplicationTest(unittest.TestCase):
         )
 
         # Verify no duplicate signal content
-        signal_texts = [s.get("signal", "") for s in signals_after_second]
+        signal_texts = [s.get("t", "") for s in signals_after_second]
         unique_signals = set(signal_texts)
         self.assertEqual(
             len(signal_texts),
@@ -147,10 +158,8 @@ class SignalDeduplicationTest(unittest.TestCase):
             "Teaching file names should be unique",
         )
 
-    def test_signals_jsonl_duplicate_append_prevention(self):
-        """WAI-Signals.jsonl should reject duplicate signal appends."""
-
-        signals_file = self.spoke_dir / "WAI-Spoke" / "WAI-Signals.jsonl"
+    def test_signal_bytype_duplicate_prevention(self):
+        """bytype/signal/ dirs should reject duplicate signal files by ID."""
 
         # Add same signal twice
         self._add_signal(self.test_signal)
@@ -158,12 +167,12 @@ class SignalDeduplicationTest(unittest.TestCase):
 
         signals = self._load_signals()
 
-        # Should only have one instance
+        # Should only have one instance (dedup by timestamp)
         matching_signals = [
             s
             for s in signals
-            if s.get("timestamp") == self.test_signal["timestamp"]
-            and s.get("signal") == self.test_signal["signal"]
+            if s.get("ca") == self.test_signal["timestamp"]
+            and s.get("t") == self.test_signal["signal"]
         ]
 
         self.assertEqual(
@@ -183,7 +192,7 @@ class SignalDeduplicationTest(unittest.TestCase):
 
 ## What This Teaching Does
 
-Appends a high-impact signal to WAI-Signals.jsonl on this spoke.
+Appends a high-impact signal to bytype/signal/ on this spoke.
 
 ## Embedded Signal
 
@@ -223,7 +232,7 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
         timestamp_matches = [
             s
             for s in signals_after_adoption
-            if s.get("timestamp") == self.test_signal["timestamp"]
+            if s.get("ca") == self.test_signal["timestamp"]
         ]
 
         self.assertEqual(
@@ -261,7 +270,7 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
         session3_signals = self._load_signals()
 
         # Should have exactly 2 unique signals
-        unique_timestamps = set(s.get("timestamp") for s in session3_signals)
+        unique_timestamps = set(s.get("ca") for s in session3_signals)
         self.assertEqual(
             len(unique_timestamps), 2, "Should have 2 unique signals across sessions"
         )
@@ -380,19 +389,18 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
             json.dump(state, f, indent=2)
 
     def _add_lug(self, lug: Dict[str, Any]):
-        """Add lug to WAI-Lugs.jsonl."""
-        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
-        with open(lugs_file, "a") as f:
-            f.write(json.dumps(lug) + "\n")
+        """Add lug to bytype/ storage."""
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        write_lug_to_bytype(wai_spoke, lug)
 
     def _add_signal(self, signal: Dict[str, Any]):
         """
-        Add signal to WAI-Lugs.jsonl with deduplication check.
+        Add signal to bytype/signal/undelivered/ with deduplication check.
 
-        WAI-Signals.jsonl is RETIRED — signals are now high-impact lugs
-        (ty="signal") in WAI-Lugs.jsonl. Deduplication key is timestamp.
+        Deduplication checks existing signal files by ID and timestamp
+        in bytype/signal/{undelivered,delivered}/ directories.
         """
-        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
 
         # Check for existing signal with same timestamp (destination-side check)
         existing_signals = self._load_signals()
@@ -402,53 +410,34 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
             ):
                 return  # Skip duplicate
 
-        # Convert legacy signal format to lug format, preserving legacy fields
-        # for backward-compatible test assertions (timestamp, signal)
+        # Convert legacy signal format to lug format
         timestamp = signal.get("timestamp", signal.get("ca", ""))
         signal_text = signal.get("signal", signal.get("t", ""))
         lug = {
             "i": f"signal-{timestamp[:10].replace('-', '')}-{hash(signal_text) & 0xFFFF:04x}",
             "ty": "signal",
             "t": signal_text,
-            "s": "c",
+            "s": "o",  # undelivered
             "ca": timestamp,
             "gb": signal.get("by", signal.get("gb", "test-agent")),
             "impact": signal.get("impact", 8),
             "description": signal_text,
             "session_id": signal.get("session_id", ""),
             "rationale": signal.get("rationale", ""),
-            # Legacy fields for backward-compatible test assertions
-            "timestamp": timestamp,
-            "signal": signal_text,
         }
 
-        with open(lugs_file, "a") as f:
-            f.write(json.dumps(lug) + "\n")
+        write_lug_to_bytype(wai_spoke, lug)
 
     def _load_signals(self) -> List[Dict[str, Any]]:
         """
-        Load signal lugs from WAI-Lugs.jsonl.
+        Load signal lugs from bytype/signal/ directories.
 
-        WAI-Signals.jsonl is RETIRED as of WAI v2 migration. Signals are now
-        high-impact lugs (ty="signal" or impact >= 8) in WAI-Lugs.jsonl.
-        This loader reads signal-type lugs from the canonical location.
+        Scans both undelivered/ and delivered/ subdirectories.
         """
-        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
-        if not lugs_file.exists():
-            return []
-
-        signals = []
-        with open(lugs_file) as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    try:
-                        lug = json.loads(line)
-                        if lug.get("ty") == "signal":
-                            signals.append(lug)
-                    except json.JSONDecodeError:
-                        continue
-        return signals
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        undelivered = load_lugs_by_type_status(wai_spoke, "signal", "undelivered")
+        delivered = load_lugs_by_type_status(wai_spoke, "signal", "delivered")
+        return undelivered + delivered
 
     def _list_teaching_files(self) -> List[Path]:
         """List all teaching files in hub."""
@@ -461,16 +450,16 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
         """
         Execute closeout signal extraction (mock implementation).
 
-        Simulates Step 2 of wai-closeout.md: scans WAI-Lugs.jsonl for entries
+        Simulates Step 2 of wai-closeout.md: scans bytype/ for entries
         with impact >= 8, deduplicates using {created_at}+{title}+{impact} key
         stored in _closeout_state.duplicate_detection_keys.signal_teachings,
-        and records new signals into WAI-Lugs.jsonl with ty="signal".
+        and creates new signal files in bytype/signal/undelivered/.
 
-        NOTE: File locking (.state.lock, .lugs.lock) is DEFERRED — not
-        implemented. Deduplication key is checked at destination instead.
+        NOTE: File locking (.state.lock) is DEFERRED — not implemented.
+        Deduplication key is checked at destination instead.
         """
         state_file = self.spoke_dir / "WAI-Spoke" / "WAI-State.json"
-        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
 
         with open(state_file) as f:
             state = json.load(f)
@@ -479,16 +468,8 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
         dup_keys = closeout_state.get("duplicate_detection_keys", {})
         existing_signal_keys = set(dup_keys.get("signal_teachings", []))
 
-        # Load current lugs
-        lugs = []
-        with open(lugs_file) as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    try:
-                        lugs.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        pass
+        # Load all lugs from bytype/
+        lugs = load_all_lugs_from_bytype(wai_spoke)
 
         # Extract signals from high-impact lugs (impact >= 8)
         new_signal_keys = []
@@ -516,12 +497,12 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
             if dedup_key in existing_signal_keys:
                 continue  # Already extracted — skip duplicate
 
-            # Create signal lug entry in WAI-Lugs.jsonl
+            # Create signal lug file in bytype/signal/undelivered/
             signal_lug = {
                 "i": f"signal-{ca[:10].replace('-', '')}-{lug['i']}",
                 "ty": "signal",
                 "t": title,
-                "s": "c",
+                "s": "o",  # undelivered
                 "ca": ca,
                 "gb": lug.get("gb", "test-agent"),
                 "impact": impact_int,
@@ -530,8 +511,7 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
                 "rationale": "High-impact decision captured by closeout protocol",
             }
 
-            with open(lugs_file, "a") as f:
-                f.write(json.dumps(signal_lug) + "\n")
+            write_lug_to_bytype(wai_spoke, signal_lug)
 
             new_signal_keys.append(dedup_key)
             signals_extracted += 1
@@ -559,7 +539,6 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
 
     def _execute_signal_teach(self, teach_time: str) -> Dict[str, Any]:
         """Execute signal teaching operation (mock implementation)."""
-        # TODO: Implement actual signal teaching logic
         signals = self._load_signals()
 
         teachings_dir = self.hub_dir / "teachings"
@@ -567,16 +546,15 @@ Move this file to WAI-Spoke/seed/ingest/processed/.
 
         files_created = 0
         for signal in signals:
-            timestamp = (
-                signal.get("timestamp", "").replace(":", "").replace("-", "")[:12]
-            )
+            ca = signal.get("ca", "")
+            timestamp = ca.replace(":", "").replace("-", "")[:12]
             filename = f"signal-{timestamp}-from-test-spoke.md.teaching"
 
             teaching_file = teachings_dir / filename
             if not teaching_file.exists():
                 teaching_content = f"""# Teaching: Signal
 
-**Type:** signal  
+**Type:** signal
 **safe_to_auto_adopt:** true
 
 ## Embedded Signal

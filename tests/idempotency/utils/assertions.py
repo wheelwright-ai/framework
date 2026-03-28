@@ -4,6 +4,11 @@ Custom Assertions for WAI Idempotency Tests
 
 Specialized assertion functions for validating WAI state consistency,
 file integrity, and idempotent operation outcomes.
+
+Updated for canonical bytype/ storage:
+- Lugs stored as individual JSON files in lugs/bytype/{type}/{status}/{id}.json
+- Signals in lugs/bytype/signal/{undelivered,delivered}/
+- WAI-Lugs.jsonl and WAI-Signals.jsonl are RETIRED
 """
 
 import json
@@ -205,6 +210,9 @@ def assert_no_duplicate_signals(signals: List[Dict[str, Any]], context: str = ""
     """
     Assert that signals list contains no duplicates.
 
+    Checks both by timestamp (ca field, with fallback to legacy timestamp field)
+    and by content (t field, with fallback to legacy signal field).
+
     Args:
         signals: List of signal dictionaries
         context: Context for error messages
@@ -215,15 +223,15 @@ def assert_no_duplicate_signals(signals: List[Dict[str, Any]], context: str = ""
     for i, signal in enumerate(signals):
         signal_context = f"{context} signal {i + 1}"
 
-        # Check timestamp uniqueness
-        timestamp = signal.get("timestamp", "")
+        # Check timestamp uniqueness — use ca (canonical) with fallback to timestamp (legacy)
+        timestamp = signal.get("ca", signal.get("timestamp", ""))
         assert timestamp not in seen_timestamps, (
             f"{signal_context}: Duplicate timestamp '{timestamp}'"
         )
         seen_timestamps.add(timestamp)
 
-        # Check content uniqueness
-        content = signal.get("signal", "")
+        # Check content uniqueness — use t (canonical) with fallback to signal (legacy)
+        content = signal.get("t", signal.get("signal", ""))
         content_hash = hashlib.md5(content.encode()).hexdigest()
         assert content_hash not in seen_content, (
             f"{signal_context}: Duplicate signal content"
@@ -344,9 +352,77 @@ def assert_file_not_corrupted(file_path: Path, context: str = ""):
         raise AssertionError(f"{context}: Cannot read file {file_path}: {e}")
 
 
+def assert_bytype_integrity(wai_spoke: Path, context: str = ""):
+    """
+    Assert that bytype/ directory structure has valid lug files.
+
+    Scans all .json files under lugs/bytype/ and validates each one
+    is parseable JSON with required lug fields.
+
+    Args:
+        wai_spoke: Path to WAI-Spoke directory
+        context: Context for error messages
+    """
+    bytype_dir = wai_spoke / "lugs" / "bytype"
+    assert bytype_dir.exists(), f"{context}: bytype/ directory does not exist at {bytype_dir}"
+
+    lugs = []
+    for json_file in bytype_dir.rglob("*.json"):
+        try:
+            with open(json_file) as f:
+                lug = json.load(f)
+                lugs.append(lug)
+        except json.JSONDecodeError as e:
+            raise AssertionError(
+                f"{context}: Invalid JSON in {json_file}: {e}"
+            )
+        except Exception as e:
+            raise AssertionError(f"{context}: Cannot read {json_file}: {e}")
+
+    # Validate lug structure
+    if lugs:
+        assert_lugs_valid(lugs, f"{context} bytype")
+
+
+def assert_signal_files_integrity(wai_spoke: Path, context: str = ""):
+    """
+    Assert that signal files in bytype/signal/ are valid.
+
+    Checks both undelivered/ and delivered/ subdirectories.
+
+    Args:
+        wai_spoke: Path to WAI-Spoke directory
+        context: Context for error messages
+    """
+    signal_dir = wai_spoke / "lugs" / "bytype" / "signal"
+    if not signal_dir.exists():
+        return  # No signals is valid
+
+    for subdir in ["undelivered", "delivered"]:
+        status_dir = signal_dir / subdir
+        if not status_dir.exists():
+            continue
+        for json_file in status_dir.glob("*.json"):
+            try:
+                with open(json_file) as f:
+                    lug = json.load(f)
+                assert lug.get("ty") == "signal", (
+                    f"{context}: File {json_file.name} in signal/{subdir}/ has type "
+                    f"'{lug.get('ty')}', expected 'signal'"
+                )
+            except json.JSONDecodeError as e:
+                raise AssertionError(
+                    f"{context}: Invalid JSON in {json_file}: {e}"
+                )
+
+
 def assert_lugs_file_integrity(lugs_file: Path, context: str = ""):
     """
     Assert that WAI-Lugs.jsonl file has valid structure.
+
+    NOTE: WAI-Lugs.jsonl is RETIRED. This function is kept for backward
+    compatibility but now also accepts the retired marker format. For new
+    tests, prefer assert_bytype_integrity().
 
     Args:
         lugs_file: Path to lugs file
@@ -362,8 +438,8 @@ def assert_lugs_file_integrity(lugs_file: Path, context: str = ""):
             for line in f:
                 line_num += 1
                 line = line.strip()
-                if not line:
-                    continue
+                if not line or line.startswith("#"):
+                    continue  # Skip empty lines and comment markers
 
                 lug = json.loads(line)
                 lugs.append(lug)
@@ -374,8 +450,9 @@ def assert_lugs_file_integrity(lugs_file: Path, context: str = ""):
     except Exception as e:
         raise AssertionError(f"{context}: Cannot read {lugs_file}: {e}")
 
-    # Validate lug structure
-    assert_lugs_valid(lugs, f"{context} lugs file")
+    # Validate lug structure (if any actual lugs exist, not just retired marker)
+    if lugs:
+        assert_lugs_valid(lugs, f"{context} lugs file")
 
 
 def assert_git_state_clean(repo_dir: Path, context: str = ""):
@@ -504,7 +581,7 @@ def dump_state_diff(state1: Dict[str, Any], state2: Dict[str, Any]) -> str:
             lines.append(f"  - {path}: {change['removed']}")
         elif "changed_from" in change:
             lines.append(
-                f"  ~ {path}: {change['changed_from']} → {change['changed_to']}"
+                f"  ~ {path}: {change['changed_from']} -> {change['changed_to']}"
             )
 
     return "\n".join(lines)

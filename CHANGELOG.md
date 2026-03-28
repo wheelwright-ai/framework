@@ -1,3 +1,31 @@
+## [2.0.81] - 2026-03-28
+
+### Added — Canonical Verification Epic (Session 88)
+
+- **`tools/wai_validate.py`:** Single-source validation library — 5 validators, canonical type/status catalogs, PEV enforcement for actionable lug types
+- **`tools/spoke_health_check.py`:** Automated spoke audit tool — quick (<2ms) and full (13ms) modes, JSON output, 6 check categories (structure, stale files, skill registry, lug integrity, hub connectivity, platform)
+- **`tools/pre_commit_health.py`:** Pre-commit gate — exits non-zero on critical drift
+- **`tests/behavioral/`:** 34 behavioral tests using real file operations (lug lifecycle, teaching adoption, spoke structure, skill registry, closeout operations). Includes canary test against real WAI-Skills.jsonl.
+- **`wai-complexity-gate.md`:** Post-Execution Falsification section — verify by proving wrong, not confirming right. Required after every code change.
+- **`wai-complexity-gate.md`:** Non-Trivial Functionality gate — lug with validated PEV required before showing to user
+- **`wai-closeout.md`:** Quality Gate 0f (Falsification) — `find` across full filesystem for retired files before commit
+- **Hub teaching:** `spoke-health-check-remediation-v1.md.teaching` — migration-safe remediation for all spokes
+
+### Fixed — Fleet Remediation
+
+- **19/19 spokes remediated to HEALTHY** — including 2 unregistered spokes (sound-sails/portal, new-solutions-by-mv)
+- **Spoke template fixed:** Removed WAI-Signals.jsonl from `templates/spoke/` — was propagating retired file to every new spoke
+- **24 signals migrated** from retired WAI-Signals.jsonl to `bytype/signal/delivered/` across 7 spokes (zero data loss)
+- **WAI-Skills.jsonl:** Removed 16 retired object references across 4 spokes (framework, basher, wheelwright-ai-website, minder)
+- **0 retired files remaining** (WAI-Signals.jsonl, WAI-Session-Log.jsonl) across entire project tree (excluding _archive/ and reference/v1-data/)
+
+### Changed
+
+- **`Makefile`:** Added `test-behavioral`, `test-health` targets; `test-all` now runs e2e + behavioral + health
+- **`tests/idempotency/utils/spoke_factory.py`:** Creates canonical bytype/ hierarchy instead of `lugs/outbox`
+- **`tests/idempotency/`:** Updated closeout replay and signal dedup tests for bytype/ structure
+- **`benchmarks/e2e/test_skills.py`:** Constants to be migrated to `wai_validate.py` (single source of truth)
+
 ## [2.0.80] - 2026-03-27
 
 ### Fixed — Teaching Protocol + Shipit Cleanup (Session 87)

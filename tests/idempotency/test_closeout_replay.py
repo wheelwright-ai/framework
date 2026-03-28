@@ -11,6 +11,12 @@ Based on wai-closeout.md Steps 1-12, focusing on:
 - State updates (Step 5)
 - Git operations (Step 11-12)
 
+Updated for canonical bytype/ storage:
+- Lugs stored as individual JSON files in lugs/bytype/{type}/{status}/{id}.json
+- Session summaries in lugs/bytype/session-summary/{id}.json
+- Autosave lugs: open in bytype/other/open/, completed in bytype/other/completed/
+- WAI-Lugs.jsonl is RETIRED — kept as marker only
+
 NOTE: File locking (.closeout.lock, .state.lock, .lugs.lock) and migration
 checkpoints (.migration-checkpoint.json) are NOT implemented — deferred to
 future batch. Concurrency is handled by ownership-based model (Step 0).
@@ -30,7 +36,14 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent / "utils"))
 
-from spoke_factory import create_test_spoke, add_test_lugs
+from spoke_factory import (
+    create_test_spoke,
+    add_test_lugs,
+    write_lug_to_bytype,
+    move_lug_bytype,
+    load_all_lugs_from_bytype,
+    load_lugs_by_type_status,
+)
 from assertions import assert_wai_state_valid, assert_lugs_valid, compare_states
 
 # Deterministic session ID for test replay consistency
@@ -42,7 +55,7 @@ def _simulate_closeout(spoke_dir: Path, session_id: str) -> Dict[str, Any]:
     Simulate the wai-closeout protocol on a temp WAI-Spoke directory.
 
     Implements Steps 0-5 of wai-closeout.md without git operations or real
-    agent calls. Operates directly on WAI-Spoke files.
+    agent calls. Operates on bytype/ lug storage (canonical structure).
 
     Deferred (not implemented here):
     - File locking (.closeout.lock, .state.lock, .lugs.lock)
@@ -50,7 +63,6 @@ def _simulate_closeout(spoke_dir: Path, session_id: str) -> Dict[str, Any]:
     """
     wai_spoke = spoke_dir / "WAI-Spoke"
     state_file = wai_spoke / "WAI-State.json"
-    lugs_file = wai_spoke / "WAI-Lugs.jsonl"
 
     # --- Step 0: Load state, check for duplicate session ---
     with open(state_file) as f:
@@ -73,44 +85,35 @@ def _simulate_closeout(spoke_dir: Path, session_id: str) -> Dict[str, Any]:
         }
 
     # --- Step 1: Lug Reconciliation ---
-    lugs = []
-    if lugs_file.exists():
-        with open(lugs_file) as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    try:
-                        lugs.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        pass
+    # Load all lugs from bytype/ storage
+    lugs = load_all_lugs_from_bytype(wai_spoke)
 
     # Find unreconciled autosave lugs
     autosave_ids = []
-    updated_lugs = []
+    resumed_from_partial = False
+
+    has_reconciled_autosaves = False
+    has_unreconciled_autosaves = False
+
+    for lug in lugs:
+        if lug.get("ty") == "autosave":
+            if lug.get("reconciled"):
+                has_reconciled_autosaves = True
+            else:
+                has_unreconciled_autosaves = True
+
     for lug in lugs:
         if lug.get("ty") == "autosave" and not lug.get("reconciled"):
+            old_status = lug["s"]
             updated_lug = {**lug, "reconciled": True, "s": "c"}
-            updated_lugs.append(updated_lug)
+            # Move from open to completed in bytype/other/
+            move_lug_bytype(wai_spoke, updated_lug, old_status)
             autosave_ids.append(lug["i"])
-        else:
-            updated_lugs.append(lug)
 
     # Check if we're resuming from a partial closeout (autosaves already
     # reconciled but no session-summary yet)
-    resumed_from_partial = False
-    has_reconciled_autosaves = any(
-        l.get("ty") == "autosave" and l.get("reconciled") for l in lugs
-    )
-    no_unreconciled = not any(
-        l.get("ty") == "autosave" and not l.get("reconciled") for l in lugs
-    )
-    if has_reconciled_autosaves and no_unreconciled and not autosave_ids:
+    if has_reconciled_autosaves and not has_unreconciled_autosaves and not autosave_ids:
         resumed_from_partial = True
-
-    # Write updated lugs (with reconciled autosaves)
-    with open(lugs_file, "w") as f:
-        for lug in updated_lugs:
-            f.write(json.dumps(lug) + "\n")
 
     # Create session-summary lug with deterministic ID: ss-{session_id}
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -123,26 +126,18 @@ def _simulate_closeout(spoke_dir: Path, session_id: str) -> Dict[str, Any]:
         "gb": "test-agent",
         "session_number": state["_session_state"]["session_count"] + 1,
         "accomplished": ["Test closeout simulation"],
-        "files_touched": [str(state_file), str(lugs_file)],
+        "files_touched": [str(state_file)],
         "decisions": [],
         "incomplete_work": {"tasks": [], "blockers": [], "next_steps": []},
         "autosaves_reconciled": autosave_ids,
     }
 
-    with open(lugs_file, "a") as f:
-        f.write(json.dumps(session_summary) + "\n")
+    # Write session-summary to bytype/session-summary/
+    write_lug_to_bytype(wai_spoke, session_summary)
 
     # --- Step 2: Signal Extraction ---
-    # Load current lugs to check for high-impact entries
-    all_lugs = []
-    with open(lugs_file) as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                try:
-                    all_lugs.append(json.loads(line))
-                except json.JSONDecodeError:
-                    pass
+    # Reload all lugs (including freshly written session-summary)
+    all_lugs = load_all_lugs_from_bytype(wai_spoke)
 
     existing_signal_keys = dup_keys.get("signal_teachings", [])
     new_signal_keys = []
@@ -217,27 +212,26 @@ class CloseoutReplayTest(unittest.TestCase):
         )
 
         # Add test lugs that would trigger closeout behavior
-        add_test_lugs(
-            self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl",
-            [
-                {
-                    "i": "autosave-001",
-                    "ty": "autosave",
-                    "t": "Work in progress",
-                    "s": "o",
-                    "ca": "2026-03-19T10:00:00Z",
-                    "reconciled": False,
-                },
-                {
-                    "i": "task-002",
-                    "ty": "task",
-                    "t": "Implement feature X",
-                    "s": "p",
-                    "ca": "2026-03-19T09:00:00Z",
-                    "gb": "test-agent",
-                },
-            ],
-        )
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        autosave_lug = {
+            "i": "autosave-001",
+            "ty": "autosave",
+            "t": "Work in progress",
+            "s": "o",
+            "ca": "2026-03-19T10:00:00Z",
+            "reconciled": False,
+        }
+        write_lug_to_bytype(wai_spoke, autosave_lug)
+
+        task_lug = {
+            "i": "task-002",
+            "ty": "task",
+            "t": "Implement feature X",
+            "s": "p",
+            "ca": "2026-03-19T09:00:00Z",
+            "gb": "test-agent",
+        }
+        write_lug_to_bytype(wai_spoke, task_lug)
 
     def tearDown(self):
         """Clean up test environment."""
@@ -273,16 +267,16 @@ class CloseoutReplayTest(unittest.TestCase):
         )
         self.assertIsNotNone(final_state["_session_state"]["last_closeout"])
 
-        # Verify lug reconciliation occurred
-        lugs = self._load_lugs()
-        autosave_lugs = [l for l in lugs if l.get("ty") == "autosave"]
-        reconciled_count = sum(1 for l in autosave_lugs if l.get("reconciled"))
+        # Verify lug reconciliation occurred — autosave should be in other/completed/
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        completed_autosaves = load_lugs_by_type_status(wai_spoke, "other", "completed")
+        reconciled_count = sum(1 for l in completed_autosaves if l.get("reconciled"))
         self.assertGreater(
             reconciled_count, 0, "Autosave lugs should be reconciled"
         )
 
-        # Verify session-summary lug was created
-        summary_lugs = [l for l in lugs if l.get("ty") == "session-summary"]
+        # Verify session-summary lug was created in bytype/session-summary/
+        summary_lugs = load_lugs_by_type_status(wai_spoke, "session-summary")
         self.assertGreater(len(summary_lugs), 0, "Session-summary lug should exist")
 
         # Verify session-summary lug ID is ss-{session_id} format
@@ -385,9 +379,8 @@ class CloseoutReplayTest(unittest.TestCase):
             "resolution": "Adopted microservices pattern",
         }
 
-        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
-        with open(lugs_file, "a") as f:
-            f.write(json.dumps(high_impact_lug) + "\n")
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        write_lug_to_bytype(wai_spoke, high_impact_lug)
 
         # First closeout — signal dedup key is recorded in state
         first_result = self._execute_closeout()
@@ -455,37 +448,27 @@ class CloseoutReplayTest(unittest.TestCase):
             return json.load(f)
 
     def _load_lugs(self) -> List[Dict[str, Any]]:
-        """Load all lugs from WAI-Lugs.jsonl."""
-        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
-        lugs = []
-        with open(lugs_file) as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    lugs.append(json.loads(line))
-        return lugs
+        """Load all lugs from bytype/ storage."""
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        return load_all_lugs_from_bytype(wai_spoke)
 
     def _load_signals(self) -> List[Dict[str, Any]]:
-        """Load high-impact signal lugs from WAI-Lugs.jsonl."""
-        lugs = self._load_lugs()
-        return [l for l in lugs if l.get("ty") == "signal" or (
-            l.get("impact") is not None and int(l.get("impact", 0)) >= 8
-            and l.get("ty") not in ("autosave", "session-summary")
-        )]
+        """Load signal lugs from bytype/signal/ directories."""
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        undelivered = load_lugs_by_type_status(wai_spoke, "signal", "undelivered")
+        delivered = load_lugs_by_type_status(wai_spoke, "signal", "delivered")
+        return undelivered + delivered
 
     def _reconcile_autosave_lugs_manually(self):
         """Manually reconcile autosave lugs (simulate partial completion)."""
-        lugs = self._load_lugs()
-        lugs_file = self.spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
+        wai_spoke = self.spoke_dir / "WAI-Spoke"
+        all_lugs = load_all_lugs_from_bytype(wai_spoke)
 
-        # Rewrite lugs with autosaves marked as reconciled
-        with open(lugs_file, "w") as f:
-            for lug in lugs:
-                if lug.get("ty") == "autosave" and not lug.get("reconciled"):
-                    reconciled_lug = {**lug, "reconciled": True, "s": "c"}
-                    f.write(json.dumps(reconciled_lug) + "\n")
-                else:
-                    f.write(json.dumps(lug) + "\n")
+        for lug in all_lugs:
+            if lug.get("ty") == "autosave" and not lug.get("reconciled"):
+                old_status = lug["s"]
+                reconciled_lug = {**lug, "reconciled": True, "s": "c"}
+                move_lug_bytype(wai_spoke, reconciled_lug, old_status)
 
 
 if __name__ == "__main__":

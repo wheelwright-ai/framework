@@ -4,12 +4,154 @@ Test Spoke Factory
 
 Utilities for creating test spokes and hubs with realistic configurations
 for idempotency testing scenarios.
+
+Updated for canonical bytype/ storage structure:
+- Lugs stored as individual JSON files in lugs/bytype/{type}/{status}/{id}.json
+- Session summaries in lugs/bytype/session-summary/{id}.json (no status subfolder)
+- Signals in lugs/bytype/signal/{undelivered,delivered}/{id}.json
+- WAI-Lugs.jsonl retained as legacy (empty/retired marker) for backward compat
 """
 
 import json
 import os
 from pathlib import Path
 from typing import Dict, Any, List, Optional
+
+
+# Map short status codes to bytype subfolder names
+STATUS_TO_FOLDER = {
+    "o": "open",
+    "p": "in_progress",
+    "c": "completed",
+    "open": "open",
+    "in-progress": "in_progress",
+    "in_progress": "in_progress",
+    "closed": "completed",
+    "completed": "completed",
+    "archived": "completed",
+}
+
+# Promoted lug types get their own bytype/ subfolder
+PROMOTED_TYPES = {"epic", "task", "feature", "bug", "implementation", "signal", "session-summary"}
+
+
+def _bytype_dir_for_lug(wai_spoke: Path, lug: Dict[str, Any]) -> Path:
+    """
+    Return the bytype directory path for a lug.
+
+    Rules:
+    - session-summary: lugs/bytype/session-summary/ (no status subfolder)
+    - signal: lugs/bytype/signal/{undelivered,delivered}/
+    - promoted types: lugs/bytype/{type}/{status}/
+    - other types: lugs/bytype/other/{status}/
+    """
+    lug_type = lug.get("ty", "other")
+    status = lug.get("s", "o")
+
+    if lug_type == "session-summary":
+        return wai_spoke / "lugs" / "bytype" / "session-summary"
+
+    if lug_type == "signal":
+        # Signals use undelivered/delivered instead of open/completed
+        if status in ("c", "completed", "delivered"):
+            return wai_spoke / "lugs" / "bytype" / "signal" / "delivered"
+        else:
+            return wai_spoke / "lugs" / "bytype" / "signal" / "undelivered"
+
+    folder_type = lug_type if lug_type in PROMOTED_TYPES else "other"
+    status_folder = STATUS_TO_FOLDER.get(status, "open")
+
+    return wai_spoke / "lugs" / "bytype" / folder_type / status_folder
+
+
+def write_lug_to_bytype(wai_spoke: Path, lug: Dict[str, Any]):
+    """
+    Write a single lug to the canonical bytype/ location.
+
+    Args:
+        wai_spoke: Path to WAI-Spoke directory
+        lug: Lug dictionary (must have "i" field)
+    """
+    target_dir = _bytype_dir_for_lug(wai_spoke, lug)
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target_file = target_dir / f"{lug['i']}.json"
+    with open(target_file, "w") as f:
+        json.dump(lug, f, indent=2)
+
+
+def move_lug_bytype(wai_spoke: Path, lug: Dict[str, Any], old_status: str):
+    """
+    Move a lug file from old status folder to new status folder in bytype/.
+
+    Args:
+        wai_spoke: Path to WAI-Spoke directory
+        lug: Lug dictionary with updated status
+        old_status: Previous status code
+    """
+    # Build old path
+    old_lug = {**lug, "s": old_status}
+    old_dir = _bytype_dir_for_lug(wai_spoke, old_lug)
+    old_file = old_dir / f"{lug['i']}.json"
+
+    # Remove old file if it exists
+    if old_file.exists():
+        old_file.unlink()
+
+    # Write to new location
+    write_lug_to_bytype(wai_spoke, lug)
+
+
+def load_all_lugs_from_bytype(wai_spoke: Path) -> List[Dict[str, Any]]:
+    """
+    Load all lugs from bytype/ directory tree.
+
+    Returns:
+        List of lug dictionaries
+    """
+    bytype_dir = wai_spoke / "lugs" / "bytype"
+    if not bytype_dir.exists():
+        return []
+
+    lugs = []
+    for json_file in bytype_dir.rglob("*.json"):
+        try:
+            with open(json_file) as f:
+                lugs.append(json.load(f))
+        except (json.JSONDecodeError, OSError):
+            continue
+    return lugs
+
+
+def load_lugs_by_type_status(
+    wai_spoke: Path, lug_type: str, status_folder: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Load lugs from a specific type/status folder in bytype/.
+
+    Args:
+        wai_spoke: Path to WAI-Spoke directory
+        lug_type: Lug type (e.g., "signal", "session-summary")
+        status_folder: Status subfolder (e.g., "undelivered", "open"). None for types without status.
+
+    Returns:
+        List of lug dictionaries
+    """
+    if status_folder:
+        target_dir = wai_spoke / "lugs" / "bytype" / lug_type / status_folder
+    else:
+        target_dir = wai_spoke / "lugs" / "bytype" / lug_type
+
+    if not target_dir.exists():
+        return []
+
+    lugs = []
+    for json_file in target_dir.glob("*.json"):
+        try:
+            with open(json_file) as f:
+                lugs.append(json.load(f))
+        except (json.JSONDecodeError, OSError):
+            continue
+    return lugs
 
 
 def create_test_spoke(
@@ -21,6 +163,9 @@ def create_test_spoke(
 ) -> Path:
     """
     Create a realistic test spoke directory structure.
+
+    Uses canonical bytype/ storage. WAI-Lugs.jsonl is created as a retired
+    marker for backward compatibility.
 
     Args:
         spoke_dir: Directory to create spoke in
@@ -37,8 +182,23 @@ def create_test_spoke(
     wai_spoke = spoke_dir / "WAI-Spoke"
     wai_spoke.mkdir(exist_ok=True)
 
-    # Create subdirectories
-    for subdir in ["sessions", "commands", "seed/ingest/processed", "lugs/outbox"]:
+    # Create subdirectories including bytype structure
+    for subdir in [
+        "sessions",
+        "commands",
+        "seed/ingest/processed",
+        "lugs/outbox",
+        "lugs/incoming",
+        "lugs/outgoing",
+        "lugs/bytype/signal/undelivered",
+        "lugs/bytype/signal/delivered",
+        "lugs/bytype/session-summary",
+        "lugs/bytype/task/open",
+        "lugs/bytype/task/in_progress",
+        "lugs/bytype/task/completed",
+        "lugs/bytype/other/open",
+        "lugs/bytype/other/completed",
+    ]:
         (wai_spoke / subdir).mkdir(parents=True, exist_ok=True)
 
     # Create WAI-State.json
@@ -85,33 +245,25 @@ def create_test_spoke(
     with open(state_file, "w") as f:
         json.dump(state, f, indent=2)
 
-    # Create empty WAI-Lugs.jsonl
+    # Create empty WAI-Lugs.jsonl for backward compat (must be valid JSONL — no comments)
     lugs_file = wai_spoke / "WAI-Lugs.jsonl"
     lugs_file.touch()
 
     # Add active work if requested
     if has_active_work:
-        add_test_lugs(
-            lugs_file,
-            [
-                {
-                    "i": "test-work-001",
-                    "ty": "task",
-                    "t": "Test task in progress",
-                    "s": "p",
-                    "ca": "2026-03-19T09:00:00Z",
-                    "gb": "test-agent",
-                }
-            ],
-        )
+        work_lug = {
+            "i": "test-work-001",
+            "ty": "task",
+            "t": "Test task in progress",
+            "s": "p",
+            "ca": "2026-03-19T09:00:00Z",
+            "gb": "test-agent",
+        }
+        write_lug_to_bytype(wai_spoke, work_lug)
 
-    # Create empty signals file
+    # Create empty WAI-Signals.jsonl for backward compat (must be valid JSONL — no comments)
     signals_file = wai_spoke / "WAI-Signals.jsonl"
-    with open(signals_file, "w") as f:
-        f.write("# RETIRED: Absorbed into WAI-Lugs.jsonl as of WAI v2 migration.\n")
-        f.write(
-            "# Do not use this file. All signals are now Lugs with impact >= 8.\n\n"
-        )
+    signals_file.touch()
 
     # Initialize git repository if not exists
     git_dir = spoke_dir / ".git"
@@ -160,17 +312,30 @@ def create_test_hub(hub_dir: Path) -> Path:
     return hub_dir
 
 
-def add_test_lugs(lugs_file: Path, lugs: List[Dict[str, Any]]):
+def add_test_lugs(target: Path, lugs: List[Dict[str, Any]]):
     """
-    Add test lugs to a WAI-Lugs.jsonl file.
+    Add test lugs to bytype/ storage.
+
+    If target is a WAI-Spoke directory (or parent containing WAI-Spoke),
+    writes each lug as an individual JSON file in the correct bytype/ folder.
+
+    For backward compat, if target looks like a .jsonl file path, we detect
+    the WAI-Spoke parent and write to bytype/ instead.
 
     Args:
-        lugs_file: Path to WAI-Lugs.jsonl file
+        target: Path to WAI-Spoke dir, or legacy WAI-Lugs.jsonl path
         lugs: List of lug dictionaries to add
     """
-    with open(lugs_file, "a") as f:
-        for lug in lugs:
-            f.write(json.dumps(lug) + "\n")
+    # Resolve WAI-Spoke directory
+    if target.name == "WAI-Lugs.jsonl" or target.suffix == ".jsonl":
+        wai_spoke = target.parent
+    elif target.name == "WAI-Spoke":
+        wai_spoke = target
+    else:
+        wai_spoke = target / "WAI-Spoke" if (target / "WAI-Spoke").exists() else target
+
+    for lug in lugs:
+        write_lug_to_bytype(wai_spoke, lug)
 
 
 def create_test_work_scenario(spoke_dir: Path, scenario: str):
@@ -181,7 +346,7 @@ def create_test_work_scenario(spoke_dir: Path, scenario: str):
         spoke_dir: Spoke directory
         scenario: Scenario name ('autosave_pending', 'high_impact_decision', etc.)
     """
-    lugs_file = spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
+    wai_spoke = spoke_dir / "WAI-Spoke"
 
     scenarios = {
         "autosave_pending": [
@@ -243,7 +408,8 @@ def create_test_work_scenario(spoke_dir: Path, scenario: str):
     }
 
     if scenario in scenarios:
-        add_test_lugs(lugs_file, scenarios[scenario])
+        for lug in scenarios[scenario]:
+            write_lug_to_bytype(wai_spoke, lug)
 
 
 def create_migration_test_spokes(
@@ -285,29 +451,28 @@ def simulate_partial_closeout(spoke_dir: Path):
     Args:
         spoke_dir: Spoke directory to modify
     """
-    lugs_file = spoke_dir / "WAI-Spoke" / "WAI-Lugs.jsonl"
+    wai_spoke = spoke_dir / "WAI-Spoke"
 
-    # Add some autosave lugs marked as reconciled (partial completion)
-    reconciled_autosaves = [
-        {
-            "i": "autosave-001",
-            "ty": "autosave",
-            "t": "Checkpoint 1",
-            "s": "c",
-            "ca": "2026-03-19T10:00:00Z",
-            "reconciled": True,
-        },
-        {
-            "i": "autosave-002",
-            "ty": "autosave",
-            "t": "Checkpoint 2",
-            "s": "o",
-            "ca": "2026-03-19T10:05:00Z",
-            "reconciled": False,  # Not yet reconciled
-        },
-    ]
+    # Add some autosave lugs — one reconciled (partial completion), one not
+    reconciled_autosave = {
+        "i": "autosave-001",
+        "ty": "autosave",
+        "t": "Checkpoint 1",
+        "s": "c",
+        "ca": "2026-03-19T10:00:00Z",
+        "reconciled": True,
+    }
+    write_lug_to_bytype(wai_spoke, reconciled_autosave)
 
-    add_test_lugs(lugs_file, reconciled_autosaves)
+    unreconciled_autosave = {
+        "i": "autosave-002",
+        "ty": "autosave",
+        "t": "Checkpoint 2",
+        "s": "o",
+        "ca": "2026-03-19T10:05:00Z",
+        "reconciled": False,
+    }
+    write_lug_to_bytype(wai_spoke, unreconciled_autosave)
 
 
 def verify_spoke_structure(spoke_dir: Path) -> Dict[str, bool]:
@@ -325,8 +490,10 @@ def verify_spoke_structure(spoke_dir: Path) -> Dict[str, bool]:
     checks = {
         "wai_spoke_exists": wai_spoke.exists(),
         "state_json_exists": (wai_spoke / "WAI-State.json").exists(),
-        "lugs_jsonl_exists": (wai_spoke / "WAI-Lugs.jsonl").exists(),
-        "signals_jsonl_exists": (wai_spoke / "WAI-Signals.jsonl").exists(),
+        "bytype_dir_exists": (wai_spoke / "lugs" / "bytype").exists(),
+        "signal_undelivered_exists": (wai_spoke / "lugs" / "bytype" / "signal" / "undelivered").exists(),
+        "signal_delivered_exists": (wai_spoke / "lugs" / "bytype" / "signal" / "delivered").exists(),
+        "session_summary_exists": (wai_spoke / "lugs" / "bytype" / "session-summary").exists(),
         "sessions_dir_exists": (wai_spoke / "sessions").exists(),
         "commands_dir_exists": (wai_spoke / "commands").exists(),
         "git_initialized": (spoke_dir / ".git").exists(),

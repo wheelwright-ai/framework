@@ -237,11 +237,12 @@ For each discovered teaching:
 6. **Prerequisite check:** If teaching declares a `Prerequisites` section, verify each condition before adopting. If any fail: skip adoption, add to `unprocessed` list with reason "Prerequisite failed: {specific check}". Do NOT adopt partial prerequisites.
 7. Adopt approved items, move originals to `seed/ingest/processed/`
 
-**After scan — delta report (required, report in Step 7 briefing):**
-```
-Teaching Discovery: hub found {total_found}, pre-existing {pre_existing}, new auto-adopt {new_auto}, manual review {new_manual}, unprocessed {unprocessed}
-```
-If `unprocessed > 0`: list each file and WHY (prerequisite failed, `safe_to_auto_adopt: false`, unknown type, etc.).
+**After scan — compute actionable count:**
+`actionable = new_auto + new_manual + unprocessed`
+
+- If `actionable == 0`: set `teachings_all_current = true`. Skip teaching detail in Step 7 briefing.
+- If `actionable > 0`: set `teachings_all_current = false`. Surface only actionable items in Step 7.
+  - If `unprocessed > 0`: list each file and WHY (prerequisite failed, `safe_to_auto_adopt: false`, etc.).
 
 **Path B — `safe_to_auto_adopt: false`:**
 1. List new `.teaching` files
@@ -272,17 +273,13 @@ Show unified WAI Point briefing:
 - Active work (from `bytype/*/open/` and `bytype/*/in_progress/`)
   - **Include routing info:** Group by `routed_to` (LOCAL, FRAMEWORK, SIGNAL)
   - Announce: "Routing: X LOCAL (this project), Y FRAMEWORK (hub), Z SIGNAL (broadcast)"
-- **Teaching absorption report** (from Step 5 delta):
-  ```
-  Teaching absorption:
-    Hub teachings found:        {total_found}
-    Already adopted (spoke):    {pre_existing}
-    Newly adopted this session: {new_auto}
-    Requiring manual review:    {new_manual}  [list filenames]
-    Unprocessed (with reason):  {unprocessed} [filename — reason]
-  ```
-  If all counts are zero and hub path valid: report "Teachings: up to date".
-  **Never silently omit unprocessed count** — zero is acceptable but must be stated.
+- **Teaching discovery** — action-gated:
+  - If `teachings_all_current`: one line: `Teachings: ✓ current (N adopted)` — no expansion
+  - If `actionable > 0`: show only what needs attention:
+    - Path A pending: compact table (File | Summary | Impact)
+    - Path B pending: list with reasons
+    - Unprocessed: list with WHY
+    - Do NOT list pre-existing count — it is noise when nothing is new
 - Context health (git, hub, session state, **context budget**)
 - Next actions (from `_session_state.next_session_recommendation`)
 

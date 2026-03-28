@@ -1,21 +1,31 @@
 # Wheelwright Framework - Test & Quality Gates
-# Used by wai-shipit quality gates (Step 5a)
+# Used by wai-closeout quality gates (Step 0b)
 
-.PHONY: test test-all test-unit test-integration test-e2e clean
+.PHONY: test test-all test-unit test-integration test-e2e test-behavioral test-health clean
 
-# Default: Run all E2E tests (matches shipit expectations)
+# Default: Run all E2E tests
 test:
 	@echo "Running E2E skill behavior tests..."
 	@python3 benchmarks/e2e/test_skills.py
 
 # Run all test categories
-test-all: test-e2e test-integration
-	@echo "✅ All test suites passed"
+test-all: test-e2e test-behavioral test-health
+	@echo "All test suites passed"
 
-# E2E behavioral tests (skill system validation)
+# E2E structural tests (skill system validation)
 test-e2e:
-	@echo "Running E2E behavioral tests..."
+	@echo "Running E2E structural tests..."
 	@python3 benchmarks/e2e/test_skills.py
+
+# Behavioral tests (real file operations, no mocks)
+test-behavioral:
+	@echo "Running behavioral tests..."
+	@python3 -m pytest tests/behavioral/ -v
+
+# Spoke health check (validates framework spoke against own rules)
+test-health:
+	@echo "Running spoke health check..."
+	@python3 tools/spoke_health_check.py . --quick
 
 # Integration tests (baseline comparison, performance)
 test-integration:
@@ -24,7 +34,7 @@ test-integration:
 
 # Unit tests (when we have them)
 test-unit:
-	@echo "⚠️  No unit tests defined yet"
+	@echo "No unit tests defined yet"
 
 # Clean test artifacts
 clean:

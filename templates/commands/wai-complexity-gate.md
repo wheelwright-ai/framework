@@ -89,6 +89,25 @@ Model switches are recorded in `WAI-State.json` under `model_log`. On closeout, 
 
 See lug: `decision-model-task-awareness-protocol` for full protocol and incident record.
 
+## Non-Trivial Functionality: Lug Required Before Showing
+
+**Hard rule:** When discussing any non-trivial new functionality (new feature, skill, advisor, protocol behavior, architectural change), a lug with a complete PEV contract must be created AND validated before presenting to the user.
+
+**Trigger:** Any proposal for new functionality that is not a trivial fix (<20 lines, 1 file, no new behavior).
+
+**Required before showing:**
+1. Lug exists at `bytype/{type}/open/{id}.json`
+2. `perceive` — points to real, findable files or clearly observable current state
+3. `execute` — concrete steps, not vague intentions ("refactor" without specifics fails)
+4. `verify` — concrete done-state the user can confirm (not "looks good")
+5. Lug is self-contained — a cold reader with no session context can act on it
+
+**Cold-reader test:** Could a naive agent execute this lug with only the file contents and no memory of this conversation? If no → fix it first.
+
+**Never do:** Show a lug draft and ask the user to help fill in the PEV fields. The improvement step happens before the user sees it.
+
+---
+
 ## Plan Validation (Before Showing to User)
 
 When creating an implementation plan (epic + child lugs), self-validate before presenting:
@@ -117,6 +136,42 @@ When creating an implementation plan (epic + child lugs), self-validate before p
 **Scope thresholds for when validation is required:**
 - Always: epics, implementation lugs, 3+ files affected, anything with test requirements
 - Optional: small bug fixes (<20 lines, 1 file), documentation updates, config changes
+
+---
+
+## Post-Execution Falsification (After Every Code Change)
+
+**Principle: Assume the change is wrong until proven otherwise.**
+
+After completing any code change, remediation, migration, or fleet-wide operation — verify by searching for evidence it FAILED, not evidence it passed. Green tool output is not proof. Absence of the problem across the full search space is proof.
+
+**Required after every change:**
+
+1. **Falsify the change itself:**
+   - Re-run the failing condition that motivated the change. Does it now pass?
+   - Introduce the old state temporarily. Does the fix actually catch it?
+
+2. **Falsify the surroundings:**
+   - What other files, templates, or spokes depend on or reference the thing you changed?
+   - Search the **filesystem** (`find`), not just the registry or known locations
+   - Templates, test-bench, demo-wheel, examples, archived projects — check all downstream copies
+
+3. **Falsify the fleet:**
+   - After fleet-wide changes: `find /home/mario/projects -name "{retired_file}"` across the ENTIRE project tree
+   - The registry is not the truth — the filesystem is
+   - Unregistered spokes, archived projects, and template files are all propagation vectors
+
+4. **Prove done by absence:**
+   - "Done" means: the problem cannot be found anywhere, not just that the fix was applied where you looked
+   - Show the `find` command output. Empty result = proven. Any match = not done.
+
+**When to run:**
+- After every file deletion or rename (prove no copies remain)
+- After every schema change (prove no old-format references survive)
+- After every teaching publication (prove it applies cleanly on a real spoke clone)
+- After every fleet remediation (prove the retired artifact is gone from ALL spokes, including unregistered ones)
+
+**Anti-pattern this prevents:** "17/17 HEALTHY" that misses the template propagating the retired file to every future spoke. Verifying registered spokes is confirming; searching the filesystem is falsifying.
 
 ## Related Skills
 

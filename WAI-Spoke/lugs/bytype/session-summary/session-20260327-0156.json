@@ -1,0 +1,70 @@
+{
+  "id": "session-20260327-0156",
+  "type": "session-summary",
+  "title": "Session 88: Canonical verification epic + fleet remediation + falsification principle",
+  "status": "completed",
+  "created_at": "2026-03-28T03:15:00Z",
+  "created_by": "claude-opus-4-6",
+  "session_number": 88,
+  "accomplished": [
+    "Teaching flag standardization (S87 carryover): safe_to_auto_adopt canonical format across 30 hub teachings",
+    "Shipit deprecation cleanup: WEI benchmark migrated to closeout Step 0e",
+    "PEV gate codified in complexity-gate.md: non-trivial work requires validated lug before showing",
+    "Validation library (tools/wai_validate.py): 5 validators, canonical type/status catalogs, PEV enforcement",
+    "Spoke health check tool (tools/spoke_health_check.py): quick/full modes, JSON output, 6 check categories",
+    "34 behavioral tests (tests/behavioral/): real file operations, canary test for retired refs",
+    "Pre-commit health gate (tools/pre_commit_health.py): exits non-zero on drift",
+    "Spoke remediation teaching published to hub",
+    "Fleet remediation: 19/19 spokes HEALTHY, 0 retired files remaining",
+    "Post-execution falsification principle codified in complexity-gate + closeout quality gate 0f",
+    "Spoke template fixed: removed WAI-Signals.jsonl propagation source",
+    "WAI-Skills.jsonl retired refs removed (framework + 3 spokes)",
+    "24 signals migrated from retired WAI-Signals.jsonl to bytype/signal/delivered/ across fleet",
+    "2 unregistered spokes discovered and remediated (sound-sails/portal, new-solutions-by-mv)"
+  ],
+  "files_touched": [
+    "tools/wai_validate.py (NEW)",
+    "tools/spoke_health_check.py (NEW)",
+    "tools/pre_commit_health.py (NEW)",
+    "tests/behavioral/* (5 NEW test files, 34 tests)",
+    "tests/idempotency/utils/spoke_factory.py",
+    "tests/idempotency/test_closeout_replay.py",
+    "tests/idempotency/test_signal_deduplication.py",
+    "tests/idempotency/utils/assertions.py",
+    "templates/commands/wai-complexity-gate.md",
+    "templates/commands/wai-closeout.md",
+    "templates/commands/wai.md",
+    "templates/commands/wai-ide-setup.md",
+    "templates/commands/SKILL-EXAMPLES.md",
+    "templates/teaching-template.md.teaching",
+    "WAI-Spoke/skills/WAI-Skills.jsonl",
+    "WAI-Spoke/lugs/reference/ (NEW dir)",
+    "Makefile",
+    "CHANGELOG.md",
+    "hub teachings (spoke-health-check-remediation-v1, signal teachings)",
+    "19 spoke WAI-Spoke/ directories remediated"
+  ],
+  "decisions": [
+    "Single validation library as source of truth — no more scattered schema constants",
+    "Health check is a tool not a test — designed for any spoke any time",
+    "Canary test pattern: test real data not just fixtures",
+    "Post-execution falsification: verify by proving wrong, not confirming right",
+    "Filesystem is truth, not registries — find across full project tree",
+    "Teaching dogfood: dry-run against real spoke clone before publishing",
+    "Lug PEV gate: create + validate before showing to user, never show drafts"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "78 active lugs in framework spoke need PEV field remediation (legacy data)",
+      "Adopt pending hub teachings (7 new from S87+S88)",
+      "Voice framework items: advisor framing files, communication contracts, taste.spoke.yaml"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "PEV remediation: run validate_all_active_lugs() and fix each lug's perceive/execute/verify",
+      "Hub teachings: adopt the 5 auto + 2 manual teachings pending since S86",
+      "Voice framework: create communication-contracts.yaml + historian framing.md"
+    ]
+  },
+  "autosaves_reconciled": []
+}

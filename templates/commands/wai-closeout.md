@@ -71,6 +71,14 @@ else
 fi
 ```
 
+**0f. Falsification:** For every file deleted, renamed, or retired this session — prove it's gone:
+```bash
+# For each retired/deleted file this session:
+find /home/mario/projects -name "{filename}" -not -path "*/_archive/*" -not -path "*/.git/*" 2>/dev/null
+# Empty = proven. Any match = not done — fix before committing.
+```
+For fleet-wide changes: search across ALL spokes (including unregistered), templates, test-bench, demo-wheel, examples. The registry is not the truth — the filesystem is.
+
 Report gate results. Proceed only after user confirms all gates pass or are acknowledged.
 
 ### 1. Lug Reconciliation
