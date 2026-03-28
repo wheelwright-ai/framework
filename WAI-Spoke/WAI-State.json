@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.81",
+    "version": "2.0.82",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-28T03:15:00Z",
+    "last_modified_at": "2026-03-28T03:55:00Z",
     "last_modified_by": "claude-opus-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,17 +93,17 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260327-0156",
+    "last_session_id": "session-20260327-2053",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-28T03:15:00Z",
-    "last_closeout": "2026-03-28T03:15:00Z",
-    "session_count": 88,
-    "track_path": "WAI-Spoke/sessions/session-20260327-0156/track.jsonl",
+    "last_modified_at": "2026-03-28T03:55:00Z",
+    "last_closeout": "2026-03-28T03:55:00Z",
+    "session_count": 89,
+    "track_path": "WAI-Spoke/sessions/session-20260327-2053/track.jsonl",
     "protocol_completed": true,
-    "next_session_recommendation": "Session 88 complete (massive). Canonical verification epic delivered: validation library, health check tool, 34 behavioral tests, fleet remediation (19/19 HEALTHY), falsification principle codified. Pending: (A) 78 active lugs need PEV remediation; (B) adopt 7 hub teachings; (C) voice framework (advisor framing, communication contracts).",
+    "next_session_recommendation": "Session 89 (light): 9 teachings adopted. Pending: (A) 78 active lugs need PEV remediation; (B) voice framework (advisor framing, communication contracts); (C) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
     "requires_review": false,
     "review_reason": null,
-    "protocol_last_run": "2026-03-28T03:22:01Z",
+    "protocol_last_run": "2026-03-28T04:03:04Z",
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
@@ -128,7 +128,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

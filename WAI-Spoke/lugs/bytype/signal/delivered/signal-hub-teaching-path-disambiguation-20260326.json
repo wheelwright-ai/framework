@@ -1,0 +1,13 @@
+{
+  "id": "signal-hub-teaching-path-disambiguation-20260326",
+  "type": "signal",
+  "title": "Hub teaching discovery: path disambiguation + index-driven approach",
+  "status": "delivered",
+  "created_at": "2026-03-27T19:26:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "impact": 9,
+  "rationale": "Every new hub setup will hit both of these bugs. The path confusion happens because AI agents expand HUB_PATH incorrectly.",
+  "_behavior_directive": {
+    "action": "track_only"
+  }
+}

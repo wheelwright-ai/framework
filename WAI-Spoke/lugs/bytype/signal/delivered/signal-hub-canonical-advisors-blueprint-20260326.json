@@ -1,0 +1,13 @@
+{
+  "id": "signal-hub-canonical-advisors-blueprint-20260326",
+  "type": "signal",
+  "title": "Hub canonical advisors blueprint: Librarian + Gardener",
+  "status": "delivered",
+  "created_at": "2026-03-27T19:26:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "impact": 9,
+  "rationale": "The hub is the only node that can evolve itself, but the framework needs blueprints so new hubs start with same DNA.",
+  "_behavior_directive": {
+    "action": "track_only"
+  }
+}
