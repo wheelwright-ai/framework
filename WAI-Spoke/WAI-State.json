@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.84",
+    "version": "2.0.85",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260328-0000",
+    "last_session_id": "session-20260328-1200",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-28T12:00:00Z",
-    "last_closeout": "2026-03-28T12:00:00Z",
-    "session_count": 91,
-    "track_path": "WAI-Spoke/sessions/session-20260328-0000/track.jsonl",
-    "next_session_recommendation": "Session 90: Fixed hook bug (WAI-State.json dirty after commit — moved session guard to runtime/session-guard.json, gitignored). Updated track prompt to v0.21. Adopted signal-lifecycle-target-routing teaching. Configured statusline. Pending: (A) 9 framework task-from-signal lugs need implementation; (B) 10 hub signals in by-target/hub/ need hub incorporation; (C) 78 active lugs need PEV remediation; (D) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
+    "last_modified_at": "2026-03-28T13:00:00Z",
+    "last_closeout": "2026-03-28T13:00:00Z",
+    "session_count": 92,
+    "track_path": "WAI-Spoke/sessions/session-20260328-1200/track.jsonl",
+    "next_session_recommendation": "Session 90+90b: Hook fix (WAI-State.json dirty), Track v0.21, closeout auto-commit fix (removed HARD STOP gate). Teachings published to hub. Pending: (A) 9 framework task-from-signal lugs need implementation; (B) 10 hub signals in by-target/hub/ need hub incorporation; (C) 78 active lugs need PEV remediation; (D) active epic backlog (skill-thrift, ozi-orchestration, wakeup-simplification).",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",
