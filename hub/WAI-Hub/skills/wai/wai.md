@@ -232,7 +232,7 @@ If registry empty: skip, log "No spokes registered."
 Check what's in the teaching pipeline waiting to reach spokes.
 
 ```bash
-ls hub/teachings_repo/framework/current/*.teaching 2>/dev/null | wc -l
+ls hub/teachings_repo/spoke/current/*.teaching 2>/dev/null | wc -l
 ```
 
 For each registered spoke, check how many teachings in `current/` are NOT yet in `{spoke.path}/WAI-Spoke/seed/ingest/processed/`. This is the "delivery debt" — teachings authored but not yet delivered.
@@ -336,7 +336,7 @@ Hub wake complete. Fleet: {N} spokes | {health summary}. Ready to work.
 | `WAI-Lugs.jsonl` | Hub's own task/signal graph | UPDATE |
 | `hub/WAI-Lugs.jsonl` | Fleet-level decisions and signals | UPDATE |
 | `hub/registry.yaml` | Registered spoke list | READ |
-| `hub/teachings_repo/framework/current/` | Active teachings for distribution | READ |
+| `hub/teachings_repo/spoke/current/` | Active teachings for distribution | READ |
 | `hub/WAI-Hub/Signals/incoming/` | Signal bulletin inbox | READ |
 
 ---

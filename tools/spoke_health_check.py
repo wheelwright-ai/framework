@@ -359,12 +359,12 @@ def check_hub_connectivity(report: HealthReport, wai_spoke: Path):
     report.add("hub-path", cat, "PASS", f"Hub reachable at {hub_path}")
 
     # teachings_repo
-    teachings = hub / "teachings_repo" / "framework" / "current"
+    teachings = hub / "teachings_repo" / "spoke" / "current"
     if teachings.exists():
         count = len(list(teachings.glob("*.teaching")))
         report.add("hub-teachings", cat, "PASS", f"teachings_repo has {count} teachings")
     else:
-        report.add("hub-teachings", cat, "FAIL", "teachings_repo/framework/current/ not found")
+        report.add("hub-teachings", cat, "FAIL", "teachings_repo/spoke/current/ not found")
 
     # Signals inbox
     signals = hub / "WAI-Hub" / "Signals" / "incoming"
@@ -374,8 +374,87 @@ def check_hub_connectivity(report: HealthReport, wai_spoke: Path):
         report.add("hub-signals", cat, "FAIL", "WAI-Hub/Signals/incoming/ not found")
 
 
+def check_cc_hooks(report: HealthReport, wai_spoke: Path):
+    """Category 6: Claude Code hook configuration — catches silent protocol failures."""
+    cat = "cc-hooks"
+
+    project_root = wai_spoke.parent
+    settings_file = project_root / ".claude" / "settings.json"
+
+    if not settings_file.exists():
+        report.add("hooks-settings", cat, "FAIL", ".claude/settings.json not found")
+        return
+
+    try:
+        settings = json.loads(settings_file.read_text())
+    except json.JSONDecodeError as e:
+        report.add("hooks-settings", cat, "FAIL", f".claude/settings.json invalid JSON: {e}")
+        return
+
+    hooks = settings.get("hooks", {})
+
+    # Required hooks
+    required_hooks = {
+        "SessionStart": "Wakeup protocol trigger",
+        "UserPromptSubmit": "Session guard + context injection",
+        "PreToolUse": "Destructive command guard",
+    }
+    for hook_name, purpose in required_hooks.items():
+        if hook_name in hooks and hooks[hook_name]:
+            # Verify the script file exists
+            entries = hooks[hook_name]
+            script_ok = True
+            for entry in entries:
+                for h in entry.get("hooks", []):
+                    cmd = h.get("command", "")
+                    # Resolve $CLAUDE_PROJECT_DIR
+                    resolved = cmd.replace("$CLAUDE_PROJECT_DIR", str(project_root))
+                    if not Path(resolved).exists():
+                        report.add(f"hooks-{hook_name.lower()}-script", cat, "FAIL",
+                                   f"{hook_name} script missing: {resolved}")
+                        script_ok = False
+            if script_ok:
+                report.add(f"hooks-{hook_name.lower()}", cat, "PASS",
+                           f"{hook_name} configured — {purpose}")
+        else:
+            report.add(f"hooks-{hook_name.lower()}", cat, "FAIL",
+                       f"{hook_name} NOT configured — {purpose}")
+
+    # Recommended hooks
+    recommended_hooks = {
+        "Stop": "Test runner after responses",
+        "PreCompact": "State preservation before compaction",
+    }
+    for hook_name, purpose in recommended_hooks.items():
+        if hook_name in hooks and hooks[hook_name]:
+            report.add(f"hooks-{hook_name.lower()}", cat, "PASS",
+                       f"{hook_name} configured — {purpose}")
+        else:
+            report.add(f"hooks-{hook_name.lower()}", cat, "WARN",
+                       f"{hook_name} not configured (recommended) — {purpose}")
+
+    # Deny rules
+    permissions = settings.get("permissions", {})
+    deny = permissions.get("deny", [])
+    if deny:
+        report.add("hooks-deny-rules", cat, "PASS", f"{len(deny)} deny rules configured")
+    else:
+        report.add("hooks-deny-rules", cat, "FAIL", "No deny rules — destructive commands unguarded")
+
+    # CLAUDE.md check
+    claude_md = project_root / "CLAUDE.md"
+    if claude_md.exists():
+        lines = len(claude_md.read_text().splitlines())
+        if lines >= 50:
+            report.add("hooks-claude-md", cat, "PASS", f"CLAUDE.md present ({lines} lines)")
+        else:
+            report.add("hooks-claude-md", cat, "WARN", f"CLAUDE.md underweight ({lines} lines, ideal 50+)")
+    else:
+        report.add("hooks-claude-md", cat, "FAIL", "CLAUDE.md not found")
+
+
 def check_platform(report: HealthReport, wai_spoke: Path):
-    """Category 6: Platform compatibility (full mode only)."""
+    """Category 7: Platform compatibility (full mode only)."""
     cat = "platform"
 
     os_name = platform.system()
@@ -418,6 +497,9 @@ def run_health_check(spoke_path: str, mode: str = "full") -> HealthReport:
     check_structure(report, wai_spoke)
     check_stale_files(report, wai_spoke)
     check_skill_registry(report, wai_spoke)
+
+    # Always run: CC hook configuration
+    check_cc_hooks(report, wai_spoke)
 
     # Full mode: also run lug integrity, hub, platform
     if mode == "full":

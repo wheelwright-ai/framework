@@ -234,10 +234,7 @@ def validate_wai_state(state: dict) -> List[str]:
         violations.append("Missing wheel.framework_version")
 
     # _session_state section
-    if "protocol_completed" not in session:
-        violations.append("Missing _session_state.protocol_completed")
-    elif not isinstance(session.get("protocol_completed"), bool):
-        violations.append("_session_state.protocol_completed must be boolean")
+    # Note: protocol_completed moved to WAI-Spoke/runtime/session-guard.json (not in WAI-State.json)
 
     if "session_count" not in session:
         violations.append("Missing _session_state.session_count")

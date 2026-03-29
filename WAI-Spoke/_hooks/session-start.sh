@@ -54,7 +54,7 @@ IP_LIST=$(ls "$LUGS_DIR/bug/in_progress/"*.json "$LUGS_DIR/feature/in_progress/"
 
 # ── 4. Hub + teaching check ───────────────────────────────────────────────────
 HUB_PATH=$(jq -r '.wheel.hub_path // ""' "$STATE_FILE" 2>/dev/null)
-TEACH_DIR="$HUB_PATH/teachings_repo/framework/current"
+TEACH_DIR="$HUB_PATH/teachings_repo/spoke/current"
 PROCESSED_DIR="$PROJECT_DIR/WAI-Spoke/seed/ingest/processed"
 
 HUB_STATUS="MISSING"
@@ -131,6 +131,54 @@ if [[ ! -d "$AGENTS_DIR" ]] || [[ -z "$(ls -A "$AGENTS_DIR" 2>/dev/null)" ]]; th
   CC_GAPS="${CC_GAPS}  - No subagent definitions in .claude/agents/\n"
 fi
 
+# ── 9. Historian advice (latest review) ──────────────────────────────────────
+HISTORIAN_ADVICE=""
+HISTORIAN_DIR="$PROJECT_DIR/WAI-Spoke/advisors/historian/reviews"
+if [[ -d "$HISTORIAN_DIR" ]]; then
+  LATEST_REVIEW=$(ls -1 "$HISTORIAN_DIR"/review-*.md 2>/dev/null | sort | tail -1)
+  if [[ -n "$LATEST_REVIEW" ]]; then
+    # Extract "Advice for Next Session" section
+    ADVICE=$(sed -n '/^## Advice for Next Session/,/^## /{ /^## Advice/d; /^## /d; p; }' "$LATEST_REVIEW" 2>/dev/null | head -10)
+    if [[ -n "$ADVICE" ]]; then
+      REVIEW_DATE=$(basename "$LATEST_REVIEW" .md | sed 's/review-//')
+      HISTORIAN_ADVICE="  Historian ($REVIEW_DATE):\n$(echo "$ADVICE" | sed 's/^/    /')"
+    fi
+  fi
+fi
+
+# ── 10. Ozi nightly report (if hub connected) ───────────────────────────────
+OZI_NIGHTLY=""
+if [[ -n "$HUB_PATH" && -d "$HUB_PATH/WAI-Hub/runtime/ozi-nightly-reports" ]]; then
+  # Find most recent report (today or yesterday)
+  TODAY=$(date +%Y-%m-%d)
+  YESTERDAY=$(date -d "yesterday" +%Y-%m-%d 2>/dev/null || date -v-1d +%Y-%m-%d 2>/dev/null || echo "")
+  REPORT_FILE=""
+  [[ -f "$HUB_PATH/WAI-Hub/runtime/ozi-nightly-reports/$TODAY.json" ]] && REPORT_FILE="$HUB_PATH/WAI-Hub/runtime/ozi-nightly-reports/$TODAY.json"
+  [[ -z "$REPORT_FILE" && -n "$YESTERDAY" && -f "$HUB_PATH/WAI-Hub/runtime/ozi-nightly-reports/$YESTERDAY.json" ]] && REPORT_FILE="$HUB_PATH/WAI-Hub/runtime/ozi-nightly-reports/$YESTERDAY.json"
+
+  if [[ -n "$REPORT_FILE" ]]; then
+    REPORT_DATE=$(jq -r '.date // "unknown"' "$REPORT_FILE" 2>/dev/null)
+    FLEET_SCANNED=$(jq -r '.spokes_scanned // 0' "$REPORT_FILE" 2>/dev/null)
+    FLEET_GREEN=$(jq -r '.spokes_green // 0' "$REPORT_FILE" 2>/dev/null)
+    FLEET_RED=$(jq -r '.spokes_red // 0' "$REPORT_FILE" 2>/dev/null)
+    ITEMS_DONE=$(jq -r '.total_items_completed // 0' "$REPORT_FILE" 2>/dev/null)
+    ITEMS_FAIL=$(jq -r '.total_items_failed // 0' "$REPORT_FILE" 2>/dev/null)
+    TEACHINGS_ADOPTED=$(jq -r '.teachings_adopted // 0' "$REPORT_FILE" 2>/dev/null)
+
+    # This spoke's results
+    SPOKE_NAME=$(jq -r '.wheel.name // ""' "$STATE_FILE" 2>/dev/null)
+    SPOKE_ITEMS=$(jq -r --arg name "$SPOKE_NAME" '.per_spoke[]? | select(.name == $name) | "\(.items_completed // 0) completed, \(.items_failed // 0) failed"' "$REPORT_FILE" 2>/dev/null)
+    [[ -z "$SPOKE_ITEMS" ]] && SPOKE_ITEMS="not included in run"
+
+    OZI_NIGHTLY="  Ozi nightly ($REPORT_DATE): fleet ${FLEET_GREEN}/${FLEET_SCANNED} green"
+    [[ "$FLEET_RED" -gt 0 ]] && OZI_NIGHTLY="$OZI_NIGHTLY, ${FLEET_RED} red"
+    OZI_NIGHTLY="$OZI_NIGHTLY | ${ITEMS_DONE} items done"
+    [[ "$ITEMS_FAIL" -gt 0 ]] && OZI_NIGHTLY="$OZI_NIGHTLY, ${ITEMS_FAIL} failed"
+    OZI_NIGHTLY="$OZI_NIGHTLY | teachings: ${TEACHINGS_ADOPTED}"
+    OZI_NIGHTLY="$OZI_NIGHTLY\n  This spoke: ${SPOKE_ITEMS}"
+  fi
+fi
+
 # ── Output ────────────────────────────────────────────────────────────────────
 cat << BRIEF
 <wai-session-init>
@@ -152,6 +200,8 @@ $(if [[ $TEACH_NEW -gt 0 ]]; then printf "  New teachings:\n%b" "$NEW_TEACHINGS"
 
 HUB SIGNALS INBOX: ${HUB_SIGNALS} items
 
+$(if [[ -n "$OZI_NIGHTLY" ]]; then printf "OZI NIGHTLY\n%b\n" "$OZI_NIGHTLY"; fi)
+$(if [[ -n "$HISTORIAN_ADVICE" ]]; then printf "HISTORIAN ADVICE\n%b\n" "$HISTORIAN_ADVICE"; fi)
 CONTEXT HEALTH
   Git: ${GIT_STATUS}
   Hub path: ${HUB_STATUS}

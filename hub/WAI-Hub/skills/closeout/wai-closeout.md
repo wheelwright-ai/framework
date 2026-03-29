@@ -239,7 +239,7 @@ for spoke in registry.spokes:
         continue
 
     # For each teaching in hub current/
-    for teaching in hub/teachings_repo/framework/current/*.teaching:
+    for teaching in hub/teachings_repo/spoke/current/*.teaching:
         teaching_name = basename(teaching)
         dest = f"{spoke_ingest}{teaching_name}"
         processed = f"{spoke.path}/WAI-Spoke/seed/ingest/processed/{teaching_name}"

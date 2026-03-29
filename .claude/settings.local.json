@@ -11,7 +11,9 @@
       "Bash(xargs:*)",
       "Bash(python -m pytest:*)",
       "Bash(python ./wai-orchestrate upgrade:*)",
-      "Bash(gh run:*)"
+      "Bash(gh run:*)",
+      "Bash(python3 -c \":*)",
+      "Bash(claude --version)"
     ]
   }
 }

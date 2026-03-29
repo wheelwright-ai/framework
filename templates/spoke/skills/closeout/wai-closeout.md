@@ -94,7 +94,7 @@ Check `WAI-Spoke/lugs/outgoing/` for queued deliveries. If found and hub connect
    Missing either block = teaching is incomplete. Fix before publishing.
 5. Enforce single-current rule: archive superseded versions to `teachings/archive/{family_key}/`
 6. Signal teachings embed the actual lug JSON verbatim
-7. If hub connected: publish to `{hub_path}/teachings_repo/framework/current/`, archive old versions, rewrite index.json
+7. If hub connected: publish to `{hub_path}/teachings_repo/spoke/current/`, archive old versions, rewrite index.json
 8. If hub unavailable: keep local, note retry in next_session_recommendation
 
 Teaching format details: see `wai-closeout-reference.md` in this skill's folder.

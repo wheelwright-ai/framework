@@ -100,7 +100,7 @@ def test_missing_verification_caught(tmp_spoke):
 def test_teaching_placed_in_ingest_discovered(tmp_spoke_with_hub):
     """A teaching placed in hub teachings_repo is discoverable via ls."""
     spoke, hub = tmp_spoke_with_hub
-    teachings_dir = hub / "teachings_repo" / "framework" / "current"
+    teachings_dir = hub / "teachings_repo" / "spoke" / "current"
 
     _write_teaching(teachings_dir / "test-v1.md.teaching", GOOD_TEACHING)
 
@@ -113,7 +113,7 @@ def test_teaching_placed_in_ingest_discovered(tmp_spoke_with_hub):
 def test_already_processed_skipped(tmp_spoke_with_hub):
     """A teaching already in processed/ is not re-adopted."""
     spoke, hub = tmp_spoke_with_hub
-    teachings_dir = hub / "teachings_repo" / "framework" / "current"
+    teachings_dir = hub / "teachings_repo" / "spoke" / "current"
     processed_dir = spoke / "WAI-Spoke" / "seed" / "ingest" / "processed"
 
     # Place teaching in hub
@@ -131,7 +131,7 @@ def test_already_processed_skipped(tmp_spoke_with_hub):
 def test_new_teaching_not_in_processed(tmp_spoke_with_hub):
     """A new teaching not in processed/ is actionable."""
     spoke, hub = tmp_spoke_with_hub
-    teachings_dir = hub / "teachings_repo" / "framework" / "current"
+    teachings_dir = hub / "teachings_repo" / "spoke" / "current"
     processed_dir = spoke / "WAI-Spoke" / "seed" / "ingest" / "processed"
 
     _write_teaching(teachings_dir / "new-v1.md.teaching", GOOD_TEACHING)

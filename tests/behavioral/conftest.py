@@ -90,7 +90,7 @@ def tmp_spoke_with_hub(tmp_spoke, tmp_path):
     hub_dir = tmp_path / "test-hub"
     hub_dir.mkdir()
     for d in (
-        "teachings_repo/framework/current",
+        "teachings_repo/spoke/current",
         "cross_spoke/current",
         "WAI-Hub/Signals/incoming",
         "WAI-Hub/Signals/processed",

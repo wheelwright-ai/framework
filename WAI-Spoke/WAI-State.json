@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.88",
+    "version": "2.0.89",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-28T02:35:00Z",
+    "last_modified_at": "2026-03-28T22:35:00Z",
     "last_modified_by": "claude-opus-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260328-0211",
+    "last_session_id": "session-20260328-2128",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-28T02:35:00Z",
-    "last_closeout": "2026-03-28T02:35:00Z",
-    "session_count": 95,
-    "track_path": "WAI-Spoke/sessions/session-20260328-0211/track.jsonl",
-    "next_session_recommendation": "Session 94: CC Maximizer 8/8 complete (Stop + PreCompact hooks added). /wai-next command created. settings.local.json cleaned. List hygiene rules in CLAUDE.md. Standing backlog: 10 epics, 23 tasks, 31 signals. Flaky concurrent closeout test (session 48) still open.",
+    "last_modified_at": "2026-03-28T22:35:00Z",
+    "last_closeout": "2026-03-28T22:35:00Z",
+    "session_count": 96,
+    "track_path": "WAI-Spoke/sessions/session-20260328-2128/track.jsonl",
+    "next_session_recommendation": "Session 94b: Ozi automation infrastructure complete. Cron installed (3:47 AM). Teaching repo restructured (spoke/ + hub-only/). Run gardener-nightly-maintenance-of-wheel.sh manually to test first nightly. Monitor results. Then: decompose Ozi epics into child tasks so nightly can pick them up. Wire human session refinement mode (R/N/W/S offer).",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",

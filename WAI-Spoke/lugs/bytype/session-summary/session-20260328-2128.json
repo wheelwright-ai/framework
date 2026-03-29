@@ -1,0 +1,71 @@
+{
+  "i": "session-20260328-2128",
+  "ty": "session-summary",
+  "t": "Session 94b summary — Ozi automation + spoke compliance + teaching repo restructure",
+  "s": "c",
+  "ca": "2026-03-28T22:30:00Z",
+  "gb": "claude-opus-4-6",
+  "session_number": 95,
+  "accomplished": [
+    "Spoke fingerprinting: added cc-hooks check category to spoke_health_check.py (all 5 hooks + deny rules + CLAUDE.md)",
+    "Fixed protocol_completed false positive in wai_validate.py",
+    "Created 3 hook template scripts for spoke template (pre-tool-guard, stop-test-runner, pre-compact)",
+    "Updated spoke template settings.json to full 5-hook + deny rules config",
+    "Created cross-spoke hook-compliance-full-stack-v1 teaching (safe_to_auto_adopt: true)",
+    "Created hub/.claude/agents/ozi-gardener.md — fleet-level orchestrator with subagent dispatch",
+    "Created .claude/agents/ozi-nightly.md — spoke-level worker",
+    "Created hub/scripts/gardener-nightly-maintenance-of-wheel.sh with lock file, logging, log rotation",
+    "Installed crontab: 47 3 * * * gardener-nightly-maintenance-of-wheel.sh",
+    "Wired Ozi nightly report detection into session-start.sh wakeup briefing",
+    "Wired historian advice (latest review) into session-start.sh wakeup briefing",
+    "Added historian to gardener nightly loop (15+ turn threshold)",
+    "Restructured teaching repo: spoke/current + hub-only/current (retired framework/ and cross_spoke/)",
+    "Updated all path references across 12+ files, fixed tests",
+    "Created teaching-repo-restructure teaching for spoke distribution",
+    "Updated closeout Step 9b: teachings default safe_to_auto_adopt: true",
+    "Fixed stop-test-runner.sh error handling (|| true pattern for all infrastructure errors)"
+  ],
+  "files_touched": [
+    "tools/spoke_health_check.py",
+    "tools/wai_validate.py",
+    "templates/spoke/.claude/settings.json",
+    "templates/spoke/.claude/hooks/pre-tool-guard.sh",
+    "templates/spoke/.claude/hooks/stop-test-runner.sh",
+    "templates/spoke/.claude/hooks/pre-compact.sh",
+    ".claude/agents/ozi-nightly.md",
+    ".claude/hooks/stop-test-runner.sh",
+    "hub/.claude/agents/ozi-gardener.md",
+    "hub/scripts/gardener-nightly-maintenance-of-wheel.sh",
+    "WAI-Spoke/_hooks/session-start.sh",
+    "templates/commands/wai.md",
+    "templates/commands/wai-closeout.md",
+    "tests/behavioral/test_teaching_adoption.py",
+    "tests/behavioral/conftest.py",
+    "hub/teachings_repo/spoke/current/ (42 teachings moved)",
+    "hub/teachings_repo/cross_spoke/current/ (2 new teachings)"
+  ],
+  "decisions": [
+    "Hub is orchestration point, not framework or individual spokes",
+    "Local cron over RemoteTrigger — needs local filesystem access to all 17 spokes",
+    "Historian threshold lowered from 30 to 15 unreviewed turns",
+    "Teaching repo split: spoke/ for spokes, hub-only/ for hub — eliminates wasted token evaluation",
+    "Framework-generated teachings default safe_to_auto_adopt: true",
+    "Ozi priority: health → inbound → signals → execute → closeout"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "First nightly run hasn't executed yet (tonight at 3:47 AM)",
+      "Old framework/ and cross_spoke/ directories not yet removed from hub (backward compat)",
+      "Hub wakeup hook needs same nightly report + historian sections",
+      "Human session refinement mode (R/N/W/S offer) not yet wired into wakeup"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Run gardener-nightly-maintenance-of-wheel.sh manually to test",
+      "Monitor first nightly run results",
+      "Wire refinement mode into wakeup for human sessions",
+      "Create epic decomposition for the 4 Ozi epics so nightly can pick up child tasks"
+    ]
+  },
+  "autosaves_reconciled": []
+}

@@ -87,7 +87,7 @@ Read `wheel.node_type` and `wheel.hub_path` from WAI-State.json.
 **Hub path validation (REQUIRED — never skip):**
 ```bash
 test -d "${HUB_PATH}" && echo "HUB_OK" || echo "HUB_MISSING"
-test -d "${HUB_PATH}/teachings_repo/framework/current" && echo "TEACHINGS_OK" || echo "TEACHINGS_MISSING"
+test -d "${HUB_PATH}/teachings_repo/spoke/current" && echo "TEACHINGS_OK" || echo "TEACHINGS_MISSING"
 ```
 
 **If hub_path is null, empty, or the directory does not exist:**
@@ -95,16 +95,15 @@ Surface in briefing under Context Health:
 > HUB PATH ERROR: `wheel.hub_path` is `{value}` — directory not found. Teaching discovery skipped.
 > Fix: Set `wheel.hub_path` in WAI-State.json to the correct hub directory.
 
-**If hub_path resolves but `teachings_repo/framework/current/` is absent:**
-> TEACHINGS REPO MISSING: `{hub_path}/teachings_repo/framework/current/` not found.
+**If hub_path resolves but `teachings_repo/spoke/current/` is absent:**
+> TEACHINGS REPO MISSING: `{hub_path}/teachings_repo/spoke/current/` not found.
 > Hub is reachable but teachings folder absent. Check hub setup.
 
 Do NOT skip silently. Both errors must appear in the Step 7 briefing.
 
 **If hub path is valid**, scan:
 ```bash
-ls -1 "${HUB_PATH}/teachings_repo/framework/current/"*.teaching 2>/dev/null
-ls -1 "${HUB_PATH}/cross_spoke/current/"*.teaching 2>/dev/null
+ls -1 "${HUB_PATH}/teachings_repo/spoke/current/"*.teaching 2>/dev/null
 ```
 
 For each discovered teaching:
