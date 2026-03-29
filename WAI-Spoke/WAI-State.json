@@ -99,7 +99,7 @@
     "last_closeout": "2026-03-28T22:35:00Z",
     "session_count": 96,
     "track_path": "WAI-Spoke/sessions/session-20260328-2128/track.jsonl",
-    "next_session_recommendation": "Session 94b: Ozi automation infrastructure complete. Cron installed (3:47 AM). Teaching repo restructured (spoke/ + hub-only/). Run gardener-nightly-maintenance-of-wheel.sh manually to test first nightly. Monitor results. Then: decompose Ozi epics into child tasks so nightly can pick them up. Wire human session refinement mode (R/N/W/S offer).",
+    "next_session_recommendation": "Session 94b closeout: All framework changes committed and pushed. HUB REPO HAS UNCOMMITTED CHANGES — gardener agent, nightly script, spoke/ teaching folder, hook compliance teaching. Commit from hub session or run gardener-wheel-maintenance.sh which will commit. First nightly run: tonight 3:47 AM. Next priorities: (1) test manual gardener run, (2) decompose Ozi epics into child tasks, (3) wire human session refinement mode.",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",
