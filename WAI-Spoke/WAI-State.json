@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.89",
+    "version": "2.0.90",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260328-2128",
+    "last_session_id": "session-20260328-2219",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-28T22:35:00Z",
-    "last_closeout": "2026-03-28T22:35:00Z",
-    "session_count": 96,
-    "track_path": "WAI-Spoke/sessions/session-20260328-2128/track.jsonl",
-    "next_session_recommendation": "Session 94b closeout: All framework changes committed and pushed. HUB REPO HAS UNCOMMITTED CHANGES — gardener agent, nightly script, spoke/ teaching folder, hook compliance teaching. Commit from hub session or run gardener-wheel-maintenance.sh which will commit. First nightly run: tonight 3:47 AM. Next priorities: (1) test manual gardener run, (2) decompose Ozi epics into child tasks, (3) wire human session refinement mode.",
+    "last_modified_at": "2026-03-29T05:15:00Z",
+    "last_closeout": "2026-03-29T05:15:00Z",
+    "session_count": 97,
+    "track_path": "WAI-Spoke/sessions/session-20260328-2219/track.jsonl",
+    "next_session_recommendation": "Session 97: Gardener formalized as hub advisor at WAI-Hub/advisors/gardener/ (scan_state.json, passes.jsonl, vectors.jsonl, reports/, scripts/wheel-tender.sh). Crontab updated. 7 new teachings pending adoption. NEXT: (1) Run wheel-tender on ONE spoke to verify end-to-end — check scan_state.json updated, passes.jsonl appended, vectors.jsonl scored with evals, report written. (2) Adopt 6 pending teachings (skip npm-to-bun). (3) Decompose Ozi epics into child tasks.",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",
