@@ -1,10 +1,21 @@
 {
   "i": "task-framework-version-in-template",
-  "t": "Add wheel.framework_version to spoke template WAI-State.json",
+  "t": "Add wheel.framework_version to spoke template WAI-State.json so new spokes get it from init",
   "ty": "task",
   "s": "o",
-  "impact": 6,
   "ca": "2026-03-14T07:22:58Z",
   "gb": "Claude Opus 4.6",
-  "description": "[template] New field separates project version (wheel.version) from framework sync version (wheel.framework_version). Already deployed to all 12 spokes; needs to be in template for new spokes."
+  "fw_ver": "3.0.0",
+  "impact": 6,
+  "priority": "P2",
+  "tags": ["template", "state"],
+  "parent_epic": "epic-session15-fleet-evolution",
+  "description": "wheel.framework_version separates project version from framework sync version. Already deployed to all spokes; needs to be in template for new spoke init.",
+  "perceive": "1. Read templates/spoke/WAI-State.json — check if wheel.framework_version field exists. 2. Read WAI-Spoke/WAI-State.json — confirm framework_version is present (value: '3.0.0'). 3. Read templates/commands/wai-init-v2.md — check if init copies this field.",
+  "execute": "1. Add 'framework_version': '3.0.0' to templates/spoke/WAI-State.json under wheel object. 2. Verify wai-init-v2.md copies WAI-State.json from template. 3. If wai-init-v2.md references specific fields to set, add framework_version to the list.",
+  "verify": "1. grep framework_version templates/spoke/WAI-State.json — present. 2. New spoke init would get framework_version from template.",
+  "_behavior_directive": {
+    "what_this_is": "Add a missing field to the spoke template so new spokes get it automatically",
+    "what_this_is_NOT": "Not retroactively updating existing spokes — the gardener handles that"
+  }
 }

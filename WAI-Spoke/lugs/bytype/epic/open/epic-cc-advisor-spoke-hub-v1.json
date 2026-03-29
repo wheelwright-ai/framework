@@ -1,0 +1,191 @@
+{
+  "i": "epic-cc-advisor-spoke-hub-v1",
+  "t": "Persistent ClaudeCode configuration advisor with hub distribution",
+  "ty": "epic",
+  "s": "o",
+  "ca": "2026-03-29T08:30:00Z",
+  "ua": "2026-03-29T09:00:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "priority": "P1",
+  "tags": ["advisor", "claude-code", "configuration", "hub", "spoke"],
+  "blocks": [],
+  "blocked_by": [],
+  "description": "Claude Code starts blank every session. The existing wai-claude-maximizer (at templates/commands/wai-claude-maximizer.md) does point-in-time audits of 8 CC config areas but has no memory — it can't detect regressions, track trends, or proactively surface improvements. The ClaudeCode advisor replaces the maximizer with a persistent advisor. At spoke level: observes CC activity, scores the same 8-area rubric, tracks score history, detects regressions, proposes configuration improvements. At hub level: aggregates cross-spoke CC patterns and redistributes validated improvements as teachings.",
+  "challenge": "CC configuration drifts silently between sessions. The maximizer detects gaps but only when manually invoked. No historical tracking means regressions go unnoticed. No cross-spoke aggregation means each spoke rediscovers the same improvements independently.",
+  "hypothesis": "If we formalize the maximizer as a persistent advisor with observation logs, score history, regression vectors, and hub-level aggregation via the existing signal/teaching pipeline, then CC config quality improves automatically across the fleet — each spoke learns from itself over time, and the hub amplifies learnings across all spokes.",
+
+  "existing_files_to_absorb": {
+    "maximizer_skill": "templates/commands/wai-claude-maximizer.md (8-area rubric, trigger conditions, gap report format, fix mode)",
+    "maximizer_reference": "templates/commands/wai-claude-maximizer-reference.md (detailed implementation guidance per area)",
+    "maximizer_skill_entry": "WAI-Spoke/skills/WAI-Skills.jsonl line 32 (id: claude-maximizer, type: guard, advisory: true)",
+    "installed_copies": ["WAI-Spoke/skills/claude-maximizer/", ".claude/commands/wai-claude-maximizer.md"],
+    "existing_hooks": ".claude/hooks/ (pre-tool-guard.sh, user-prompt-submit.sh, stop-test-runner.sh, pre-compact.sh)",
+    "existing_settings": ".claude/settings.json (hooks config, deny rules — no allow rules yet)",
+    "state_file": "WAI-Spoke/WAI-State.json (spoke identity, phase, session count, module adoption)"
+  },
+
+  "advisor_pattern_reference": {
+    "what_is_an_advisor": "A WAI advisor is a persistent agent that lives at WAI-Spoke/advisors/{name}/ (spoke level) or WAI-Hub/advisors/{name}/ (hub level). It has its own state files, runs periodically, and produces reports. It reads shared infrastructure but writes only to its own folder.",
+    "historian_example": "WAI-Spoke/advisors/historian/ has: scan_state.json (watermark — last scan session, total scanned), passes.jsonl (one line per review — sessions reviewed, patterns detected, vectors created), vectors.jsonl (detected patterns with lifecycle: watching→confirmed→dismissed), reviews/ (human-readable reports). The historian scans session tracks for recurring patterns.",
+    "gardener_example": "WAI-Hub/advisors/gardener/ has: scan_state.json (per-spoke last_tended, health status), passes.jsonl (per-run summary + token usage), vectors.jsonl (per-spoke health scores with evals), reports/ (nightly fleet reports), scripts/ (cron entry point), logs/ (per-spoke execution logs). The gardener tends all spokes nightly."
+  },
+
+  "new_file_schemas": {
+    "scan_state_json": {
+      "description": "Watermark for the CC advisor — when it last ran, current score, next scheduled audit",
+      "schema": {
+        "last_audit_at": "ISO-8601 or null (never run)",
+        "last_audit_session": "session-YYYYMMDD-HHMM or null",
+        "current_score": "0-8 integer",
+        "score_by_area": {"CLAUDE.md": "pass|fail", "Hooks": "pass|fail", "Permissions": "pass|fail", "Statusline": "pass|fail", "Slash_Commands": "pass|fail", "Subagents": "pass|fail", "MCP_Servers": "pass|fail", "Git_Worktrees": "pass|fail"},
+        "sessions_since_last_audit": "integer (triggers audit at 10)",
+        "total_audits": "integer",
+        "pending_proposals": ["proposal IDs awaiting user approval"],
+        "auto_applied_count": "integer (lifetime safe auto-applies)"
+      }
+    },
+    "passes_jsonl": {
+      "description": "One JSONL line per audit pass — score, findings, actions taken",
+      "schema_per_line": {
+        "id": "pass-YYYYMMDD",
+        "timestamp": "ISO-8601",
+        "score": "0-8",
+        "score_by_area": {"CLAUDE.md": "pass|fail", "Hooks": "pass|fail", "Permissions": "pass|fail", "Statusline": "pass|fail", "Slash_Commands": "pass|fail", "Subagents": "pass|fail", "MCP_Servers": "pass|fail", "Git_Worktrees": "pass|fail"},
+        "score_delta": "-2 to +2 (change from previous pass)",
+        "findings": ["list of gap descriptions"],
+        "proposals_generated": "integer",
+        "auto_applied": "integer",
+        "session_count_at_audit": "integer"
+      }
+    },
+    "vectors_jsonl": {
+      "description": "Tracked patterns — regressions, recurring friction, improvement opportunities",
+      "schema_per_line": {
+        "id": "vector-YYYYMMDD-NNNN",
+        "pattern_type": "regression | friction | opportunity",
+        "description": "human-readable pattern description",
+        "first_seen": "ISO-8601",
+        "last_seen": "ISO-8601",
+        "occurrences": "integer",
+        "status": "watching | confirmed | resolved | dismissed",
+        "resolution": "string or null"
+      }
+    }
+  },
+
+  "hub_path_resolution": "Read WAI-State.json field wheel.hub_path at runtime. Example: /home/mario/projects/wheelwright/hub. All Phase 5 paths like {hub_path}/WAI-Hub/advisors/cc-advisor/ resolve from this field.",
+
+  "agent_file_format": "A .claude/agents/*.md file is a markdown file read by the Claude CLI when --agent flag is used or when the Agent tool references it. Structure: H1 title, role description paragraph, then numbered steps or sections describing what the agent should do. No special frontmatter. See .claude/agents/lug-reviewer.md (7 lines) or hub/.claude/agents/ozi-gardener.md (322 lines) for examples.",
+
+  "event_log_schemas": {
+    "permission_prompts_jsonl": {"ts": "ISO-8601", "session": "session-id first 8 chars", "spoke": "wheel.name from WAI-State", "event": "permission_request", "data": {"tool": "Bash|Read|Write|Edit|...", "verb": "first word of bash command or null", "command": "full command string", "classification": "safe|review|deny|unknown"}},
+    "session_events_jsonl_start": {"ts": "ISO-8601", "session": "id", "spoke": "name", "event": "session_start", "data": {}},
+    "session_events_jsonl_end": {"ts": "ISO-8601", "session": "id", "spoke": "name", "event": "session_end", "data": {"duration_minutes": 0, "tokens_used": 0, "context_pct_at_end": 0, "compact_count": 0, "permission_prompts": 0}},
+    "hook_events_jsonl": {"ts": "ISO-8601", "session": "id", "spoke": "name", "event": "hook_fire", "data": {"hook_name": "pre-tool-guard|user-prompt-submit|...", "result": "ok|fail", "duration_ms": 0, "error": "string or null"}}
+  },
+
+  "audit_trigger_mechanism": "The session-start hook (WAI-Spoke/_hooks/session-start.sh or .claude/hooks/user-prompt-submit.sh) reads scan_state.json, increments sessions_since_last_audit, and writes it back. When count >= 10, it sets a flag that the cc-advisor skill reads at wakeup to trigger a full audit pass.",
+
+  "acceptance_criteria_per_phase": {
+    "phase_1": "scan_state.json exists and valid JSON. cc-advisor.md skill loads without error. /wai-claude-maximizer still invokes scoring (backward compat). WAI-Skills.jsonl has cc-advisor entry, no maximizer entry.",
+    "phase_2": "After 3 sessions, permission-prompts.jsonl has entries. session-events.jsonl has start/end pairs. hook-events.jsonl has at least one entry per configured hook.",
+    "phase_3": "After 10 sessions, passes.jsonl has at least 1 audit entry. Manually lowering a score and running next audit creates a regression vector in vectors.jsonl.",
+    "phase_4": "A read-only command prompted 3+ sessions gets auto-added to settings.json permissions.allow. A CLAUDE.md gap generates a proposal in reports/. Wakeup shows top gaps.",
+    "phase_5": "WAI-Hub/advisors/cc-advisor/ exists. A signal emitted by 2 spokes produces a teaching in teachings_repo/spoke/current/. Weekly report generated."
+  },
+
+  "signal_and_teaching_pipeline": {
+    "how_signals_work": "A signal is a high-impact lug (impact >= 8) stored at WAI-Spoke/lugs/bytype/signal/undelivered/{id}.json. At closeout (Step 9c), undelivered signals are copied to {hub_path}/WAI-Hub/signals/incoming/. The hub processes them on its next run.",
+    "how_teachings_work": "A teaching is a .teaching file at {hub_path}/teachings_repo/spoke/current/. Spokes discover new teachings at wakeup (Step 5). Auto-adoptable teachings (safe_to_auto_adopt: true) can be applied without manual review.",
+    "cc_advisor_usage": "Hub CC advisor generates teachings for validated cross-spoke improvements. Spoke CC advisor emits signals for hub-relevant findings. No parallel distribution mechanism needed."
+  },
+
+  "phases": [
+    {
+      "id": "phase-1-foundation",
+      "name": "Foundation — advisor skeleton + maximizer absorption",
+      "status": "not_started",
+      "items": [
+        "Create WAI-Spoke/advisors/cc-advisor/ with scan_state.json (see new_file_schemas), empty passes.jsonl, empty vectors.jsonl, reports/ dir",
+        "Create WAI-Spoke/skills/cc-advisor/cc-advisor.md — absorb rubric from templates/commands/wai-claude-maximizer.md, add advisor lifecycle (periodic audit, score tracking, regression detection)",
+        "Create WAI-Spoke/skills/cc-advisor/cc-advisor-reference.md — absorb from templates/commands/wai-claude-maximizer-reference.md, add event schemas, proposal format",
+        "Create .claude/agents/cc-advisor.md — agent that runs the skill's scoring logic, reads advisor state, writes results to scan_state + passes",
+        "Update WAI-Spoke/skills/WAI-Skills.jsonl — replace the claude-maximizer entry (id, command_file, objects paths) with cc-advisor entry",
+        "Redirect /wai-claude-maximizer: edit templates/commands/wai-claude-maximizer.md to a 3-line file that says 'This skill has been absorbed into the ClaudeCode advisor. Run /cc-advisor or read WAI-Spoke/skills/cc-advisor/cc-advisor.md.'"
+      ]
+    },
+    {
+      "id": "phase-2-observation",
+      "name": "Observation — permission friction, session metrics, hook health logging",
+      "status": "not_started",
+      "items": [
+        "Create WAI-Spoke/advisors/cc-advisor/logs/ directory for JSONL event streams",
+        "Add permission-prompts.jsonl logging: extend .claude/hooks/user-prompt-submit.sh to append {ts, session, event: 'permission_request', data: {tool, command, classification}} to advisor logs",
+        "Add session-events.jsonl logging: extend session-start hook to log session_start event; extend stop hook to log session_end with duration, tokens, context_pct, compact_count",
+        "Add hook-events.jsonl logging: each hook script appends {ts, hook_name, result: ok|fail, duration_ms} to advisor logs",
+        "All events use base schema: {ts, session, spoke, event, data} — spoke name read from WAI-State.json wheel.name"
+      ]
+    },
+    {
+      "id": "phase-3-analysis",
+      "name": "Analysis — periodic audit with score history and regression detection",
+      "status": "not_started",
+      "items": [
+        "Add session counter to scan_state.json: increment sessions_since_last_audit at each session start; trigger full audit when count reaches 10",
+        "Audit pass: run 8-area scoring (same logic as maximizer), append result to passes.jsonl with score + delta + findings",
+        "Regression detection: if score_delta < 0, create a vector in vectors.jsonl with pattern_type: 'regression' and surface at next wakeup",
+        "Permission friction analysis: read permission-prompts.jsonl, identify top 3 most-prompted commands, classify as safe/review/deny candidates"
+      ]
+    },
+    {
+      "id": "phase-4-adjustment",
+      "name": "Adjustment — safe auto-apply, patch proposals, proactive advisory",
+      "status": "not_started",
+      "items": [
+        "Safe permission auto-apply: if a read-only command has been prompted 3+ sessions with zero write side-effects, auto-add to settings.json permissions.allow with notification to user",
+        "CLAUDE.md patch proposals: when audit finds missing sections or stale anti-patterns, generate a diff proposal stored in advisor reports/. Always require user approval.",
+        "Wakeup integration: at session start, if scan_state has pending_proposals or regression vectors, surface top 3 gaps as a brief note (one line each)",
+        "Signal emission: when a finding has impact >= 8 and applies beyond this spoke (e.g., new safe permission pattern), create a signal lug in bytype/signal/undelivered/ for hub delivery at closeout"
+      ]
+    },
+    {
+      "id": "phase-5-hub",
+      "name": "Hub integration — cross-spoke patterns, teaching distribution",
+      "status": "not_started",
+      "items": [
+        "Create WAI-Hub/advisors/cc-advisor/ with same structure as spoke advisor (scan_state, passes, vectors, reports)",
+        "Cross-spoke pattern detection: read signals from WAI-Hub/signals/incoming/ with cc-advisor origin; if 2+ spokes report same finding within 30 days, create a teaching candidate",
+        "Teaching generation: write validated improvements as .teaching files to teachings_repo/spoke/current/ with safe_to_auto_adopt: true for low-risk items (permission additions), false for CLAUDE.md/hook changes",
+        "Weekly fleet CC report: aggregate all spoke scores into WAI-Hub/advisors/cc-advisor/reports/weekly-YYYY-MM-DD.md",
+        "Gardener integration: add CC advisor audit as a step in hub/.claude/agents/ozi-gardener.md — after health remediation, run cc-advisor scoring on each spoke and update hub advisor state"
+      ]
+    }
+  ],
+
+  "design_principles": [
+    "P3 Stewardship: observation before action — log everything before changing anything",
+    "Hooks over instructions — guaranteed behaviors are hooks, not CLAUDE.md prose",
+    "P3 Stewardship: propose don't impose — advisor proposes, user approves (except safe read-only auto-applies with notification)",
+    "Skill Thrift: lean primary, verbose reference on demand",
+    "P1 Persistence: WAI-State as source of truth — advisor reads phase/modules from state, writes findings to advisor folder",
+    "P10 Autonomy: fail safe — log failures and continue, never block sessions or corrupt configs"
+  ],
+
+  "scoring_rubric": {
+    "areas": ["CLAUDE.md", "Hooks", "Permissions", "Statusline", "Slash Commands", "Subagents", "MCP Servers", "Git Worktrees"],
+    "score_range": "0-8 (count of areas at or above ideal for spoke maturity)",
+    "source": "Absorbed from templates/commands/wai-claude-maximizer.md unchanged",
+    "maturity_thresholds": {
+      "new_spoke_0_to_10_sessions": "target 4/8 (CLAUDE.md + Hooks + Permissions + Statusline)",
+      "established_10_to_50_sessions": "target 6/8 (add Commands + Subagents)",
+      "mature_50_plus_sessions": "target 8/8 (all areas)"
+    }
+  },
+
+  "_behavior_directive": {
+    "what_this_is": "Epic to build the ClaudeCode advisor — a persistent WAI advisor that replaces the point-in-time maximizer with continuous CC config monitoring, historical tracking, and cross-spoke improvement distribution. Uses existing advisor pattern, signal pipeline, and teaching distribution.",
+    "what_this_is_NOT": "Not a new system parallel to WAI. Not changing what the 8-area rubric measures — only how it runs (persistent vs on-demand). Not creating parallel distribution mechanisms — uses teachings_repo."
+  }
+}

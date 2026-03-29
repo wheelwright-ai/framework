@@ -1,0 +1,20 @@
+{
+  "i": "task-skill-thrift-tier2-ozi-monitor",
+  "t": "Apply skill thrift to wai-ozi-work-queue-monitor.md — slim 364 lines to behavioral instructions, extract verbose content to reference file",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-29T09:30:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "priority": "P1",
+  "tags": ["skill-thrift", "tier2"],
+  "parent_epic": "epic-skill-thrift-v1",
+  "perceive": "1. Read templates/commands/wai-ozi-work-queue-monitor.md (364 lines). 2. Identify behavioral instructions (what to do, in what order, trigger conditions) vs verbose content (JSON examples, schemas, report templates, worked examples). 3. Read templates/commands/wai-closeout.md and wai-lug-schema.md as examples of already-slimmed skills — observe the pattern.",
+  "execute": "1. Read the full skill file. 2. Write slimmed primary: keep all rules, triggers, decision logic, tables. Drop all JSON examples, schema blocks, worked examples, report templates. 3. Write wai-ozi-work-queue-monitor-reference.md with all moved content, prefaced with 'Reference for wai-ozi-work-queue-monitor.md. Load on-demand only.' 4. Fix any duplicate sections found while editing. 5. Sync both files to all 3 targets: templates/spoke/skills/ozi-work-queue-monitor/, WAI-Spoke/skills/ozi-work-queue-monitor/, WAI-Spoke/commands/. 6. Verify line counts.",
+  "verify": "1. wc -l templates/commands/wai-ozi-work-queue-monitor.md — must be under 200 lines. 2. grep for key behavioral rules still present (trigger conditions, dispatch logic). 3. grep for JSON examples in reference file (confirms they moved). 4. diff templates/commands/wai-ozi-work-queue-monitor.md WAI-Spoke/commands/wai-ozi-work-queue-monitor.md — must match (synced).",
+  "_behavior_directive": {
+    "what_this_is": "Apply the skill thrift pattern to one specific skill file — slim primary, create reference companion",
+    "what_this_is_NOT": "Not changing the skill's behavior — only reorganizing where content lives (primary vs reference)"
+  }
+}

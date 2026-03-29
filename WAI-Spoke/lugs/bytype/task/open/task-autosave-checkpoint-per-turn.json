@@ -1,0 +1,20 @@
+{
+  "i": "task-autosave-checkpoint-per-turn",
+  "t": "Write autosave checkpoint before each track append so crash recovery has a known-good restore point",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-29T09:45:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "priority": "P2",
+  "tags": ["recovery", "autosave", "track"],
+  "parent_epic": "epic-interruption-recovery-v1",
+  "perceive": "1. Read templates/commands/wai.md Step 8 (track capture instructions) — how track.jsonl is appended each turn. 2. Check if WAI-Spoke/sessions/{session}/.autosave/ pattern exists anywhere. 3. Read WAI-Spoke/WAI-State.json to see if autosave fields exist.",
+  "execute": "1. Add to wai.md track capture instructions: before appending to track.jsonl, write current turn's JSON to {session_dir}/.autosave/turn-{N}.json. 2. Keep only last 3 checkpoints (delete turn-{N-3}.json after writing turn-{N}.json). 3. Add .autosave/ to the session directory structure documentation. 4. Sync wai.md to all targets.",
+  "verify": "1. After 4 turns, ls {session_dir}/.autosave/ shows exactly 3 files (turn-2, turn-3, turn-4). 2. Each checkpoint is valid JSON matching the track entry schema. 3. If track.jsonl is corrupted, checkpoints provide recovery data.",
+  "_behavior_directive": {
+    "what_this_is": "Per-turn autosave checkpoints for crash recovery — write before track append, keep rolling window of 3",
+    "what_this_is_NOT": "Not implementing the recovery UI — just the checkpoint mechanism. Recovery is task-track-interruption-detection + /wai-green-light."
+  }
+}

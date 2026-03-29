@@ -1,10 +1,21 @@
 {
   "i": "task-multi-ai-case-study",
-  "t": "Add multi-AI case study to framework README + model tracking in session log",
+  "t": "Document ezorg-email-website as multi-AI case study and add model identity tracking to session track schema",
   "ty": "task",
   "s": "o",
-  "impact": 7,
   "ca": "2026-03-14T07:22:58Z",
   "gb": "Claude Opus 4.6",
-  "description": "[documentation] ezorg-email-website: 5 AI models, 35 sessions. Document as case study. Session track should subsume model_log pattern benefits — capture model identity per turn so we can evaluate model performance from track data."
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "priority": "P3",
+  "tags": ["documentation", "multi-ai", "track"],
+  "parent_epic": "epic-session15-fleet-evolution",
+  "description": "ezorg-email-website used 5 AI models across 35 sessions �� a real multi-AI case study. Track schema should capture model identity per turn for performance evaluation.",
+  "perceive": "1. Check /home/mario/projects/ezorg-email-website/WAI-Spoke/sessions/ — count sessions, check track files for model diversity. 2. Read templates/commands/wai-track-generate.md — current track point schema. 3. Read WAI-State.json model_log — existing model tracking.",
+  "execute": "1. Add 'model' field to track point schema in wai-track-generate.md: model name recorded per turn (e.g., 'claude-opus-4-6', 'gemini-2.5-pro'). 2. This subsumes the model_log pattern — track data now captures model per turn. 3. Write case study section for framework docs: multi-AI spoke with session count, model diversity, lessons learned. 4. Sync track schema changes to all targets.",
+  "verify": "1. wai-track-generate.md schema includes 'model' field. 2. New track entries include model identity. 3. Case study document exists in framework/docs/.",
+  "_behavior_directive": {
+    "what_this_is": "Add model tracking to track schema and document the multi-AI case study",
+    "what_this_is_NOT": "Not retroactively adding model data to old tracks — only new sessions capture this"
+  }
 }

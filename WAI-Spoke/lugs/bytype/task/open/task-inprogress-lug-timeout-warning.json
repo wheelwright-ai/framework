@@ -1,0 +1,20 @@
+{
+  "i": "task-inprogress-lug-timeout-warning",
+  "t": "Detect stale in_progress lugs at wakeup — warn when unchanged for 4+ hours, offer abandon/resume/extend",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-29T09:45:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 6,
+  "priority": "P2",
+  "tags": ["wakeup", "recovery", "lugs"],
+  "parent_epic": "epic-interruption-recovery-v1",
+  "perceive": "1. Read templates/commands/wai.md Step 4 (Load Active Lugs) — how in_progress lugs are loaded. 2. ls WAI-Spoke/lugs/bytype/*/in_progress/*.json — check what in_progress lugs exist and their timestamps. 3. Check lug schema for updated_at / ua field.",
+  "execute": "1. Add to wai.md Step 7 (after loading active lugs): for each in_progress lug, check ua (updated_at) or file mtime. 2. If older than 4 hours: surface warning: '{lug_id} has been in_progress for {N}h. Mark abandoned / Resume / Extend deadline?' 3. User response: 'abandon' moves to open/ with note; 'resume' continues; 'extend' updates ua. 4. Sync wai.md to all targets.",
+  "verify": "1. Create a lug in in_progress/ with ua older than 4h — wakeup shows warning. 2. Fresh in_progress lug (ua within 4h) — no warning. 3. Abandon action moves lug back to open/ with review_reason set.",
+  "_behavior_directive": {
+    "what_this_is": "Stale in_progress lug detection at wakeup with user choice to abandon/resume/extend",
+    "what_this_is_NOT": "Not auto-abandoning — always asks user. The 4h threshold is for warning only."
+  }
+}

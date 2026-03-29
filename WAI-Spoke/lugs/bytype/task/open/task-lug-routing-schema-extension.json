@@ -1,0 +1,20 @@
+{
+  "i": "task-lug-routing-schema-extension",
+  "t": "Add routed_to and scope_verified_by fields to lug schema — enable scope-aware routing at creation and delivery",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-29T09:30:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "priority": "P1",
+  "tags": ["lug-schema", "routing", "ozi"],
+  "parent_epic": "epic-ozi-routing-awareness-v1",
+  "perceive": "1. Read templates/commands/wai-lug-schema.md — find the Key Mapping section and Required Field Defaults section. 2. Read templates/commands/wai-closeout.md — find Step 9c (signal delivery to hub) to understand current delivery logic. 3. Check how many existing lugs already have a routed_to field: grep -r 'routed_to' WAI-Spoke/lugs/bytype/.",
+  "execute": "1. Add to wai-lug-schema.md Key Mapping table: routed_to (enum: LOCAL|FRAMEWORK|SIGNAL, default LOCAL) and scope_verified_by (string: who decided routing — user/agent/auto). 2. Add to Required Field Defaults: routed_to defaults to LOCAL, scope_verified_by defaults to null. 3. Add a 'Routing' section after Scope Flags explaining: LOCAL = stays in this spoke, FRAMEWORK = goes to hub for framework-level implementation, SIGNAL = broadcast to other spokes via hub. 4. Update wai-closeout.md Step 9c: add filter — only deliver lugs where routed_to is FRAMEWORK or SIGNAL to the hub. LOCAL lugs stay in spoke. 5. Sync wai-lug-schema.md and wai-closeout.md to all targets (templates/spoke/skills/, WAI-Spoke/commands/, WAI-Spoke/skills/).",
+  "verify": "1. grep 'routed_to' templates/commands/wai-lug-schema.md — field documented. 2. grep 'routed_to' templates/commands/wai-closeout.md — delivery filter present. 3. Existing lugs with routed_to field still valid (backward compat — field is optional with default LOCAL). 4. diff sync check across targets.",
+  "_behavior_directive": {
+    "what_this_is": "Extend lug schema with routing fields and update closeout delivery filter — the data model for scope-aware routing",
+    "what_this_is_NOT": "Not implementing the Ozi routing gate UI (that's a separate task) — this is the schema and delivery filter only"
+  }
+}

@@ -1,10 +1,21 @@
 {
   "i": "task-spoke-self-registry-via-lug",
-  "t": "Spokes generate self-registry entry and send to hub via lug",
+  "t": "Spokes generate self-registry entry at closeout and send to hub via signal for hub-registry.json updates",
   "ty": "task",
   "s": "o",
-  "impact": 7,
   "ca": "2026-03-14T07:22:58Z",
   "gb": "Claude Opus 4.6",
-  "description": "[distribution] Each spoke generates its own registry entry on closeout. Sends to hub via outbox lug. Hub replaces (not merges) and tracks changes over time. Hub sets minimum expectations in closeout skill. Drives foundation completion visibility."
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "priority": "P2",
+  "tags": ["distribution", "registry", "closeout"],
+  "parent_epic": "epic-session15-fleet-evolution",
+  "description": "Each spoke generates its own registry entry on closeout. Sends to hub via signal pipeline. Hub replaces spoke entry in hub-registry.json.",
+  "perceive": "1. Read templates/commands/wai-closeout.md — find where to add registry signal step (after Step 9c). 2. Read hub/hub-registry.json — current per-spoke fields. 3. Read WAI-Spoke/WAI-State.json — fields that map to registry entry.",
+  "execute": "1. Add Step 9d to wai-closeout.md: generate spoke registry update signal from WAI-State.json fields (wheel_id, spoke_id, path, foundation_name, project_description, current_phase, framework_version, last_session). 2. Write as signal lug to bytype/signal/undelivered/ with target: 'hub'. 3. Hub gardener processes: reads signal, updates matching entry in hub-registry.json. 4. Sync closeout to all targets.",
+  "verify": "1. After closeout, bytype/signal/undelivered/ has a registry update signal with all required fields. 2. Gardener can parse and apply the update to hub-registry.json.",
+  "_behavior_directive": {
+    "what_this_is": "Auto-generate spoke registry entries at closeout — keeps hub-registry.json current",
+    "what_this_is_NOT": "Not manual registry management — automatic, driven by closeout"
+  }
 }

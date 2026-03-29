@@ -1,0 +1,20 @@
+{
+  "i": "task-lug-quality-review-bugs",
+  "t": "Review and improve all 11 open/in_progress bug lugs for naming quality, PEV compliance, and self-containment",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-29T10:00:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "priority": "P1",
+  "tags": ["lugs", "quality", "bugs"],
+  "parent_epic": "epic-lug-quality-review-v1",
+  "perceive": "1. ls WAI-Spoke/lugs/bytype/bug/open/*.json and WAI-Spoke/lugs/bytype/bug/in_progress/*.json — list all bug lugs. 2. Read each bug lug. 3. Check against quality standards: id matches filename, title is 5+ words and descriptive, has perceive/execute/verify fields, self-contained for cold reader.",
+  "execute": "For each bug lug: 1. Read the full lug. 2. Check: (a) id = filename (without .json), (b) title is meaningful 5+ words, (c) has PEV fields, (d) description explains the bug clearly for a cold reader. 3. If any gap: rewrite the lug with improvements — add PEV if missing, expand title if vague, ensure description is self-contained. 4. Dogfood: spawn a sub-agent with just the lug content, ask 'What is this bug? How would you fix it? What would you check?' — if sub-agent can't answer, the lug needs more detail. 5. Write improved version back to the same path.",
+  "verify": "1. Every bug lug has: id matching filename, 5+ word title, perceive/execute/verify fields, description. 2. Dogfood sub-agent can explain what each bug is and how to verify the fix. 3. No lug has generic title like 'Bug: fix thing'.",
+  "_behavior_directive": {
+    "what_this_is": "Batch review of all bug lugs for quality — the proof-of-concept batch for the lug quality epic",
+    "what_this_is_NOT": "Not reviewing tasks, epics, or ideas — those are future batches"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "i": "task-skill-thrift-tier2-lug-compat",
+  "t": "Apply skill thrift to wai-lug-compat.md — slim 277 lines to behavioral instructions, extract verbose content to reference file",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-29T09:30:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 6,
+  "priority": "P2",
+  "tags": ["skill-thrift", "tier2"],
+  "parent_epic": "epic-skill-thrift-v1",
+  "perceive": "1. Read templates/commands/wai-lug-compat.md (277 lines). 2. Identify behavioral instructions vs verbose content (JSON examples, scoring formulas, worked examples). 3. Read templates/commands/wai-closeout.md as example of slimmed skill.",
+  "execute": "1. Read the full skill file. 2. Write slimmed primary: keep rules, scoring logic, trigger conditions, decision tables. Drop JSON examples, worked scoring examples, verbose commentary. 3. Write wai-lug-compat-reference.md with moved content. 4. Sync to templates/spoke/skills/lug-compat/, WAI-Spoke/skills/lug-compat/, WAI-Spoke/commands/. 5. Verify line counts.",
+  "verify": "1. wc -l templates/commands/wai-lug-compat.md — must be under 150 lines. 2. Key scoring rules still present in primary. 3. diff sync check across all 3 targets.",
+  "_behavior_directive": {
+    "what_this_is": "Apply skill thrift pattern to wai-lug-compat.md",
+    "what_this_is_NOT": "Not changing scoring logic — only reorganizing content"
+  }
+}
