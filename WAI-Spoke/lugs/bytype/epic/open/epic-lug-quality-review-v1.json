@@ -1,0 +1,25 @@
+{
+  "i": "epic-lug-quality-review-v1",
+  "t": "Review and improve all 65 active lugs for naming quality, detail, and PEV compliance via dogfooded improve process",
+  "ty": "epic",
+  "s": "o",
+  "ca": "2026-03-29T08:00:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "priority": "P1",
+  "tags": ["lugs", "quality", "governance"],
+  "blocks": [],
+  "blocked_by": ["task-lug-folder-cleanup-and-hub-lugs"],
+  "description": "Every active lug (61 open + 4 in_progress) must meet quality standards: meaningful name (id=filename=intent), adequate description, PEV fields where required, self-contained for cold readers. Each lug runs through the improve process, dogfooded on a fresh sub-agent to verify clarity. Multi-session work, batched by type.",
+  "batches": [
+    {"name": "bugs", "count": 11, "session": "this session (proof-of-concept)"},
+    {"name": "tasks", "count": 24, "session": "future"},
+    {"name": "epics", "count": 11, "session": "future"},
+    {"name": "other/ideas", "count": 18, "session": "future — triage for keep/discard"}
+  ],
+  "_behavior_directive": {
+    "what_this_is": "Epic tracking the quality review of all active lugs across multiple sessions",
+    "what_this_is_NOT": "Not a one-shot cleanup — this is batched, methodical quality improvement"
+  }
+}

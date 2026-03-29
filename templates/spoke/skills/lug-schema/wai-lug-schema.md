@@ -38,7 +38,7 @@ WAI-Spoke/lugs/
 | Signals | `lugs/bytype/signal/{undelivered,delivered}/` | Undelivered = not yet sent to hub |
 | Lug index | `WAI-Spoke/WAI-LugIndex.jsonl` | Lightweight lookup — on-demand only |
 | Incoming/outgoing | `WAI-Spoke/lugs/incoming/` and `outgoing/` | Delivery channel only |
-| Hub bulletin | `WAI-Hub/Signals/incoming/` | High-impact lugs copied here at closeout |
+| Hub bulletin | `WAI-Hub/signals/incoming/` | High-impact lugs copied here at closeout |
 | Reference docs | `WAI-Spoke/reference/` | Top-level, peer to lugs/sessions/skills |
 
 **Storage rules:**

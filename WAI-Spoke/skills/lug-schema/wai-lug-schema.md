@@ -20,7 +20,7 @@
 | All lugs | `WAI-Spoke/WAI-Lugs.jsonl` | Append-only JSONL, one object per line |
 | Signals | `WAI-Spoke/WAI-Lugs.jsonl` | Signals ARE lugs with `impact >= 8` — no separate file |
 | Inbox/outbox | `WAI-Spoke/lugs/inbox/` and `lugs/outbox/` | Delivery channel only — not durable storage |
-| Hub bulletin | `WAI-Hub/Signals/incoming/` | High-impact lugs copied here at closeout for cross-spoke visibility |
+| Hub bulletin | `WAI-Hub/signals/incoming/` | High-impact lugs copied here at closeout for cross-spoke visibility |
 
 `WAI-Spoke/WAI-Signals.jsonl` is **retired**. Do not create it or write to it.
 

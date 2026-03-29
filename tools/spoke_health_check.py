@@ -369,9 +369,9 @@ def check_hub_connectivity(report: HealthReport, wai_spoke: Path):
     # Signals inbox
     signals = hub / "WAI-Hub" / "Signals" / "incoming"
     if signals.exists():
-        report.add("hub-signals", cat, "PASS", "WAI-Hub/Signals/incoming/ exists")
+        report.add("hub-signals", cat, "PASS", "WAI-Hub/signals/incoming/ exists")
     else:
-        report.add("hub-signals", cat, "FAIL", "WAI-Hub/Signals/incoming/ not found")
+        report.add("hub-signals", cat, "FAIL", "WAI-Hub/signals/incoming/ not found")
 
 
 def check_cc_hooks(report: HealthReport, wai_spoke: Path):

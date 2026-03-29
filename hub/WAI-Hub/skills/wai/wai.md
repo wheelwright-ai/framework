@@ -91,7 +91,7 @@ For each discovered teaching not yet in `WAI-Spoke/seed/processed/`:
 **Hub Signal Bulletin:**
 
 ```bash
-ls ${HUB_PATH}/WAI-Hub/Signals/incoming/*.json 2>/dev/null
+ls ${HUB_PATH}/WAI-Hub/signals/incoming/*.json 2>/dev/null
 ```
 
 For each `.json` file: check if id already known in WAI-Lugs.jsonl. If new, surface in briefing. Do not auto-adopt.
@@ -261,7 +261,7 @@ Fleet: {N} spokes | {healthy_count} healthy | {stale_count} stale | {unreachable
 Teaching queue: {N} in current/ | {M} delivery debt
 
 #### Hub Bulletins
-{new signals from WAI-Hub/Signals/incoming/ not yet known}
+{new signals from WAI-Hub/signals/incoming/ not yet known}
 
 #### Spoke Active Work
 {active lugs from WAI-Lugs.jsonl — hub's own backlog}
@@ -337,7 +337,7 @@ Hub wake complete. Fleet: {N} spokes | {health summary}. Ready to work.
 | `hub/WAI-Lugs.jsonl` | Fleet-level decisions and signals | UPDATE |
 | `hub/registry.yaml` | Registered spoke list | READ |
 | `hub/teachings_repo/spoke/current/` | Active teachings for distribution | READ |
-| `hub/WAI-Hub/Signals/incoming/` | Signal bulletin inbox | READ |
+| `hub/WAI-Hub/signals/incoming/` | Signal bulletin inbox | READ |
 
 ---
 

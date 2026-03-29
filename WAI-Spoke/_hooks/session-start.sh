@@ -91,8 +91,8 @@ fi
 
 # ── 5. Hub signals bulletin count ────────────────────────────────────────────
 HUB_SIGNALS=0
-if [[ -d "$HUB_PATH/WAI-Hub/Signals/incoming" ]]; then
-  HUB_SIGNALS=$(ls "$HUB_PATH/WAI-Hub/Signals/incoming/"*.json 2>/dev/null | grep -v '.gitkeep' | wc -l | tr -d ' ')
+if [[ -d "$HUB_PATH/WAI-Hub/signals/incoming" ]]; then
+  HUB_SIGNALS=$(ls "$HUB_PATH/WAI-Hub/signals/incoming/"*.json 2>/dev/null | grep -v '.gitkeep' | wc -l | tr -d ' ')
 fi
 
 # ── 6. Next session recommendation ───────────────────────────────────────────

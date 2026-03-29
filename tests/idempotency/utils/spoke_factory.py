@@ -292,8 +292,8 @@ def create_test_hub(hub_dir: Path) -> Path:
     for subdir in [
         "teachings",
         "WAI-Spoke/lugs/inbox",
-        "WAI-Hub/Signals/incoming",
-        "WAI-Hub/Signals/processed",
+        "WAI-Hub/signals/incoming",
+        "WAI-Hub/signals/processed",
     ]:
         (hub_dir / subdir).mkdir(parents=True, exist_ok=True)
 

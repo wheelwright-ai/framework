@@ -173,8 +173,8 @@ The hub should own:
 
 Canonical signal bulletin location:
 
-- `WAI-Hub/Signals/incoming/`
-- `WAI-Hub/Signals/processed/`
+- `WAI-Hub/signals/incoming/`
+- `WAI-Hub/signals/processed/`
 
 This folder acts as the hub bulletin board for high-impact lugs copied upward from spokes. Other spokes inspect `incoming/` on wakeup. Framework absorption and teaching generation clear or reconcile items by moving them to `processed/` after incorporation.
 
@@ -191,10 +191,10 @@ Resolved signal model:
 
 - signals are canonically **lugs**
 - a lug becomes a signal when `impact > 7`
-- qualifying lugs are copied to the hub bulletin at `WAI-Hub/Signals/incoming/`
+- qualifying lugs are copied to the hub bulletin at `WAI-Hub/signals/incoming/`
 - other spokes inspect those signals during wakeup
 - framework incorporates relevant signals and may generate teachings from them
-- processed signals are moved to `WAI-Hub/Signals/processed/`, not deleted
+- processed signals are moved to `WAI-Hub/signals/processed/`, not deleted
 
 Processed signal records should retain or gain:
 
@@ -384,7 +384,7 @@ Current repo examples conflict:
 Resolved direction:
 
 - the canonical model is signal-classified lugs
-- the hub bulletin board at `WAI-Hub/Signals/incoming/` and `WAI-Hub/Signals/processed/` is a distribution/staging mechanism
+- the hub bulletin board at `WAI-Hub/signals/incoming/` and `WAI-Hub/signals/processed/` is a distribution/staging mechanism
 - any separate signal file is secondary to the lug model, not a competing source of truth
 
 ### 8.3 `BRIEF` / `Manifest` Vocabulary Conflicts With `WAI-State`

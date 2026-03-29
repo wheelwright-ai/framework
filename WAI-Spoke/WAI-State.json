@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.90",
+    "version": "2.0.91",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260328-2219",
+    "last_session_id": "session-20260329-0029",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-29T05:15:00Z",
-    "last_closeout": "2026-03-29T05:15:00Z",
-    "session_count": 97,
-    "track_path": "WAI-Spoke/sessions/session-20260328-2219/track.jsonl",
-    "next_session_recommendation": "Session 97: Gardener formalized as hub advisor at WAI-Hub/advisors/gardener/ (scan_state.json, passes.jsonl, vectors.jsonl, reports/, scripts/wheel-tender.sh). Crontab updated. 7 new teachings pending adoption. NEXT: (1) Run wheel-tender on ONE spoke to verify end-to-end — check scan_state.json updated, passes.jsonl appended, vectors.jsonl scored with evals, report written. (2) Adopt 6 pending teachings (skip npm-to-bun). (3) Decompose Ozi epics into child tasks.",
+    "last_modified_at": "2026-03-29T08:15:00Z",
+    "last_closeout": "2026-03-29T08:15:00Z",
+    "session_count": 98,
+    "track_path": "WAI-Spoke/sessions/session-20260329-0029/track.jsonl",
+    "next_session_recommendation": "Session 98 (continued from 97): Massive hygiene session. Gardener: formalized as advisor, rewritten with militant 4-phase remediation + per-spoke logging, tested twice (6/17 GREEN on 2nd run, $0.22 Haiku). Fleet cleanup: hub signals lowercase (31 files updated), deprecated files removed (WAI-Workspace, temp state, GEMINI.md), malformed sessions fixed, inbox/outbox subsumed, WAI-Hub/lugs/ created. NEXT: (1) Review 11 bug lugs (epic-lug-quality-review-v1 batch 1). (2) Adopt 7 pending teachings. (3) Add lug naming policy to wai-lug-schema.md. (4) Commit hub repo changes (gardener files, signals rename, lugs structure, deprecated cleanup).",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",

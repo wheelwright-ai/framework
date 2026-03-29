@@ -92,8 +92,8 @@ def tmp_spoke_with_hub(tmp_spoke, tmp_path):
     for d in (
         "teachings_repo/spoke/current",
         "cross_spoke/current",
-        "WAI-Hub/Signals/incoming",
-        "WAI-Hub/Signals/processed",
+        "WAI-Hub/signals/incoming",
+        "WAI-Hub/signals/processed",
     ):
         (hub_dir / d).mkdir(parents=True)
 

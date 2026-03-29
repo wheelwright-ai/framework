@@ -242,13 +242,13 @@ For each discovered teaching:
 
 **Hub Signal Bulletin:** Signals are routed by target. Read only your relevant folder(s):
 
-- **Framework spoke** reads: `{hub_path}/WAI-Hub/Signals/by-target/framework/`
-- **Other spokes** read: `{hub_path}/WAI-Hub/Signals/by-target/spokes/` + `by-target/spokes/{spoke_id}/`
+- **Framework spoke** reads: `{hub_path}/WAI-Hub/signals/by-target/framework/`
+- **Other spokes** read: `{hub_path}/WAI-Hub/signals/by-target/spokes/` + `by-target/spokes/{spoke_id}/`
 
 For each `.json` file in your target folder:
 1. Read it, check if already tracked locally (id in `bytype/signal/` or `bytype/task/`)
 2. If new: surface in briefing, then incorporate — create a local lug (task/bug/signal) from the content
-3. After incorporation + teaching distributed: move signal to `{hub_path}/WAI-Hub/Signals/processed/`
+3. After incorporation + teaching distributed: move signal to `{hub_path}/WAI-Hub/signals/processed/`
 
 **Lifecycle:** `incoming/` → hub triages to `by-target/{target}/` → target incorporates → teaching → `processed/`
 

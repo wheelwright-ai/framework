@@ -101,7 +101,7 @@ Teaching format details: see `wai-closeout-reference.md` in this skill's folder.
 
 ### 9c. Hub Signal Bulletin
 
-For each signal lug with `impact > 7` and `status != "archived"`: if not already at `{hub_path}/WAI-Hub/Signals/incoming/{id}.json`, write it there. Skip if hub not connected.
+For each signal lug with `impact > 7` and `status != "archived"`: if not already at `{hub_path}/WAI-Hub/signals/incoming/{id}.json`, write it there. Skip if hub not connected.
 
 ### 10. Summary Generation
 

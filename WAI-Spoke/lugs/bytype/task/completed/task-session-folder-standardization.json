@@ -1,0 +1,23 @@
+{
+  "i": "task-session-folder-standardization",
+  "t": "Script and fix malformed session folders across framework and hub spokes",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-29T08:00:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 6,
+  "priority": "P2",
+  "tags": ["sessions", "cleanup", "tooling"],
+  "blocks": [],
+  "blocked_by": [],
+  "challenge": "Malformed session folders exist: 083-tuesday-forge (no session- prefix), unsorted-tracks/ (orphan), two hub folders with 6-digit timestamps (HHMMSS instead of HHMM). Non-standard entries cause confusion and break tooling that expects session-YYYYMMDD-HHMM format.",
+  "perceive": "1. ls framework/WAI-Spoke/sessions/ — find 083-tuesday-forge and unsorted-tracks/. 2. ls hub/WAI-Spoke/sessions/ — find session-20260326-090918 and session-20260326-170206. 3. Read track files inside malformed folders to extract correct dates. 4. Check canonical format: session-YYYYMMDD-HHMM (4-digit time).",
+  "execute": "1. Create tools/fix_session_folders.py with --dry-run mode. Script scans WAI-Spoke/sessions/, identifies non-compliant entries, renames 6-digit times to 4-digit, moves non-session entries to sessions/archive/. 2. Run --dry-run on framework and hub. 3. Run for real on framework and hub. 4. Add to gardener remediation: run fix_session_folders.py as part of spoke health remediation.",
+  "verify": "1. python3 tools/fix_session_folders.py --dry-run shows 0 non-compliant across framework and hub. 2. All session folders match session-YYYYMMDD-HHMM pattern. 3. No data lost (orphan tracks archived, not deleted).",
+  "scope": "FRAMEWORK",
+  "_behavior_directive": {
+    "what_this_is": "Script to detect and fix malformed session folder names, then run it across framework and hub",
+    "what_this_is_NOT": "Not modifying session content or track files — only folder naming"
+  }
+}

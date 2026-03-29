@@ -140,11 +140,11 @@ For each discovered teaching:
 
 **Hub Signal Bulletin (incoming/):**
 
-Check `{hub_path}/WAI-Hub/Signals/incoming/` for new signal files:
+Check `{hub_path}/WAI-Hub/signals/incoming/` for new signal files:
 1. For each `.json` file found: read it, check if already known (id present in WAI-Lugs.jsonl)
 2. If new: surface in briefing as "Hub signal: {title} (impact={impact}, from={node})"
 3. Do NOT auto-adopt — signals are advisory. User decides whether to act.
-4. After inspection: optionally move processed signals to `WAI-Hub/Signals/processed/` at closeout
+4. After inspection: optionally move processed signals to `WAI-Hub/signals/processed/` at closeout
 
 Do NOT skip silently. Both errors must appear in the briefing (see hub path validation above).
 
@@ -534,7 +534,7 @@ Inbox items are automatically routed on wakeup:
 | `delivery_confirmation` | acknowledged (no file) | Log receipt, move to processed |
 | `phone-home` | outbox/ | Generate status report response |
 
-**Signal Handling Note:** Signals are canonically stored as high-impact lugs (impact >= 8) in `WAI-Lugs.jsonl` and routed through the hub bulletin at `WAI-Hub/Signals/incoming/` and `WAI-Hub/Signals/processed/`.
+**Signal Handling Note:** Signals are canonically stored as high-impact lugs (impact >= 8) in `WAI-Lugs.jsonl` and routed through the hub bulletin at `WAI-Hub/signals/incoming/` and `WAI-Hub/signals/processed/`.
 
 **MAILROOM SAFETY RULES:**
 

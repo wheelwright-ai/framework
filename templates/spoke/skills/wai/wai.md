@@ -125,7 +125,7 @@ For each discovered teaching:
 4. Wait for explicit user approval
 5. Copy to `WAI-Spoke/seed/ingest/manual/` for review; move original to processed
 
-**Hub Signal Bulletin:** Check `{hub_path}/WAI-Hub/Signals/incoming/` for new signal files. Surface new ones in briefing. Do NOT auto-adopt — signals are advisory.
+**Hub Signal Bulletin:** Check `{hub_path}/WAI-Hub/signals/incoming/` for new signal files. Surface new ones in briefing. Do NOT auto-adopt — signals are advisory.
 
 ---
 

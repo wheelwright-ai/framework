@@ -163,8 +163,8 @@ The registry ensures "maintain expectations, not file locations" — capabilitie
 **Purpose:** Stage high-impact intelligence for selective pull by spokes
 
 **File Path Pattern:** 
-- Incoming: `WAI-Hub/Signals/incoming/{lug_id}.json`
-- Processed: `WAI-Hub/Signals/processed/{lug_id}.json`
+- Incoming: `WAI-Hub/signals/incoming/{lug_id}.json`
+- Processed: `WAI-Hub/signals/processed/{lug_id}.json`
 
 **Signal Classification Rule:**
 - Signals are lugs with `impact >= 8`
@@ -555,7 +555,7 @@ Before capability promotion:
 - ❌ `wai-migration-canonical` — Schema drafted, tooling needed
 
 ### 10.2 Implementation Dependencies
-1. Hub bulletin board implementation (`WAI-Hub/Signals/`)
+1. Hub bulletin board implementation (`WAI-Hub/signals/`)
 2. Migration tooling for capability tracking
 3. Closeout ceremony formalization
 4. Registry file creation and maintenance tooling

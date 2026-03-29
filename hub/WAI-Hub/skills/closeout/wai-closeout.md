@@ -205,7 +205,7 @@ Publish: move old current to `archive/{family_key}/`, copy new current into `cur
 Publish high-impact lugs to hub bulletin for cross-spoke visibility.
 
 For each lug where `type == "signal"` AND `impact > 7` AND `status != "archived"`:
-1. Check if `{hub_path}/WAI-Hub/Signals/incoming/{lug-id}.json` already exists
+1. Check if `{hub_path}/WAI-Hub/signals/incoming/{lug-id}.json` already exists
 2. If not: write full lug JSON to that path
 
 ---
@@ -257,9 +257,9 @@ Report: "Teaching distribution: N teachings delivered to M spokes | K already cu
 
 ### 9e.2: Signal Bulletin Distribution
 
-Signals are available to spokes via `WAI-Hub/Signals/incoming/` (which Step 9c populates). No additional copying needed — spokes read the hub bulletin directly at wakeup.
+Signals are available to spokes via `WAI-Hub/signals/incoming/` (which Step 9c populates). No additional copying needed — spokes read the hub bulletin directly at wakeup.
 
-If `WAI-Hub/Signals/incoming/` has grown significantly (> 50 files), move acknowledged signals to `processed/` to keep the inbox manageable.
+If `WAI-Hub/signals/incoming/` has grown significantly (> 50 files), move acknowledged signals to `processed/` to keep the inbox manageable.
 
 ### 9e.3: Distribution Lug
 

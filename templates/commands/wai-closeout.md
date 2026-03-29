@@ -195,7 +195,7 @@ Teaching format details: see `wai-closeout-reference.md` in this skill's folder.
 
 ### 9c. Hub Signal Bulletin (Target-Routed)
 
-Deliver signals to `{hub_path}/WAI-Hub/Signals/incoming/` with a `target` field so hub triage can route them.
+Deliver signals to `{hub_path}/WAI-Hub/signals/incoming/` with a `target` field so hub triage can route them.
 
 For each signal lug to deliver, include a `target` field:
 - `"hub"` — hub architecture, KB, advisor changes
@@ -204,7 +204,7 @@ For each signal lug to deliver, include a `target` field:
 - `"spokes/{id}"` — specific spoke
 
 **What to deliver:**
-1. Each lug with `routed_to = "SIGNAL"`: write to `{hub_path}/WAI-Hub/Signals/incoming/{id}.json` if not already present
+1. Each lug with `routed_to = "SIGNAL"`: write to `{hub_path}/WAI-Hub/signals/incoming/{id}.json` if not already present
 2. Any signal lug with `impact > 7` not already caught by routing
 3. **Backlog sweep (always):** All files in `bytype/signal/undelivered/` — drains accumulated backlog
 
