@@ -1,0 +1,21 @@
+{
+  "id": "fix-closeout-health-check-missing-v1",
+  "type": "bug",
+  "status": "open",
+  "title": "Closeout Step 9d: health-check.jsonl template does not exist — skip is expected",
+  "description": "Step 9d loads templates/health-check.jsonl. This file does not exist in the framework. Every spoke logs a spurious 'file not found' error every session. Fix: annotate Step 9d — template is intentionally absent until created. Skip is expected, not an error. Log 'Step 9d: health-check.jsonl not found, skipping.'",
+  "impact": 6,
+  "pev": {
+    "priority": "medium",
+    "effort": "1",
+    "value": "6"
+  },
+  "acceptance_criteria": [
+    "Step 9d checks for templates/health-check.jsonl without error logging",
+    "Log message is 'Step 9d: health-check.jsonl not found, skipping.' when absent",
+    "No spurious error messages appear in closeout logs"
+  ],
+  "created_at": "2026-03-28T01:00:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "routed_to": "LOCAL"
+}
