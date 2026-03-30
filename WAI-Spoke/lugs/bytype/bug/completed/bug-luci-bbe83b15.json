@@ -2,7 +2,7 @@
   "i": "bug-luci-bbe83b15",
   "t": "Luci detected: tests failed \u2014 1 failed, 42 passed, 1 skipped in 4.18s",
   "ty": "bug",
-  "s": "open",
+  "s": "completed",
   "ca": "2026-03-30T01:01:47Z",
   "gb": "advisor-luci",
   "fw_ver": "3.0.0",
