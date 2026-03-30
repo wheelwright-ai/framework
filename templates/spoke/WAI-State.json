@@ -89,6 +89,12 @@
     "protocol_completed": false,
     "next_session_recommendation": null
   },
+  "_work_queue": {
+    "enabled": true,
+    "vibe": null,
+    "last_scored_at": null,
+    "items": []
+  },
   "_migration_state": {
     "_purpose": "Tracks capability adoption and migration receipts for dual-read/single-write compatibility",
     "framework_migrations_applied": [],

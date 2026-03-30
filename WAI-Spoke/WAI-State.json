@@ -108,6 +108,93 @@
     "teaching_audit_result": "all_94_teachings_verified_adopted",
     "teaching_audit_wired_to_wakeup": true
   },
+  "_work_queue": {
+    "enabled": true,
+    "vibe": null,
+    "last_scored_at": "2026-03-30T01:15:00Z",
+    "items": [
+      {
+        "id": "task-cc-advisor-phase1-foundation",
+        "roi": 6.75,
+        "type": "task",
+        "status": "ready",
+        "title": "Create ClaudeCode advisor skeleton \u2014 absorb maximizer rubric",
+        "tagged_next": true
+      },
+      {
+        "id": "task-work-queue-schema-and-state",
+        "roi": 6.75,
+        "type": "task",
+        "status": "ready",
+        "title": "Add _work_queue to WAI-State.json \u2014 priority-ordered array w",
+        "tagged_next": false
+      },
+      {
+        "id": "task-dogfood-skill-definition",
+        "roi": 6.0,
+        "type": "task",
+        "status": "ready",
+        "title": "Define the dogfood skill \u2014 sub-agent validation protocol for",
+        "tagged_next": false
+      },
+      {
+        "id": "task-multi-ai-case-study",
+        "roi": 5.25,
+        "type": "task",
+        "status": "ready",
+        "title": "Document ezorg-email-website as multi-AI case study and add ",
+        "tagged_next": false
+      },
+      {
+        "id": "task-queue-auto-discovery-bootstrap",
+        "roi": 5.25,
+        "type": "task",
+        "status": "ready",
+        "title": "Auto-discover and build work queue from existing lugs when _",
+        "tagged_next": false
+      },
+      {
+        "id": "feature-lathe-portfolio-management-v1",
+        "roi": 5.0,
+        "type": "feature",
+        "status": "ready",
+        "title": "Lathe: Portfolio management layer \u2014 strategic weighting, shi",
+        "tagged_next": false
+      },
+      {
+        "id": "task-from-signal-signal-cross-spoke-routing-protocol-v1",
+        "roi": 4.5,
+        "type": "task",
+        "status": "ready",
+        "title": "Cross-Spoke Idea Routing: ideas captured in one spoke must b",
+        "tagged_next": false
+      },
+      {
+        "id": "task-pull-based-distribution-v1",
+        "roi": 4.0,
+        "type": "task",
+        "status": "ready",
+        "title": "Implement Pull-based distribution (Teach/Learn Pull)",
+        "tagged_next": false
+      },
+      {
+        "id": "feature-advisor-data-source-autonomy-v1",
+        "roi": 3.75,
+        "type": "feature",
+        "status": "ready",
+        "title": "Advisors declare data sources, assess adequacy, and create l",
+        "tagged_next": false
+      },
+      {
+        "id": "task-gardener-spoke-innovation-discovery",
+        "roi": 3.5,
+        "type": "task",
+        "status": "ready",
+        "title": "Add spoke innovation discovery to gardener \u2014 detect local WA",
+        "tagged_next": false
+      }
+    ]
+  },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
     "integration_check": {
