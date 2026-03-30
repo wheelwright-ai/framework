@@ -134,6 +134,26 @@ For each implementation lug with `status = "implemented"`: check `_migration_sta
 4. Regenerate `WAI-LugIndex.jsonl` — one line per lug: `{id, type, status, title, folder, created_at, routed_to}`
 5. Report: "Moved N lugs. Routing: M LOCAL, K FRAMEWORK, J SIGNAL. Index: T entries."
 
+### 5d. Tag Next Lug + Report Progress
+
+**Tag next:** Run the ROI scorer to identify the next highest-priority actionable lug:
+
+```bash
+python3 tools/score_backlog.py ${SESSION_VIBE:-} 2>/dev/null | head -15
+```
+
+Pick the top item that is type `task`, `bug`, or `feature` with ROI >= 3.0. Write its ID to `_session_state.next_session_recommendation` as: "Next lug: {id} — {title} (ROI {score})"
+
+**Report progress:** For each lug resolved this session, append to `WAI-Spoke/runtime/spoke-changelog.jsonl`:
+
+```json
+{"ts": "ISO-8601", "lug": "lug-id", "title": "lug title", "result": "completed", "session": "session-YYYYMMDD-HHMM", "commit": "git-hash", "type": "task|bug|feature"}
+```
+
+This changelog feeds Compass dashboards. **Framework-internal changes (skill thrift, protocol updates) do NOT go here** — they have their own changelog in CHANGELOG.md. Only user-visible work and spoke improvements count.
+
+**Display on next wakeup:** The next session's wakeup Step 9 will show the tagged lug as the recommended starting point, providing clear focus for anyone reviewing the terminal or track.
+
 ### 6. Finalize Session Track
 
 Write a final track point (phase: `review`). Do NOT delete the track file — it's the permanent session record.

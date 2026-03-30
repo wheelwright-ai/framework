@@ -2,7 +2,7 @@
   "i": "task-work-queue-chain-mode",
   "t": "Add chain mode to work queue \u2014 implement item, closeout with track, auto-load next item without manual intervention",
   "ty": "task",
-  "s": "o",
+  "s": "resolved",
   "ca": "2026-03-29T09:45:00Z",
   "gb": "claude-opus-4-6",
   "fw_ver": "3.0.0",
@@ -37,5 +37,7 @@
     "what_this_is": "Chain mode for sequential work queue processing \u2014 mini-closeout between items, auto-advance",
     "what_this_is_NOT": "Not parallel execution \u2014 strictly sequential. Not bypassing closeout \u2014 each item gets proper state preservation."
   },
-  "va": "ship"
+  "va": "ship",
+  "resolved_at": "2026-03-30T01:10:00Z",
+  "resolved_by": "session-20260329-2315"
 }

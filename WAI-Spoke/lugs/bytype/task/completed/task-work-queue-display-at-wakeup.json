@@ -2,7 +2,7 @@
   "i": "task-work-queue-display-at-wakeup",
   "t": "Display work queue status at wakeup Step 9 \u2014 ready count, refinement count, and work/review/skip offer",
   "ty": "task",
-  "s": "o",
+  "s": "resolved",
   "ca": "2026-03-29T09:45:00Z",
   "gb": "claude-opus-4-6",
   "fw_ver": "3.0.0",
@@ -36,5 +36,7 @@
     "what_this_is": "Wakeup presentation of the work queue \u2014 display and offer, not queue logic",
     "what_this_is_NOT": "Not implementing the queue itself (that's task-work-queue-schema-and-state) or chain mode"
   },
-  "va": "grind"
+  "va": "grind",
+  "resolved_at": "2026-03-30T01:10:00Z",
+  "resolved_by": "session-20260329-2315"
 }

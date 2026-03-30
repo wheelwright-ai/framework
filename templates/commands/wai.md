@@ -476,6 +476,34 @@ Store the response in session state. If the user types a vibe, Ozi uses it for R
 
 **Vibe definitions:** build=creative, fix=corrective, think=strategic, grind=mechanical, ship=finish things. See `wai-lug-schema-reference.md` for full multiplier table.
 
+**Chain progress (if spoke-changelog.jsonl exists):**
+
+```bash
+# Show recent completions from spoke changelog
+if [ -f "WAI-Spoke/runtime/spoke-changelog.jsonl" ]; then
+    RECENT=$(tail -5 WAI-Spoke/runtime/spoke-changelog.jsonl 2>/dev/null)
+    if [ -n "$RECENT" ]; then
+        echo "Recent completions:"
+        echo "$RECENT" | python3 -c "
+import sys, json
+for line in sys.stdin:
+    e = json.loads(line.strip())
+    print(f\"  {e.get('ts','')[:10]} {e.get('type',''):<8} {e.get('title','')[:50]} [{e.get('result','')}]\")
+"
+    fi
+fi
+```
+
+Show recent completions in briefing so anyone reviewing the terminal or track sees clear delivery progress. These feed into Compass reports.
+
+**Tagged next lug (from last closeout):**
+
+Check `_session_state.next_session_recommendation` for "Next lug:" prefix. If found, surface it as the recommended starting point:
+
+```
+→ Tagged next: {lug_id} — {title} (ROI {score})
+```
+
 Display wakeup completion marker with session context:
 
 ```
@@ -485,6 +513,9 @@ Display wakeup completion marker with session context:
 │  Active work: {X} open, {Y} in_progress, {Z} signals
 │  Vibe: {vibe or "none"}
 │  Context: {percent}% ({tokens_used}K/{tokens_limit}K)
+│
+│  Recent: {last 3 spoke-changelog entries, one line each}
+│  Next: {tagged lug from last closeout, or "run score_backlog.py"}
 │
 └─ Ready to work.
 ```
