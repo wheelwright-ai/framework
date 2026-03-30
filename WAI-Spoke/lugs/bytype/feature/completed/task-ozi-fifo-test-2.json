@@ -2,7 +2,7 @@
   "id": "task-ozi-fifo-test-2",
   "type": "feature",
   "title": "Second FIFO test item",
-  "status": "in_progress",
+  "status": "resolved",
   "description": "Later-created ready lug to confirm FIFO ordering.",
   "impact": 3,
   "priority": "medium",
@@ -17,5 +17,8 @@
     "auto_session_key": "cubic-river",
     "subagent_prompt": "You are a builder sub-agent dispatched by Ozi.\n\nYour ONLY job: Complete feature task-ozi-fifo-test-2\n\nTitle: Second FIFO test item\n\nDescription:\nLater-created ready lug to confirm FIFO ordering.\n\nInstructions:\n1. Read the full lug from WAI-Lugs.jsonl (id=\"task-ozi-fifo-test-2\")\n2. Stay in scope\n3. Update the lug with progress\n4. When complete, set status to ready_for_recheck\n"
   },
-  "va": "ship"
+  "va": "ship",
+  "resolved_at": "2026-03-30T02:15:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Test artifact \u2014 FIFO ordering test. Queue system replaced by ROI scorer."
 }

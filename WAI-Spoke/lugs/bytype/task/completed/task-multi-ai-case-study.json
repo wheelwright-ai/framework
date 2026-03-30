@@ -2,7 +2,7 @@
   "i": "task-multi-ai-case-study",
   "t": "Document ezorg-email-website as multi-AI case study and add model identity tracking to session track schema",
   "ty": "task",
-  "s": "o",
+  "s": "resolved",
   "ca": "2026-03-14T07:22:58Z",
   "gb": "Claude Opus 4.6",
   "fw_ver": "3.0.0",
@@ -32,5 +32,9 @@
     "what_this_is": "Add model tracking to track schema and document the multi-AI case study",
     "what_this_is_NOT": "Not retroactively adding model data to old tracks \u2014 only new sessions capture this"
   },
-  "va": "build"
+  "va": "build",
+  "resolved_at": "2026-03-30T02:15:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Deferred \u2014 case study requires ezorg spoke data. Route to nurturator spoke for content pipeline.",
+  "rt": "SPOKE/nurturator"
 }
