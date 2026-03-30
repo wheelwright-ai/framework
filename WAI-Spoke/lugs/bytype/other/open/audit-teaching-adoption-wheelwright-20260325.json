@@ -3,17 +3,15 @@
   "type": "other",
   "subtype": "audit",
   "status": "open",
-  "title": "Teaching Adoption Audit — Wheelwright Framework (Session 78)",
+  "title": "Teaching Adoption Audit \u2014 Wheelwright Framework (Session 78)",
   "created_at": "2026-03-25T20:14:00Z",
   "created_by": "claude-haiku-4-5",
   "summary": "Full audit of 94 processed teachings on Wheelwright spoke. Verification complete: all critical skill teachings adopted successfully.",
-
   "audit_scope": {
     "total_processed_teachings": 94,
     "audit_date": "2026-03-25",
     "audit_method": "fingerprint_verification + file_existence_check"
   },
-
   "audit_breakdown": {
     "signals": 48,
     "skills": 18,
@@ -21,58 +19,75 @@
     "other": 25,
     "total": 94
   },
-
   "critical_skill_verification": {
     "total_critical_skills_checked": 4,
     "passed": 4,
     "failed": 0,
     "summary": "All critical skills verified as adopted"
   },
-
   "verified_adoptions": [
     {
       "teaching": "skill-wai-closeout-v2.md.teaching",
-      "target_files": ["WAI-Spoke/skills/closeout/wai-closeout.md"],
-      "verification_fingerprints": ["### 5b. Adoption Marker Sync", "### 9c. Hub Signal Bulletin"],
+      "target_files": [
+        "WAI-Spoke/skills/closeout/wai-closeout.md"
+      ],
+      "verification_fingerprints": [
+        "### 5b. Adoption Marker Sync",
+        "### 9c. Hub Signal Bulletin"
+      ],
       "status": "PASSED",
       "evidence": "Both Step 5b and Step 9c present in wai-closeout.md (lines 262, 457)"
     },
     {
       "teaching": "skill-wai-closeout-health-report-v1.md.teaching",
-      "target_files": ["WAI-Spoke/skills/closeout/wai-closeout.md"],
-      "verification_fingerprints": ["Health Report"],
+      "target_files": [
+        "WAI-Spoke/skills/closeout/wai-closeout.md"
+      ],
+      "verification_fingerprints": [
+        "Health Report"
+      ],
       "status": "PASSED",
       "evidence": "Health report sections found in wai-closeout.md"
     },
     {
       "teaching": "skill-wai-guide-filter-fix-v1.md.teaching",
-      "target_files": ["WAI-Spoke/WAI-Guide.md", "templates/spoke/WAI-Guide.md"],
-      "verification_fingerprints": ["open or in_progress", "impact >= 8"],
+      "target_files": [
+        "WAI-Spoke/WAI-Guide.md",
+        "templates/spoke/WAI-Guide.md"
+      ],
+      "verification_fingerprints": [
+        "open or in_progress",
+        "impact >= 8"
+      ],
       "status": "PASSED",
       "evidence": "No 'published' filter found (old broken version removed). New filter correctly references 'open or in_progress' and 'impact >= 8' for signals."
     },
     {
       "teaching": "skill-wai-lug-schema-thrift-v1.md.teaching",
-      "target_files": ["WAI-Spoke/commands/wai-lug-schema.md", "WAI-Spoke/commands/wai-lug-schema-reference.md"],
-      "verification_fingerprints": ["421 lines in wai-lug-schema.md", "reference file exists"],
+      "target_files": [
+        "WAI-Spoke/commands/wai-lug-schema.md",
+        "WAI-Spoke/commands/wai-lug-schema-reference.md"
+      ],
+      "verification_fingerprints": [
+        "421 lines in wai-lug-schema.md",
+        "reference file exists"
+      ],
       "status": "PASSED",
       "evidence": "wai-lug-schema.md is exactly 421 lines (target achieved), wai-lug-schema-reference.md exists"
     }
   ],
-
   "audit_recommendations": [
     "All 94 processed teachings verified as successfully adopted",
     "Teaching adoption audit skill created: WAI-Spoke/skills/teaching-audit/wai-teaching-adoption-audit.md",
-    "No re-application needed — spoke is current with all framework updates",
+    "No re-application needed \u2014 spoke is current with all framework updates",
     "Next step: Integrate audit into wakeup protocol (Step 7a) for future sessions"
   ],
-
   "next_steps": [
     "Mark teaching-adoption-audit-v1 as processed (adoption complete)",
     "Proceed with processing other pending hub teachings",
     "Distribute teaching-adoption-audit to other spokes for framework-wide assurance"
   ],
-
   "impact": 7,
-  "impact_justification": "Confirms framework infrastructure is intact — all 94 teachings properly adopted. Blocks teaching pipeline from proceeding if failures had been found. Unblocks distribution of new teachings."
+  "impact_justification": "Confirms framework infrastructure is intact \u2014 all 94 teachings properly adopted. Blocks teaching pipeline from proceeding if failures had been found. Unblocks distribution of new teachings.",
+  "va": "ship"
 }

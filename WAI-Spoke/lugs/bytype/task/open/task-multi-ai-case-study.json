@@ -8,13 +8,21 @@
   "fw_ver": "3.0.0",
   "impact": 7,
   "priority": "P3",
-  "tags": ["documentation", "multi-ai", "track"],
+  "tags": [
+    "documentation",
+    "multi-ai",
+    "track"
+  ],
   "parent_epic": "epic-session15-fleet-evolution",
-  "description": "ezorg-email-website used 5 AI models across 35 sessions �� a real multi-AI case study. Track schema should capture model identity per turn for performance evaluation.",
-  "perceive": "1. Check /home/mario/projects/ezorg-email-website/WAI-Spoke/sessions/ — count sessions, check track files for model diversity. 2. Read templates/commands/wai-track-generate.md — current track point schema. 3. Read WAI-State.json model_log — existing model tracking.",
-  "execute": "1. Add 'model' field to track point schema in wai-track-generate.md: model name recorded per turn (e.g., 'claude-opus-4-6', 'gemini-2.5-pro'). 2. This subsumes the model_log pattern — track data now captures model per turn. 3. Write case study section for framework docs: multi-AI spoke with session count, model diversity, lessons learned. 4. Sync track schema changes to all targets.",
+  "description": "ezorg-email-website used 5 AI models across 35 sessions \ufffd\ufffd a real multi-AI case study. Track schema should capture model identity per turn for performance evaluation.",
+  "perceive": "1. Check /home/mario/projects/ezorg-email-website/WAI-Spoke/sessions/ \u2014 count sessions, check track files for model diversity. 2. Read templates/commands/wai-track-generate.md \u2014 current track point schema. 3. Read WAI-State.json model_log \u2014 existing model tracking.",
+  "execute": "1. Add 'model' field to track point schema in wai-track-generate.md: model name recorded per turn (e.g., 'claude-opus-4-6', 'gemini-2.5-pro'). 2. This subsumes the model_log pattern \u2014 track data now captures model per turn. 3. Write case study section for framework docs: multi-AI spoke with session count, model diversity, lessons learned. 4. Sync track schema changes to all targets.",
   "verify": "1. wai-track-generate.md schema includes 'model' field. 2. New track entries include model identity. 3. Case study document exists in framework/docs/.",
-  "pev": {"priority": "low", "effort": "2", "value": "7"},
+  "pev": {
+    "priority": "low",
+    "effort": "2",
+    "value": "7"
+  },
   "acceptance_criteria": [
     "wai-track-generate.md schema includes 'model' as a documented field per track point",
     "New track entries capture model identity per turn",
@@ -22,6 +30,7 @@
   ],
   "_behavior_directive": {
     "what_this_is": "Add model tracking to track schema and document the multi-AI case study",
-    "what_this_is_NOT": "Not retroactively adding model data to old tracks — only new sessions capture this"
-  }
+    "what_this_is_NOT": "Not retroactively adding model data to old tracks \u2014 only new sessions capture this"
+  },
+  "va": "build"
 }

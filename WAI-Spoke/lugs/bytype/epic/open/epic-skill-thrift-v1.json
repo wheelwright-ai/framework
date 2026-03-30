@@ -1,7 +1,7 @@
 {
   "id": "epic-skill-thrift-v1",
   "type": "epic",
-  "title": "Apply Skill Thrift Principle to all WAI skills — lean primary files, reference files for verbose content",
+  "title": "Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference files for verbose content",
   "status": "open",
   "created_at": "2026-03-25T05:30:00Z",
   "updated_at": "2026-03-25T03:45:00Z",
@@ -14,10 +14,10 @@
   },
   "principle": "Primary skill file = behavioral instructions only. Secondary {skill}-reference.md in same folder = examples, schemas, verbose specs. Reference files are loaded on-demand, not at wakeup.",
   "already_done": [
-    "wai-closeout.md (650→137 lines, -77%) — wai-closeout-reference.md created",
-    "wai-shipit.md (680→113 lines, -79%)",
-    "wai-lug-schema.md (795→421 lines, -47%) — wai-lug-schema-reference.md created (349L). Duplicate dogfooding section fixed. All 6 sync targets updated.",
-    "wai-improve.md (656→380 lines, -42%) — wai-improve-reference.md created (182L). All 6 sync targets updated."
+    "wai-closeout.md (650\u2192137 lines, -77%) \u2014 wai-closeout-reference.md created",
+    "wai-shipit.md (680\u2192113 lines, -79%)",
+    "wai-lug-schema.md (795\u2192421 lines, -47%) \u2014 wai-lug-schema-reference.md created (349L). Duplicate dogfooding section fixed. All 6 sync targets updated.",
+    "wai-improve.md (656\u2192380 lines, -42%) \u2014 wai-improve-reference.md created (182L). All 6 sync targets updated."
   ],
   "tier1_plan": {
     "wai-lug-schema.md": {
@@ -25,43 +25,43 @@
       "estimated_primary_lines": 330,
       "estimated_savings_pct": 58,
       "stays_in_primary": [
-        "Canonical Storage section — folder hierarchy, storage rules, what/where table",
-        "What Is A Lug — 2 para definition",
-        "Key Mapping table (short↔full field names) + Title Policy",
+        "Canonical Storage section \u2014 folder hierarchy, storage rules, what/where table",
+        "What Is A Lug \u2014 2 para definition",
+        "Key Mapping table (short\u2194full field names) + Title Policy",
         "Status values table",
         "Type catalog table (all types)",
-        "PEV Chain Pattern — when to use, field names, compatibility note (NO JSON examples)",
-        "Canonical Type System — type table + work.kind table + dual-read note (NO JSON example)",
-        "Lug ID generation — formula only (sha256[:12])",
+        "PEV Chain Pattern \u2014 when to use, field names, compatibility note (NO JSON examples)",
+        "Canonical Type System \u2014 type table + work.kind table + dual-read note (NO JSON example)",
+        "Lug ID generation \u2014 formula only (sha256[:12])",
         "Required Field Defaults table",
-        "gb field rules — model ID required, examples of correct/wrong",
+        "gb field rules \u2014 model ID required, examples of correct/wrong",
         "PEV fields requirement + one minimal JSON example",
-        "implementation lug — when to use, lifecycle states, 10 review gate rules (prose only, NO JSON schema)",
-        "Lug Lifecycle (CREATE→DOGFOOD→...→ARCHIVE steps)",
-        "Dogfooding — the golden rule + naive agent test steps (MERGE duplicate sections — two exist at L520 and L542)",
-        "Cross-spoke _behavior_directive — requirement + misinterpretation test + checklist (NO JSON example)",
+        "implementation lug \u2014 when to use, lifecycle states, 10 review gate rules (prose only, NO JSON schema)",
+        "Lug Lifecycle (CREATE\u2192DOGFOOD\u2192...\u2192ARCHIVE steps)",
+        "Dogfooding \u2014 the golden rule + naive agent test steps (MERGE duplicate sections \u2014 two exist at L520 and L542)",
+        "Cross-spoke _behavior_directive \u2014 requirement + misinterpretation test + checklist (NO JSON example)",
         "Priority Flags table + migration note",
         "Scope Flags",
         "Conditional Loading Fields",
         "Signal vs Task vs Phone-Home table",
-        "Anti-patterns — rules only (NO JSON examples)",
+        "Anti-patterns \u2014 rules only (NO JSON examples)",
         "Related Skills"
       ],
       "moves_to_reference": [
-        "PEV Chain Pattern — full JSON example (3-lug chain)",
-        "PEV Chain Pattern — chain structure table with key fields",
-        "Canonical Type System — work.kind JSON example",
-        "Lug ID generation — extended example with sha256 output",
-        "Lug Creation Template — full JSON block (lines 222-237)",
-        "implementation lug — full JSON schema (ready_to_build_gate, review_rubric, remediation_plan, workflow tracker, review_notes, review_cycles, acceptance) — ~140 lines",
+        "PEV Chain Pattern \u2014 full JSON example (3-lug chain)",
+        "PEV Chain Pattern \u2014 chain structure table with key fields",
+        "Canonical Type System \u2014 work.kind JSON example",
+        "Lug ID generation \u2014 extended example with sha256 output",
+        "Lug Creation Template \u2014 full JSON block (lines 222-237)",
+        "implementation lug \u2014 full JSON schema (ready_to_build_gate, review_rubric, remediation_plan, workflow tracker, review_notes, review_cycles, acceptance) \u2014 ~140 lines",
         "Victory Briefing format section",
         "WAI-Challenges.jsonl section (schema + lifecycle + slug generation)",
         "AI Workflow with Lugs (wakeup/session/autosave/closeout steps)",
         "Ozi Gardening Lug Types (ozi-controller, ozi-work, ozi-test schemas)",
-        "Anti-patterns — full JSON examples",
-        "Cross-spoke _behavior_directive — JSON example"
+        "Anti-patterns \u2014 full JSON examples",
+        "Cross-spoke _behavior_directive \u2014 JSON example"
       ],
-      "bug_to_fix": "Duplicate 'Dogfooding Lugs' section — lines 520-523 is a broken fragment of the real section at lines 542-553. Merge into one clean section.",
+      "bug_to_fix": "Duplicate 'Dogfooding Lugs' section \u2014 lines 520-523 is a broken fragment of the real section at lines 542-553. Merge into one clean section.",
       "output_files": [
         "templates/commands/wai-lug-schema.md (slimmed primary)",
         "templates/commands/wai-lug-schema-reference.md (new reference file)",
@@ -77,15 +77,15 @@
       "estimated_savings_pct": 62,
       "stays_in_primary": [
         "Core Principle (challenge vs hypothesis separation)",
-        "Execution Flow diagram (Step 0→5)",
-        "Step 0: Load Spoke Context — what to read, completeness check signals, scoring context setup",
-        "Step 1: Intake — 4 required fields, trivial path",
-        "Step 2: Similarity and Fit Check — 5 sub-steps (2a-2e), similarity type table",
-        "Step 3: Refinement Questions — question types and when to ask",
-        "Step 3b: Challenge Matching — WAI-Challenges.jsonl link rule",
-        "Step 4: Evaluation and Scoring — 4 dimensions, scoring protocol",
-        "Step 5: Output as idea lug — lug fields required",
-        "Backlog Review mode — trigger conditions and process"
+        "Execution Flow diagram (Step 0\u21925)",
+        "Step 0: Load Spoke Context \u2014 what to read, completeness check signals, scoring context setup",
+        "Step 1: Intake \u2014 4 required fields, trivial path",
+        "Step 2: Similarity and Fit Check \u2014 5 sub-steps (2a-2e), similarity type table",
+        "Step 3: Refinement Questions \u2014 question types and when to ask",
+        "Step 3b: Challenge Matching \u2014 WAI-Challenges.jsonl link rule",
+        "Step 4: Evaluation and Scoring \u2014 4 dimensions, scoring protocol",
+        "Step 5: Output as idea lug \u2014 lug fields required",
+        "Backlog Review mode \u2014 trigger conditions and process"
       ],
       "moves_to_reference": [
         "Fit Report template (lines ~192-210)",
@@ -94,7 +94,7 @@
         "Terminology reconciliation examples table",
         "Idea lug example JSON",
         "Backlog review output format/template",
-        "Worked example of challenge→hypothesis→lug flow"
+        "Worked example of challenge\u2192hypothesis\u2192lug flow"
       ],
       "output_files": [
         "templates/commands/wai-improve.md (slimmed primary)",
@@ -108,28 +108,37 @@
   },
   "per_skill_process": [
     "1. Read the skill file in full",
-    "2. Write slimmed primary: behavioral instructions only — keep all rules, drop all examples/schemas/templates that an agent doesn't need loaded unless authoring",
+    "2. Write slimmed primary: behavioral instructions only \u2014 keep all rules, drop all examples/schemas/templates that an agent doesn't need loaded unless authoring",
     "3. Write reference file: all moved content, prefaced with a note pointing back to the primary",
     "4. Fix any bugs encountered while editing (e.g. duplicate sections)",
     "5. Sync both files: cp to templates/spoke/skills/{id}/ and WAI-Spoke/commands/",
     "6. Verify line counts and no behavior lost"
   ],
   "verify": [
-    "wc -l templates/commands/wai-lug-schema.md — DONE: 421 (795→421, -47%; target was 350, behavioral density justifies 421)",
-    "grep -c 'canonical storage\\|bytype\\|storage rules' templates/commands/wai-lug-schema.md — storage rules present",
-    "grep -c 'implementation.*lifecycle\\|review gate\\|remediation' templates/commands/wai-lug-schema.md — implementation rules present",
-    "grep 'ready_to_build_gate' templates/commands/wai-lug-schema-reference.md — JSON schema moved to reference",
-    "diff templates/commands/wai-lug-schema.md templates/spoke/skills/lug-schema/wai-lug-schema.md — in sync",
-    "diff templates/commands/wai-lug-schema.md WAI-Spoke/commands/wai-lug-schema.md — in sync",
-    "wc -l templates/commands/wai-improve.md — must be ≤280",
-    "diff templates/commands/wai-improve.md templates/spoke/skills/improve/wai-improve.md — in sync",
-    "diff templates/commands/wai-improve.md WAI-Spoke/commands/wai-improve.md — in sync"
+    "wc -l templates/commands/wai-lug-schema.md \u2014 DONE: 421 (795\u2192421, -47%; target was 350, behavioral density justifies 421)",
+    "grep -c 'canonical storage\\|bytype\\|storage rules' templates/commands/wai-lug-schema.md \u2014 storage rules present",
+    "grep -c 'implementation.*lifecycle\\|review gate\\|remediation' templates/commands/wai-lug-schema.md \u2014 implementation rules present",
+    "grep 'ready_to_build_gate' templates/commands/wai-lug-schema-reference.md \u2014 JSON schema moved to reference",
+    "diff templates/commands/wai-lug-schema.md templates/spoke/skills/lug-schema/wai-lug-schema.md \u2014 in sync",
+    "diff templates/commands/wai-lug-schema.md WAI-Spoke/commands/wai-lug-schema.md \u2014 in sync",
+    "wc -l templates/commands/wai-improve.md \u2014 must be \u2264280",
+    "diff templates/commands/wai-improve.md templates/spoke/skills/improve/wai-improve.md \u2014 in sync",
+    "diff templates/commands/wai-improve.md WAI-Spoke/commands/wai-improve.md \u2014 in sync"
   ],
-  "tier2_items": ["wai-ozi-work-queue-monitor.md (364L)", "wai-lug-compat.md (277L)", "wai-track-generate.md (274L)", "wai-ide-setup.md (262L)", "wai-foundation.md (261L)", "wai-principles.md (234L)", "wai.md (220L)"],
+  "tier2_items": [
+    "wai-ozi-work-queue-monitor.md (364L)",
+    "wai-lug-compat.md (277L)",
+    "wai-track-generate.md (274L)",
+    "wai-ide-setup.md (262L)",
+    "wai-foundation.md (261L)",
+    "wai-principles.md (234L)",
+    "wai.md (220L)"
+  ],
   "estimated_savings": {
     "tier1_wai_lug_schema": "~465 lines, ~20KB",
     "tier1_wai_improve": "~406 lines, ~17KB",
-    "tier1_total": "~871 lines saved — largest two files alone",
+    "tier1_total": "~871 lines saved \u2014 largest two files alone",
     "full_epic": "~25,000+ tokens across all skills"
-  }
+  },
+  "va": "fix"
 }

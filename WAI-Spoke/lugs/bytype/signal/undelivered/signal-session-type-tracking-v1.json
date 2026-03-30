@@ -7,5 +7,11 @@
   "body": "Session count in WAI-State.json is currently incremented at closeout but the session-start hook fires for all session types including agent-initiated sessions. session_count should only increment for user-initiated (human) sessions. Agent sessions should be tracked separately or flagged. This affects: session_count accuracy, analytics, and any future per-session metrics. Hook should capture session_type (user|agent) and pass to closeout for conditional increment.",
   "impact": 7,
   "source": "session-81-framework",
-  "tags": ["session-tracking", "analytics", "session-start-hook", "closeout"]
+  "tags": [
+    "session-tracking",
+    "analytics",
+    "session-start-hook",
+    "closeout"
+  ],
+  "va": "think"
 }

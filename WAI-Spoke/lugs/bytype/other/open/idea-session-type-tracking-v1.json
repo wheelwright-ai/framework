@@ -24,5 +24,6 @@
   "_behavior_directive": {
     "what_this_is": "Improvement idea: distinguish user vs agent sessions in session_count.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
-  }
+  },
+  "va": "grind"
 }

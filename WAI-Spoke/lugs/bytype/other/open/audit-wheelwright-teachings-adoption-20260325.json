@@ -6,7 +6,7 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T13:00:00Z",
   "fw_version": "3.0.0",
-  "title": "Teaching Adoption Audit — Wheelwright Framework (Session 77)",
+  "title": "Teaching Adoption Audit \u2014 Wheelwright Framework (Session 77)",
   "category": "audit-result",
   "summary": "Audited 93 processed teachings on Wheelwright Framework. Spot-checked critical teachings. Finding: Spoke is UP TO DATE. Protocol-critical teachings applied correctly. Reference materials in place.",
   "audit_scope": {
@@ -21,24 +21,24 @@
       "type": "critical-protocol-fix",
       "fingerprint": "Do NOT skip silently",
       "verification": "Found at line 169 in templates/commands/wai.md",
-      "status": "✓ ADOPTED",
-      "importance": "Critical — fixes hub discovery"
+      "status": "\u2713 ADOPTED",
+      "importance": "Critical \u2014 fixes hub discovery"
     },
     {
       "teaching": "skill-wai-lug-schema-thrift-v1.md.teaching",
       "type": "skill-thrift",
       "fingerprint": "Reference file creation",
       "verification": "wai-lug-schema-reference.md exists (12k, 2026-03-25 03:59)",
-      "status": "✓ ADOPTED",
-      "importance": "High — Session 73 reference file"
+      "status": "\u2713 ADOPTED",
+      "importance": "High \u2014 Session 73 reference file"
     },
     {
       "teaching": "skill-wai-improve-thrift-v1.md.teaching",
       "type": "skill-thrift",
       "fingerprint": "Reference file creation",
       "verification": "wai-improve-reference.md exists (6.2k, 2026-03-25 04:03)",
-      "status": "✓ ADOPTED",
-      "importance": "High — Session 73 reference file"
+      "status": "\u2713 ADOPTED",
+      "importance": "High \u2014 Session 73 reference file"
     }
   ],
   "summary_findings": [
@@ -49,9 +49,9 @@
     "93 total processed teachings suggests good teaching adoption velocity"
   ],
   "observations": [
-    "Most processed teachings (65+) are signals and reference materials — not code-changing",
+    "Most processed teachings (65+) are signals and reference materials \u2014 not code-changing",
     "Code-changing teachings (skills, protocol fixes) all show applied verification fingerprints",
-    "Teaching processing is working correctly — move to processed/ happens AFTER changes applied",
+    "Teaching processing is working correctly \u2014 move to processed/ happens AFTER changes applied",
     "No evidence of the anti-pattern described in task-teaching-adoption-audit-protocol-v1"
   ],
   "next_steps": [
@@ -59,7 +59,8 @@
     "Each spoke should run similar audit on startup to confirm adoption",
     "Add verification fingerprints to future teachings (required for adoption verification)"
   ],
-  "teaching_needed": "wai-teaching-adoption-audit-v1.md.teaching — formal protocol for all spokes to audit themselves",
+  "teaching_needed": "wai-teaching-adoption-audit-v1.md.teaching \u2014 formal protocol for all spokes to audit themselves",
   "routed_to": "local",
-  "scope_verified_by": "manual audit performed"
+  "scope_verified_by": "manual audit performed",
+  "va": "grind"
 }

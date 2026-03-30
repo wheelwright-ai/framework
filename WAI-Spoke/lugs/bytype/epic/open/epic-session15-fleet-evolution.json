@@ -26,27 +26,70 @@
   "incorporate_now": {
     "description": "Work that was part of the canonical evolution.",
     "children": [
-      {"id": "epic-v1-v2-state-migration", "status": "completed", "note": "Done piecemeal sessions 51-67"},
-      {"id": "task-idempotent-closeout-concurrency", "status": "completed", "note": "implementation-idempotent-closeout-concurrency-v1 completed"},
-      {"id": "task-framework-version-in-template", "status": "open", "note": "Still pending"}
+      {
+        "id": "epic-v1-v2-state-migration",
+        "status": "completed",
+        "note": "Done piecemeal sessions 51-67"
+      },
+      {
+        "id": "task-idempotent-closeout-concurrency",
+        "status": "completed",
+        "note": "implementation-idempotent-closeout-concurrency-v1 completed"
+      },
+      {
+        "id": "task-framework-version-in-template",
+        "status": "open",
+        "note": "Still pending"
+      }
     ],
     "rewrite_first": [
-      {"id": "epic-skills-folder-architecture", "status": "superseded", "note": "Skills now in WAI-Spoke/skills/{id}/ subfolders — done via skill system evolution"},
-      {"id": "epic-working-agreement-skill", "status": "superseded", "note": "Working agreements now enforced via complexity-advisor and stewardship-advisor skills"}
+      {
+        "id": "epic-skills-folder-architecture",
+        "status": "superseded",
+        "note": "Skills now in WAI-Spoke/skills/{id}/ subfolders \u2014 done via skill system evolution"
+      },
+      {
+        "id": "epic-working-agreement-skill",
+        "status": "superseded",
+        "note": "Working agreements now enforced via complexity-advisor and stewardship-advisor skills"
+      }
     ]
   },
   "post_evolution": {
     "description": "Remaining work after canonical core is stable.",
     "children": [
-      {"id": "epic-sharded-lugs-with-index", "status": "superseded", "note": "Replaced by epic-context-diet-v1 bytype/ structure"},
-      {"id": "task-spoke-self-registry-via-lug", "status": "open"},
-      {"id": "epic-check-spokes-skill", "status": "open"},
-      {"id": "epic-dogfood-skill", "status": "open"},
-      {"id": "task-registry-git-tracking", "status": "open"},
-      {"id": "task-custom-ai-file-indexing", "status": "open"},
-      {"id": "task-multi-ai-case-study", "status": "open"}
+      {
+        "id": "epic-sharded-lugs-with-index",
+        "status": "superseded",
+        "note": "Replaced by epic-context-diet-v1 bytype/ structure"
+      },
+      {
+        "id": "task-spoke-self-registry-via-lug",
+        "status": "open"
+      },
+      {
+        "id": "epic-check-spokes-skill",
+        "status": "open"
+      },
+      {
+        "id": "epic-dogfood-skill",
+        "status": "open"
+      },
+      {
+        "id": "task-registry-git-tracking",
+        "status": "open"
+      },
+      {
+        "id": "task-custom-ai-file-indexing",
+        "status": "open"
+      },
+      {
+        "id": "task-multi-ai-case-study",
+        "status": "open"
+      }
     ]
   },
   "reconciled_at": "2026-03-24T22:25:00Z",
-  "reconciled_reason": "Session 68 audit: updated child statuses to reflect actual completion state. 3 of 5 incorporate_now items completed, 2 rewrite_first items superseded by evolved skill system. 1 post_evolution item superseded. Remaining open items are valid backlog."
+  "reconciled_reason": "Session 68 audit: updated child statuses to reflect actual completion state. 3 of 5 incorporate_now items completed, 2 rewrite_first items superseded by evolved skill system. 1 post_evolution item superseded. Remaining open items are valid backlog.",
+  "va": "think"
 }

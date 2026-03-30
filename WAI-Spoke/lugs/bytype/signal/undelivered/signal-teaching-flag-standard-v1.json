@@ -16,5 +16,6 @@
   "routed_to": "SIGNAL",
   "_behavior_directive": {
     "action": "track_only"
-  }
+  },
+  "va": "think"
 }

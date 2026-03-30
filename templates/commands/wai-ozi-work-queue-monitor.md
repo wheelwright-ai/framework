@@ -82,14 +82,28 @@ def scan_work_queue():
     return queue
 ```
 
+### Step 1b: ROI Score & Sort
+
+Before dispatching, score all scannable work by ROI with optional vibe tiebreaking:
+
+```bash
+# Run the backlog scorer — vibe from session state (or empty for pure ROI)
+python3 tools/score_backlog.py ${SESSION_VIBE:-}
+```
+
+**ROI formula:** `(impact × leverage) / effort`
+- Signals capped at ROI 5.0 (routing, not implementation)
+- Vibe multiplier reshapes ordering when set (see `wai-lug-schema-reference.md`)
+- Dispatch and display follow ROI order, not FIFO
+
 ### Step 2: Auto-Dispatch Ready Work
 
-For lugs with `status='ready'`, attempt auto-assignment:
+For lugs with `status='ready'`, attempt auto-assignment **in ROI-sorted order**:
 
 ```python
 def auto_dispatch_ready_work(ready_lugs):
-    """Assign ready work to available agents"""
-    
+    """Assign ready work to available agents, highest ROI first"""
+
     for lug in ready_lugs:
         # Skip high-risk lug types
         if lug['type'] in ['implementation', 'epic', 'review']:

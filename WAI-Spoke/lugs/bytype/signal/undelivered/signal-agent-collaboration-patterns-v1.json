@@ -1,28 +1,25 @@
 {
   "id": "signal-agent-collaboration-patterns-v1",
   "ty": "signal",
-  "t": "Agent-User Collaboration Patterns — 5 behavioral signals from PathFinder Historian first pass",
+  "t": "Agent-User Collaboration Patterns \u2014 5 behavioral signals from PathFinder Historian first pass",
   "s": "o",
   "ca": "2026-03-25T22:35:00Z",
-  "gb": "Claude Sonnet 4.6 (PathFinder spoke — Historian review + user approval)",
+  "gb": "Claude Sonnet 4.6 (PathFinder spoke \u2014 Historian review + user approval)",
   "priority": "high",
   "impact": 9,
   "source": "historian-review-20260325-2215 + explicit user instruction to submit to framework",
   "source_spoke": "pathfinder",
-
   "signals": [
-
     {
       "id": "collab-01",
       "name": "Lean Option First",
       "category": "epic_presentation",
-      "description": "When presenting an epic or implementation proposal, always lead with the minimal useful version alongside the full design. User consistently reframes large proposals to lean scope (confirmed 3x: Scout History → Pulse Check, Tracks variants, Fit Chat minimal save). Front-loading the lean option skips the reframing turn and respects the user's natural decision style.",
+      "description": "When presenting an epic or implementation proposal, always lead with the minimal useful version alongside the full design. User consistently reframes large proposals to lean scope (confirmed 3x: Scout History \u2192 Pulse Check, Tracks variants, Fit Chat minimal save). Front-loading the lean option skips the reframing turn and respects the user's natural decision style.",
       "current_behavior": "Agent presents one design (usually full scope). User reframes to lean scope. Agent re-presents lean version. 1-2 turns wasted.",
       "desired_behavior": "Agent presents: 'Lean version (Xh): ... / Full version (Yh): ...' at the top of every epic proposal. User picks. No reframing turn needed.",
-      "implementation_target": "wai-improve.md or epic lug authoring guidance — add lean/full framing as standard output format for implementation proposals.",
+      "implementation_target": "wai-improve.md or epic lug authoring guidance \u2014 add lean/full framing as standard output format for implementation proposals.",
       "repro": "Any session where user receives a large epic proposal and responds by asking for a smaller version."
     },
-
     {
       "id": "collab-02",
       "name": "Pre-Flight Before Production Data Mutations",
@@ -30,35 +27,32 @@
       "description": "Before any write, delete, restructure, or shell operation on production data files (jobs.json, profile.json, chat_history.json, etc.), the agent must state exactly what it is about to change and receive explicit acknowledgment. This is a hard rule, not a preference. PathFinder session 16 had 3 jobs.json wipes in one night from agents executing destructive operations without pre-stating intent.",
       "current_behavior": "Agent executes data mutations as part of a task flow without pausing to state intent. User discovers the change after it happens.",
       "desired_behavior": "Agent stops before any destructive/mutating data operation and says: 'About to [action] on [file]. This will [effect]. Proceed?' One sentence, not a ceremony. User confirms, then agent proceeds.",
-      "implementation_target": "stewardship guard (wai-stewardship-guard.md) or a new data-safety guard — trigger on any API call or shell command that writes/deletes a data file.",
+      "implementation_target": "stewardship guard (wai-stewardship-guard.md) or a new data-safety guard \u2014 trigger on any API call or shell command that writes/deletes a data file.",
       "repro": "Session 16 turns 24-28 (PathFinder): jq redirect destroyed jobs.json. Session 16 turn 17: agent proposed nuclear chat reset before user corrected to surgical fix."
     },
-
     {
       "id": "collab-03",
       "name": "Carry-Forward Escalation in Briefing",
       "category": "wakeup_briefing",
-      "description": "Open items that survive 2+ sessions without resolution should be visually distinguished from new items in the wakeup briefing. Currently all open items are re-listed at the same priority each session, creating noise and normalizing stale items. A 3-session-old open item represents either forgotten work or a decision that was never made — both need attention.",
+      "description": "Open items that survive 2+ sessions without resolution should be visually distinguished from new items in the wakeup briefing. Currently all open items are re-listed at the same priority each session, creating noise and normalizing stale items. A 3-session-old open item represents either forgotten work or a decision that was never made \u2014 both need attention.",
       "current_behavior": "Wakeup lists open items flat. A 3-session-old open item looks identical to a new one. Users treat both as equal priority.",
-      "desired_behavior": "Wakeup Active Work section marks items by session age: [2s] for 2 sessions open, [3s] for 3, etc. Items open 3+ sessions get a prompt: 'Open 3 sessions — still relevant? (keep / close / defer)'. This converts stale open items from noise into decisions.",
-      "implementation_target": "wai.md Step 5 (briefing format) — Active Work section. Age can be computed from lug created_at vs current session count.",
+      "desired_behavior": "Wakeup Active Work section marks items by session age: [2s] for 2 sessions open, [3s] for 3, etc. Items open 3+ sessions get a prompt: 'Open 3 sessions \u2014 still relevant? (keep / close / defer)'. This converts stale open items from noise into decisions.",
+      "implementation_target": "wai.md Step 5 (briefing format) \u2014 Active Work section. Age can be computed from lug created_at vs current session count.",
       "repro": "PathFinder: 'Fit Chat persistence (unbuilt)' carried as open item for 2 sessions before implementation. 'Scout History epic' carried as open for 4+ sessions. 'Historian threshold noted at 29 turns' carried implicitly for 6 sessions."
     },
-
     {
       "id": "collab-04",
       "name": "Session Intent Declaration at Start",
       "category": "session_structure",
       "description": "Sessions with a stated goal at the top produce cleaner track points, tighter deliveries, and better context utilization. Sessions that start exploratory (no stated goal) tend to sprawl across multiple threads, generate weaker track entries, and are harder to closeout. The agent should prompt for session intent if none is given, or infer and confirm it from the user's first message.",
       "current_behavior": "Agent runs full wakeup briefing and waits for user to direct. If user message is vague ('what should we do?'), session drifts into discovery mode.",
-      "desired_behavior": "At the end of wakeup Step 10 (Ready Prompt), if the user's opening message doesn't specify a goal, agent asks: 'What's the focus for this session?' If specified (even vaguely), agent confirms: 'Got it — [goal]. Starting there.' This one exchange anchors the track and the context.",
-      "implementation_target": "wai.md Step 10 (Ready Prompt) — add session intent clarification as a conditional step. Also informs the session track's first point (focus field).",
+      "desired_behavior": "At the end of wakeup Step 10 (Ready Prompt), if the user's opening message doesn't specify a goal, agent asks: 'What's the focus for this session?' If specified (even vaguely), agent confirms: 'Got it \u2014 [goal]. Starting there.' This one exchange anchors the track and the context.",
+      "implementation_target": "wai.md Step 10 (Ready Prompt) \u2014 add session intent clarification as a conditional step. Also informs the session track's first point (focus field).",
       "repro": "PathFinder track_session-20260316-0045 (session 16): 29 turns across 6+ different threads. track_session-20260325-0748 (session 38): 5 turns, clear goal ('implement Pulse Check'), clean delivery."
     },
-
     {
       "id": "collab-05",
-      "name": "taste.spoke as Living Contract — Prioritize Schema Design",
+      "name": "taste.spoke as Living Contract \u2014 Prioritize Schema Design",
       "category": "framework_infrastructure",
       "description": "taste.spoke is the highest-leverage infrastructure item for improving agent-user fit across sessions. Without it, agents re-learn user preferences every session from scratch. PathFinder has 3 confirmed durable preferences ready to encode (data mutation safety, proportional response, lean scope first) that are currently sitting in a historian review file waiting for the schema to be finalized. Prioritizing taste.spoke design eliminates per-session preference re-teaching.",
       "current_behavior": "Behavioral preferences discovered in sessions (corrections, satisfaction signals, direction style) are captured in track points and historian reviews but not codified anywhere that persists into future sessions as active guidance.",
@@ -66,19 +60,23 @@
       "implementation_target": "Framework-level: design and publish taste.spoke schema. Wakeup protocol: add taste.spoke loading step. Historian: add taste.spoke nudge output format once schema exists.",
       "repro": "PathFinder: 3 taste.spoke entries proposed in historian-review-20260325-2215 are deferred indefinitely because the schema doesn't exist yet. Without schema, all 5 collaboration signals in this file have no durable home."
     }
-
   ],
-
   "submission_context": {
     "origin": "PathFinder Historian first pass (2026-03-25)",
     "reviewed_by": "Mario Vaccari (user) + Claude Sonnet 4.6",
     "user_instruction": "Send these signals to the framework to implement.",
     "evidence_base": "75 track points across 14 sessions (2026-03-14 to 2026-03-26)",
-    "priority_order": ["collab-02 (data safety — highest risk)", "collab-03 (carry-forward — reduces noise)", "collab-01 (lean option — saves turns)", "collab-04 (session intent — anchors context)", "collab-05 (taste.spoke — enables everything else)"]
+    "priority_order": [
+      "collab-02 (data safety \u2014 highest risk)",
+      "collab-03 (carry-forward \u2014 reduces noise)",
+      "collab-01 (lean option \u2014 saves turns)",
+      "collab-04 (session intent \u2014 anchors context)",
+      "collab-05 (taste.spoke \u2014 enables everything else)"
+    ]
   },
-
   "_behavior_directive": {
     "what_this_is": "Five behavioral signals from PathFinder's first Historian pass, approved by user for framework implementation. Each signal describes a current behavior gap, desired behavior, and suggested implementation target.",
     "what_this_is_NOT": "An instruction to implement any of these immediately or without framework review. These are signals for the framework to evaluate, prioritize, and convert to teachings/protocol updates at its discretion."
-  }
+  },
+  "va": "build"
 }

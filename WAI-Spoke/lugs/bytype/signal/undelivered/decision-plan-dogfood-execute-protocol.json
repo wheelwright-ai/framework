@@ -2,13 +2,13 @@
   "id": "decision-plan-dogfood-execute-protocol",
   "i": "decision-plan-dogfood-execute-protocol",
   "ty": "signal",
-  "t": "Multi-file changes require Plan → Epic → Dogfood → Execute sequence",
+  "t": "Multi-file changes require Plan \u2192 Epic \u2192 Dogfood \u2192 Execute sequence",
   "s": "o",
   "created_at": "2026-03-14T20:30:00Z",
   "wakeup_visibility": true,
   "_behavior_directive": {
     "what_this_is": "A working agreement that governs how the framework AI handles any change touching 2+ files or requiring 6+ steps. The sequence is non-negotiable and must not be collapsed even in YOLO mode.",
-    "what_this_is_NOT": "This does not apply to single-file edits, lug authoring, or read-only operations. It also does not prohibit YOLO mode — YOLO mode activates AFTER the user approves a plan, not before.",
+    "what_this_is_NOT": "This does not apply to single-file edits, lug authoring, or read-only operations. It also does not prohibit YOLO mode \u2014 YOLO mode activates AFTER the user approves a plan, not before.",
     "sequence": {
       "1_plan": "Produce a written plan. State what changes, why, what is NOT changing.",
       "2_epic_lug": "Write the plan as an epic lug in WAI-Lugs.jsonl. Tell the user the lug ID. Do not proceed until this is done.",
@@ -18,7 +18,8 @@
       "6_execute": "Execute. YOLO mode is now active for the approved scope only."
     },
     "why": "Prevents scope creep, silent divergence, and unreviewed execution. The dogfood subagent catches ambiguity that the authoring agent normalizes over. A plan that a naive agent cannot follow is a plan that will fail across sessions and models.",
-    "failure_mode_this_prevents": "Agent skips plan → executes directly → changes are correct but ungoverned, hard to audit, and set a precedent for skipping governance on larger changes.",
+    "failure_mode_this_prevents": "Agent skips plan \u2192 executes directly \u2192 changes are correct but ungoverned, hard to audit, and set a precedent for skipping governance on larger changes.",
     "exception": "Truly atomic single-step changes (rename one variable, fix one typo, add one lug) may skip steps 2-4 but still need user acknowledgment."
-  }
+  },
+  "va": "think"
 }

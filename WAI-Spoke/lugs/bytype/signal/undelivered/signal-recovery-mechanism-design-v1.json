@@ -7,7 +7,7 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T11:45:00Z",
   "fw_version": "3.0.0",
-  "title": "Interruption Recovery Mechanism — Guided recovery from unexpected restarts",
+  "title": "Interruption Recovery Mechanism \u2014 Guided recovery from unexpected restarts",
   "summary": "Windows updates, power loss, and system crashes interrupt sessions mid-work. Framework should detect interruptions and offer recovery path: Resume / Inspect / Skip / New. Requires: track integrity check, autosave checkpoints, stale lug timeout detection, recovery prompt.",
   "description": "Session 73: User reported that Windows updates cause unexpected restarts, leaving work in-progress lugs and incomplete track entries. Current wakeup has no mechanism to: (1) detect if interruption happened, (2) offer resume path, (3) protect against data loss between last track entry and crash. Design: Track integrity validation + autosave checkpoints + timeout warnings + recovery prompt.",
   "design_elements": [
@@ -16,7 +16,7 @@
     "Recovery Prompt: offer Green Light (resume) / Red Light (inspect) / Skip / New Project",
     "Autosave Checkpoints: write turn state to `.autosave/turn-{N}.json` before appending to track",
     "Track Corruption Recovery: if track.jsonl invalid but autosave exists, recover from checkpoint",
-    "In-Progress Lug Timeout: warn if in_progress lug unchanged >4h — suggest abandon/resume/extend",
+    "In-Progress Lug Timeout: warn if in_progress lug unchanged >4h \u2014 suggest abandon/resume/extend",
     "Session Status Marker: `_session_status` in WAI-State tracks interruption state (clean/interrupted/stale)",
     "Cleanup: autosave files 3+ sessions old deleted at closeout"
   ],
@@ -30,5 +30,6 @@
   "learning": "Session continuity isn't just about memory (lugs/tracks). It's also about detecting when continuity was broken and offering repair paths. Framework should assume interruptions are normal, not edge cases.",
   "routed_to": "signal:all-spokes",
   "scope_verified_by": "user request",
-  "routing_notes": "High-impact learning for all spokes. Teaches that recovery mechanisms are essential for real-world interruptions."
+  "routing_notes": "High-impact learning for all spokes. Teaches that recovery mechanisms are essential for real-world interruptions.",
+  "va": "ship"
 }

@@ -1,7 +1,7 @@
 {
   "i": "idea-challenge-registry-v1",
   "ty": "idea",
-  "t": "WAI-Challenges.jsonl — problem-centric backlog as first-class file",
+  "t": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
   "s": "proposed",
   "ca": "2026-03-14T11:00:00Z",
   "ua": "2026-03-15T02:25:00Z",
@@ -9,10 +9,10 @@
   "gb": "agent",
   "origin": "signal",
   "scope": "schema",
-  "challenge": "Challenges repeat across ideas but are embedded inside idea lugs — there is no way to see all ideas addressing the same problem, track how hypotheses for a challenge evolved over time, or deduplicate at the problem level. The backlog is idea-centric, not problem-centric.",
+  "challenge": "Challenges repeat across ideas but are embedded inside idea lugs \u2014 there is no way to see all ideas addressing the same problem, track how hypotheses for a challenge evolved over time, or deduplicate at the problem level. The backlog is idea-centric, not problem-centric.",
   "hypothesis": "If we introduce WAI-Challenges.jsonl as a first-class append-only file (schema: i, statement, first_seen, first_seen_in, status, related_lugs, resolution_notes) and add challenge_id to idea lug schema, with wai-improve auto-creating or linking challenge entries during Step 1 intake using Jaccard similarity matching, then the system becomes problem-centric: ideas cluster around challenges, hypothesis evolution is visible, and the backlog shows a history of thinking rather than a list of proposals.",
-  "prior_hypothesis": "WAI-Challenges.jsonl as first-class file (id, statement, first_seen, related_lugs, status) — relationship direction and creation ownership unresolved",
-  "reframe_notes": "Design decisions resolved: (1) new file not new lug type — enables historical challenge review independent of ideas; (2) agent auto-creates challenge entries during wai-improve Step 1 intake; (3) bidirectional — challenge.related_lugs + idea.challenge_id — consistency maintained via append-only override pattern (same as WAI-Lugs.jsonl); (4) Jaccard similarity used for challenge matching (consistent with friction detector approach)",
+  "prior_hypothesis": "WAI-Challenges.jsonl as first-class file (id, statement, first_seen, related_lugs, status) \u2014 relationship direction and creation ownership unresolved",
+  "reframe_notes": "Design decisions resolved: (1) new file not new lug type \u2014 enables historical challenge review independent of ideas; (2) agent auto-creates challenge entries during wai-improve Step 1 intake; (3) bidirectional \u2014 challenge.related_lugs + idea.challenge_id \u2014 consistency maintained via append-only override pattern (same as WAI-Lugs.jsonl); (4) Jaccard similarity used for challenge matching (consistent with friction detector approach)",
   "spoke_context_loaded": true,
   "fit_classification": "net_new",
   "related_lugs": [
@@ -26,11 +26,12 @@
     "system_fit": "aligned",
     "generality": "all-spokes"
   },
-  "priority": "P2 (base P2, scope:schema — design discussion completed this session)",
+  "priority": "P2 (base P2, scope:schema \u2014 design discussion completed this session)",
   "next_step": "epic",
   "agent_framing": "Introduce WAI-Challenges.jsonl so ideas cluster around problems. Agent auto-creates challenge entries during wai-improve intake. Bidirectional refs maintained append-only. Makes backlog problem-centric and enables hypothesis evolution tracking across sessions.",
   "_behavior_directive": {
-    "what_this_is": "Finalized improvement idea — schema addition. Ready for epic creation in a future session.",
+    "what_this_is": "Finalized improvement idea \u2014 schema addition. Ready for epic creation in a future session.",
     "what_this_is_NOT": "An instruction to implement. Epic must be created and dogfooded before execution."
-  }
+  },
+  "va": "build"
 }

@@ -8,13 +8,21 @@
   "fw_ver": "3.0.0",
   "impact": 4,
   "priority": "P3",
-  "tags": ["wakeup", "awareness", "multi-ai"],
+  "tags": [
+    "wakeup",
+    "awareness",
+    "multi-ai"
+  ],
   "parent_epic": "epic-session15-fleet-evolution",
   "description": "Some spokes have custom AI personality files (e.g., SPARKY.md for code-puppy). Wakeup should detect and surface these for awareness without modifying them.",
-  "perceive": "1. Read templates/commands/wai.md Step 1 (Load Integration File) — where AI tool detection happens. 2. Check if any spokes have non-standard .md files at root (SPARKY.md, CUSTOM-AI.md, etc.). 3. Read WAI-Spoke/WAI-File-Index.json if it exists — does it track custom files?",
+  "perceive": "1. Read templates/commands/wai.md Step 1 (Load Integration File) \u2014 where AI tool detection happens. 2. Check if any spokes have non-standard .md files at root (SPARKY.md, CUSTOM-AI.md, etc.). 3. Read WAI-Spoke/WAI-File-Index.json if it exists \u2014 does it track custom files?",
   "execute": "1. Add to wai.md Step 1: after detecting integration file, glob for *.md at project root that aren't CLAUDE.md/AGENTS.md/GEMINI.md/README.md/CHANGELOG.md. 2. If found: surface in briefing under Context Health: 'Custom AI files detected: SPARKY.md (do not overwrite)'. 3. Sync wai.md to all targets.",
-  "verify": "1. Spoke with SPARKY.md at root — wakeup mentions it. 2. Spoke without custom files — no extra output. 3. Custom files are never modified by any WAI process.",
-  "pev": {"priority": "low", "effort": "2", "value": "4"},
+  "verify": "1. Spoke with SPARKY.md at root \u2014 wakeup mentions it. 2. Spoke without custom files \u2014 no extra output. 3. Custom files are never modified by any WAI process.",
+  "pev": {
+    "priority": "low",
+    "effort": "2",
+    "value": "4"
+  },
   "acceptance_criteria": [
     "wai.md Step 1 detects non-standard *.md files at project root (excluding known files)",
     "Detected custom AI files surfaced in Context Health section of wakeup briefing",
@@ -23,6 +31,7 @@
   ],
   "_behavior_directive": {
     "what_this_is": "Awareness-only detection of custom AI files at wakeup",
-    "what_this_is_NOT": "Not indexing or managing these files — just surfacing their existence"
-  }
+    "what_this_is_NOT": "Not indexing or managing these files \u2014 just surfacing their existence"
+  },
+  "va": "grind"
 }

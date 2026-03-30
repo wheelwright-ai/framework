@@ -1,6 +1,6 @@
 {
   "i": "task-gardener-spoke-innovation-discovery",
-  "t": "Add spoke innovation discovery to gardener — detect local WAI patterns worth sharing across the fleet",
+  "t": "Add spoke innovation discovery to gardener \u2014 detect local WAI patterns worth sharing across the fleet",
   "ty": "task",
   "s": "o",
   "ca": "2026-03-29T09:45:00Z",
@@ -8,13 +8,22 @@
   "fw_ver": "3.0.0",
   "impact": 7,
   "priority": "P2",
-  "tags": ["gardener", "hub", "innovation", "learning"],
+  "tags": [
+    "gardener",
+    "hub",
+    "innovation",
+    "learning"
+  ],
   "parent_epic": "epic-hub-evolution-structure",
   "supersedes": "epic-check-spokes-skill",
-  "perceive": "1. Read hub/.claude/agents/ozi-gardener.md — current Step 2 (per-spoke work loop). 2. Read the historian advisor pattern at WAI-Spoke/advisors/historian/ — how it detects patterns. 3. Check what spoke-specific innovations look like: custom hooks in .claude/hooks/, custom skills in WAI-Spoke/skills/ not in template, custom agents in .claude/agents/.",
+  "perceive": "1. Read hub/.claude/agents/ozi-gardener.md \u2014 current Step 2 (per-spoke work loop). 2. Read the historian advisor pattern at WAI-Spoke/advisors/historian/ \u2014 how it detects patterns. 3. Check what spoke-specific innovations look like: custom hooks in .claude/hooks/, custom skills in WAI-Spoke/skills/ not in template, custom agents in .claude/agents/.",
   "execute": "1. Add Step 2.5 to ozi-gardener.md (after work loop, before historian): Innovation Scan. 2. For each spoke, compare its .claude/ and WAI-Spoke/skills/ against the framework template. Items IN the spoke but NOT in the template are potential innovations. 3. For each innovation found: check if it has been used (referenced in recent session tracks or invoked in last 10 sessions). 4. If used innovation found: create a signal lug describing the pattern, route to hub for framework consideration. 5. Log innovations found to the per-spoke execution log.",
-  "verify": "1. Spoke with a custom hook not in template — gardener log shows 'Innovation found: {hook_name}'. 2. Spoke with unused custom skill — skipped (no signal). 3. Signal created for validated innovation routes to WAI-Hub/signals/incoming/.",
-  "pev": {"priority": "low", "effort": "3", "value": "7"},
+  "verify": "1. Spoke with a custom hook not in template \u2014 gardener log shows 'Innovation found: {hook_name}'. 2. Spoke with unused custom skill \u2014 skipped (no signal). 3. Signal created for validated innovation routes to WAI-Hub/signals/incoming/.",
+  "pev": {
+    "priority": "low",
+    "effort": "3",
+    "value": "7"
+  },
   "acceptance_criteria": [
     "ozi-gardener.md includes an Innovation Scan step after the work loop",
     "Custom hooks, skills, and agents not in framework template are detected per spoke",
@@ -22,7 +31,8 @@
     "Signal lugs for discovered innovations route to WAI-Hub/signals/incoming/"
   ],
   "_behavior_directive": {
-    "what_this_is": "Add innovation discovery to the gardener — detect spoke-specific patterns worth sharing, supersedes epic-check-spokes-skill",
-    "what_this_is_NOT": "Not implementing the innovations — just discovering and signaling them for framework consideration"
-  }
+    "what_this_is": "Add innovation discovery to the gardener \u2014 detect spoke-specific patterns worth sharing, supersedes epic-check-spokes-skill",
+    "what_this_is_NOT": "Not implementing the innovations \u2014 just discovering and signaling them for framework consideration"
+  },
+  "va": "build"
 }

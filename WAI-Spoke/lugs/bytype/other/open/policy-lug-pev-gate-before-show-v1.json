@@ -18,5 +18,6 @@
   ],
   "violation": "Showing a lug draft and asking the user to help fill it in. Presenting incomplete PEV fields. Skipping validation.",
   "rationale": "User demands confidence the lug was improved before being shown. Incomplete lugs waste review time and break session continuity for future agents.",
-  "routed_to": "LOCAL"
+  "routed_to": "LOCAL",
+  "va": "build"
 }

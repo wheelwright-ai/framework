@@ -5,8 +5,8 @@
   "s": "proposed",
   "ca": "2026-03-26T16:30:00Z",
   "gb": "session-81-framework via incoming signal",
-  "challenge": "Agents identify an issue or optimization opportunity and immediately implement it, bypassing the detect→signal→route protocol. This is a scope violation — it mutates framework outside of formal adoption and produces changes invisible to wakeup.",
-  "hypothesis": "Add explicit rule to wai-rules.md and wai-principles.md: when an agent identifies an issue during a session, it MUST capture→signal→route — never implement in place. Historian watches for the anti-pattern 'agent identified X and immediately implemented Y' in track entries.",
+  "challenge": "Agents identify an issue or optimization opportunity and immediately implement it, bypassing the detect\u2192signal\u2192route protocol. This is a scope violation \u2014 it mutates framework outside of formal adoption and produces changes invisible to wakeup.",
+  "hypothesis": "Add explicit rule to wai-rules.md and wai-principles.md: when an agent identifies an issue during a session, it MUST capture\u2192signal\u2192route \u2014 never implement in place. Historian watches for the anti-pattern 'agent identified X and immediately implemented Y' in track entries.",
   "origin": "signal",
   "challenge_id": "chal-detect-signal-not-fix",
   "scope": "protocol",
@@ -24,5 +24,6 @@
   "_behavior_directive": {
     "what_this_is": "Improvement idea: enforce detect-signal-route discipline as explicit protocol rule.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
-  }
+  },
+  "va": "grind"
 }

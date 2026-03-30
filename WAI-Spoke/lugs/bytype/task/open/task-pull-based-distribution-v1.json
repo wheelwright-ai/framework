@@ -13,11 +13,15 @@
       "Update WAI-State.json with hub_broadcast_path (default: {hub_path}/broadcast)",
       "Update wakeup protocol (wai.md) to check hub/broadcast/teachings/ for new .teaching files",
       "Update wakeup protocol to check hub/broadcast/lugs/ for global signals",
-      "Implement sync logic in wai-learn: copy from hub/broadcast/ → local seed/ingest/"
+      "Implement sync logic in wai-learn: copy from hub/broadcast/ \u2192 local seed/ingest/"
     ],
     "verify": "Wakeup briefing detects and pulls 1 new teaching file from hub broadcast without manual /wai-teach."
   },
-  "pev": {"priority": "high", "effort": "4", "value": "8"},
+  "pev": {
+    "priority": "high",
+    "effort": "4",
+    "value": "8"
+  },
   "acceptance_criteria": [
     "WAI-State.json includes hub_broadcast_path configuration",
     "Wakeup protocol (wai.md) checks hub/broadcast/teachings/ for new .teaching files",
@@ -28,5 +32,6 @@
   "_behavior_directive": {
     "what_this_is": "Requirement for spoke-side pull distribution logic.",
     "what_this_is_NOT": "The Hub-side implementation."
-  }
+  },
+  "va": "build"
 }

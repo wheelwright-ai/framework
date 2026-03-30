@@ -9,5 +9,8 @@
   "impact": 10,
   "rationale": "Framework went from 'says canonical' to 'proves canonical'. tools/wai_validate.py is the single source of truth for all schema knowledge. tools/spoke_health_check.py validates any spoke. 34 behavioral tests replaced mock-heavy structural tests. 19/19 spokes remediated to HEALTHY including 2 unregistered and the spoke template. Zero retired files remaining (WAI-Signals.jsonl, WAI-Session-Log.jsonl). Spoke template fixed to prevent propagation.",
   "routed_to": "SIGNAL",
-  "_behavior_directive": {"action": "track_only"}
+  "_behavior_directive": {
+    "action": "track_only"
+  },
+  "va": "think"
 }

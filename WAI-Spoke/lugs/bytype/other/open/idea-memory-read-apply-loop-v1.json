@@ -6,7 +6,7 @@
   "ca": "2026-03-26T16:30:00Z",
   "gb": "session-81-framework via incoming signal",
   "challenge": "The memory loop is strong on write, partial on load, weak on apply. MEMORY.md is loaded at wakeup but there is no enforcement that behavioral feedback entries shape in-session decisions. The fix-impulse overrides feedback framing in the moment. Historian helps but only if review is triggered and its output acted on.",
-  "hypothesis": "Design a protocol mechanism that closes the apply step — not just loads memory but ties feedback entries to in-session decision checkpoints. Candidate: wakeup surfaces active feedback entries (not just loads them) and the agent explicitly acknowledges them before starting work. Historian review output feeds back into MEMORY.md as updated entries that wakeup must surface.",
+  "hypothesis": "Design a protocol mechanism that closes the apply step \u2014 not just loads memory but ties feedback entries to in-session decision checkpoints. Candidate: wakeup surfaces active feedback entries (not just loads them) and the agent explicitly acknowledges them before starting work. Historian review output feeds back into MEMORY.md as updated entries that wakeup must surface.",
   "origin": "signal",
   "challenge_id": "chal-memory-read-apply-loop",
   "scope": "protocol",
@@ -24,5 +24,6 @@
   "_behavior_directive": {
     "what_this_is": "Improvement idea: close the memory read-apply loop at wakeup.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
-  }
+  },
+  "va": "think"
 }

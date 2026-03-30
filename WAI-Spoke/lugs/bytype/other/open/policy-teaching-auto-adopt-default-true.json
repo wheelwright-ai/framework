@@ -9,12 +9,12 @@
   "category": "framework-policy",
   "title": "POLICY: Teachings Default to safe_to_auto_adopt: true",
   "priority": "ARCHITECTURE",
-  "summary": "All teachings distributed by the framework should default to `safe_to_auto_adopt: true`. Manual approval gates slow framework velocity. If a teaching isn't safe to auto-adopt, it shouldn't be distributed. Exception: CRITICAL teachings that block other processing (like audit) — still auto-adopt, but with blocking rule.",
+  "summary": "All teachings distributed by the framework should default to `safe_to_auto_adopt: true`. Manual approval gates slow framework velocity. If a teaching isn't safe to auto-adopt, it shouldn't be distributed. Exception: CRITICAL teachings that block other processing (like audit) \u2014 still auto-adopt, but with blocking rule.",
   "policy": {
     "default": "Every teaching created by framework has `safe_to_auto_adopt: true` by default",
     "rationale": [
-      "Framework curates teachings before distribution — if it's distributed, it's vetted",
-      "Manual approval gates every update — this breaks framework velocity",
+      "Framework curates teachings before distribution \u2014 if it's distributed, it's vetted",
+      "Manual approval gates every update \u2014 this breaks framework velocity",
       "Trust the distribution. If teaching is unsafe, don't distribute it",
       "Auto-adoption enables continuous framework evolution across all spokes"
     ],
@@ -22,20 +22,20 @@
   },
   "teaching_authoring_requirement": [
     "Every new teaching MUST include: `safe_to_auto_adopt: true` (default)",
-    "If you believe a teaching should NOT auto-adopt, escalate to framework team — it may not be ready for distribution",
+    "If you believe a teaching should NOT auto-adopt, escalate to framework team \u2014 it may not be ready for distribution",
     "Reasoning: if there's doubt, either: (a) fix the teaching until you're confident, or (b) don't distribute it yet"
   ],
   "template_requirement": [
     "Teaching template (templates/teaching-template.md.teaching) must include:",
     "```",
-    "**Safe to auto-adopt:** true ← DEFAULT",
+    "**Safe to auto-adopt:** true \u2190 DEFAULT",
     "```",
     "Every new teaching copies this default. Docs remind: change only if you have strong reason and have escalated."
   ],
   "enforcement": [
     "Wakeup Step 5 (teaching discovery): assume auto_adopt=true unless explicitly set to false (rare)",
-    "Teaching processing: if `safe_to_auto_adopt` field missing → assume true",
-    "Audit: if teaching was processed but not adopted → remediation includes re-adoption (because it should have auto-adopted)"
+    "Teaching processing: if `safe_to_auto_adopt` field missing \u2192 assume true",
+    "Audit: if teaching was processed but not adopted \u2192 remediation includes re-adoption (because it should have auto-adopted)"
   ],
   "impact": [
     "Spokes receive framework updates without gates",
@@ -50,5 +50,6 @@
     "Brief framework team: new policy, rationale, when to escalate"
   ],
   "routed_to": "framework",
-  "scope_verified_by": "user insight: 'teachings should be auto-adopt true right?'"
+  "scope_verified_by": "user insight: 'teachings should be auto-adopt true right?'",
+  "va": "build"
 }

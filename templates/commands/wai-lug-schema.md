@@ -73,6 +73,9 @@ A lug is a JSON file at `WAI-Spoke/lugs/bytype/{type}/{status}/{id}.json`. The f
 | `gb` | `gathered_by` | Agent or session that created it |
 | `v` | `version` | Version number (foundation, core-protocol lugs) |
 | `fw_ver` | `fw_ver` | **Framework version when lug was authored** (e.g. "3.0.0"). Set once at creation — never updated. Enables currency scoring. See `wai-lug-compat.md`. |
+| `va` | `vibe_affinity` | **Work energy category** — one of: `build`, `fix`, `think`, `grind`, `ship`. Optional. Used by Ozi ROI scorer for tiebreaking when items have similar priority. |
+| `impact` | `impact` | **Impact score** 1-10. Used by ROI scorer. Default inferred from type if absent. |
+| `effort` | `effort` | **Effort score** 1-5. Used by ROI scorer. Default inferred from type if absent. |
 
 **Title Policy:**
 - **No generic session summaries:** "Session 35 summary" is BANNED.

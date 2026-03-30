@@ -2,12 +2,13 @@
   "id": "signal-skill-hub-override-resolution-v1",
   "type": "signal",
   "title": "Hub override skill resolution: WAI-Hub/skills/{id}/ checked before WAI-Spoke/skills/{id}/",
-  "event": "Hub-node skill resolution order established — hub overrides take precedence over spoke base skills",
+  "event": "Hub-node skill resolution order established \u2014 hub overrides take precedence over spoke base skills",
   "what_changed": "Before: No resolution protocol; hub skills lived in WAI-Spoke/skills/ alongside spoke skills. After: Hub checks WAI-Hub/skills/{id}/{command_file} first; falls back to WAI-Spoke/skills/{id}/{command_file}. Hub-enriched wakeup/closeout live in WAI-Hub/skills/, not WAI-Spoke/skills/.",
   "why": "Hub nodes run richer protocols than spokes. The override model lets the hub extend spoke skills without forking them. Spoke base skills remain portable and reusable.",
   "impact": 8,
   "fw_ver": "3.0.0",
   "status": "open",
   "created_at": "2026-03-24T16:00:00Z",
-  "created_by": "claude-sonnet-4-6"
+  "created_by": "claude-sonnet-4-6",
+  "va": "think"
 }

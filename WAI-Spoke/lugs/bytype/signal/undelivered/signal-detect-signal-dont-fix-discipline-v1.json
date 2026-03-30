@@ -4,13 +4,20 @@
   "status": "undelivered",
   "created": "2026-03-26T00:00:00Z",
   "title": "Agent discipline: detect-signal-route, not detect-fix",
-  "body": "When agents identify an issue or optimization opportunity, the impulse is to fix it immediately. Required behavior: capture → signal → route. Do NOT implement in place. This applies to: framework protocol improvements, cross-spoke behavior changes, optimization ideas surfaced during a session. The fix-impulse is a scope violation — it mutates framework outside of formal adoption. Historian should watch track entries for the anti-pattern 'agent identified X and immediately implemented Y' and surface it for tuning. Work tracking must go into lugs (signal/task/epic/idea) — not TaskCreate, scratch .md files, or in-memory notes. These don't survive session ends and are invisible to wakeup.",
+  "body": "When agents identify an issue or optimization opportunity, the impulse is to fix it immediately. Required behavior: capture \u2192 signal \u2192 route. Do NOT implement in place. This applies to: framework protocol improvements, cross-spoke behavior changes, optimization ideas surfaced during a session. The fix-impulse is a scope violation \u2014 it mutates framework outside of formal adoption. Historian should watch track entries for the anti-pattern 'agent identified X and immediately implemented Y' and surface it for tuning. Work tracking must go into lugs (signal/task/epic/idea) \u2014 not TaskCreate, scratch .md files, or in-memory notes. These don't survive session ends and are invisible to wakeup.",
   "impact": 8,
   "source": "session-81-framework",
-  "tags": ["discipline", "agent-behavior", "scope", "historian", "lug-first"],
+  "tags": [
+    "discipline",
+    "agent-behavior",
+    "scope",
+    "historian",
+    "lug-first"
+  ],
   "routing": {
     "intent": "framework-principle",
     "suggested_home": "wai-rules.md or wai-principles.md",
     "adoption_path": "framework-spoke formal session"
-  }
+  },
+  "va": "think"
 }

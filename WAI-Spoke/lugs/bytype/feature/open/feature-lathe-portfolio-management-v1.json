@@ -2,7 +2,7 @@
   "id": "feature-lathe-portfolio-management-v1",
   "type": "feature",
   "status": "open",
-  "title": "Lathe: Portfolio management layer — strategic weighting, shift directions, investment profiles",
+  "title": "Lathe: Portfolio management layer \u2014 strategic weighting, shift directions, investment profiles",
   "impact": 10,
   "description": "The Lathe is the strategic layer that shapes where the wheel spins hardest. Each spoke gets a shift direction (maintain/growth/revenue/custom) with urgency and investment profiles (time, money, attention). The gardener uses lathe weights to prioritize which spokes get tended first and how much budget each gets. Combined with the Gardener Priority (G) and User Attention (U) scores, the Lathe produces an actionable morning dashboard: here's where to spend your 30 minutes, here's what the gardener will handle overnight, here's what's trending toward your goals.",
   "pev": {
@@ -19,15 +19,27 @@
     "Research mode: gardener can scan for ideas/opportunities and brief user without executing"
   ],
   "vision": {
-    "shift_directions": ["maintain", "growth", "revenue", "research", "sunset"],
-    "investment_types": ["time_hours", "cost_usd", "attention_minutes", "team_members"],
-    "inter_relations": "0 or many groups per spoke — e-commerce, application-model, marketing, focus areas",
+    "shift_directions": [
+      "maintain",
+      "growth",
+      "revenue",
+      "research",
+      "sunset"
+    ],
+    "investment_types": [
+      "time_hours",
+      "cost_usd",
+      "attention_minutes",
+      "team_members"
+    ],
+    "inter_relations": "0 or many groups per spoke \u2014 e-commerce, application-model, marketing, focus areas",
     "research_mode": "Gardener finds ideas, does research, prepares implementation-ready briefs for easy user approval"
   },
   "created_at": "2026-03-29T22:30:00Z",
   "created_by": "claude-opus-4-6",
   "_behavior_directive": {
-    "what_this_is": "Feature lug for the Lathe portfolio management system — strategic spoke weighting",
-    "what_this_is_NOT": "Not a simple scoring tweak — this is a new architectural layer"
-  }
+    "what_this_is": "Feature lug for the Lathe portfolio management system \u2014 strategic spoke weighting",
+    "what_this_is_NOT": "Not a simple scoring tweak \u2014 this is a new architectural layer"
+  },
+  "va": "build"
 }

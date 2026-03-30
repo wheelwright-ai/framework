@@ -6,20 +6,20 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T12:00:00Z",
   "fw_version": "3.0.0",
-  "title": "Ozi Work Queue Orchestration — Priority-ordered autonomous work dispatch",
-  "one_liner": "Ozi maintains a work queue with priority ordering (teachings → inbound → signals → local), tracks readiness (ready vs needs_refinement), and auto-chains through jobs with minimal context + user UAT recording.",
+  "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
+  "one_liner": "Ozi maintains a work queue with priority ordering (teachings \u2192 inbound \u2192 signals \u2192 local), tracks readiness (ready vs needs_refinement), and auto-chains through jobs with minimal context + user UAT recording.",
   "summary": "Current: User asks Ozi 'what should I work on?' and Ozi discovers work ad-hoc. Better: Lug creation automatically enrolls items in a prioritized work queue. Ozi knows the burndown list, can work through it autonomously (with approval), and tracks progress in track file + UAT log. Two modes: (1) Interactive 'Work the queue' / 'Review refinements', (2) Auto-chain with approval. Each job: minimal wai context + named lug + previous track context only.",
   "motivation": "Users want to BUILD the queue, not babysit it. Ozi should discover work, prioritize, execute when approved, and auto-close. This enables: continuous delivery of framework improvements, clear burndown visibility, autonomous multi-session work chains, minimal context overhead.",
-  "user_story": "Mario says: 'I'll build the queue of lugs. Ozi works through it. I get UAT + implementation notes in track. Approve auto mode and it chains: implement → closeout → load next item, minimal context, repeat until queue empty or I stop it.'",
+  "user_story": "Mario says: 'I'll build the queue of lugs. Ozi works through it. I get UAT + implementation notes in track. Approve auto mode and it chains: implement \u2192 closeout \u2192 load next item, minimal context, repeat until queue empty or I stop it.'",
   "acceptance_criteria": [
     "Lug creation: auto-add to work queue with state 'ready' or 'needs_refinement'",
     "Work queue schema: priority order, status (ready/needs_refinement), estimated steps, blocker list",
-    "Wakeup Step 9 (new): Display work queue status — ready items + pending refinements + chain option",
+    "Wakeup Step 9 (new): Display work queue status \u2014 ready items + pending refinements + chain option",
     "Interactive mode: 'Work the job queue' (next ready item) OR 'Review refinements' (next needs_refinement)",
-    "Auto mode: With approval, chain jobs — implement → closeout w/ track capture → load next",
+    "Auto mode: With approval, chain jobs \u2014 implement \u2192 closeout w/ track capture \u2192 load next",
     "Auto execution: Load only WAI core + named lug + prev track (minimal context, ~15-20k tokens)",
     "Track capture: Every turn recorded with focus/action/thinking/implementation notes + UAT",
-    "Queue state: Persisted in WAI-State.json `_work_queue` — survives sessions",
+    "Queue state: Persisted in WAI-State.json `_work_queue` \u2014 survives sessions",
     "Closeout Step 10 (new): Mark completed items as done, next item auto-loaded if auto-mode enabled"
   ],
   "work_queue_priority_order": [
@@ -114,5 +114,6 @@
   "size_estimate": "10-15 steps (largest epic yet)",
   "routed_to": "framework",
   "scope_verified_by": "user request (Session 73: 'This will rock! With this I can do work building the queue')",
-  "routing_notes": "Framework-wide orchestration feature. Will be delivered as teaching when implemented. Changes how all spokes work with Ozi."
+  "routing_notes": "Framework-wide orchestration feature. Will be delivered as teaching when implemented. Changes how all spokes work with Ozi.",
+  "va": "grind"
 }

@@ -16,5 +16,6 @@
     "dispatch_method": "auto",
     "auto_session_key": "cubic-river",
     "subagent_prompt": "You are a builder sub-agent dispatched by Ozi.\n\nYour ONLY job: Complete feature task-ozi-fifo-test-2\n\nTitle: Second FIFO test item\n\nDescription:\nLater-created ready lug to confirm FIFO ordering.\n\nInstructions:\n1. Read the full lug from WAI-Lugs.jsonl (id=\"task-ozi-fifo-test-2\")\n2. Stay in scope\n3. Update the lug with progress\n4. When complete, set status to ready_for_recheck\n"
-  }
+  },
+  "va": "ship"
 }

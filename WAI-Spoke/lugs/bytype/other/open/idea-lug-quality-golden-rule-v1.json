@@ -6,7 +6,7 @@
   "ca": "2026-03-26T16:30:00Z",
   "gb": "session-81-framework via incoming signal",
   "challenge": "Lugs are written tersely and the improve skill is skipped. The user receives a lug notification before improve has run, meaning they see incomplete work. Terse lugs create invisible gaps for the next agent.",
-  "hypothesis": "Two rules codified in wai-lug-schema.md authoring section and wai-improve trigger: (1) Golden Rule — write every lug as if the next reader has zero context; body must explain situation, rationale, scope, references. (2) Improve-Before-Notify — run improve skill before telling the user a lug is done. The notification IS the signal of completion, not the write.",
+  "hypothesis": "Two rules codified in wai-lug-schema.md authoring section and wai-improve trigger: (1) Golden Rule \u2014 write every lug as if the next reader has zero context; body must explain situation, rationale, scope, references. (2) Improve-Before-Notify \u2014 run improve skill before telling the user a lug is done. The notification IS the signal of completion, not the write.",
   "origin": "signal",
   "challenge_id": "chal-lug-quality-golden-rule",
   "scope": "protocol",
@@ -24,5 +24,6 @@
   "_behavior_directive": {
     "what_this_is": "Improvement idea: lug quality standard and improve workflow enforcement.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
-  }
+  },
+  "va": "grind"
 }

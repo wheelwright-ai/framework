@@ -1,7 +1,7 @@
 {
   "id": "signal-skill-thrift-tier1-v1",
   "type": "signal",
-  "title": "Skill Thrift Tier 1 complete: wai-lug-schema + wai-improve slimmed — 770 lines removed from primary context load",
+  "title": "Skill Thrift Tier 1 complete: wai-lug-schema + wai-improve slimmed \u2014 770 lines removed from primary context load",
   "status": "undelivered",
   "created_at": "2026-03-25T04:30:00Z",
   "created_by": "claude-sonnet-4-6",
@@ -30,7 +30,8 @@
   ],
   "behavioral_preservation": "All behavioral instructions preserved in primary files. Reference files supplement, not replace.",
   "_behavior_directive": {
-    "what_this_is": "Signal lug recording Skill Thrift Tier 1 completion — high-impact architectural improvement to framework",
-    "what_this_is_NOT": "An instruction to apply these changes — they are already applied"
-  }
+    "what_this_is": "Signal lug recording Skill Thrift Tier 1 completion \u2014 high-impact architectural improvement to framework",
+    "what_this_is_NOT": "An instruction to apply these changes \u2014 they are already applied"
+  },
+  "va": "grind"
 }

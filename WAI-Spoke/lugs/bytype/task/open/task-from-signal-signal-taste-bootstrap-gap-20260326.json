@@ -8,7 +8,11 @@
   "impact": 8,
   "source_signal": "signal-taste-bootstrap-gap-20260326",
   "description": "The Taste system (taste.spoke.yaml, taste.user.yaml) is not being bootstrapped on new spokes. Spokes log 'No taste files found \u2014 skipped' every session for months without escalating or self-initializing. The Historian's nudge output loop is silently disabled on any spoke that hasn't manually created the files.",
-  "pev": {"priority": "medium", "effort": "2", "value": "8"},
+  "pev": {
+    "priority": "medium",
+    "effort": "2",
+    "value": "8"
+  },
   "acceptance_criteria": [
     "New spokes auto-initialize taste.spoke.yaml and taste.user.yaml with minimal defaults on first wakeup",
     "Existing spokes without taste files get bootstrapped on next wakeup (not silently skipped)",
@@ -18,5 +22,6 @@
   "_behavior_directive": {
     "what_this_is": "Task derived from hub signal signal-taste-bootstrap-gap-20260326. Needs framework implementation.",
     "action": "implement"
-  }
+  },
+  "va": "build"
 }

@@ -6,7 +6,7 @@
   "ca": "2026-03-26T16:30:00Z",
   "gb": "PathFinder Historian first pass (2026-03-25) via incoming signal",
   "challenge": "Sessions with no stated goal at the start sprawl across multiple threads, generate weaker track entries, and are harder to closeout. Sessions that start exploratory drift rather than deliver.",
-  "hypothesis": "At the end of wakeup Step 9 (Ready), if the user's opening message doesn't specify a goal, agent asks: 'What's the focus for this session?' If a goal is specified (even vaguely), agent confirms: 'Got it — [goal]. Starting there.' This anchors the track's focus field and the session context.",
+  "hypothesis": "At the end of wakeup Step 9 (Ready), if the user's opening message doesn't specify a goal, agent asks: 'What's the focus for this session?' If a goal is specified (even vaguely), agent confirms: 'Got it \u2014 [goal]. Starting there.' This anchors the track's focus field and the session context.",
   "origin": "signal",
   "challenge_id": "chal-session-intent-declaration",
   "scope": "protocol",
@@ -24,5 +24,6 @@
   "_behavior_directive": {
     "what_this_is": "Improvement idea: session intent declaration at wakeup Ready step.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
-  }
+  },
+  "va": "grind"
 }

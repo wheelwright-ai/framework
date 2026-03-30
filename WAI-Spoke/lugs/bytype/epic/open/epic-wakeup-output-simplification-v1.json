@@ -6,8 +6,8 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T12:30:00Z",
   "fw_version": "3.0.0",
-  "title": "Wakeup Output Simplification — Binary work choice",
-  "one_liner": "When work queue exists, simplify wakeup briefing to single offer: 'Complete workable items | Refine backlog' — reduce cognitive load, clear next action.",
+  "title": "Wakeup Output Simplification \u2014 Binary work choice",
+  "one_liner": "When work queue exists, simplify wakeup briefing to single offer: 'Complete workable items | Refine backlog' \u2014 reduce cognitive load, clear next action.",
   "summary": "Current wakeup briefing shows: project state, all active lugs, teachings, signals, context health, recommendations. Too much. When queue is populated (via auto-discovery or user), simplify to: 'Ready work queue: N items (Haiku-completable). Refine backlog: M items (needs_refinement). Your choice: [W]ork / [R]efine / [S]kip'? Clean binary choice, reduce noise, clarify path forward.",
   "motivation": "Clarity + low cognitive load. User wakes up, sees queue, picks work or refinement. No digging through lugs list. 'What should I do?' is answered instantly.",
   "key_distinction": "Workable items = items marked 'ready' in queue that meet Haiku complexity threshold (completable by sub-agent in one session, <10 steps, clear acceptance criteria)",
@@ -15,7 +15,7 @@
     "Wakeup Step 7 (new sub-section): Queue-based briefing mode (if queue exists)",
     "Show only:",
     "  - Project identity (1 line: 'Wheelwright Framework v2.x')",
-    "  - Context health (1 line: '48% context (YELLOW) — plan remaining work')",
+    "  - Context health (1 line: '48% context (YELLOW) \u2014 plan remaining work')",
     "  - Queue summary (2 lines): 'Workable: N items | Refine backlog: M items'",
     "  - Binary offer: '[W]ork ready queue / [R]efine backlog / [S]kip?'",
     "Skip full lug list, teaching discovery, signal review (those are inside queue management)",
@@ -41,7 +41,7 @@
     ]
   },
   "scope": [
-    "Wakeup Step 7: Conditional logic — if queue exists, show simplified briefing",
+    "Wakeup Step 7: Conditional logic \u2014 if queue exists, show simplified briefing",
     "Queue metadata: add `workable: boolean` flag per item (auto-calculated from criteria)",
     "Briefing display: collapse to 4 lines + offer, hide lug details",
     "Define complexity thresholds (steps, time, criteria quality)"
@@ -60,5 +60,6 @@
   "size_estimate": "2-3 steps",
   "routed_to": "framework",
   "scope_verified_by": "user request (Session 73: 'wakeup output should leverage it to make the simple offer to the user - complete workable items; refine backlog')",
-  "routing_notes": "UX/simplification feature for queue orchestration system. Feeds into epic-ozi-work-queue-orchestration-v1 + epic-ozi-queue-auto-discovery-v1."
+  "routing_notes": "UX/simplification feature for queue orchestration system. Feeds into epic-ozi-work-queue-orchestration-v1 + epic-ozi-queue-auto-discovery-v1.",
+  "va": "grind"
 }

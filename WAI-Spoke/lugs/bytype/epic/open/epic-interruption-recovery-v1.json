@@ -6,17 +6,17 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T11:45:00Z",
   "fw_version": "3.0.0",
-  "title": "Interruption Detection & Recovery — Windows restarts, unexpected crashes",
+  "title": "Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes",
   "one_liner": "Detect when sessions are interrupted (crash/restart) and offer guided recovery: resume in-progress work, inspect incomplete entries, or start fresh.",
   "summary": "Windows updates (and other system events) cause unexpected restarts mid-session. Currently: wakeup sees in_progress lugs but doesn't know if they're abandoned or waiting. Tracks might be truncated mid-write. Need: (1) Track integrity checks, (2) Interruption detection flag, (3) Recovery prompt with resume path, (4) Autosave checkpoints, (5) Stale lug timeout warnings.",
   "motivation": "When a session crashes, the next wakeup should ask 'Resume work?' instead of leaving user confused. Autosave + track integrity = zero work lost between last track entry and crash. This is especially important for long multi-turn epics.",
   "acceptance_criteria": [
-    "Wakeup Step 7a: Validate track.jsonl final entry — check for `completed` flag or required fields",
+    "Wakeup Step 7a: Validate track.jsonl final entry \u2014 check for `completed` flag or required fields",
     "If invalid/incomplete: Surface 'Session interrupted at Turn N (timestamp)' in briefing",
-    "Wakeup Step 8 (new): Interruption recovery prompt — offer Green/Red/Skip/NewProject paths",
-    "Wakeup Step 8: Timeout warning for in_progress lugs unchanged >4h — 'Mark abandoned / Resume / Extend?'",
+    "Wakeup Step 8 (new): Interruption recovery prompt \u2014 offer Green/Red/Skip/NewProject paths",
+    "Wakeup Step 8: Timeout warning for in_progress lugs unchanged >4h \u2014 'Mark abandoned / Resume / Extend?'",
     "Every turn: Autosave checkpoint written to `.autosave/turn-{N}.json` before appending to track",
-    "Wakeup Step 6: If track.jsonl corrupted but autosave exists → recover checkpoint",
+    "Wakeup Step 6: If track.jsonl corrupted but autosave exists \u2192 recover checkpoint",
     "WAI-State.json: Add `_session_status` field: { last_session_id, last_turn, status: clean|interrupted|stale }",
     "Closeout: Set status to 'clean'. Cleanup old autosave files (3+ sessions)."
   ],
@@ -42,5 +42,6 @@
   "size_estimate": "7-10 steps",
   "routed_to": "framework",
   "scope_verified_by": "user request (Session 73: recovery mechanism for unexpected restarts)",
-  "routing_notes": "Framework-wide improvement. Affects wakeup protocol, track schema, and state management. Should be delivered as teaching to all spokes."
+  "routing_notes": "Framework-wide improvement. Affects wakeup protocol, track schema, and state management. Should be delivered as teaching to all spokes.",
+  "va": "ship"
 }

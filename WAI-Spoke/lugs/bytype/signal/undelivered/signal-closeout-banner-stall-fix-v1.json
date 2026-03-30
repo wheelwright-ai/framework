@@ -1,17 +1,18 @@
 {
   "id": "signal-closeout-banner-stall-fix-v1",
   "type": "signal",
-  "title": "Closeout Step 11 banner confirmation logic inverted — proceed unless explicit cancel",
-  "description": "Step 11 (Summary Banner) previously required an affirmative response ('yes', 'go', 'proceed', etc.) before committing. Silence and new instructions were not treated as confirmation. This caused systematic stalls where spokes waited indefinitely for explicit approval. Fix: inverted logic — proceed with commit unless user explicitly says 'no', 'cancel', or 'stop'. Questions, new instructions, or thumbs-up all now count as confirmation. Do not re-ask.",
+  "title": "Closeout Step 11 banner confirmation logic inverted \u2014 proceed unless explicit cancel",
+  "description": "Step 11 (Summary Banner) previously required an affirmative response ('yes', 'go', 'proceed', etc.) before committing. Silence and new instructions were not treated as confirmation. This caused systematic stalls where spokes waited indefinitely for explicit approval. Fix: inverted logic \u2014 proceed with commit unless user explicitly says 'no', 'cancel', or 'stop'. Questions, new instructions, or thumbs-up all now count as confirmation. Do not re-ask.",
   "impact": 8,
   "created_by": "claude-sonnet-4-6",
   "created_at": "2026-03-27T00:30:00Z",
   "session_id": "session-20260326-2221",
-  "rationale": "Bug report from minder S48 (bug-closeout-banner-stall-v1) confirmed the pattern. The original design treated silence as ambiguous — but in practice users often reply with follow-up questions or new tasks after seeing the banner, expecting commit to proceed. Requiring explicit 'yes' broke the workflow every time.",
+  "rationale": "Bug report from minder S48 (bug-closeout-banner-stall-v1) confirmed the pattern. The original design treated silence as ambiguous \u2014 but in practice users often reply with follow-up questions or new tasks after seeing the banner, expecting commit to proceed. Requiring explicit 'yes' broke the workflow every time.",
   "fix": {
     "file": "templates/commands/wai-closeout.md",
     "step": "11",
     "change": "Inverted confirmation: 'Do NOT proceed unless user explicitly cancels' replaces 'wait for affirmative response'"
   },
-  "hub_candidate": true
+  "hub_candidate": true,
+  "va": "build"
 }

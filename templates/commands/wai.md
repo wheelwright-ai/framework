@@ -376,6 +376,18 @@ touch "$SESSION_DIR/track.jsonl"
 
 ## Step 9: Ready
 
+**Vibe prompt (one word, no ceremony):**
+
+Before displaying the wakeup marker, ask:
+
+```
+Vibe? (build / fix / think / grind / ship) [skip]
+```
+
+Store the response in session state. If the user types a vibe, Ozi uses it for ROI tiebreaking throughout the session. If the user skips or says nothing, use pure ROI ordering (no vibe multiplier). The vibe can be changed mid-session by saying the word.
+
+**Vibe definitions:** build=creative, fix=corrective, think=strategic, grind=mechanical, ship=finish things. See `wai-lug-schema-reference.md` for full multiplier table.
+
 Display wakeup completion marker with session context:
 
 ```
@@ -383,6 +395,7 @@ Display wakeup completion marker with session context:
 │
 │  Project: {project_name} v{version}
 │  Active work: {X} open, {Y} in_progress, {Z} signals
+│  Vibe: {vibe or "none"}
 │  Context: {percent}% ({tokens_used}K/{tokens_limit}K)
 │
 └─ Ready to work.

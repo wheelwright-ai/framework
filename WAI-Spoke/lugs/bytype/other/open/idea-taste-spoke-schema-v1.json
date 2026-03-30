@@ -6,7 +6,7 @@
   "ca": "2026-03-26T16:30:00Z",
   "gb": "PathFinder Historian first pass (2026-03-25) via incoming signal",
   "challenge": "Behavioral preferences discovered in sessions (corrections, satisfaction signals, direction style) are captured in track points and historian reviews but not codified anywhere that persists into future sessions as active guidance. Agents re-learn preferences from scratch every session.",
-  "hypothesis": "Framework-level: design and publish taste.spoke schema. Wakeup protocol: add taste.spoke loading step after skills (Step 3). Historian: add taste.spoke nudge output format once schema exists. Nudge lifecycle: proposed → accepted/rejected. Categories: communication, workflow, approach, boundaries, philosophy. PathFinder has 3 confirmed durable preferences ready to encode immediately (data mutation safety, proportional response, lean scope first).",
+  "hypothesis": "Framework-level: design and publish taste.spoke schema. Wakeup protocol: add taste.spoke loading step after skills (Step 3). Historian: add taste.spoke nudge output format once schema exists. Nudge lifecycle: proposed \u2192 accepted/rejected. Categories: communication, workflow, approach, boundaries, philosophy. PathFinder has 3 confirmed durable preferences ready to encode immediately (data mutation safety, proportional response, lean scope first).",
   "origin": "signal",
   "challenge_id": "chal-taste-spoke-living-contract",
   "scope": "multi",
@@ -20,9 +20,10 @@
     "generality": "all-spokes"
   },
   "priority": "P2",
-  "next_step": "epic needed — design taste.spoke schema; schema exists in framework/skills/taste.yaml but needs finalization and wakeup integration",
+  "next_step": "epic needed \u2014 design taste.spoke schema; schema exists in framework/skills/taste.yaml but needs finalization and wakeup integration",
   "_behavior_directive": {
     "what_this_is": "Improvement idea: taste.spoke schema finalization and wakeup loading.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
-  }
+  },
+  "va": "build"
 }

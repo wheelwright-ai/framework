@@ -7,9 +7,9 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T12:00:00Z",
   "fw_version": "3.0.0",
-  "title": "Ozi Autonomous Orchestration — Work queue + auto-chain = continuous delivery",
-  "summary": "Design for Ozi as autonomous work orchestrator: maintains prioritized work queue (teachings → inbound → signals → local), marks items ready vs needs_refinement, executes with approval, chains jobs with minimal context, captures UAT + implementation notes in track. Enables: users build queue, Ozi executes, clear burndown, continuous delivery.",
-  "description": "Session 73: User described vision for work queue management. Instead of 'Ozi what should I work on?', Ozi maintains queue. Two modes: (1) Interactive 'Work the job queue' / 'Review refinements', (2) Auto-chain: approve once, Ozi chains through jobs (implement → minimal closeout → load next), minimal context (~20k tokens), track captures UAT + implementation. Queue prioritizes: teaching files first (framework upgrades) → inbound lugs (hub deliveries) → signals (learnings) → local work (project items). Lug creation auto-enrolls in queue.",
+  "title": "Ozi Autonomous Orchestration \u2014 Work queue + auto-chain = continuous delivery",
+  "summary": "Design for Ozi as autonomous work orchestrator: maintains prioritized work queue (teachings \u2192 inbound \u2192 signals \u2192 local), marks items ready vs needs_refinement, executes with approval, chains jobs with minimal context, captures UAT + implementation notes in track. Enables: users build queue, Ozi executes, clear burndown, continuous delivery.",
+  "description": "Session 73: User described vision for work queue management. Instead of 'Ozi what should I work on?', Ozi maintains queue. Two modes: (1) Interactive 'Work the job queue' / 'Review refinements', (2) Auto-chain: approve once, Ozi chains through jobs (implement \u2192 minimal closeout \u2192 load next), minimal context (~20k tokens), track captures UAT + implementation. Queue prioritizes: teaching files first (framework upgrades) \u2192 inbound lugs (hub deliveries) \u2192 signals (learnings) \u2192 local work (project items). Lug creation auto-enrolls in queue.",
   "design_pillars": [
     "Queue discipline: Prioritized, visible, chainable work list",
     "Minimal context: Each job loads only WAI + named lug + prev track (~20k vs 46k full wakeup)",
@@ -42,8 +42,9 @@
     "Context stays lean: each job knows what it's doing"
   ],
   "next_action": "Implement epic-ozi-work-queue-orchestration-v1. This is largest epic yet (10-15 steps). Needs: queue schema, priority logic, minimal context loader, auto-chain orchestrator, track extensions, closeout integration.",
-  "learning": "Autonomous work execution scales. Framework should assume Ozi can work without supervision. Give it a queue, it executes. Give it approval, it chains. This is the path to true 'AI as responsible partner' — not just suggesting work, but tracking + executing it accountably.",
+  "learning": "Autonomous work execution scales. Framework should assume Ozi can work without supervision. Give it a queue, it executes. Give it approval, it chains. This is the path to true 'AI as responsible partner' \u2014 not just suggesting work, but tracking + executing it accountably.",
   "routed_to": "signal:all-spokes",
   "scope_verified_by": "user request",
-  "routing_notes": "Highest-impact signal yet (10). Transforms how all spokes interact with Ozi. Teaching for entire framework ecosystem."
+  "routing_notes": "Highest-impact signal yet (10). Transforms how all spokes interact with Ozi. Teaching for entire framework ecosystem.",
+  "va": "grind"
 }

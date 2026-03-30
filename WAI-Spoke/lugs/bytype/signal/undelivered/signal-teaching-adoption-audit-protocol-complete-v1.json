@@ -7,13 +7,13 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T13:15:00Z",
   "fw_version": "3.0.0",
-  "title": "Teaching Adoption Audit Protocol — Complete and Ready for Distribution",
+  "title": "Teaching Adoption Audit Protocol \u2014 Complete and Ready for Distribution",
   "summary": "Completed Option 3: Audited Wheelwright Framework (93 processed teachings), confirmed all are ADOPTED. Created formal teaching (skill-wai-teaching-adoption-audit-v1.md.teaching) for distribution to all spokes. Teaching includes audit skill, verification protocol, wakeup integration, remediation path.",
   "what_we_did": [
     "Audited Wheelwright Framework's 93 processed teachings",
     "Spot-checked critical protocol teachings (skill-wai-wakeup-discovery-fix, lug-schema-thrift, improve-thrift)",
     "Verified verification fingerprints in target files (e.g., 'Do NOT skip silently' in wai.md)",
-    "Confirmed: Spoke is UP TO DATE — no 'processed but not adopted' pattern detected",
+    "Confirmed: Spoke is UP TO DATE \u2014 no 'processed but not adopted' pattern detected",
     "Created formal teaching file: skill-wai-teaching-adoption-audit-v1.md.teaching",
     "Teaching includes: audit skill, manual protocol, wakeup integration, remediation steps"
   ],
@@ -59,8 +59,9 @@
     "Future teachings can be verified programmatically",
     "Confidence that framework updates reach all spokes"
   ],
-  "learning": "Teaching adoption audit is essential infrastructure. The anti-pattern (processed ≠ adopted) was real but rarely visible. Verification fingerprints make it detectable. This teaching enables spoke autonomy + accountability.",
+  "learning": "Teaching adoption audit is essential infrastructure. The anti-pattern (processed \u2260 adopted) was real but rarely visible. Verification fingerprints make it detectable. This teaching enables spoke autonomy + accountability.",
   "routed_to": "signal:all-spokes",
   "scope_verified_by": "completed Option 3 quick-win audit on Wheelwright Framework",
-  "routing_notes": "High-impact signal (9). Teaching itself is framework-wide distribution. Enables all spokes to self-audit and confirm up-to-date status."
+  "routing_notes": "High-impact signal (9). Teaching itself is framework-wide distribution. Enables all spokes to self-audit and confirm up-to-date status.",
+  "va": "grind"
 }

@@ -6,7 +6,7 @@
   "ca": "2026-03-26T16:30:00Z",
   "gb": "PathFinder Historian first pass (2026-03-25) via incoming signal",
   "challenge": "Open items that survive multiple sessions without resolution are listed flat alongside new items in the wakeup briefing. A 3-session-old item looks identical to a new one, normalizing stale work and hiding decisions that were never made.",
-  "hypothesis": "Active Work section in wakeup Step 7 marks items by session age: [2s] for 2 sessions open, [3s+] for three or more. Items open 3+ sessions show a prompt: 'Open 3 sessions — still relevant? (keep / close / defer)'. Age computed from lug created_at vs current session count.",
+  "hypothesis": "Active Work section in wakeup Step 7 marks items by session age: [2s] for 2 sessions open, [3s+] for three or more. Items open 3+ sessions show a prompt: 'Open 3 sessions \u2014 still relevant? (keep / close / defer)'. Age computed from lug created_at vs current session count.",
   "origin": "signal",
   "challenge_id": "chal-carry-forward-escalation",
   "scope": "protocol",
@@ -24,5 +24,6 @@
   "_behavior_directive": {
     "what_this_is": "Improvement idea: age-escalation for stale open items in wakeup briefing.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
-  }
+  },
+  "va": "build"
 }

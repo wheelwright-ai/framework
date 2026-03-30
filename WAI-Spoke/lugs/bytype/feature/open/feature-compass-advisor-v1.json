@@ -2,17 +2,17 @@
   "id": "feature-compass-advisor-v1",
   "type": "feature",
   "status": "open",
-  "title": "Compass: Hub advisor — dynamic HTML dashboard, morning brief, decision tracker, productivity metrics",
+  "title": "Compass: Hub advisor \u2014 dynamic HTML dashboard, morning brief, decision tracker, productivity metrics",
   "impact": 10,
   "pev": {
     "priority": "high",
     "effort": "5",
     "value": "10"
   },
-  "description": "The Compass is the user-facing hub advisor. It gathers data from Gardener (fleet health, work executed) and Lathe (strategic weights, shift directions, budgets), then generates a dynamic HTML dashboard personalized to the user's tone (from taste files). The dashboard presents decision points for easy approval, tracks decision history, and measures productivity. It is the autopilot — aware of everything happening across all spokes, informing the user of what matters, and making approval as frictionless as possible.",
+  "description": "The Compass is the user-facing hub advisor. It gathers data from Gardener (fleet health, work executed) and Lathe (strategic weights, shift directions, budgets), then generates a dynamic HTML dashboard personalized to the user's tone (from taste files). The dashboard presents decision points for easy approval, tracks decision history, and measures productivity. It is the autopilot \u2014 aware of everything happening across all spokes, informing the user of what matters, and making approval as frictionless as possible.",
   "acceptance_criteria": [
     "Hub advisor at WAI-Hub/advisors/compass/ with scan_state.json, passes.jsonl, reports/",
-    "Dynamic HTML output generated per run — served locally or opened in browser",
+    "Dynamic HTML output generated per run \u2014 served locally or opened in browser",
     "Reads taste.user.yaml for tone and communication preferences",
     "Reads Gardener scan_state + Lathe spoke_lathe.json for data",
     "Dashboard sections: fleet status, attention priorities, decision queue, productivity trends",
@@ -24,21 +24,32 @@
     "Runs as part of gardener nightly OR on-demand via /wai-compass"
   ],
   "architecture": {
-    "hub_advisors": ["gardener (execution)", "lathe (strategy)", "compass (awareness)"],
-    "data_sources": ["scan_state.json", "spoke_lathe.json", "passes.jsonl", "vectors.jsonl", "taste.user.yaml"],
+    "hub_advisors": [
+      "gardener (execution)",
+      "lathe (strategy)",
+      "compass (awareness)"
+    ],
+    "data_sources": [
+      "scan_state.json",
+      "spoke_lathe.json",
+      "passes.jsonl",
+      "vectors.jsonl",
+      "taste.user.yaml"
+    ],
     "output": "HTML dashboard + JSON report + decision queue file",
-    "history": "WAI-Hub/advisors/compass/decisions.jsonl — every decision with timestamp, context, outcome"
+    "history": "WAI-Hub/advisors/compass/decisions.jsonl \u2014 every decision with timestamp, context, outcome"
   },
   "vision": {
-    "morning_flow": "Wake up → open compass dashboard → see 3 decisions to make → approve/defer → gardener executes tonight",
+    "morning_flow": "Wake up \u2192 open compass dashboard \u2192 see 3 decisions to make \u2192 approve/defer \u2192 gardener executes tonight",
     "productivity": "Measurable: lugs/week, cost/spoke, attention minutes vs plan, autonomy ratio trend",
     "research": "Compass finds ideas in the wild (trends, tools, opportunities) and prepares implementation-ready briefs",
-    "tone": "Dashboard reflects user's communication style from taste files — not generic, not robotic"
+    "tone": "Dashboard reflects user's communication style from taste files \u2014 not generic, not robotic"
   },
   "created_at": "2026-03-29T23:00:00Z",
   "created_by": "claude-opus-4-6",
   "_behavior_directive": {
-    "what_this_is": "Feature lug for the Compass hub advisor — the user-facing dashboard and decision engine",
-    "what_this_is_NOT": "Not just a report generator — this is the autopilot interface for the entire system"
-  }
+    "what_this_is": "Feature lug for the Compass hub advisor \u2014 the user-facing dashboard and decision engine",
+    "what_this_is_NOT": "Not just a report generator \u2014 this is the autopilot interface for the entire system"
+  },
+  "va": "build"
 }

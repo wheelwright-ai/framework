@@ -6,17 +6,17 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T11:15:00Z",
   "fw_version": "3.0.0",
-  "title": "Ozi Routing Awareness — Scope-aware work dispatch & lug creation",
+  "title": "Ozi Routing Awareness \u2014 Scope-aware work dispatch & lug creation",
   "one_liner": "Build routing intelligence into Ozi: before creating lugs or dispatching work, verify if it's local, framework, or broadcast-signal scope.",
-  "summary": "Ozi (and AI assistants) currently create lugs without explicitly considering project boundaries. When discovering an issue, work item, or learning, Ozi should: (1) identify what project it belongs to, (2) check if it's in-scope for THIS spoke or if it's framework-wide, (3) route accordingly — local lugs stay internal, framework improvements go to hub teaching, signals broadcast to other spokes.",
+  "summary": "Ozi (and AI assistants) currently create lugs without explicitly considering project boundaries. When discovering an issue, work item, or learning, Ozi should: (1) identify what project it belongs to, (2) check if it's in-scope for THIS spoke or if it's framework-wide, (3) route accordingly \u2014 local lugs stay internal, framework improvements go to hub teaching, signals broadcast to other spokes.",
   "motivation": "Scope clarity prevents wasted turns figuring out routing. Users should be able to ask 'add this feature' and Ozi says 'I'll create it in [project], routed to [destination]' before writing the lug. Boundaries are core to stewardship.",
   "acceptance_criteria": [
     "Ozi loads `_project_foundation` + `wheel` identity at session start",
     "Before creating any lug: routing gate asks/verifies: LOCAL | FRAMEWORK | SIGNAL",
     "Lug schema extended: `routed_to` (enum) + `scope_verified_by` (string: who decided)",
-    "Lug creation announces: 'Creating [type] {title} → [destination] (routed to [target])'",
+    "Lug creation announces: 'Creating [type] {title} \u2192 [destination] (routed to [target])'",
     "Closeout filters lugs by routing: local stays, framework/signal copied to hub for delivery",
-    "Test case: User requests 'optimize wakeup for fast projects' — Ozi routes to epic-minimal-context-wakeup-v1 (LOCAL) + creates signal-ozi-routing-awareness (SIGNAL)"
+    "Test case: User requests 'optimize wakeup for fast projects' \u2014 Ozi routes to epic-minimal-context-wakeup-v1 (LOCAL) + creates signal-ozi-routing-awareness (SIGNAL)"
   ],
   "scope": [
     "Extend lug-schema with routing fields",
@@ -35,5 +35,6 @@
   ],
   "phase": "planning",
   "priority": "high",
-  "size_estimate": "6-8 steps"
+  "size_estimate": "6-8 steps",
+  "va": "grind"
 }

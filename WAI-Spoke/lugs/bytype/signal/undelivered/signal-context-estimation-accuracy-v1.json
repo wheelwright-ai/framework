@@ -7,11 +7,11 @@
   "created_by": "claude-haiku-4-5",
   "timestamp": "2026-03-25T11:01:00Z",
   "fw_version": "3.0.0",
-  "title": "Context Estimation Accuracy — 2.4x Overestimate on Wakeup",
+  "title": "Context Estimation Accuracy \u2014 2.4x Overestimate on Wakeup",
   "summary": "Wakeup protocol estimated 57% context usage (114KB), actual measured 23% (46KB). Estimation method is too naive and breaks transparency.",
-  "description": "Session 73 wakeup briefing estimated context at 57% by summing file sizes without accounting for: (1) lazy-loaded content (lugs listed but not read), (2) compression efficiency (tokens ≠ file bytes), (3) truncated preview loads (WAI-State.md showed 73KB but only 2KB loaded). When user ran /context, actual was 23% — 2.4x error.",
+  "description": "Session 73 wakeup briefing estimated context at 57% by summing file sizes without accounting for: (1) lazy-loaded content (lugs listed but not read), (2) compression efficiency (tokens \u2260 file bytes), (3) truncated preview loads (WAI-State.md showed 73KB but only 2KB loaded). When user ran /context, actual was 23% \u2014 2.4x error.",
   "implications": [
-    "Briefing context health reports are unreliable — breaks user trust in capacity warnings",
+    "Briefing context health reports are unreliable \u2014 breaks user trust in capacity warnings",
     "YELLOW/ORANGE alerts may fire incorrectly, pushing premature closeouts",
     "Framework appears imprecise when context health is core value prop"
   ],
@@ -22,11 +22,12 @@
     "Option C (future): Build lightweight token counter into wakeup that tracks each loaded file's actual consumption."
   ],
   "affected_lugs": [
-    "epic-skill-thrift-v1 (Tier 1) — part of broader slim-down effort"
+    "epic-skill-thrift-v1 (Tier 1) \u2014 part of broader slim-down effort"
   ],
-  "next_action": "Update wakeup protocol Step 7 (Context Budget Governor) — replace estimation with measured reality",
+  "next_action": "Update wakeup protocol Step 7 (Context Budget Governor) \u2014 replace estimation with measured reality",
   "learning": "AI context measurement needs ground truth, not inference. Trust tool outputs (Claude's /context) over calculated estimates.",
   "routed_to": "signal:all-spokes",
   "scope_verified_by": "user feedback (Session 73: context estimation is framework-wide issue)",
-  "routing_notes": "High-impact learning (impact: 9) that affects all spokes' wakeup protocol. Should be delivered to hub as framework teaching."
+  "routing_notes": "High-impact learning (impact: 9) that affects all spokes' wakeup protocol. Should be delivered to hub as framework teaching.",
+  "va": "grind"
 }

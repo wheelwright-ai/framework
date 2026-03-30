@@ -1,0 +1,46 @@
+{
+  "i": "feature-ozi-roi-vibe-scoring-v1",
+  "t": "Ozi ROI scoring with vibe-aware tiebreaking for priority-equal work items",
+  "ty": "feature",
+  "s": "in_progress",
+  "ca": "2026-03-29T23:20:00Z",
+  "gb": "session-20260329-2315",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "effort": 3,
+  "description": "Replace FIFO queue ordering with ROI-scored prioritization. When items score within 0.5 ROI of each other, use vibe affinity to tiebreak. Vibe is sourced from hub (Compass default) or user override at wakeup. Self-interrogate: apply to framework spoke immediately, iterate from real usage.",
+  "perceive": "Ozi currently picks work FIFO. User observed that some low-ROI items block high-ROI ones. Equal-priority items should respect user energy/mood. Hub (Compass) should influence default vibe.",
+  "execute": [
+    "1. Define ROI formula: (impact \u00d7 leverage) / effort",
+    "2. Define vibe categories and work-type affinity map",
+    "3. Add vibe_affinity tag to lug schema as optional field",
+    "4. Tag all active lugs in this spoke with vibe_affinity",
+    "5. Add vibe prompt to wakeup Step 9 (one word, no ceremony)",
+    "6. Wire tiebreak logic into Ozi work queue monitor skill",
+    "7. Self-test: run scored queue on our own backlog, verify ordering matches ROI analysis"
+  ],
+  "verify": "Wakeup presents vibe prompt. Ozi queue sorts by ROI. Equal-ROI items respect vibe. Framework spoke backlog ordering matches Session 102 analysis.",
+  "workflow": {
+    "completed_steps": [
+      "1. ROI formula defined: (impact \u00d7 leverage) / effort, signal cap at 5.0",
+      "2. Vibe categories defined: build/fix/think/grind/ship with multiplicative affinity",
+      "3. vibe_affinity (va), impact, effort added to lug schema + reference doc",
+      "4. All 98 active lugs tagged with va field via tools/tag_vibe_affinity.py",
+      "5. Vibe prompt added to wakeup Step 9 — one word, no ceremony",
+      "6. Ozi monitor Step 1b wired to tools/score_backlog.py with vibe param",
+      "7. Self-test: validated across all 5 vibes — correct differentiation confirmed"
+    ],
+    "next_step": "None — all execute steps complete. Ready for closeout or further iteration.",
+    "iteration_notes": [
+      "v1: additive bonuses too weak \u2014 items within ROI gap >1.0 never reordered",
+      "v2: multiplicative affinity (0.5-1.8x) \u2014 correct differentiation confirmed",
+      "v1: signals dominated (effort=1 inflated ROI) \u2014 added signal cap at 5.0",
+      "Data quality: audit-teaching-adoption lug inflated by stale impact=7 in other bucket"
+    ]
+  },
+  "_behavior_directive": {
+    "what_this_is": "ROI + vibe scoring system for Ozi work queue prioritization. Replaces FIFO with intelligent ordering.",
+    "what_this_is_NOT": "Not a planning tool. Not Lathe (portfolio strategy). Not Compass (dashboard). This is the scoring engine that both Lathe and Compass will feed into."
+  },
+  "va": "ship"
+}
