@@ -1,0 +1,19 @@
+{
+  "id": "signal-repo-sanitization-auto-init-v1",
+  "type": "signal",
+  "status": "undelivered",
+  "s": "undelivered",
+  "created_at": "2026-03-30T04:00:00Z",
+  "gb": "claude-opus-4-6 (session-20260330-0134)",
+  "fw_ver": "3.0.0",
+  "title": "Framework repo sanitized: WAI-Spoke/ gitignored with auto-init from template on first session",
+  "impact": 9,
+  "signal": "WAI-Spoke/ is now fully gitignored in the framework repo. Personal session data, lugs, and state never committed. Auto-init hook creates WAI-Spoke/ from templates/spoke/WAI-State.json.template on first Claude session. All hardcoded /home/mario paths replaced with env vars. Personal data archived to hub/spokes/framework/. This changes the distribution model: clone gets clean framework, WAI-Spoke bootstraps on first use.",
+  "rationale": "Fundamental change to how the framework distributes. Enables true open-source release without PII leakage. Every spoke should adopt this pattern \u2014 WAI-Spoke/ is runtime data, not source code.",
+  "routed_to": "SIGNAL",
+  "scope_verified_by": "user (Session 103: 'it shouldnt store my WAI-Spoke in the repo')",
+  "_behavior_directive": {
+    "what_this_is": "Signal observation from signal-repo-sanitization-auto-init-v1",
+    "what_this_is_NOT": "Not an instruction to execute. Route and store only."
+  }
+}
