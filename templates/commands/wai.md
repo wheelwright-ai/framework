@@ -419,11 +419,19 @@ Display budget status using actual token measurement and traffic-light tiers:
 | ORANGE | 60-80% | Warn: "Context at {N}% — consider closeout after current task" |
 | RED | >80% | **Auto-prepare closeout.** Notify user: "Context at {N}% — initiating closeout preparation." Begin state preservation (reconcile lugs, capture session summary, prepare WAI-State updates). User can override with "continue" but default is closeout. |
 
-**Measurement method:** Report actual token usage from the `/context` command (Claude Code only). Framework must have a way to query real context usage at wakeup. Note: This is a measurement, not an estimate. Use model context limit from `ai_context.context_limit` in WAI-State.json (default: 200,000).
+**Measurement method — NEVER GUESS:**
 
-**For non-Claude tools:** If `/context` is unavailable, include note in briefing: "Context measurement unavailable on this tool. Run `/context` periodically to check budget." Do NOT estimate.
+1. **Claude Code:** The `/context` command shows real token usage. Read its output to get `{tokens_used}K/{tokens_limit}K ({percent}%)`. The model's actual context limit varies:
+   - Opus 4.6 (1M context): 1,000,000 tokens
+   - Sonnet 4.6: 200,000 tokens
+   - Haiku 4.5: 200,000 tokens
+   Use the limit shown by `/context`, NOT `ai_context.context_limit` in WAI-State.json (that field is informational only — `/context` is authoritative).
 
-**During the session:** Before loading large files on-demand, check if loading would exceed 200KB of additional tokens. If so, warn before loading. Do not load if it would cross into RED tier without user approval.
+2. **If `/context` was NOT run this session:** State "Context: unknown — run /context for measurement". Do NOT estimate from token counts, file sizes, or turn counts. Estimation was proven 2.4x inaccurate in Session 102 (estimated 48%, actual 18%).
+
+3. **Non-Claude tools:** Note "Context measurement unavailable. Run tool-specific equivalent periodically."
+
+**During the session:** When the user runs `/context`, read the output and update the tier accordingly. Before loading large files on-demand, note that the load will consume tokens but do not fabricate a percentage.
 
 **Closeout readiness line (add to Context Health section of Step 7 briefing):**
 ```

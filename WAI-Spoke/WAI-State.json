@@ -99,7 +99,7 @@
     "last_closeout": "2026-03-30T05:20:00Z",
     "session_count": 102,
     "track_path": "WAI-Spoke/sessions/session-20260329-1808/track.jsonl",
-    "next_session_recommendation": "Session 102: (1) Fix tender pass 2 loop — only processed 1 spoke then stopped, needs set +e around ls/find checks. (2) Run tender --all to adopt teachings fleet-wide. (3) Implement Lathe scoring in wheel-tender for dynamic prioritization. (4) Review 18 kept hub signals — route to spokes or extract teachings. (5) Adopt migration-npm-to-bun-v1 teaching (manual review). (6) Design Compass MVP — morning dashboard HTML. (7) LinkedIn post about async dispatch → create lug for nurturator.",
+    "next_session_recommendation": "Session 102: (1) Fix tender pass 2 loop \u2014 only processed 1 spoke then stopped, needs set +e around ls/find checks. (2) Run tender --all to adopt teachings fleet-wide. (3) Implement Lathe scoring in wheel-tender for dynamic prioritization. (4) Review 18 kept hub signals \u2014 route to spokes or extract teachings. (5) Adopt migration-npm-to-bun-v1 teaching (manual review). (6) Design Compass MVP \u2014 morning dashboard HTML. (7) LinkedIn post about async dispatch \u2192 create lug for nurturator.",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",
@@ -213,7 +213,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
@@ -233,7 +233,7 @@
       "total_tokens_used": 0,
       "tokens_saved_estimate": 0,
       "baseline_tokens_estimate": 0,
-      "context_limit": 200000,
+      "context_limit": 1000000,
       "avg_tokens_per_session": 0
     },
     "quality_metrics": {
