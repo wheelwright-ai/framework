@@ -17,6 +17,18 @@ If NO (hook did not run): Execute all steps normally.
 
 ---
 
+## Minimal Mode
+
+If the user passes `--minimal` or says "minimal wakeup" or "quick wakeup":
+- **Load:** WAI-State.json only (Step 2)
+- **Skip:** Skills (Step 3), active lug listing (Step 4), historian (Step 4b), taste (Step 4c), teachings (Step 5), external tracks (Step 6)
+- **Show:** Project name, version, session count, last closeout time, tagged next lug
+- **Ask:** "What's your focus?" — load relevant lugs on-demand based on answer
+
+This reduces wakeup from ~46k to ~8k tokens. Use for quick cross-project handoffs or when you know exactly what you want to work on.
+
+---
+
 ## Step 1: Load Integration File
 
 Detect environment and read the corresponding integration file:

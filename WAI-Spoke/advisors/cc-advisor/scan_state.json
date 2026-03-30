@@ -1,0 +1,24 @@
+{
+  "advisor_id": "cc-advisor",
+  "advisor_name": "ClaudeCode Configuration Advisor",
+  "version": "1.0.0",
+  "last_scan_session": null,
+  "last_scan_at": null,
+  "scan_count": 0,
+  "passes": [],
+  "data_sources": [
+    {"source": ".claude/settings.json", "fields_used": ["hooks", "permissions"], "adequacy": "good"},
+    {"source": ".claude/settings.local.json", "fields_used": ["permissions"], "adequacy": "unknown"},
+    {"source": "CLAUDE.md", "fields_used": ["rules", "anti-patterns", "hooks"], "adequacy": "good"},
+    {"source": ".claude/hooks/", "fields_used": ["hook scripts"], "adequacy": "good"}
+  ],
+  "rubric": {
+    "categories": [
+      {"id": "hooks", "name": "Hook Coverage", "weight": 3, "checks": ["session-start", "user-prompt-submit", "pre-tool-guard", "stop-hook", "pre-compact"]},
+      {"id": "permissions", "name": "Permission Hygiene", "weight": 2, "checks": ["deny-list-populated", "no-wildcard-allows", "settings-local-clean"]},
+      {"id": "claude-md", "name": "CLAUDE.md Completeness", "weight": 2, "checks": ["anti-patterns", "standing-rules", "workflow", "hooks-documented"]},
+      {"id": "integration", "name": "WAI Integration", "weight": 3, "checks": ["wakeup-hook", "closeout-hook", "track-capture", "lug-schema-loaded"]}
+    ],
+    "scoring": "Each check: 0 (missing), 1 (partial), 2 (complete). Score = sum / max * 100"
+  }
+}

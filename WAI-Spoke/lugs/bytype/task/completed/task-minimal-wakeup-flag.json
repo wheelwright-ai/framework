@@ -2,7 +2,7 @@
   "i": "task-minimal-wakeup-flag",
   "t": "Add minimal context wakeup mode \u2014 skip Skills and lugs loading when switching between spokes quickly",
   "ty": "task",
-  "s": "o",
+  "s": "r",
   "ca": "2026-03-29T09:45:00Z",
   "gb": "claude-opus-4-6",
   "fw_ver": "3.0.0",

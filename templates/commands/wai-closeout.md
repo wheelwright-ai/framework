@@ -233,6 +233,32 @@ For each signal lug to deliver, include a `target` field:
 
 Report: "Delivered N signals to hub (M new, K already present). Targets: X hub, Y framework, Z spokes."
 
+### 9d. Spoke Registry Update
+
+Generate a spoke self-registry entry so the hub always has current spoke metadata.
+
+1. Extract from `WAI-State.json`:
+   - `wheel.spoke_id`, `wheel.name`, `wheel.version`, `wheel.status`
+   - `_project_foundation.identity.one_liner`
+   - `_session_state.session_count`, `_session_state.last_closeout`
+
+2. Write to `{hub_path}/WAI-Hub/registry/incoming/{spoke_id}.json`:
+```json
+{
+  "spoke_id": "{spoke_id}",
+  "name": "{name}",
+  "version": "{version}",
+  "status": "{status}",
+  "one_liner": "{one_liner}",
+  "session_count": N,
+  "last_closeout": "ISO-8601",
+  "reported_at": "ISO-8601"
+}
+```
+
+3. If hub unreachable: note in `next_session_recommendation`, don't block closeout.
+4. Hub gardener aggregates `registry/incoming/` entries into `hub-registry.json`.
+
 ### 10. Autosave Cleanup (Interruption Recovery Hygiene)
 
 Remove autosave checkpoints older than 3 sessions:
