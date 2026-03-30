@@ -1,8 +1,8 @@
 {
   "i": "policy-closeout-per-milestone-v1",
-  "t": "POLICY: Commit and closeout per completed lug or significant milestone — progress over perfection",
+  "t": "POLICY: Commit and closeout per completed lug or significant milestone \u2014 progress over perfection",
   "ty": "policy",
-  "s": "open",
+  "s": "resolved",
   "ca": "2026-03-29T23:55:00Z",
   "gb": "session-20260329-2315",
   "fw_ver": "3.0.0",
@@ -13,5 +13,8 @@
   "_behavior_directive": {
     "what_this_is": "Commit cadence policy: one commit per lug completion or milestone. Drives visible progress and prevents loss.",
     "what_this_is_NOT": "Not a replacement for closeout ceremony. Full /wai-closeout still runs at session end. This is about intermediate persistence."
-  }
+  },
+  "resolved_at": "2026-03-30T03:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Active policy \u2014 proven in Session 102 (20 commits). Keep as reference but close the lug."
 }

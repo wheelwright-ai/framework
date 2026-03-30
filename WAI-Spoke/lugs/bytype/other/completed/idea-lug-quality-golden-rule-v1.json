@@ -2,7 +2,7 @@
   "i": "idea-lug-quality-golden-rule-v1",
   "ty": "idea",
   "t": "Lug quality: golden rule standard + improve-before-notify workflow",
-  "s": "proposed",
+  "s": "resolved",
   "ca": "2026-03-26T16:30:00Z",
   "gb": "session-81-framework via incoming signal",
   "challenge": "Lugs are written tersely and the improve skill is skipped. The user receives a lug notification before improve has run, meaning they see incomplete work. Terse lugs create invisible gaps for the next agent.",
@@ -25,5 +25,8 @@
     "what_this_is": "Improvement idea: lug quality standard and improve workflow enforcement.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
   },
-  "va": "grind"
+  "va": "grind",
+  "resolved_at": "2026-03-30T03:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Captured in PEV gate rule + lug-before-showing feedback. Already enforced."
 }

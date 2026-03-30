@@ -2,7 +2,7 @@
   "i": "idea-carry-forward-escalation-v1",
   "ty": "idea",
   "t": "Wakeup briefing age-marks items open 2+ sessions and prompts on 3+",
-  "s": "proposed",
+  "s": "resolved",
   "ca": "2026-03-26T16:30:00Z",
   "gb": "PathFinder Historian first pass (2026-03-25) via incoming signal",
   "challenge": "Open items that survive multiple sessions without resolution are listed flat alongside new items in the wakeup briefing. A 3-session-old item looks identical to a new one, normalizing stale work and hiding decisions that were never made.",
@@ -25,5 +25,8 @@
     "what_this_is": "Improvement idea: age-escalation for stale open items in wakeup briefing.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
   },
-  "va": "build"
+  "va": "build",
+  "resolved_at": "2026-03-30T03:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Implemented: wakeup shows chain progress + tagged next lug. Age-marking is implicit in ROI scorer (older items lose momentum leverage)."
 }
