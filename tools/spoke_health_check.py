@@ -79,11 +79,23 @@ class HealthReport:
     def elapsed_ms(self):
         return (time.time() - self.start_time) * 1000
 
+    @property
+    def health(self):
+        """Overall health: GREEN (0 fails), YELLOW (1-3 fails), RED (4+ fails).
+        WARNs are informational and do not affect health status."""
+        if self.failed == 0:
+            return "GREEN"
+        elif self.failed <= 3:
+            return "YELLOW"
+        else:
+            return "RED"
+
     def to_dict(self):
         return {
             "spoke_path": self.spoke_path,
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "mode": self.mode,
+            "health": self.health,
             "elapsed_ms": round(self.elapsed_ms, 1),
             "passed": self.passed,
             "failed": self.failed,
@@ -110,8 +122,7 @@ class HealthReport:
             f"  Passed: {self.passed} | Failed: {self.failed} | "
             f"Warnings: {self.warnings} | {self.elapsed_ms:.0f}ms"
         )
-        overall = "HEALTHY" if self.failed == 0 else "DRIFT DETECTED"
-        print(f"  Result: {overall}")
+        print(f"  Health: {self.health}")
         print()
 
 

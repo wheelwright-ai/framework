@@ -7,5 +7,8 @@
   "fix_suggestion": "Add a rule: if user responds to the banner with anything other than an explicit 'no', 'cancel', or 'stop', treat it as confirmation and proceed. Alternatively, auto-commit after banner is shown with a 10-second countdown unless explicitly cancelled.",
   "source_spoke": "minder",
   "session_id": "claude-sonnet-4-6-2026-03-26-s48",
-  "created_at": "2026-03-26T22:20:00Z"
+  "created_at": "2026-03-26T22:20:00Z",
+  "resolved_at": "2026-03-29T18:40:00Z",
+  "resolved_by": "claude-opus-4-6",
+  "resolution": "Already fixed in current codebase \u2014 verified session 101"
 }

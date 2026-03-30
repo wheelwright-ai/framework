@@ -74,7 +74,8 @@ Living document. Add entries when Claude does something wrong.
 - Never `git push --force` to `main`.
 - Never write secret values or `.env` contents to any file.
 - Do not make unrequested changes outside the explicit scope of the current task.
-- Use `\cp` and `\rm -f` in WSL to bypass interactive aliases.
+- Use `\cp` in WSL to bypass interactive cp alias.
+- **Never use `rm` on files under `~/projects/`.** Move to `~/projects/trash_bin/` preserving the relative path. Example: `mkdir -p ~/projects/trash_bin/wheelwright/framework && mv ~/projects/wheelwright/framework/old-file.txt ~/projects/trash_bin/wheelwright/framework/old-file.txt`. The pre-tool-guard hook enforces this, but prefer writing the mv directly. Trash is purged automatically by the gardener after 10 days.
 
 ## Behavioral Protocols
 

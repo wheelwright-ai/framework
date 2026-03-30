@@ -272,6 +272,7 @@ Show unified WAI Point briefing:
 - Active work (from `bytype/*/open/` and `bytype/*/in_progress/`)
   - **Include routing info:** Group by `routed_to` (LOCAL, FRAMEWORK, SIGNAL)
   - Announce: "Routing: X LOCAL (this project), Y FRAMEWORK (hub), Z SIGNAL (broadcast)"
+  - **Stale in_progress detection:** Surface any lugs unchanged for >4 hours with options to abandon/resume/extend
 - **Teaching discovery** — action-gated:
   - If `teachings_all_current`: one line: `Teachings: ✓ current (N adopted)` — no expansion
   - If `actionable > 0`: show only what needs attention:
@@ -340,6 +341,7 @@ touch "$SESSION_DIR/track.jsonl"
 1. **Autosave checkpoint** (BEFORE appending to track):
    ```bash
    TURN_N={turn_number}
+   mkdir -p "WAI-Spoke/.autosave"
    cat > "WAI-Spoke/.autosave/turn-${TURN_N}.json" << 'EOF'
    {
      "turn": {TURN_N},
@@ -349,8 +351,11 @@ touch "$SESSION_DIR/track.jsonl"
      "state": { ... lug state, open work, decisions ... }
    }
    EOF
+
+   # Keep rolling window of last 3 checkpoints
+   ls -1 "WAI-Spoke/.autosave/turn-"*.json 2>/dev/null | sort -V | head -n -3 | xargs -r rm -f
    ```
-   Purpose: If session crashes, recover from this checkpoint before track.jsonl append.
+   Purpose: If session crashes, recover from this checkpoint before track.jsonl append. Rolling window prevents autosave directory from accumulating stale files.
 
 2. **Track entry** (AFTER turn completes successfully):
    ```json

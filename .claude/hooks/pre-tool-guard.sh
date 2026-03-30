@@ -41,6 +41,31 @@ if echo "$first_line" | grep -qiE '^\s*.*drop\s+(database|table)'; then
   exit 2
 fi
 
+# Intercept: rm within ~/projects — redirect to trash bin with reflective path
+# Matches: rm, rm -f, rm -rf, \rm, \rm -f on files/dirs under ~/projects/
+TRASH_BIN="$HOME/projects/trash_bin"
+if echo "$first_line" | grep -qE '^\s*\\?rm\s'; then
+  # Extract target paths (skip flags)
+  targets=$(echo "$first_line" | sed -E 's/^\s*\\?rm\s+(-[a-zA-Z]+\s+)*//g')
+  # Only intercept if targets are under ~/projects/
+  if echo "$targets" | grep -qE "(^|/)(~/projects/|\$HOME/projects/|/home/[^/]+/projects/)"; then
+    # Build the rewritten command: mkdir -p trash dest, mv instead of rm
+    rewrite="# Soft-delete: redirected to trash bin"$'\n'
+    for target in $targets; do
+      # Expand ~ and $HOME
+      expanded=$(echo "$target" | sed "s|^~|$HOME|; s|\\\$HOME|$HOME|")
+      # Strip the ~/projects/ prefix to get relative path
+      rel_path="${expanded#$HOME/projects/}"
+      trash_dest="$TRASH_BIN/$rel_path"
+      trash_dir=$(dirname "$trash_dest")
+      rewrite+="mkdir -p \"$trash_dir\" && mv \"$expanded\" \"$trash_dest\""$'\n'
+    done
+    echo "SOFT-DELETE: rm intercepted — files moved to $TRASH_BIN/ instead of deleted. Rewrite:" >&2
+    echo "$rewrite" >&2
+    exit 2
+  fi
+fi
+
 # Allow everything else
 echo '{"decision":"allow"}'
 exit 0

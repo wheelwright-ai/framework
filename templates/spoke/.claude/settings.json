@@ -57,8 +57,31 @@
     ]
   },
   "permissions": {
+    "allow": [
+      "Bash(*~/projects/*)",
+      "Bash(*~/.claude/*)",
+      "Bash(git *)",
+      "Bash(python3 *)",
+      "Bash(date *)",
+      "Bash(test *)",
+      "Bash(which *)",
+      "Bash(echo *)",
+      "Bash(pwd)",
+      "Bash(sleep *)",
+      "Bash(kill *)",
+      "Bash(crontab *)",
+      "Write(*)",
+      "Read(*)",
+      "Edit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Skill(*)",
+      "Agent(*)"
+    ],
     "deny": [
       "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/projects)",
       "Bash(git push --force*)",
       "Bash(git push -f*)"
     ]
