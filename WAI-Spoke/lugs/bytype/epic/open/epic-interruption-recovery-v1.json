@@ -43,5 +43,10 @@
   "routed_to": "framework",
   "scope_verified_by": "user request (Session 73: recovery mechanism for unexpected restarts)",
   "routing_notes": "Framework-wide improvement. Affects wakeup protocol, track schema, and state management. Should be delivered as teaching to all spokes.",
-  "va": "ship"
+  "va": "ship",
+  "perceive": "Read the current state relevant to: Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "impact": 8,
+  "effort": 4
 }

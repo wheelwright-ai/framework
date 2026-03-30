@@ -41,5 +41,8 @@
     "what_this_is": "Feature lug for the Lathe portfolio management system \u2014 strategic spoke weighting",
     "what_this_is_NOT": "Not a simple scoring tweak \u2014 this is a new architectural layer"
   },
-  "va": "build"
+  "va": "build",
+  "perceive": "Read the current state relevant to: Lathe: Portfolio management layer \u2014 strategic weighting, shift directions, inves. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: The Lathe is the strategic layer that shapes where the wheel spins hardest. Each spoke gets a shift direction (maintain/growth/revenue/custom) with urgency and investment profiles (time, money, attent",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals."
 }

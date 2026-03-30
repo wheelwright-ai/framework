@@ -60,5 +60,14 @@
   ],
   "reconciled_at": "2026-03-24T22:25:00Z",
   "reconciled_reason": "Session 68 audit: teachings_repo and signal routing are operational. Updated child statuses. Moved from open to in_progress. 2 of 4 children completed.",
-  "va": "grind"
+  "va": "grind",
+  "perceive": "Read the current state relevant to: Hub folder/structure evolution for canonical Wheelwright. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Evolve hub directory structure to support canonical Wheelwright model.",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Hub folder/structure evolution for canonical Wheelwright",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "effort": 4
 }

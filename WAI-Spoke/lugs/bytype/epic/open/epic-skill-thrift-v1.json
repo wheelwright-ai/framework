@@ -140,5 +140,13 @@
     "tier1_total": "~871 lines saved \u2014 largest two files alone",
     "full_epic": "~25,000+ tokens across all skills"
   },
-  "va": "fix"
+  "va": "fix",
+  "perceive": "Read the current state relevant to: Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference f. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference files for verbose content",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Apply Skill Thrift Principle to all WAI skills \u2014 lean primar",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "effort": 4
 }

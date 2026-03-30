@@ -255,5 +255,14 @@
     "what_this_is": "Epic to build the ClaudeCode advisor \u2014 a persistent WAI advisor that replaces the point-in-time maximizer with continuous CC config monitoring, historical tracking, and cross-spoke improvement distribution. Uses existing advisor pattern, signal pipeline, and teaching distribution.",
     "what_this_is_NOT": "Not a new system parallel to WAI. Not changing what the 8-area rubric measures \u2014 only how it runs (persistent vs on-demand). Not creating parallel distribution mechanisms \u2014 uses teachings_repo."
   },
-  "va": "build"
+  "va": "build",
+  "perceive": "Read the current state relevant to: Persistent ClaudeCode configuration advisor with hub distribution. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Claude Code starts blank every session. The existing wai-claude-maximizer (at templates/commands/wai-claude-maximizer.md) does point-in-time audits of 8 CC config areas but has no memory \u2014 it can't de",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Persistent ClaudeCode configuration advisor with hub distrib",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "effort": 4
 }

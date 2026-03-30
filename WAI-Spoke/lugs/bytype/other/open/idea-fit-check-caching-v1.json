@@ -30,5 +30,15 @@
     "what_this_is": "Improvement idea \u2014 adds caching to the fit check for large backlogs.",
     "what_this_is_NOT": "An instruction to implement."
   },
-  "va": "grind"
+  "va": "grind",
+  "perceive": "Read the current state relevant to: Fit-check caching \u2014 stamp idea lugs with corpus hash to skip redundant scans. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Fit-check caching \u2014 stamp idea lugs with corpus hash to skip redundant scans",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Fit-check caching \u2014 stamp idea lugs with corpus hash to skip",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "impact": 4,
+  "effort": 2
 }

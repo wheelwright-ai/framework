@@ -52,5 +52,8 @@
     "what_this_is_NOT": "Not just a report generator \u2014 this is the autopilot interface for the entire system"
   },
   "va": "build",
-  "updated_at": "2026-03-30T03:10:00Z"
+  "updated_at": "2026-03-30T03:10:00Z",
+  "perceive": "Read the current state relevant to: Compass: Hub advisor \u2014 dynamic HTML dashboard, morning brief, decision tracker, . Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: The Compass is the user-facing hub advisor. It gathers data from Gardener (fleet health, work executed) and Lathe (strategic weights, shift directions, budgets), then generates a dynamic HTML dashboar",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals."
 }

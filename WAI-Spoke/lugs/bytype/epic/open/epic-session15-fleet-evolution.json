@@ -91,5 +91,14 @@
   },
   "reconciled_at": "2026-03-24T22:25:00Z",
   "reconciled_reason": "Session 68 audit: updated child statuses to reflect actual completion state. 3 of 5 incorporate_now items completed, 2 rewrite_first items superseded by evolved skill system. 1 post_evolution item superseded. Remaining open items are valid backlog.",
-  "va": "think"
+  "va": "think",
+  "perceive": "Read the current state relevant to: Canonical Wheelwright evolution - object model, behavior, migration, and post-de. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Parent epic for the canonical Wheelwright redesign and refactor. Establishes canonical WAI object definitions, spoke/hub behavior, storage structure, and migration-safe closeout semantics.",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Canonical Wheelwright evolution - object model, behavior, mi",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "effort": 4
 }

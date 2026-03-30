@@ -33,5 +33,15 @@
     "what_this_is": "Finalized improvement idea \u2014 schema addition. Ready for epic creation in a future session.",
     "what_this_is_NOT": "An instruction to implement. Epic must be created and dogfooded before execution."
   },
-  "va": "build"
+  "va": "build",
+  "perceive": "Read the current state relevant to: WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: WAI-Challenges.jsonl \u2014 problem-centric backlog as first-clas",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "impact": 4,
+  "effort": 2
 }

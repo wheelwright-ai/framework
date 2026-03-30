@@ -44,5 +44,14 @@
     "what_this_is": "Epic tracking the quality review of all active lugs across multiple sessions",
     "what_this_is_NOT": "Not a one-shot cleanup \u2014 this is batched, methodical quality improvement"
   },
-  "va": "grind"
+  "va": "grind",
+  "perceive": "Read the current state relevant to: Review and improve all 65 active lugs for naming quality, detail, and PEV compli. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Every active lug (61 open + 4 in_progress) must meet quality standards: meaningful name (id=filename=intent), adequate description, PEV fields where required, self-contained for cold readers. Each lug",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Review and improve all 65 active lugs for naming quality, de",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "effort": 4
 }

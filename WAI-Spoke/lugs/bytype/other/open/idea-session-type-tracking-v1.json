@@ -25,5 +25,15 @@
     "what_this_is": "Improvement idea: distinguish user vs agent sessions in session_count.",
     "what_this_is_NOT": "An instruction to implement immediately without user direction."
   },
-  "va": "grind"
+  "va": "grind",
+  "perceive": "Read the current state relevant to: session_count increments only for user-initiated sessions; agent sessions tracke. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: session_count increments only for user-initiated sessions; agent sessions tracked separately",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: session_count increments only for user-initiated sessions; a",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "impact": 4,
+  "effort": 2
 }

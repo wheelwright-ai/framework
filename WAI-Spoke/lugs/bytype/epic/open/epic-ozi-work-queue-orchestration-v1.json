@@ -115,5 +115,10 @@
   "routed_to": "framework",
   "scope_verified_by": "user request (Session 73: 'This will rock! With this I can do work building the queue')",
   "routing_notes": "Framework-wide orchestration feature. Will be delivered as teaching when implemented. Changes how all spokes work with Ozi.",
-  "va": "grind"
+  "va": "grind",
+  "perceive": "Read the current state relevant to: Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "impact": 8,
+  "effort": 4
 }

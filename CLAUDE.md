@@ -63,6 +63,8 @@ Living document. Add entries when Claude does something wrong.
 - **TaskCreate for persistent state:** Tasks don't survive sessions. Use lugs (P11).
 - **Asking permission for safe ops:** Don't ask "want me to X or Y?" — use the ROI scorer, pick the best action, do it. P10 says trust is the default. Only pause for genuinely destructive actions.
 - **Guessing context %:** Never estimate context usage. Use `/context` output or state "unknown". Estimation was proven 2.4x inaccurate.
+- **Placeholder lugs:** Never create a lug without complete PEV, acceptance criteria, effort score, and file targets. Everything will be implemented — make it implementable at creation. After presenting a plan, immediately create the lugs. Don't wait to be asked.
+- **Deferring lug quality:** Don't walk away from the creation window without the artifact correctly defined. Test against principles and mission goals. Test again. Ozi enforces this.
 
 ## Formatting Rules: Lists
 
