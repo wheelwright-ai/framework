@@ -152,18 +152,23 @@ If `WAI-Spoke/advisors/historian/` exists:
 
 ```bash
 # Find last reviewed session watermark
-LAST_SCAN=$(jq -r '.scan_state.last_scan_session // ""' WAI-Spoke/advisors/historian/scan_state.json 2>/dev/null)
+# scan_state.json stores last_scan_session at the top level (e.g. "track_20260315-2024" or "session-20260315-2024")
+LAST_SCAN_RAW=$(jq -r '.last_scan_session // ""' WAI-Spoke/advisors/historian/scan_state.json 2>/dev/null)
 
-# Count track files newer than watermark
-UNREVIEWED_SESSIONS=$(ls -1 WAI-Spoke/sessions/ 2>/dev/null | grep "^session-" | sort | awk -v w="$LAST_SCAN" '$0 > w' | wc -l)
+# Normalize: strip any prefix (track_, session-) to get just the datetime "YYYYMMDD-HHMM"
+LAST_SCAN_TS=$(echo "$LAST_SCAN_RAW" | sed 's/^[^0-9]*//')
 
-# Sum points across those sessions
+# Count sessions and points newer than watermark
+UNREVIEWED_SESSIONS=0
 UNREVIEWED_POINTS=0
 for session_dir in WAI-Spoke/sessions/session-*/; do
     sname=$(basename "$session_dir")
-    if [[ "$sname" > "$LAST_SCAN" ]]; then
+    # Strip "session-" prefix to get datetime for comparison
+    session_ts="${sname#session-}"
+    if [[ -z "$LAST_SCAN_TS" || "$session_ts" > "$LAST_SCAN_TS" ]]; then
         count=$(wc -l < "$session_dir/track.jsonl" 2>/dev/null || echo 0)
         UNREVIEWED_POINTS=$((UNREVIEWED_POINTS + count))
+        UNREVIEWED_SESSIONS=$((UNREVIEWED_SESSIONS + 1))
     fi
 done
 ```
