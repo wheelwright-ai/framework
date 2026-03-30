@@ -1,0 +1,45 @@
+{
+  "i": "impl-expediter-rename-expand-v1",
+  "t": "Rename Librarian \u2192 Expediter + add lug prioritization/refinement burndown role",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T14:50:00Z",
+  "gb": "claude-sonnet-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "effort": 3,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "expediter",
+    "librarian",
+    "rename",
+    "hub",
+    "lug-quality"
+  ],
+  "description": "Rename the Librarian advisor to Expediter across all active hub and framework files. Expand scope beyond signal\u2192KB\u2192teach distribution to include: lug prioritization scanning (quality score per lug), refinement queue generation, and active burndown dispatch. The Expediter is the accelerator \u2014 it makes work faster to generate in each spoke by ensuring lugs arrive already refined and cheaper to dispatch.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/expediter/",
+    "/home/mario/projects/wheelwright/hub/WAI-Spoke/advisors/Expediter/",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/skills/wai/wai.md",
+    "/home/mario/projects/wheelwright/hub/AGENTS.md",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/skills/hub-knowledge-base-curator/knowledge-base-curator.yaml",
+    "/home/mario/projects/wheelwright/hub/tools/expediter_history.py",
+    "/home/mario/projects/wheelwright/hub/tests/integration/test_expediter_intake.py",
+    "/home/mario/projects/wheelwright/hub/tests/unit/test_expediter_advisor.py",
+    "/home/mario/projects/wheelwright/hub/tests/test_expediter_abstraction.py"
+  ],
+  "perceive": "Read existing Librarian skill.yaml, wai.md Step 1.5, AGENTS.md table. Confirm active vs historical file distinction.",
+  "execute": "Wave 1: mv directories. Wave 2: Update skill.yaml + state.json + deliver.py. Wave 3: Update wai.md, AGENTS.md, kb curator yaml. Wave 4: Add prioritize_and_refine.py. Wave 5: Rename tests + tools. Wave 6: Update open lugs.",
+  "verify": "grep -r Expediter hub/WAI-Hub/advisors/expediter/ returns hits. grep -r Librarian hub/WAI-Hub/advisors/ returns nothing. Hub wai.md step 1.5 references expediter/ paths. prioritize_and_refine.py exists and runs.",
+  "acceptance_criteria": [
+    "hub/WAI-Hub/advisors/expediter/ exists with all scripts",
+    "hub/WAI-Spoke/advisors/Expediter/ exists with updated skill.yaml",
+    "wai.md Step 1.5 references Expediter paths and includes lug refinement step",
+    "prioritize_and_refine.py scores lugs by PEV quality and outputs refinement queue",
+    "No stale 'Librarian' refs in active config files (wai.md, AGENTS.md, skill.yaml)"
+  ],
+  "model_fit": "SONNET",
+  "completed_at": "2026-03-30T15:12:00Z",
+  "completed_by": "claude-sonnet-4-6"
+}

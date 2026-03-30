@@ -1,0 +1,40 @@
+{
+  "i": "impl-gardener-consistency-audit-v1",
+  "t": "Gardener: Add consistency audit pass \u2014 detect and fix deprecated patterns across all spoke skill files",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T15:05:00Z",
+  "gb": "claude-sonnet-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "effort": 3,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "gardener",
+    "consistency",
+    "audit",
+    "housekeeping",
+    "automation"
+  ],
+  "description": "The Gardener currently checks spoke structural health (hooks, settings, version) but never audits skill file content for deprecated patterns. This means humans discover stale references (WAI-Lugs.jsonl, WAI-Session-Log.jsonl, countdown closeout patterns, renamed advisors) only by accident. The Gardener should own this proactively: scan all skill files on every nightly run, auto-fix safe patterns, and generate remediation lugs for complex ones. This is Pass 0 \u2014 runs before any spoke tends.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/audit_consistency.py",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh"
+  ],
+  "perceive": "Read wheel-tender.sh to understand Pass structure (Pass 1/2/3). Read verify_health.py for the health check pattern to model after. Read remediate.sh to understand how fixes are applied. Identify where Pass 0 should be inserted (before Pass 1).",
+  "execute": "1. Create audit_consistency.py with a RULES catalog. Each rule: pattern (regex), scope (files to scan), severity (auto_fix|flag), fix (replacement or None), description. Initial rules: (a) WAI-Lugs.jsonl in scope.writes fields \u2192 bytype/ paths [auto_fix in WAI-Skills.jsonl], (b) WAI-Session-Log.jsonl refs \u2192 flag, (c) lugs/active/ refs \u2192 flag, (d) advisors/Librarian/ paths \u2192 advisors/Expediter/ [auto_fix], (e) 'Proceeding with commit in N' countdown patterns in closeout skills \u2192 flag. Script outputs: list of auto-fixes applied + list of flagged issues. For each flagged issue, create a lug at hub/WAI-Spoke/lugs/bytype/task/open/task-consistency-fix-{hash}.json with the specific file, line, pattern, and suggested fix. 2. Add Pass 0 block to wheel-tender.sh: runs audit_consistency.py --hub-path $HUB_DIR --spokes-file <(registry spoke paths), logs to PASS0 prefix, reports counts.",
+  "verify": "python3 audit_consistency.py --hub-path /home/mario/projects/wheelwright/hub returns report. Running it detects WAI-Lugs.jsonl in WAI-Hub/skills/lug-advisor/wai-lug-advisor.md. Running it on a clean file returns 0 issues. Auto-fix on WAI-Skills.jsonl scope.writes replaces WAI-Lugs.jsonl with correct bytype/ path.",
+  "acceptance_criteria": [
+    "audit_consistency.py exists with RULES catalog of at least 5 deprecated patterns",
+    "Script auto-fixes safe patterns (WAI-Skills.jsonl scope.writes, Librarian path refs)",
+    "Script generates remediation lugs for complex patterns needing AI judgment",
+    "wheel-tender.sh has Pass 0 block that runs audit_consistency.py before Pass 1",
+    "Pass 0 logs PASS0_FIX and PASS0_FLAG entries to the nightly log",
+    "Running the tender nightly will catch any future regression in skill files"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "completed_at": "2026-03-30T15:10:00Z",
+  "completed_by": "claude-sonnet-4-6"
+}

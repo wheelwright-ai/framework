@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.128",
+    "version": "2.0.129",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -33,7 +33,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-30T19:42:44Z",
+    "last_modified_at": "2026-03-30T15:15:00Z",
     "last_modified_by": "claude-opus-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260330-1255",
-    "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-30T20:35:00Z",
-    "last_closeout": "2026-03-30T20:35:00Z",
-    "session_count": 107,
-    "track_path": "WAI-Spoke/sessions/session-20260330-1255/track.jsonl",
-    "next_session_recommendation": "Session 108: (1) Tender should have completed lug-hub-kb-system-tests-v1 + lug-process-existing-inbox-signals-v1 — verify and update impl-librarian-execute-hub-lugs-v1 tracking lug. (2) Refine 7 open epics: epic-cc-advisor-spoke-hub-v1, epic-skill-thrift-v1, epic-interruption-recovery-v1, epic-ozi-routing-awareness-v1, epic-ozi-work-queue-orchestration-v1, epic-lug-quality-review-v1, epic-session15-fleet-evolution. (3) Adopt pending teaching: signal-20260330-1942-from-wheelwright.md.teaching (false completions in tender — move to processed). (4) Run 2 HAIKU tasks: task-permission-request-logger-hook-v1, task-subagent-memory-config-v1. (5) impl-cc-advisor-phases-2-5-v1 still open (OPUS). NOTE: avoid --dry-run on wheel-tender.sh — it still runs Pass 1 Claude session. Check log for filter result instead.",
+    "last_session_id": "session-20260330-1445",
+    "last_modified_by": "claude-opus-4-6",
+    "last_modified_at": "2026-03-30T15:15:00Z",
+    "last_closeout": "2026-03-30T15:15:00Z",
+    "session_count": 108,
+    "track_path": "WAI-Spoke/sessions/session-20260330-1445/track.jsonl",
+    "next_session_recommendation": "Session 109: (1) Run tender to execute 2 auto-generated consistency-fix lugs on hub \u2014 these prune WAI-Lugs.jsonl refs from wai-closeout.md, wai-lug-advisor.md, wai-principles.md. (2) Run 2 HAIKU tasks: task-permission-request-logger-hook-v1, task-subagent-memory-config-v1. (3) impl-cc-advisor-phases-2-5-v1 still open (OPUS). (4) Verify impl-hub-lug-health-fix-v1 blocker status for impl-librarian-execute-hub-lugs-v1 (now impl-expediter, lug file name unchanged). (5) Refine 7 open epics. NOTE: Gardener nightly now runs Pass 0 consistency audit automatically \u2014 check gardener log for results.",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",
@@ -118,7 +118,7 @@
         "roi": 5.0,
         "type": "feature",
         "status": "ready",
-        "title": "Lathe: Portfolio management layer — strategic weighting, shift directions, inves",
+        "title": "Lathe: Portfolio management layer \u2014 strategic weighting, shift directions, inves",
         "phase": null,
         "tagged_next": true
       },
@@ -145,7 +145,7 @@
         "roi": 3.38,
         "type": "epic",
         "status": "ready",
-        "title": "Apply Skill Thrift Principle to all WAI skills — lean primary files, reference f",
+        "title": "Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference f",
         "phase": null,
         "tagged_next": false
       },
@@ -154,7 +154,7 @@
         "roi": 3.33,
         "type": "feature",
         "status": "ready",
-        "title": "Compass: Hub advisor — dynamic HTML dashboard, morning brief, decision tracker, ",
+        "title": "Compass: Hub advisor \u2014 dynamic HTML dashboard, morning brief, decision tracker, ",
         "phase": null,
         "tagged_next": false
       },
@@ -163,7 +163,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Interruption Detection & Recovery — Windows restarts, unexpected crashes",
+        "title": "Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes",
         "phase": "planning",
         "tagged_next": false
       },
@@ -181,7 +181,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Routing Awareness — Scope-aware work dispatch & lug creation",
+        "title": "Ozi Routing Awareness \u2014 Scope-aware work dispatch & lug creation",
         "phase": "planning",
         "tagged_next": false
       },
@@ -190,7 +190,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Work Queue Orchestration — Priority-ordered autonomous work dispatch",
+        "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
         "phase": "planning",
         "tagged_next": false
       },
@@ -199,7 +199,7 @@
         "roi": 3.0,
         "type": "other",
         "status": "ready",
-        "title": "WAI-Challenges.jsonl — problem-centric backlog as first-class file",
+        "title": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
         "phase": null,
         "tagged_next": false
       }
@@ -223,7 +223,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

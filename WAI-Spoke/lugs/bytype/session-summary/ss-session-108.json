@@ -1,0 +1,59 @@
+{
+  "i": "ss-session-108",
+  "ty": "session-summary",
+  "t": "Session 108: Expediter advisor + Gardener consistency audit",
+  "s": "c",
+  "ca": "2026-03-30T15:15:00Z",
+  "gb": "claude-sonnet-4-6 + claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "session_number": 108,
+  "accomplished": [
+    "Renamed Librarian advisor to Expediter across 15+ active hub files",
+    "Created prioritize_and_refine.py \u2014 PEV quality scorer + lug refinement queue",
+    "Expanded Expediter role: signal absorption + lug prioritization burndown",
+    "Updated hub wai.md Step 1.5 to Expediter + added Step 1.5c (refinement pass)",
+    "Fixed 8 WAI-Lugs.jsonl stale refs in hub wai.md to bytype/ canonical paths",
+    "Built Gardener audit_consistency.py with 7-rule deprecated pattern catalog",
+    "Wired audit as Pass 0 in wheel-tender.sh \u2014 runs before any spoke work",
+    "Live Pass 0 run: auto-fixed WAI-Skills.jsonl + CHANGELOG.md, generated 2 remediation lugs",
+    "Adopted 3 signal teachings (tender false completions, dry-run cost, false blocker pattern)"
+  ],
+  "files_touched": [
+    "hub/WAI-Hub/advisors/expediter/ (renamed from librarian)",
+    "hub/WAI-Spoke/advisors/Expediter/ (renamed from Librarian)",
+    "hub/WAI-Hub/advisors/expediter/prioritize_and_refine.py (new)",
+    "hub/WAI-Hub/advisors/gardener/audit_consistency.py (new)",
+    "hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh",
+    "hub/WAI-Hub/skills/wai/wai.md",
+    "hub/AGENTS.md",
+    "hub/WAI-Hub/skills/hub-knowledge-base-curator/knowledge-base-curator.yaml",
+    "hub/WAI-Hub/skills/WAI-Skills.jsonl",
+    "hub/tests/ (3 renamed test files)",
+    "hub/tools/expediter_history.py (renamed)",
+    "framework/WAI-Spoke/lugs/ (6 signal lugs + 3 impl lugs + session summary)"
+  ],
+  "decisions": [
+    "Expediter name chosen over Librarian \u2014 more descriptive of prioritization + burndown role",
+    "Historical lugs/tracks not renamed \u2014 they are records, not active config",
+    "Gardener Pass 0 as pre-pass \u2014 consistency audit runs before any spoke work is dispatched",
+    "Auto-fix for bounded patterns (scope fields, paths), flag for prose changes needing AI judgment",
+    "audit_consistency.py generates remediation lugs automatically \u2014 self-healing loop"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "task-permission-request-logger-hook-v1 (HAIKU) \u2014 not started",
+      "task-subagent-memory-config-v1 (HAIKU) \u2014 not started",
+      "impl-cc-advisor-phases-2-5-v1 (OPUS) \u2014 not started",
+      "2 auto-generated hub consistency fix lugs (task-consistency-fix-57599cc9, task-consistency-fix-b8574071)",
+      "Verify impl-hub-lug-health-fix-v1 blocker still valid for impl-librarian-execute-hub-lugs-v1",
+      "7 open epics need refinement"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Run tender to execute the 2 consistency-fix lugs on hub (SONNET)",
+      "Run 2 HAIKU tasks: permission-request-logger-hook + subagent-memory-config",
+      "impl-cc-advisor-phases-2-5-v1 needs OPUS session",
+      "Refine 7 open epics"
+    ]
+  }
+}
