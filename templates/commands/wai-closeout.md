@@ -130,9 +130,10 @@ For each implementation lug with `status = "implemented"`: check `_migration_sta
    - **LOCAL:** Move to `bytype/{type}/completed/` (stays in this spoke)
    - **FRAMEWORK:** Move to `bytype/{type}/completed/` AND copy to hub teachings (Step 9b)
    - **SIGNAL:** Move to `bytype/signal/delivered/` AND copy to hub signal bulletin (Step 9c)
+   - **SPOKE/{spoke_id}:** Copy to `{hub_path}/WAI-Hub/lugs/incoming/{spoke_id}/{id}.json`. The hub gardener routes it to the target spoke's `incoming/` folder. Move original to `bytype/{type}/completed/` locally.
 3. Move delivered signals from `undelivered/` to `delivered/` (archive metadata only; actual delivery in Step 9c)
 4. Regenerate `WAI-LugIndex.jsonl` — one line per lug: `{id, type, status, title, folder, created_at, routed_to}`
-5. Report: "Moved N lugs. Routing: M LOCAL, K FRAMEWORK, J SIGNAL. Index: T entries."
+5. Report: "Moved N lugs. Routing: M LOCAL, K FRAMEWORK, J SIGNAL, P SPOKE. Index: T entries."
 
 ### 5d. Tag Next Lug + Report Progress
 

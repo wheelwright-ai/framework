@@ -228,6 +228,21 @@ fi
 
 ---
 
+## Step 4d: Work Queue Bootstrap
+
+If `_work_queue.items` in WAI-State.json is empty or `_work_queue` is missing:
+
+1. Run `python3 tools/score_backlog.py` to score all active lugs
+2. Take top 10 items where type is `task`, `bug`, or `feature` and ROI >= 3.0
+3. Write to `_work_queue.items` in WAI-State.json: `[{id, roi, type, status: "ready", title, tagged_next}]`
+4. Set first item's `tagged_next: true`
+5. Set `_work_queue.last_scored_at` to current UTC timestamp
+6. Surface in briefing: "Work queue bootstrapped: {N} items"
+
+If `_work_queue.items` is already populated: skip silently. Queue is refreshed at closeout (Step 5d).
+
+---
+
 ## Step 5: Discover Teachings
 
 Poll the hub's teachings folders for new framework and cross-spoke updates.

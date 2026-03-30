@@ -76,6 +76,7 @@ A lug is a JSON file at `WAI-Spoke/lugs/bytype/{type}/{status}/{id}.json`. The f
 | `va` | `vibe_affinity` | **Work energy category** — one of: `build`, `fix`, `think`, `grind`, `ship`. Optional. Used by Ozi ROI scorer for tiebreaking when items have similar priority. |
 | `impact` | `impact` | **Impact score** 1-10. Used by ROI scorer. Default inferred from type if absent. |
 | `effort` | `effort` | **Effort score** 1-5. Used by ROI scorer. Default inferred from type if absent. |
+| `rt` | `routed_to` | Routing target: `LOCAL`, `FRAMEWORK`, `SIGNAL`, or `SPOKE/{spoke_id}` for cross-spoke |
 
 **Title Policy:**
 - **No generic session summaries:** "Session 35 summary" is BANNED.
@@ -388,6 +389,7 @@ If found in `priority` on an existing lug, treat as P1-equivalent.
 | `"LOCAL"` | Stays in this spoke — project-specific work | File copied to `lugs/bytype/{type}/completed/` only |
 | `"FRAMEWORK"` | Framework improvement — goes to hub | File copied to hub teaching delivery + `completed/` |
 | `"SIGNAL"` | High-impact learning (impact >= 8) — broadcast to all spokes | File copied to hub signal bulletin + `bytype/signal/delivered/` |
+| `"SPOKE/{spoke_id}"` | Cross-spoke routing — idea/task belongs to a different spoke | File copied to `{hub_path}/WAI-Hub/lugs/incoming/{spoke_id}/` + moved to `completed/` locally |
 
 **Default:** If not set, assume `LOCAL`. Ozi should ask before creating any lug.
 
@@ -415,6 +417,7 @@ Before creating any lug:
    - **LOCAL:** "Affects only this project" ✓
    - **FRAMEWORK:** "Affects how projects work" → route to FRAMEWORK
    - **SIGNAL:** "Impact >= 8 and affects multiple spokes" → route to SIGNAL
+   - **SPOKE/{spoke_id}:** "Belongs to a different spoke" → route to SPOKE/{spoke_id}
 3. Announce: `"Creating {type} '{title}' → {routed_to}"`
 4. Wait for user confirmation (can override routing)
 5. Record decision in `scope_verified_by`
