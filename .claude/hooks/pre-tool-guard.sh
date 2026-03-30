@@ -9,7 +9,7 @@ input=$(cat)
 tool=$(echo "$input" | jq -r '.tool_name // ""')
 
 # Only guard Bash commands
-[[ "$tool" != "Bash" ]] && echo '{"decision":"allow"}' && exit 0
+[[ "$tool" != "Bash" ]] && exit 0
 
 cmd=$(echo "$input" | jq -r '.tool_input.command // ""')
 
@@ -67,5 +67,4 @@ if echo "$first_line" | grep -qE '^\s*\\?rm\s'; then
 fi
 
 # Allow everything else
-echo '{"decision":"allow"}'
 exit 0

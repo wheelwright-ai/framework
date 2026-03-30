@@ -2,11 +2,10 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup",
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh"
+            "command": "/home/mario/projects/wheelwright/framework/.claude/hooks/session-start.sh"
           }
         ]
       }
@@ -17,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/user-prompt-submit.sh"
+            "command": "/home/mario/projects/wheelwright/framework/.claude/hooks/user-prompt-submit.sh"
           }
         ]
       }
@@ -28,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/pre-tool-guard.sh"
+            "command": "/home/mario/projects/wheelwright/framework/.claude/hooks/pre-tool-guard.sh"
           }
         ]
       }
@@ -39,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/stop-test-runner.sh"
+            "command": "/home/mario/projects/wheelwright/framework/.claude/hooks/stop-test-runner.sh"
           }
         ]
       }
@@ -50,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact.sh"
+            "command": "/home/mario/projects/wheelwright/framework/.claude/hooks/pre-compact.sh"
           }
         ]
       }
@@ -58,18 +57,7 @@
   },
   "permissions": {
     "allow": [
-      "Bash(*~/projects/*)",
-      "Bash(*~/.claude/*)",
-      "Bash(git *)",
-      "Bash(python3 *)",
-      "Bash(date *)",
-      "Bash(test *)",
-      "Bash(which *)",
-      "Bash(echo *)",
-      "Bash(pwd)",
-      "Bash(sleep *)",
-      "Bash(kill *)",
-      "Bash(crontab *)",
+      "Bash(*)",
       "Write(*)",
       "Read(*)",
       "Edit(*)",
@@ -80,8 +68,9 @@
     ],
     "deny": [
       "Bash(rm -rf /)",
-      "Bash(rm -rf ~)",
-      "Bash(rm -rf ~/projects)",
+      "Bash(rm -rf ~*)",
+      "Bash(rm -rf ~/projects*)",
+      "Bash(rm -r ~/projects*)",
       "Bash(git push --force*)",
       "Bash(git push -f*)"
     ]

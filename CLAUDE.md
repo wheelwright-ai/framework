@@ -45,7 +45,7 @@ Plan mode (Shift+Tab twice) before execution. Required for:
 
 | Hook | Event | What It Does |
 |------|-------|-------------|
-| `WAI-Spoke/_hooks/session-start.sh` | SessionStart | Pre-compute wakeup data, CC health check |
+| `.claude/hooks/session-start.sh` | SessionStart | Pre-compute wakeup data, CC health check |
 | `.claude/hooks/user-prompt-submit.sh` | UserPromptSubmit | Session guard + WAI essentials injection |
 | `.claude/hooks/pre-tool-guard.sh` | PreToolUse | Block destructive commands (rm -rf, force-push) |
 | `.claude/hooks/stop-test-runner.sh` | Stop | Run pytest when Python files changed |
