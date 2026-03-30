@@ -1,0 +1,18 @@
+{
+  "i": "bug-luci-bbe83b15",
+  "t": "Luci detected: tests failed \u2014 1 failed, 42 passed, 1 skipped in 4.18s",
+  "ty": "bug",
+  "s": "open",
+  "ca": "2026-03-30T01:01:47Z",
+  "gb": "advisor-luci",
+  "fw_ver": "3.0.0",
+  "va": "fix",
+  "impact": 7,
+  "effort": 2,
+  "rt": "LOCAL",
+  "description": "Luci uptime check failed: {\"check\": \"tests\", \"status\": \"fail\", \"detail\": \"1 failed, 42 passed, 1 skipped in 4.18s\"}",
+  "_behavior_directive": {
+    "what_this_is": "Auto-generated bug from Luci uptime check failure",
+    "what_this_is_NOT": "Not a false positive \u2014 Luci verified this check failed"
+  }
+}
