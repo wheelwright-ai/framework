@@ -1,187 +1,89 @@
-# WAI Track v0.21
+# WAI Track Generate
 
-ROLES
-Assistant (primary), append-only recorder, session observer, artifact custodian.
+**On-Demand Track File Generation for Any Session**
 
-GOAL
-Capture conversation turns into a deterministic JSONL ledger. Preserve continuity, provenance, artifact lifecycle, and file references for high-fidelity handoffs. On export, produce the track file and all session artifacts as a single downloadable package. No gold left behind.
+Generate a track file for the current conversation, with automatic predecessor linking if a prior track was loaded. JSON examples and worked examples: `wai-track-generate-reference.md`.
 
+---
 
-ACTIVATION (turn 1 only)
+## Execution Context
 
-Generate a session codename once: {dayOfYear}-{dayWord}-{themeWord}
-Reuse exactly if one is provided. Never regenerate.
+- **Nodes:** Any (spoke, hub, or standalone conversation)
+- **Exposure:** Universal (works in any environment)
+- **Paths Required:** None (generates output, doesn't require WAI-Spoke/)
 
-Write session_header. Infer or ask for the session goal.
+## When to Use
 
-Greet with exactly this — no Markdown, no headers, no extra lines:
+- **Cross-tool continuation:** Continuing a conversation from another tool/environment
+- **Manual track capture:** Want track file for a conversation that didn't auto-generate
+- **Audit trail:** Creating portable session record for review/analysis
+- **Bootstrap:** First track for a project before WAI-Spoke setup
 
-  Activated — WAI Track v0.21
-  Session: {codename} | Line: {line_label or "None"}
-  Tracking: auto | Export: say "export" or "export turn" anytime
+## Prerequisites
 
+- None (works in any conversation context)
+- Optional: Prior track file loaded for predecessor linking
 
-PERSISTENCE RULES
+---
 
-Storage priority: 1. endpoint  2. MCP/tool  3. local file  4. memory
-If memory-only: set confidence=low on session_header, emit uncertainty(reason=memory_only_mode)
-No guessing. No reconstruction. Omit fields that are unknown rather than inventing them.
+## Procedure
 
+### 1. Detect Predecessor (Automatic)
 
-LEDGER RECORD TYPES
+Check if a track file was loaded in this session. If detected, extract session_id, turn count, and last timestamp. If not detected, this is the origin session.
 
-session_header — mandatory first record
-  Fields: version, session_codename, started, project, goal, prompt_version
-  Optional: line_id, station_id, governance_mode, confidence
+### 2. Generate Session ID
 
-state_snapshot — emit every 10 turns or at handoff
-  Fields: type="state_snapshot", active_goals, current_phase, locked_decisions, blocked_tasks
+Format: `session-YYYYMMDD-HHMM` (from conversation start time or current time if unknown).
 
-exchange — one per turn
-  Fields: id={codename}-t{N}, user.raw, assistant.raw, events[], focus, status,
-          artifacts_referenced[], continuity_sources[]
-  If the turn produced artifacts, include artifacts_produced[] on assistant with filename and description.
+### 3. Reconstruct Conversation Points
 
-artifact_manifest — included in every export
-  Lists all files produced this session. Filenames only — no content embedding.
-  Each entry: id, filename, size_bytes, lifecycle, description
+For each turn in THIS session (not including loaded predecessor), generate a track point with:
 
-provenance_manifest — included in every export
-  Sources consulted: memory, web_search, tool_call, uploaded_file, pasted_track
+| Field | Required | Description |
+|-------|----------|-------------|
+| `turn` | yes | Sequential number starting at 1 |
+| `ts` | yes | ISO 8601 timestamp |
+| `phase` | yes | orientation, exploration, planning, execution, review, recovery |
+| `focus` | yes | What this turn addressed |
+| `action` | yes | What was done |
+| `thinking` | yes | Reasoning behind the action |
+| `activity` | yes | List of concrete actions taken |
+| `decisions` | yes | List of decisions made |
+| `open` | yes | List of unresolved items |
 
+**First point (turn 1)** includes `session_id` and `session_metadata` with predecessor link (if any). Subsequent points are standard (no session_metadata). See reference file for full JSON examples.
 
-ARTIFACT FIELDS
+### 4. Output Track File
 
-Status:     materialized | uploaded | referenced | described_only
-Lifecycle:  proposed | approved | blocked | deprecated | superseded | active
+**Filename:** `WAI_Track-{YYYYMMDD}-{HHMM}-{Provider}-{Model}.jsonl`
 
-Epic: when the user wants to lock a concept for later work, emit an epic event
-and register it in the artifact_manifest with lifecycle=proposed.
+**Format:** JSONL (one JSON object per line)
 
+**Delivery:** Code block for copy-paste, downloadable link if supported, or file write to `WAI-Spoke/sessions/` if available. See reference file for delivery option details.
 
-EXPORT PROTOCOL
+### 5. Report Summary
 
-Triggers: "export", "export track", "generate track", or any clear equivalent.
+Report: filename, turn count, phase distribution, duration, predecessor chain info, and next steps.
 
-Full session export (default):
-  Step 1 — Inventory
-    Scan /mnt/user-data/outputs/ for all files produced this session.
-    For each: filename, size_bytes, lifecycle (active or superseded), one-sentence description.
+---
 
-  Step 2 — Write the JSONL
-    Filename: WAI_Track-{YYYYMMDD}-{HHMM}-{Provider}-{Model}_full.jsonl
-    Write to /mnt/user-data/outputs/
-    Record order in file:
-      1. session_header
-      2. artifact_manifest (filenames + metadata, no content)
-      3. provenance_manifest
-      4. line_manifest / station_manifest if applicable
-      5. state_snapshot (most recent)
-      6. exchange records in turn order
-    The JSONL itself is listed last in artifact_manifest with lifecycle=active.
+## Success Criteria
 
-  Step 3 — Present
-    Call present_files once with: track JSONL first, then active artifacts, then superseded.
+- Track file generated with valid JSONL format
+- All turns from THIS session included (not duplicating predecessor)
+- First point includes session_metadata (if applicable)
+- Predecessor link accurate (if detected)
+- File follows naming convention
+- User can download/save/copy the output
 
-  Step 4 — Summary (print this block only, no other text)
-    Session package — {codename}
-    ---
-    {filename:<45}  {size_bytes:>8} bytes  [{lifecycle}]
-    ... one line per file
-    ---
-    TOTAL  {n} files  {total_bytes} bytes
+---
 
-Single-turn export ("export turn" or "export last response"):
-  Write one exchange record covering only the specified turn.
-  Include artifacts_produced if the turn generated files.
-  Filename: WAI_Track-{codename}-t{N}.jsonl
-  Present the JSONL and any artifacts produced in that turn together.
-  Print summary with turn label and files included.
+## Related Commands
 
+- `/wai-green-light` — Resume from existing track in WAI-Spoke environment
+- `/wai-closeout` — Finalize session (includes automatic track writing if WAI-Spoke/ exists)
 
-FALLBACK — no filesystem available
+---
 
-Embed file contents directly in the artifact_manifest records.
-Text files (.md .txt .json .ts .py .sql): content_text field, UTF-8, never truncate.
-Binary/HTML files (.html .pdf .png): content_b64 field, base64-encoded, add encoding="base64".
-Set confidence=low on session_header.
-
-Recovery script (include as a comment block in the JSONL):
-
-  import json, base64
-  with open("WAI_Track-*.jsonl") as f:
-      for line in f:
-          rec = json.loads(line)
-          if rec.get("type") == "artifact_manifest":
-              for a in rec["artifacts"]:
-                  if "content_text" in a:
-                      open(a["filename"], "w").write(a["content_text"])
-                  elif "content_b64" in a:
-                      open(a["filename"], "wb").write(base64.b64decode(a["content_b64"]))
-                  print(f"Recovered: {a['filename']}")
-
-
-LINE AND STATION DEFINITIONS
-
-Track:   session-level record
-Line:    shared continuity channel across agents, tools, and humans
-Station: local collection point and control boundary
-
-Source rules:
-  live_session — content generated in this conversation
-  pasted_track — content pasted in from another session; never treat as materialized until verified
-  uploaded_file — user-provided file; record as uploaded, not materialized
-
-
-OPERATIONAL STYLE
-
-Low ceremony: no wrapper text on exports. Package summary only.
-High fidelity: verbatim capture of user and assistant turns.
-Package complete: every file produced is in the download list.
-Self-contained: the package must be usable by a cold agent with no prior context.
-Atomic exports: single-turn exports are fully valid. They are not lesser than full exports.
-
-
-WAI DOMAIN VOCABULARY
-
-This session may use Wheelwright (WAI) terms. Treat these as precise domain language.
-
-Lug
-  A typed JSON work item. The persistent memory unit of a WAI project.
-  Every lug has: id, type, status, and PEV fields.
-  Lugs must be self-contained — readable cold with zero conversation history.
-
-Lug types
-  epic            large multi-session effort; contains child tasks
-  task/bug/feature  executable work items with PEV fields
-  signal          high-impact learning (impact >= 8); shared across all projects
-  implementation  non-trivial execution batch with a review gate before coding starts
-  session-summary end-of-session archive record
-
-PEV (required on all actionable lugs)
-  perceive   what to read or examine before starting
-  execute    concrete steps to take
-  verify     how to confirm it is done correctly
-
-Lifecycle: open -> in_progress -> completed
-
-Quality bar before sharing a lug:
-
-  Dogfood test
-    Send just the PEV to a sub-agent with zero context.
-    Can they implement it without a single clarifying question?
-    Gaps mean the lug is not ready.
-
-  Misinterpretation test
-    Could this be read as "execute immediately" instead of "track for later"?
-    If yes, add: _behavior_directive: { what_this_is: "...", what_this_is_NOT: "..." }
-
-  Cold-read test
-    No implicit references ("see above", "as discussed").
-    Every file path, field name, and dependency must be explicit.
-
-Treat lug discussions as specification work.
-Record decisions about lug shape and content in exchange events like any other decision.
-
-Note: full lug schema, routing fields, and storage paths are not included here.
-If the session involves authoring lugs specifically, ask for wai-lug-schema-reference.
+*Track generation creates portable conversation artifacts for cross-tool continuity.*
