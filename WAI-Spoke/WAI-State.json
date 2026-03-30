@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.97",
+    "version": "2.0.124",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260329-1808",
+    "last_session_id": "session-20260329-2315",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-30T05:20:00Z",
-    "last_closeout": "2026-03-30T05:20:00Z",
-    "session_count": 102,
-    "track_path": "WAI-Spoke/sessions/session-20260329-1808/track.jsonl",
-    "next_session_recommendation": "Session 102: (1) Fix tender pass 2 loop \u2014 only processed 1 spoke then stopped, needs set +e around ls/find checks. (2) Run tender --all to adopt teachings fleet-wide. (3) Implement Lathe scoring in wheel-tender for dynamic prioritization. (4) Review 18 kept hub signals \u2014 route to spokes or extract teachings. (5) Adopt migration-npm-to-bun-v1 teaching (manual review). (6) Design Compass MVP \u2014 morning dashboard HTML. (7) LinkedIn post about async dispatch \u2192 create lug for nurturator.",
+    "last_modified_at": "2026-03-30T03:30:00Z",
+    "last_closeout": "2026-03-30T03:30:00Z",
+    "session_count": 103,
+    "track_path": "WAI-Spoke/sessions/session-20260329-2315/track.jsonl",
+    "next_session_recommendation": "Session 103: (1) Test chain mode live \u2014 run tools/wai-chain.sh --budget 3. (2) Populate spoke registry via gardener for Compass dashboard. (3) Configure Lathe spoke weights for active projects. (4) Fix bug-luci-bbe83b15 (1 failing test). (5) Continue epic execution \u2014 ozi-routing, ozi-orchestration, skill-thrift remaining items.",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",
@@ -111,7 +111,7 @@
   "_work_queue": {
     "enabled": true,
     "vibe": null,
-    "last_scored_at": "2026-03-30T01:15:00Z",
+    "last_scored_at": "2026-03-30T03:30:00Z",
     "items": [
       {
         "id": "task-cc-advisor-phase1-foundation",
