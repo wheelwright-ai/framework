@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/mario/projects/wheelwright
+cd ${PROJECTS_ROOT:-~/projects}/wheelwright
 git init
 git add .
 git commit -m "Initial commit: Wheelwright Framework v1.0.0

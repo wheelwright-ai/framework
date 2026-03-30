@@ -29,7 +29,7 @@
 **Structure:** v1 (.WAI/ directory)
 **Type:** Framework (Wheel project tracking its own development)
 **Repository:** https://github.com/wheelwright-ai/framework
-**Created by:** Mario Vaccari
+**Created by:** {{author}}
 
 *"We aren't reinventing the wheel - we're evolving it faster than one person ever could."*
 
@@ -207,7 +207,7 @@ ADAPTIVE mode maintains intentionality:
 | 2025-12-29 | Automatic discovery as critical feature | WAI must be auto-seen by AI tools - added README section showing how each tool discovers WAI | 9 |
 | 2025-12-29 | Corrected wheel metaphor | Hub=memory+registry, Spoke-Project=project memory, Wheels=Hub+all Spokes - clarifies relationships | 8 |
 | 2025-12-28 | Rebrand to Wheelwright | Wheel metaphor (hub/spokes/wheel) more intuitive, WAI = "Way", wheelwright.ai domain | 10 |
-| 2025-12-28 | GitHub org wheelwright-ai | Clean multi-repo setup, single SSH key via mariov96 account | 9 |
+| 2025-12-28 | GitHub org wheelwright-ai | Clean multi-repo setup, single SSH key via {{user}}v96 account | 9 |
 | 2025-12-28 | WAI file naming | Consistent prefix, phonetically "Way" files | 9 |
 | 2025-12-22 | Framework-Hub separation | Framework = code, Hub = user's data | 10 |
 | 2025-12-22 | AI stewardship philosophy | Enable but remain intentful | 9 |
@@ -240,12 +240,12 @@ WAI context        Output context for LLM paste
 
 | Date | Change | Rationale | Acknowledged By |
 |------|--------|-----------|-----------------|
-| 2026-02-01 | Changed to ADAPTIVE mode | User requested planning gates for significant features while keeping autonomy for small tasks - balances velocity with oversight | Mario Vaccari |
-| 2025-12-29 | Enabled YOLO mode | User requested autonomous AI operation - AI proceeds with full agency, logs decisions retroactively | Mario Vaccari |
-| 2025-12-28 | Rebranded from SCF to Wheelwright | Wheel metaphor more intuitive, WAI branding, wheelwright.ai domain | Mario Vaccari |
-| 2025-12-28 | Created wheelwright-ai GitHub org | Clean multi-repo structure, matches local folder layout | Mario Vaccari |
-| 2025-12-22 | Framework-Hub separation | Clean architecture - framework is code, hub is user's data | Mario Vaccari |
-| 2025-12-22 | AI stewardship philosophy | Enable but remain intentful - AI as responsible partner | Mario Vaccari |
+| 2026-02-01 | Changed to ADAPTIVE mode | User requested planning gates for significant features while keeping autonomy for small tasks - balances velocity with oversight | {{author}} |
+| 2025-12-29 | Enabled YOLO mode | User requested autonomous AI operation - AI proceeds with full agency, logs decisions retroactively | {{author}} |
+| 2025-12-28 | Rebranded from SCF to Wheelwright | Wheel metaphor more intuitive, WAI branding, wheelwright.ai domain | {{author}} |
+| 2025-12-28 | Created wheelwright-ai GitHub org | Clean multi-repo structure, matches local folder layout | {{author}} |
+| 2025-12-22 | Framework-Hub separation | Clean architecture - framework is code, hub is user's data | {{author}} |
+| 2025-12-22 | AI stewardship philosophy | Enable but remain intentful - AI as responsible partner | {{author}} |
 
 ---
 
@@ -1101,7 +1101,7 @@ wai hub teach --with-learnings
 
 **Framework Version:** 1.0
 **Repository:** https://github.com/wheelwright-ai/framework
-**Created by:** Mario Vaccari
+**Created by:** {{author}}
 
 *"We aren't reinventing the wheel - we're evolving it faster than one person ever could."*
 

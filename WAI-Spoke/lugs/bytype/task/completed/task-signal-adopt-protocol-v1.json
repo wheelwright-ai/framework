@@ -1,9 +1,0 @@
-{
-  "i": "task-signal-adopt-protocol-v1",
-  "ty": "task",
-  "t": "Improve safe_to_auto_adopt signal/teaching adoption protocol",
-  "s": "c",
-  "reconciled": true,
-  "closed_at": "2026-03-16T05:30:00Z",
-  "resolution": "Implemented all 3 improvements: (1) wai-closeout.md Step 9b — signal filename now includes sender spoke_id (signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching), (2) wai.md Step 3a — split into Path A (safe_to_auto_adopt:true, brief prompt + duplicate check) and Path B (false, full ceremony), (3) duplicate check added to Path A before appending to WAI-Signals.jsonl"
-}

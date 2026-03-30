@@ -9,7 +9,7 @@
 set -euo pipefail
 
 SPOKE_PATH="${1:-.}"
-HUB_PATH="/home/mario/projects/wheelwright/hub"
+HUB_PATH="${PROJECTS_ROOT:-~/projects}/wheelwright/hub"
 FRAMEWORK_PATH="$HUB_PATH/framework"
 TEMPLATE_PATH="$FRAMEWORK_PATH/templates/spoke"
 
@@ -84,8 +84,8 @@ changed = []
 if "wheel" not in state:
     state["wheel"] = {}
 
-if state["wheel"].get("hub_path") != "/home/mario/projects/wheelwright/hub/":
-    state["wheel"]["hub_path"] = "/home/mario/projects/wheelwright/hub/"
+if state["wheel"].get("hub_path") != "${PROJECTS_ROOT:-~/projects}/wheelwright/hub/":
+    state["wheel"]["hub_path"] = "${PROJECTS_ROOT:-~/projects}/wheelwright/hub/"
     changed.append("wheel.hub_path")
 
 fw_ver = "$FW_VERSION"
@@ -98,11 +98,11 @@ if state["wheel"].get("node_type") != "spoke":
     changed.append("wheel.node_type = spoke")
 
 if "wheelwright" in state:
-    if state["wheelwright"].get("hub_path") != "/home/mario/projects/wheelwright/hub/":
-        state["wheelwright"]["hub_path"] = "/home/mario/projects/wheelwright/hub/"
+    if state["wheelwright"].get("hub_path") != "${PROJECTS_ROOT:-~/projects}/wheelwright/hub/":
+        state["wheelwright"]["hub_path"] = "${PROJECTS_ROOT:-~/projects}/wheelwright/hub/"
         changed.append("wheelwright.hub_path")
-    if state["wheelwright"].get("framework_path") != "/home/mario/projects/wheelwright/framework":
-        state["wheelwright"]["framework_path"] = "/home/mario/projects/wheelwright/framework"
+    if state["wheelwright"].get("framework_path") != "${PROJECTS_ROOT:-~/projects}/wheelwright/framework":
+        state["wheelwright"]["framework_path"] = "${PROJECTS_ROOT:-~/projects}/wheelwright/framework"
         changed.append("wheelwright.framework_path")
 
 if changed:
@@ -271,7 +271,7 @@ echo ""
 echo "=== Upgrade Complete: $SPOKE_NAME ==="
 echo "Framework version: $FW_VERSION"
 echo "Skills: $SKILL_COUNT files in WAI-Spoke/commands/"
-echo "Hub: /home/mario/projects/wheelwright/hub/"
+echo "Hub: ${PROJECTS_ROOT:-~/projects}/wheelwright/hub/"
 echo "Bootstrap files: AGENTS.md, CLAUDE.md, GEMINI.md"
 echo "Hook: .claude/hooks/user-prompt-submit.sh (wired in settings.json)"
 echo ""

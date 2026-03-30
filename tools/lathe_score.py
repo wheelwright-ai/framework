@@ -9,7 +9,8 @@ import json
 import sys
 from pathlib import Path
 
-HUB_PATH = Path(sys.argv[sys.argv.index("--hub-path") + 1] if "--hub-path" in sys.argv else "/home/mario/projects/wheelwright/hub")
+import os
+HUB_PATH = Path(sys.argv[sys.argv.index("--hub-path") + 1] if "--hub-path" in sys.argv else os.environ.get("WAI_HUB_PATH", ""))
 LATHE_CONFIG = HUB_PATH / "WAI-Hub/advisors/lathe/spoke_lathe.json"
 
 

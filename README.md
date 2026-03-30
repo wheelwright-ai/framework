@@ -309,8 +309,8 @@ There is no CLI, no runtime, no package to install.
 
 Real projects using Wheelwright for session continuity:
 
-- **PathFinder** (`/home/mario/projects/pathfinder`) — v0.4.0 | 18+ sessions | AI-powered career placement engine. Multiple models (Claude, Gemini) resume mid-work seamlessly.
-- **Tracks** (`/home/mario/projects/wheelwright/tracks`) — v0.1.0 | Progress tracking system. Bootstrap project demonstrating early-stage spoke setup.
+- **Your Project** — Any codebase. Run `wai init` to create a spoke. AI resumes mid-work seamlessly across Claude, Gemini, and other tools.
+- **Multi-Project Fleet** — Connect multiple spokes through a hub for cross-project learning and coordinated teachings.
 
 Both speak the same protocol. Any AI picks up where the last one left off.
 

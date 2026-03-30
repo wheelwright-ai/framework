@@ -15,6 +15,10 @@ from pathlib import Path
 SPOKE = Path(__file__).parent.parent / "WAI-Spoke"
 BYTYPE = SPOKE / "lugs" / "bytype"
 
+# Import shared lug utilities
+sys.path.insert(0, str(Path(__file__).parent))
+from lug_utils import is_blocked, blocked_reason, evaluate_execute_when, load_phases_from_state
+
 # Vibe affinity: maps vibe -> type/tag -> bonus (0.0 to 1.0 added to ROI)
 # Vibe affinity: multiplier applied to base ROI (1.0 = neutral)
 # Values >1.0 boost, <1.0 suppress. This is multiplicative so it
@@ -132,42 +136,107 @@ def scan_active_lugs() -> list[dict]:
     return results
 
 
+def update_state_work_queue(scored: list[dict], phases: list[dict]) -> None:
+    """Write top items back to WAI-State.json _work_queue."""
+    state_file = SPOKE / "WAI-State.json"
+    if not state_file.exists():
+        return
+    try:
+        state = json.loads(state_file.read_text())
+    except (json.JSONDecodeError, OSError):
+        return
+
+    wq = state.setdefault("_work_queue", {"enabled": True})
+    # Only include dispatchable items (not blocked/gated)
+    items = []
+    for entry in scored[:15]:
+        if entry.get("_blocked") or entry.get("_gated"):
+            continue
+        items.append({
+            "id": entry["lug"].get("id", entry["file"].replace(".json", "")),
+            "roi": entry["roi"],
+            "type": entry["type"],
+            "status": "ready",
+            "title": entry["title"][:80],
+            "phase": entry["lug"].get("phase"),
+            "tagged_next": len(items) == 0,
+        })
+        if len(items) >= 10:
+            break
+
+    wq["items"] = items
+    wq["last_scored_at"] = __import__("datetime").datetime.now(
+        __import__("datetime").timezone.utc
+    ).isoformat()
+    if phases:
+        wq["phases"] = phases
+
+    state_file.write_text(json.dumps(state, indent=2) + "\n")
+    print(f"\n  ✅ _work_queue updated ({len(items)} items written to WAI-State.json)")
+
+
 def main():
-    vibe = sys.argv[1].lower() if len(sys.argv) > 1 else None
+    args = sys.argv[1:]
+    update_state = "--update-state" in args
+    if update_state:
+        args.remove("--update-state")
+
+    vibe = args[0].lower() if args else None
     if vibe and vibe not in VIBE_AFFINITY:
         print(f"Unknown vibe: {vibe}. Options: {', '.join(VIBE_AFFINITY.keys())}")
         sys.exit(1)
 
+    phases = load_phases_from_state()
     lugs = scan_active_lugs()
     scored = []
     for entry in lugs:
         roi = score_lug(entry["lug"], entry["type"], entry["status"], vibe)
-        scored.append({**entry, "roi": roi})
+        # Check blocking/gating
+        ready, gate_reason = evaluate_execute_when(entry["lug"], phases)
+        scored.append({
+            **entry,
+            "roi": roi,
+            "_blocked": is_blocked(entry["lug"]),
+            "_gated": not ready,
+            "_gate_reason": gate_reason,
+        })
 
     scored.sort(key=lambda x: x["roi"], reverse=True)
 
-    # Display
+    # Partition into dispatchable and gated
+    dispatchable = [s for s in scored if not s["_gated"]]
+    gated = [s for s in scored if s["_gated"]]
+
+    # Display dispatchable items
     vibe_label = f" | Vibe: {vibe}" if vibe else ""
     print(f"\n{'='*80}")
-    print(f"  Ozi ROI Backlog — {len(scored)} active items{vibe_label}")
+    print(f"  Ozi ROI Backlog — {len(dispatchable)} ready, {len(gated)} gated{vibe_label}")
     print(f"{'='*80}\n")
     print(f"  {'#':>3}  {'ROI':>5}  {'Type':<10} {'Status':<13} {'Title'}")
     print(f"  {'─'*3}  {'─'*5}  {'─'*10} {'─'*13} {'─'*40}")
 
-    for i, item in enumerate(scored, 1):
-        impact_str = f"i{item['impact']}" if item["impact"] else "i?"
-        effort_str = f"e{item['effort']}" if item["effort"] else "e?"
-        print(f"  {i:>3}  {item['roi']:>5.1f}  {item['type']:<10} {item['status']:<13} {item['title'][:65]}")
-        if i <= 10:
-            # Show detail for top 10
-            pass
-        if i == 10:
-            print(f"\n  ... and {len(scored) - 10} more items\n")
+    for i, item in enumerate(dispatchable, 1):
+        phase_tag = f" [{item['lug'].get('phase', '')}]" if item["lug"].get("phase") else ""
+        print(f"  {i:>3}  {item['roi']:>5.1f}  {item['type']:<10} {item['status']:<13} {item['title'][:60]}{phase_tag}")
+        if i == 10 and len(dispatchable) > 10:
+            print(f"\n  ... and {len(dispatchable) - 10} more ready items\n")
+            break
+
+    # Display gated items
+    if gated:
+        print(f"\n  {'─'*78}")
+        print(f"  GATED ({len(gated)} items — waiting on conditions)")
+        print(f"  {'─'*78}")
+        for item in gated[:5]:
+            reason = item["_gate_reason"][:50] if item["_gate_reason"] else "unknown"
+            print(f"  🔒 {item['roi']:>5.1f}  {item['type']:<10} {item['title'][:45]}  ← {reason}")
+        if len(gated) > 5:
+            print(f"  ... and {len(gated) - 5} more gated items")
 
     # Summary by type
     print(f"\n  {'Type':<12} {'Count':>5}  {'Avg ROI':>7}  {'Best':>5}")
     print(f"  {'─'*12} {'─'*5}  {'─'*7}  {'─'*5}")
-    types = {}
+    types: dict[str, list[float]] = {}
     for item in scored:
         t = item["type"]
         if t not in types:
@@ -178,6 +247,9 @@ def main():
         print(f"  {t:<12} {len(vals):>5}  {sum(vals)/len(vals):>7.1f}  {max(vals):>5.1f}")
 
     print()
+
+    if update_state:
+        update_state_work_queue(scored, phases)
 
 
 if __name__ == "__main__":

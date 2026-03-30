@@ -54,7 +54,7 @@ After every code change, verify by searching for evidence it FAILED, not evidenc
 
 1. **Falsify the change:** Re-run the failing condition. Does it now pass?
 2. **Falsify the surroundings:** Search filesystem for all files referencing the changed thing
-3. **Falsify the fleet:** `find /home/mario/projects -name "{retired_file}"` across entire project tree
+3. **Falsify the fleet:** `find ${PROJECTS_ROOT:-~/projects} -name "{retired_file}"` across entire project tree
 4. **Prove done by absence:** Empty find result = proven. Any match = not done.
 
 Run after: file deletion/rename, schema change, teaching publication, fleet remediation.

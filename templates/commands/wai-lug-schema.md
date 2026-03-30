@@ -196,8 +196,11 @@ For named lugs (foundation, epic): use human-readable IDs:
 | `impact` | `5` | Medium. Adjust up/down based on scope. |
 | `priority` | `"medium"` | Use `"before_next_epic"` only when truly blocking |
 | `blocks` | `[]` | Empty array |
-| `blocked_by` | `[]` | Empty array |
+| `blocked_by` | `[]` | Empty array — evaluated by dispatch (items with unresolved blockers are skipped) |
 | `tags` | `[]` | Empty array |
+| `phase` | `null` | Phase membership ID (e.g. `"p1-foundation"`) — groups items for milestone tracking |
+| `phase_order` | `null` | Numeric ordering within a phase (lower = earlier) |
+| `execute_when` | `null` | Conditional trigger — see Execute-When Gates section below |
 
 ### `gb` (gathered_by) — Model ID Required
 
@@ -215,6 +218,52 @@ WRONG:    "gb": "AI"
 **Why this matters:** Self-chosen names create ambiguity. `gb` is an audit field — it must answer "which model wrote this?" unambiguously across sessions, tools, and time. If working in a v1 spoke with `current_ai: "Sparky"` in WAI-State.json, ignore that field — use your model ID.
 
 Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (session-20260317-0444)"`
+
+---
+
+## Execute-When Gates
+
+Lugs can declare conditions that must be true before they become dispatchable. The `execute_when` field is evaluated by `score_backlog.py`, `wai_ozi.py`, and `wai-chain.sh` before dispatch.
+
+**Schema:**
+```json
+{
+  "execute_when": {
+    "all_completed": ["lug-id-1", "lug-id-2"],
+    "any_completed": ["lug-id-3"],
+    "phase_completed": "p1-foundation",
+    "manual_gate": false
+  }
+}
+```
+
+| Field | Logic | Purpose |
+|-------|-------|---------|
+| `all_completed` | AND | Every listed lug ID must be in `completed/` or `delivered/` |
+| `any_completed` | OR | At least one listed lug ID must be completed |
+| `phase_completed` | GROUP | All lugs declaring `"phase": "{id}"` must be completed |
+| `manual_gate` | BLOCK | If `true`, always blocked until user explicitly overrides |
+
+**All conditions must be satisfied** if present. Missing conditions are ignored (permissive).
+
+**Relationship to `blocked_by`:** Both are checked. `execute_when.all_completed` subsumes `blocked_by` for new lugs. Existing `blocked_by` arrays remain valid — the evaluator checks both.
+
+**Phase membership:** A lug belongs to a phase by declaring `"phase": "p1-foundation"`. Phase definitions live in `WAI-State.json` `_work_queue.phases`:
+
+```json
+{
+  "_work_queue": {
+    "phases": [
+      {"id": "p1-foundation", "title": "Foundation fixes", "order": 1},
+      {"id": "p2-orchestration", "title": "Queue orchestration", "order": 2}
+    ]
+  }
+}
+```
+
+Phase completion is computed dynamically — all lugs declaring the phase must be in `completed/`.
+
+**Dispatch behavior:** Items with unmet `execute_when` conditions are listed as "gated" in `score_backlog.py` output and skipped by Ozi and chain mode.
 
 ---
 

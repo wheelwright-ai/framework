@@ -67,12 +67,14 @@ while [ "$SESSION_NUM" -lt "$BUDGET" ]; do
     # Find the actual lug file
     TOP_LUG_FILE=$(cd "$PROJECT_DIR" && find WAI-Spoke/lugs/bytype/ -name "*.json" -path "*/$TOP_STATUS/*" 2>/dev/null | head -1 || true)
 
-    # Better: use the scorer to get the actual file
+    # Better: use the scorer to get the actual file (with gate checks)
     TOP_LUG_FILE=$(cd "$PROJECT_DIR" && python3 -c "
 import json, sys
 sys.path.insert(0, 'tools')
 from score_backlog import scan_active_lugs, score_lug
+from lug_utils import evaluate_execute_when, load_phases_from_state
 lugs = scan_active_lugs()
+phases = load_phases_from_state()
 vibe = '$VIBE_ARG' or None
 scored = []
 for e in lugs:
@@ -80,8 +82,12 @@ for e in lugs:
     scored.append({**e, 'roi': roi})
 scored.sort(key=lambda x: x['roi'], reverse=True)
 # Skip signals and 'other' — only actionable types
+# Also skip blocked/gated items
 for item in scored:
     if item['type'] in ('task', 'bug', 'feature') and item['roi'] >= 3.0:
+        ready, reason = evaluate_execute_when(item['lug'], phases)
+        if not ready:
+            continue
         print(f\"WAI-Spoke/lugs/bytype/{item['type']}/{item['status']}/{item['file']}\")
         break
 " 2>/dev/null || true)

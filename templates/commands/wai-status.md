@@ -111,7 +111,7 @@ Max parallel: 2
 Hub Connection:
   Status: ✅ Connected
   Last sync: 2 days ago
-  Hub path: /home/mario/projects/wheelwright/hub/
+  Hub path: {wheel.hub_path from WAI-State.json}
 
 Session Health:
   Turn count: 12

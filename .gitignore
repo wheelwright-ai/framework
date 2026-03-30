@@ -93,9 +93,18 @@ test_results.txt
 benchmark_epic008.json
 _custom/
 
+# ═══════════════════════════════════════════════════════
+# WAI-Spoke/ — generated on init, never committed.
+# Source of truth: templates/ folder.
+# Personal data: archive to hub/spokes/{spoke_name}/
+# ═══════════════════════════════════════════════════════
+WAI-Spoke/
+
 # Windows Zone.Identifier metadata
 *:Zone.Identifier
 *.Zone.Identifier
 
 # v1 migration backups (no longer needed)
 *.v1-backup
+reference/historical/
+reference/v1-data/

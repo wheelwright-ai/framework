@@ -17,7 +17,7 @@ import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
-HUB_PATH = Path(sys.argv[sys.argv.index("--hub-path") + 1] if "--hub-path" in sys.argv else "/home/mario/projects/wheelwright/hub")
+HUB_PATH = Path(sys.argv[sys.argv.index("--hub-path") + 1] if "--hub-path" in sys.argv else os.environ.get("WAI_HUB_PATH", ""))
 OPEN_BROWSER = "--open" in sys.argv
 
 COMPASS_DIR = HUB_PATH / "WAI-Hub/advisors/compass"

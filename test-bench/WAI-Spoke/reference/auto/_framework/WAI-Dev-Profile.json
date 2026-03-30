@@ -7,13 +7,13 @@
     "last_updated": "2026-02-01T11:50:00Z"
   },
   "github": {
-    "username": "mariov96",
+    "username": "{{github_username}}",
     "organizations": ["wheelwright-ai"],
-    "ssh_key_path": "/home/mario/.ssh/",
+    "ssh_key_path": "{{home_dir}}/.ssh/",
     "primary_key": "id_ed25519",
     "remote_url_format": "SSH",
     "ssh_test_command": "ssh -T git@github.com",
-    "expected_response": "Hi mariov96! You've successfully authenticated",
+    "expected_response": "Hi {{github_username}}! You've successfully authenticated",
     "examples": {
       "clone": "git clone git@github.com:wheelwright-ai/framework.git",
       "remote_add": "git remote add origin git@github.com:wheelwright-ai/repo.git",
@@ -36,7 +36,7 @@
     "os": "linux/wsl",
     "shell": "bash",
     "editor": "vim",
-    "home": "/home/mario",
-    "projects_root": "/home/mario/projects"
+    "home": "{{home_dir}}",
+    "projects_root": "{{projects_root}}"
   }
 }

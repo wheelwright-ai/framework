@@ -1,8 +1,0 @@
-{
-  "id": "task-ozi-fifo-test-1",
-  "status": "completed",
-  "resolution": "implemented",
-  "resolution_reason": "Grep audit complete. Removed 5 vestigial files: calculate_scores_complete.py (superseded), scripts/benchmarks/benchmark.py + epic008.py + lugs.py (unreferenced old scripts), scripts/simulate_hub_upgrade.py (unreferenced). YOLO/ADAPTIVE refs are in archive/ + reference/v1-data/ only — no live code affected. teach-as-spoke-command refs are in archive/wai_cli_old/ only — correctly archived.",
-  "closed_at": "2026-03-23T22:40:00Z",
-  "closed_by": "claude-sonnet-4-6"
-}

@@ -1,9 +1,0 @@
-{
-  "i": "idea-open-type-field-v1",
-  "ty": "idea",
-  "t": "open_type field on track points — mark intentional vs friction open items",
-  "s": "c",
-  "ua": "2026-03-16T19:04:58Z",
-  "closed_by": "code-puppy-f16663",
-  "closed_reason": "Implemented via epic-open-type-field-v1"
-}

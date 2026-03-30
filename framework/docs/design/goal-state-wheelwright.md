@@ -362,8 +362,8 @@ This section is intentionally direct. These are the contradictions implementatio
 
 Current repo examples conflict:
 
-- [README.md](/home/mario/projects/wheelwright/framework/README.md) says `Teach = PUSH`, `Learn = PULL`
-- [templates/spoke/WAI-Skills.jsonl](/home/mario/projects/wheelwright/framework/templates/spoke/WAI-Skills.jsonl) currently describes `teach` as pulling from hub and `learn` as pushing to hub
+- [README.md](README.md) says `Teach = PUSH`, `Learn = PULL`
+- [templates/spoke/WAI-Skills.jsonl](templates/spoke/WAI-Skills.jsonl) currently describes `teach` as pulling from hub and `learn` as pushing to hub
 
 Resolved direction:
 
@@ -378,8 +378,8 @@ Legacy commands may continue to exist as wrappers or compatibility affordances, 
 
 Current repo examples conflict:
 
-- [README.md](/home/mario/projects/wheelwright/framework/README.md) and current spoke templates use `WAI-Signals.jsonl`
-- [framework/docs/index.md](/home/mario/projects/wheelwright/framework/framework/docs/index.md) and older v2 material often describe signals as high-impact lugs inside the lug system
+- [README.md](README.md) and current spoke templates use `WAI-Signals.jsonl`
+- [framework/docs/index.md](framework/docs/index.md) and older v2 material often describe signals as high-impact lugs inside the lug system
 
 Resolved direction:
 
@@ -391,8 +391,8 @@ Resolved direction:
 
 Current repo examples conflict:
 
-- [framework/docs/guides/migration-v1-to-v2.md](/home/mario/projects/wheelwright/framework/framework/docs/guides/migration-v1-to-v2.md) centers `BRIEF.md`, `EXTENSION.md`, and `WAI-Manifest.yaml`
-- [templates/spoke/WAI-State.json](/home/mario/projects/wheelwright/framework/templates/spoke/WAI-State.json) centers `WAI-State.json` and `WAI-Spoke/`
+- [framework/docs/guides/migration-v1-to-v2.md](framework/docs/guides/migration-v1-to-v2.md) centers `BRIEF.md`, `EXTENSION.md`, and `WAI-Manifest.yaml`
+- [templates/spoke/WAI-State.json](templates/spoke/WAI-State.json) centers `WAI-State.json` and `WAI-Spoke/`
 
 Resolved direction:
 
@@ -403,8 +403,8 @@ Resolved direction:
 
 Current repo examples conflict:
 
-- [tracks/spec/track-format.md](/home/mario/projects/wheelwright/framework/tracks/spec/track-format.md) implies standalone `track_YYYYMMDD-HHMM.jsonl`
-- [WAI-Spoke/commands/wai.md](/home/mario/projects/wheelwright/framework/WAI-Spoke/commands/wai.md) still includes `session-YYYYMMDD-HHMM/track.jsonl`
+- [tracks/spec/track-format.md](tracks/spec/track-format.md) implies standalone `track_YYYYMMDD-HHMM.jsonl`
+- [WAI-Spoke/commands/wai.md](WAI-Spoke/commands/wai.md) still includes `session-YYYYMMDD-HHMM/track.jsonl`
 - current repo data contains both `sessions/track_*.jsonl` and older `session-*/track.jsonl`
 
 Resolved direction:
@@ -416,7 +416,7 @@ Resolved direction:
 
 Examples:
 
-- [framework/docs/index.md](/home/mario/projects/wheelwright/framework/framework/docs/index.md) describes a richer multi-agent / BRIEF / ledger system than the current repo actually enforces
+- [framework/docs/index.md](framework/docs/index.md) describes a richer multi-agent / BRIEF / ledger system than the current repo actually enforces
 - GPT conversation introduced `Ozi`, which is now clarified here as a partner identity layer rather than a persistence object
 
 The design should separate:

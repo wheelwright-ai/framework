@@ -8,7 +8,14 @@
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 STATE_FILE="$PROJECT_DIR/WAI-Spoke/WAI-State.json"
 
-# Exit silently if not a WAI project
+# Auto-init: if no WAI-State.json but template exists, bootstrap
+TEMPLATE_FILE="$PROJECT_DIR/templates/spoke/WAI-State.json.template"
+if [[ ! -f "$STATE_FILE" && -f "$TEMPLATE_FILE" ]]; then
+  mkdir -p "$PROJECT_DIR/WAI-Spoke"
+  cp "$TEMPLATE_FILE" "$STATE_FILE"
+fi
+
+# Exit silently if still no state file (not a WAI project)
 [[ ! -f "$STATE_FILE" ]] && exit 0
 
 # Session guard uses a runtime file (gitignored) to avoid dirtying WAI-State.json

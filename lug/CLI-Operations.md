@@ -29,10 +29,10 @@ bash -c "cd /path && git add file && git commit -m 'message'"
 **Example:**
 ```bash
 # ❌ WRONG - will fail
-git -C /home/mario/projects/wheelwright-ai/framework status
+git -C ${PROJECTS_ROOT}/wheelwright-ai/framework status
 
 # ✅ RIGHT - works
-bash -c "cd /home/mario/projects/wheelwright-ai/framework && git status"
+bash -c "cd ${PROJECTS_ROOT}/wheelwright-ai/framework && git status"
 ```
 
 ---

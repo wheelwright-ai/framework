@@ -102,23 +102,17 @@ deliver_lug(spoke_name, lug_json):
 
 ---
 
-## Known Fleet (as of 2026-03-17)
+## Example Fleet (dynamic — resolved at runtime)
 
-Resolved from `/home/mario/projects/wheelwright/hub/hub-registry.json`:
+Resolved from `{hub_path}/hub-registry.json`:
 
 | Spoke | Path | WAI | Deliver To |
 |-------|------|-----|------------|
-| Wheelwright (framework) | `/home/mario/projects/wheelwright/framework` | v2 | seed/ingest |
-| PathFinder | `/home/mario/projects/pathfinder` | v1 | seed/ingest |
-| Tracks | `/home/mario/projects/wheelwright/tracks` | v1 | seed/ingest |
-| Wheelwright.ai Website | `/home/mario/projects/wheelwright-ai-website` | v1 | unknown |
-| Windows Crash Diagnostic Suite | `/home/mario/projects/why-go-bye` | v1 | unknown |
-| Consider This | `/home/mario/projects/considerthis` | v1 | unknown |
-| Basher | `/home/mario/projects/basher` | v1 | unknown |
-| EzOrg.Email | `/home/mario/projects/ezorg-email-website` | v1 | unknown |
-| EzOrg LeadFinder | `/home/mario/projects/ezorg/leadfinder` | v1 | unknown |
+| My Framework | `{projects_root}/my-framework` | v2 | seed/ingest |
+| Project Alpha | `{projects_root}/project-alpha` | v1 | seed/ingest |
+| Project Beta | `{projects_root}/project-beta` | v1 | unknown |
 
-Note: This table is a snapshot. Always re-read hub-registry.json at session start — new spokes may have registered since this was written.
+Note: This table is an example. Always re-read hub-registry.json at session start — the actual fleet is resolved dynamically.
 
 ---
 
@@ -127,5 +121,5 @@ Note: This table is a snapshot. Always re-read hub-registry.json at session star
 - Fleet map is session-scoped memory. Do not write it to disk.
 - Spoke names are case-sensitive in the fleet map (use `wheel.name` from WAI-State.json).
 - For v1 spokes (no sessions/ directory, no seed/ingest/processed/), teachings still land in seed/ingest/ — the spoke agent processes them manually.
-- The hub itself (`/home/mario/projects/wheelwright/hub`) appears in the registry — skip it for delivery purposes.
+- The hub itself appears in the registry — skip it for delivery purposes.
 - `/path/to/project` placeholder in registry — always skip.

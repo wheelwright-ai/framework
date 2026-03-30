@@ -86,7 +86,7 @@ Wheelwright is primarily a **template and state management framework** with mini
 **Issue:** Hub path read from WAI-State.json without validation
 
 ```bash
-HUB_PATH=$(jq -r '.hub.path // "/home/mario/projects/wheelwright/hub"' WAI-Spoke/WAI-State.json)
+HUB_PATH=$(jq -r '.hub.path // "${PROJECTS_ROOT}/wheelwright/hub"' WAI-Spoke/WAI-State.json)
 TEACHINGS=("$HUB_PATH"/framework/*.teaching)
 ```
 
@@ -169,7 +169,7 @@ TEACHINGS=("$HUB_PATH"/framework/*.teaching)
 
 **Current State:**
 ```bash
-HUB_PATH=$(jq -r '.hub.path // "/home/mario/projects/wheelwright/hub"' WAI-Spoke/WAI-State.json)
+HUB_PATH=$(jq -r '.hub.path // "${PROJECTS_ROOT}/wheelwright/hub"' WAI-Spoke/WAI-State.json)
 ```
 
 **Issues:**
@@ -179,7 +179,7 @@ HUB_PATH=$(jq -r '.hub.path // "/home/mario/projects/wheelwright/hub"' WAI-Spoke
 
 **Recommended Fix:**
 ```bash
-HUB_PATH=$(jq -r '.hub.path // "/home/mario/projects/wheelwright/hub"' WAI-Spoke/WAI-State.json)
+HUB_PATH=$(jq -r '.hub.path // "${PROJECTS_ROOT}/wheelwright/hub"' WAI-Spoke/WAI-State.json)
 
 # Validate path
 if [[ ! "$HUB_PATH" =~ ^/ ]]; then

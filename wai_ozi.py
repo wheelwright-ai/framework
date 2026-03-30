@@ -18,7 +18,7 @@ class OziWorkQueueMonitor:
 
     def __init__(self, spoke_path: str = "WAI-Spoke"):
         self.spoke_path = Path(spoke_path)
-        self.lugs_file = self.spoke_path / "WAI-Lugs.jsonl"
+        self.bytype_dir = self.spoke_path / "lugs" / "bytype"
         self.changelog_file = self.spoke_path / "WAI-Changelog.jsonl"
         self.skills_file = self.spoke_path / "WAI-Skills.jsonl"
         self.runtime_dir = self.spoke_path / "runtime" / "ozi-sessions"
@@ -86,6 +86,32 @@ class OziWorkQueueMonitor:
     def current_owner_name(self) -> str:
         return f"ozi:{self.session_key()}"
 
+    def _scan_bytype_folders(self, statuses: List[str]) -> List[Dict[str, Any]]:
+        """Scan bytype/ folders for lugs matching given statuses."""
+        results: List[Dict[str, Any]] = []
+        if not self.bytype_dir.exists():
+            return results
+        for type_dir in sorted(self.bytype_dir.iterdir()):
+            if not type_dir.is_dir():
+                continue
+            for status_name in statuses:
+                status_path = type_dir / status_name
+                if not status_path.exists():
+                    continue
+                for lug_file in sorted(status_path.glob("*.json")):
+                    try:
+                        lug = json.loads(lug_file.read_text())
+                        # Ensure essential fields from filesystem context
+                        lug.setdefault("id", lug_file.stem)
+                        lug.setdefault("type", type_dir.name)
+                        lug["_file_path"] = str(lug_file)
+                        lug["_fs_status"] = status_name
+                        lug["_fs_type"] = type_dir.name
+                        results.append(lug)
+                    except (json.JSONDecodeError, OSError):
+                        continue
+        return results
+
     def scan_work_queue(self) -> Dict[str, List[Dict[str, Any]]]:
         queue: Dict[str, List[Dict[str, Any]]] = {
             "ready": [],
@@ -97,67 +123,55 @@ class OziWorkQueueMonitor:
             "stale": [],
             "completed_recently": [],
         }
-        if not self.lugs_file.exists():
-            return queue
 
         now = datetime.now(timezone.utc)
         owner_name = self.current_owner_name()
 
-        with open(self.lugs_file, "r") as handle:
-            for line in handle:
-                try:
-                    lug = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
+        # Scan open + in_progress lugs from bytype/ filesystem
+        all_lugs = self._scan_bytype_folders(["open", "in_progress"])
 
-                status = lug.get("status", "unknown")
-                workflow = lug.get("workflow", {})
-                owner = workflow.get("current_owner")
+        for lug in all_lugs:
+            # Use lug's own status field if present, fall back to filesystem status
+            status = lug.get("status", lug.get("s", lug.get("_fs_status", "open")))
+            # Normalize short codes
+            if status in ("o", "open"):
+                status = "open"
+            elif status in ("p", "in-progress", "in_progress"):
+                status = "in_progress"
 
-                if status == "ready":
-                    queue["ready"].append(lug)
-                    continue
+            workflow = lug.get("workflow", {})
+            owner = workflow.get("current_owner")
 
-                if status == "in_progress":
-                    if owner == owner_name:
-                        queue["claimed_by_me"].append(lug)
-                    updated_at = workflow.get("updated_at")
-                    if updated_at:
-                        try:
-                            updated_dt = datetime.fromisoformat(
-                                updated_at.replace("Z", "+00:00")
-                            )
-                            if (now - updated_dt) > timedelta(hours=4):
-                                queue["stale"].append(lug)
-                            else:
-                                queue["in_progress"].append(lug)
-                        except ValueError:
+            # Open items are ready for work
+            if status == "open":
+                queue["ready"].append(lug)
+                continue
+
+            if status == "in_progress":
+                if owner == owner_name:
+                    queue["claimed_by_me"].append(lug)
+                updated_at = workflow.get("updated_at")
+                if updated_at:
+                    try:
+                        updated_dt = datetime.fromisoformat(
+                            updated_at.replace("Z", "+00:00")
+                        )
+                        if (now - updated_dt) > timedelta(hours=4):
+                            queue["stale"].append(lug)
+                        else:
                             queue["in_progress"].append(lug)
-                    else:
+                    except ValueError:
                         queue["in_progress"].append(lug)
-                    continue
+                else:
+                    queue["in_progress"].append(lug)
+                continue
 
-                if status == "ready_for_recheck":
-                    queue["ready_for_recheck"].append(lug)
-                    continue
+            if status == "ready_for_recheck":
+                queue["ready_for_recheck"].append(lug)
+                continue
 
-                if status == "accepted":
-                    if not lug.get("user_reviewed", False):
-                        queue["accepted"].append(lug)
-                    updated_at = lug.get("updated_at") or lug.get("accepted_at")
-                    if updated_at:
-                        try:
-                            updated_dt = datetime.fromisoformat(
-                                updated_at.replace("Z", "+00:00")
-                            )
-                            if (now - updated_dt) < timedelta(hours=24):
-                                queue["completed_recently"].append(lug)
-                        except ValueError:
-                            pass
-                    continue
-
-                if status == "needs_clarification":
-                    queue["needs_clarification"].append(lug)
+            if status == "needs_clarification":
+                queue["needs_clarification"].append(lug)
 
         return queue
 
@@ -320,27 +334,53 @@ class OziWorkQueueMonitor:
         if available_slots == 0:
             return []
 
+        # Import gate evaluation
+        try:
+            import sys as _sys
+            _sys.path.insert(0, str(Path(__file__).parent / "tools"))
+            from lug_utils import evaluate_execute_when, load_phases_from_state
+            phases = load_phases_from_state()
+        except ImportError:
+            phases = []
+            evaluate_execute_when = None
+
         dispatched: List[str] = []
-        for lug in self._fifo_ready_lugs(queue.get("ready", [])):
+        for lug in self._roi_sorted_lugs(queue.get("ready", [])):
             if len(dispatched) >= available_slots:
                 break
-            lug_type = lug.get("type", "unknown")
+            lug_type = lug.get("type", lug.get("_fs_type", "unknown"))
             if lug_type in self.AUTO_EXCLUDED_TYPES:
                 continue
             lug_id = lug.get("id")
             if not isinstance(lug_id, str) or not lug_id:
                 continue
+            # Check blocked_by and execute_when gates
+            if evaluate_execute_when:
+                ready, reason = evaluate_execute_when(lug, phases)
+                if not ready:
+                    continue
             if self._dispatch_lug_to_subagent(lug_id, lug):
                 dispatched.append(lug_id)
         return dispatched
 
-    def _fifo_ready_lugs(self, lugs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        def sort_key(lug: Dict[str, Any]) -> str:
-            return str(
-                lug.get("created_at") or lug.get("updated_at") or lug.get("id") or ""
-            )
+    def _roi_sorted_lugs(self, lugs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Sort lugs by ROI (highest first), falling back to FIFO."""
+        try:
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent / "tools"))
+            from score_backlog import score_lug
+        except ImportError:
+            # Fallback to FIFO if scorer unavailable
+            return sorted(lugs, key=lambda l: str(
+                l.get("created_at") or l.get("updated_at") or l.get("id") or ""
+            ))
 
-        return sorted(lugs, key=sort_key)
+        def roi_key(lug: Dict[str, Any]) -> float:
+            lug_type = lug.get("_fs_type", lug.get("type", "other"))
+            status = lug.get("_fs_status", "open")
+            return score_lug(lug, lug_type, status)
+
+        return sorted(lugs, key=roi_key, reverse=True)
 
     def _dispatch_lug_to_subagent(self, lug_id: str, lug: Dict[str, Any]) -> bool:
         workflow = {
@@ -398,51 +438,91 @@ class OziWorkQueueMonitor:
         )
 
     def _create_implementation_prompt(self, lug_id: str, lug: Dict[str, Any]) -> str:
-        title = lug.get("title", "Untitled")
-        description = lug.get("description", "No description")
-        lug_type = lug.get("type", "task")
+        title = lug.get("title", lug.get("t", "Untitled"))
+        description = lug.get("description", lug.get("summary", "No description"))
+        lug_type = lug.get("type", lug.get("_fs_type", "task"))
+        file_path = lug.get("_file_path", f"WAI-Spoke/lugs/bytype/{lug_type}/open/{lug_id}.json")
+        perceive = lug.get("perceive", "")
+        execute = lug.get("execute", "")
+        verify = lug.get("verify", "")
+        pev_block = ""
+        if perceive or execute or verify:
+            pev_block = (
+                f"\nPEV Contract:\n"
+                f"  Perceive: {perceive}\n"
+                f"  Execute: {execute}\n"
+                f"  Verify: {verify}\n"
+            )
         return (
             "You are a builder sub-agent dispatched by Ozi.\n\n"
             f"Your ONLY job: Complete {lug_type} {lug_id}\n\n"
             f"Title: {title}\n\n"
-            f"Description:\n{description}\n\n"
+            f"Description:\n{description}\n"
+            f"{pev_block}\n"
             "Instructions:\n"
-            f'1. Read the full lug from WAI-Lugs.jsonl (id="{lug_id}")\n'
-            "2. Stay in scope\n"
-            "3. Update the lug with progress\n"
-            "4. When complete, set status to ready_for_recheck\n"
+            f"1. Read the full lug from: {file_path}\n"
+            "2. Follow the PEV contract: perceive → execute → verify\n"
+            "3. Stay in scope — only change what the lug specifies\n"
+            "4. Update the lug file with progress and completion notes\n"
+            "5. When complete, move lug to completed/ and set status to ready_for_recheck\n"
         )
+
+    def _find_lug_file(self, lug_id: str) -> Path | None:
+        """Find a lug file across all bytype/ folders."""
+        if not self.bytype_dir.exists():
+            return None
+        for type_dir in self.bytype_dir.iterdir():
+            if not type_dir.is_dir():
+                continue
+            for status_dir in type_dir.iterdir():
+                if not status_dir.is_dir():
+                    continue
+                candidate = status_dir / f"{lug_id}.json"
+                if candidate.exists():
+                    return candidate
+        return None
 
     def _update_lug_status(
         self, lug_id: str, status: str, workflow: Dict[str, Any]
     ) -> bool:
-        try:
-            with open(self.lugs_file, "r") as handle:
-                lines = handle.readlines()
-        except FileNotFoundError:
+        lug_path = self._find_lug_file(lug_id)
+        if not lug_path:
             return False
 
-        updated = False
-        for index, line in enumerate(lines):
-            try:
-                lug = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if lug.get("id") != lug_id:
-                continue
-            lug["status"] = status
-            lug["updated_at"] = datetime.now(timezone.utc).isoformat()
-            current_workflow = lug.get("workflow", {})
-            current_workflow.update(workflow)
-            lug["workflow"] = current_workflow
-            lines[index] = json.dumps(lug) + "\n"
-            updated = True
-            break
+        try:
+            lug = json.loads(lug_path.read_text())
+        except (json.JSONDecodeError, OSError):
+            return False
 
-        if updated:
-            with open(self.lugs_file, "w") as handle:
-                handle.writelines(lines)
-        return updated
+        lug["status"] = status
+        lug["s"] = status
+        lug["updated_at"] = datetime.now(timezone.utc).isoformat()
+        current_workflow = lug.get("workflow", {})
+        current_workflow.update(workflow)
+        lug["workflow"] = current_workflow
+
+        # Move file to new status folder if status changed
+        current_status_dir = lug_path.parent.name
+        type_dir = lug_path.parent.parent
+        new_status_dir = status.replace("-", "_")
+
+        if current_status_dir != new_status_dir:
+            new_dir = type_dir / new_status_dir
+            new_dir.mkdir(parents=True, exist_ok=True)
+            new_path = new_dir / lug_path.name
+            # Remove internal metadata before saving
+            lug.pop("_file_path", None)
+            lug.pop("_fs_status", None)
+            lug.pop("_fs_type", None)
+            new_path.write_text(json.dumps(lug, indent=2) + "\n")
+            lug_path.unlink()
+        else:
+            lug.pop("_file_path", None)
+            lug.pop("_fs_status", None)
+            lug.pop("_fs_type", None)
+            lug_path.write_text(json.dumps(lug, indent=2) + "\n")
+
+        return True
 
 
 def run_cycle(ozi: OziWorkQueueMonitor) -> int:

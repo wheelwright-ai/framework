@@ -1,8 +1,8 @@
 {
   "version": "2.1",
   "metadata": {
-    "spoke_path": "/home/mario/projects/wheelwright-ai/framework/WAI-Spoke",
-    "project_root": "/home/mario/projects/wheelwright-ai/framework",
+    "spoke_path": "{{home_dir}}/projects/wheelwright-ai/framework/WAI-Spoke",
+    "project_root": "{{home_dir}}/projects/wheelwright-ai/framework",
     "project_name": "framework",
     "last_updated": "2026-01-19T23:39:05Z",
     "updated_by": "WAI Update"
