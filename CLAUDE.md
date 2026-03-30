@@ -61,6 +61,8 @@ Living document. Add entries when Claude does something wrong.
 - **settings.local.json junk:** Do not approve one-off session-specific paths into settings.local.json. Keep only reusable entries.
 - **Memorizing rules:** Read the skill file. Don't carry rules in conversation context when the file is the source of truth.
 - **TaskCreate for persistent state:** Tasks don't survive sessions. Use lugs (P11).
+- **Asking permission for safe ops:** Don't ask "want me to X or Y?" — use the ROI scorer, pick the best action, do it. P10 says trust is the default. Only pause for genuinely destructive actions.
+- **Guessing context %:** Never estimate context usage. Use `/context` output or state "unknown". Estimation was proven 2.4x inaccurate.
 
 ## Formatting Rules: Lists
 
