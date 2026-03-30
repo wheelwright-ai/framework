@@ -56,6 +56,12 @@ Also load strategic context if it exists:
 cat WAI-Spoke/WAI-State.md
 ```
 
+**Custom AI personality files:**
+```bash
+ls *.md 2>/dev/null | grep -viE "^(README|CLAUDE|GEMINI|AGENTS|CHANGELOG)" | head -5
+```
+If any found, surface in briefing: "Custom files detected: {list}". Do NOT read or modify them — awareness only.
+
 ---
 
 ## Step 3: Skills (Lazy-Load)

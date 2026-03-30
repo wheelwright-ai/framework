@@ -2,7 +2,7 @@
   "i": "task-custom-ai-file-indexing",
   "t": "Detect custom AI personality files (SPARKY.md etc) at wakeup and list them for awareness without overwriting",
   "ty": "task",
-  "s": "o",
+  "s": "r",
   "ca": "2026-03-14T07:22:58Z",
   "gb": "Claude Opus 4.6",
   "fw_ver": "3.0.0",
