@@ -1,0 +1,59 @@
+{
+  "i": "session-20260330-0533",
+  "ty": "session-summary",
+  "t": "Session 106: Phase 1 impl chain + advisor pipeline + CC config hardening",
+  "s": "c",
+  "ca": "2026-03-30T20:00:00Z",
+  "gb": "claude-sonnet-4-6+claude-opus-4-6",
+  "session_number": 106,
+  "model_sequence": ["claude-sonnet-4-6", "claude-opus-4-6"],
+  "accomplished": [
+    "Phase 1 impl chain complete: hub health fix (DRIFT→GREEN), lathe scoring (17 spokes), taste deploy (10 prefs), tender model routing + dry-run",
+    "First tender run on hub: Pass 3 executed, 5 lugs attempted, 2 genuinely completed, 3 false completions detected and reverted",
+    "Built verify_health.py — health-checks all 17 registered spokes, populates scan_state.json with real data",
+    "Built compass_report.py — generates HTML dashboard from real data (17 spokes, 62 signals, portfolio mix)",
+    "Wired post-tend pipeline into wheel-tender.sh: verify_health → lathe_score → compass_report",
+    "Applied CC Advisor feedback: absolute paths in hooks, SessionStart matcher fix, deny list wildcards",
+    "Framework spoke RED→GREEN: 30 lug schema fixes (routed_to, behavior_directive, status)",
+    "Fixed pre-tool-guard.sh hook error: removed JSON echo on allow path",
+    "Broadened permissions to Bash(*) with hook as guard",
+    "Compass web interface outlined (Flask + decision queue + MCP future)"
+  ],
+  "files_touched": [
+    ".claude/hooks/pre-tool-guard.sh",
+    ".claude/settings.json",
+    "CLAUDE.md",
+    "/hub/tools/verify_health.py",
+    "/hub/tools/compass_report.py",
+    "/hub/tools/lathe_score.py",
+    "/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh",
+    "/hub/WAI-Hub/advisors/compass/reports/latest.html",
+    "/hub/WAI-Hub/advisors/compass/WEB-INTERFACE.md",
+    "/hub/taste.user.yaml"
+  ],
+  "decisions": [
+    "Pre-tool-guard: exit 0 silently for allow (no JSON output) — fixes CC hook error display",
+    "Bash(*) in allow list — hook handles blocking, permissions are fallback",
+    "Absolute paths in settings.json hooks — never $CLAUDE_PROJECT_DIR (added as CLAUDE.md anti-pattern)",
+    "False completions reverted: tender Sonnet marked lugs done without creating implementation files",
+    "Post-tend pipeline order: health → lathe → compass (data dependency chain)",
+    "Flask recommended for Compass web interface over static HTML"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "9 hub implementation lugs still open (librarian + gardener tools)",
+      "Phase 2 framework impl lugs ready (compass dashboard, decision engine, gardener-lathe integration)",
+      "PermissionRequest logger hook not yet created (lug exists: task-permission-request-logger-hook-v1)",
+      "Subagent memory config not yet done (lug exists: task-subagent-memory-config-v1)",
+      "Compass web interface ready for implementation (design doc committed)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Run another tender on hub to pick up remaining 9 implementation lugs",
+      "Start Phase 2 framework impl chain: compass-full-dashboard, compass-decision-engine, gardener-lathe-integration",
+      "Build Compass Flask web app for interactive dashboard",
+      "Create PermissionRequest logger hook (HAIKU task)"
+    ]
+  },
+  "autosaves_reconciled": []
+}
