@@ -1,0 +1,10 @@
+# taste.spoke.yaml — project-level preferences
+# Auto-generated at wakeup. Edit freely.
+preferences:
+  communication:
+    verbosity: balanced    # terse | balanced | detailed
+    style: direct          # direct | conversational | formal
+  workflow:
+    plan_threshold: 2      # files changed before requiring plan mode
+    auto_commit: false     # auto-commit after task completion
+nudges: []                 # proposed changes from historian

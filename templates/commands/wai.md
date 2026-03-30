@@ -180,6 +180,42 @@ If `UNREVIEWED_POINTS < 30` or directory missing: **silent** — no mention in b
 
 ---
 
+## Step 4c: Taste Bootstrap Check
+
+If `WAI-Spoke/taste.spoke.yaml` does NOT exist:
+
+```bash
+if [ ! -f "WAI-Spoke/taste.spoke.yaml" ]; then
+    # Bootstrap from template if available, otherwise create inline
+    if [ -f "templates/spoke/taste.spoke.yaml" ]; then
+        \cp templates/spoke/taste.spoke.yaml WAI-Spoke/taste.spoke.yaml
+    else
+        cat > WAI-Spoke/taste.spoke.yaml << 'TASTE'
+# taste.spoke.yaml — project-level preferences
+# Auto-generated at wakeup. Edit freely.
+preferences:
+  communication:
+    verbosity: balanced
+    style: direct
+  workflow:
+    plan_threshold: 2
+    auto_commit: false
+nudges: []
+TASTE
+    fi
+    echo "TASTE_BOOTSTRAPPED=true"
+else
+    echo "TASTE_BOOTSTRAPPED=false"
+fi
+```
+
+**If bootstrapped:** Surface in briefing: `Initialized taste.spoke.yaml with defaults`
+**If already exists:** Silent — no mention in briefing.
+
+**Do NOT touch `taste.user.yaml` at wakeup** — that is a hub-level file managed by the user.
+
+---
+
 ## Step 5: Discover Teachings
 
 Poll the hub's teachings folders for new framework and cross-spoke updates.

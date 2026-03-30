@@ -238,10 +238,12 @@ echo "✅ Cleaned autosave checkpoints > 3 sessions old"
 Commit and push **immediately** — no user confirmation required. The summary banner displays AFTER, not before.
 
 ```bash
-git add WAI-Spoke/ [other session files]
+git add WAI-Spoke/WAI-State.json WAI-Spoke/ [other session files]
 git commit -m "WAI Session [N]: [accomplishments] | [version]"
 git push origin main
 ```
+
+**Critical:** `WAI-Spoke/WAI-State.json` is listed explicitly first to guarantee it is staged even if glob expansion is incomplete or the agent truncates the command. This file MUST be committed every closeout — a dirty WAI-State.json at next wakeup means lost session state.
 
 If ceremony level is Minimal, include in commit message: `(minimal closeout — full deferred)`
 
