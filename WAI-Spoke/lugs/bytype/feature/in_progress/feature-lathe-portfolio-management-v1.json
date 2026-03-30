@@ -1,7 +1,7 @@
 {
   "id": "feature-lathe-portfolio-management-v1",
   "type": "feature",
-  "status": "open",
+  "status": "in_progress",
   "title": "Lathe: Portfolio management layer \u2014 strategic weighting, shift directions, investment profiles",
   "impact": 10,
   "description": "The Lathe is the strategic layer that shapes where the wheel spins hardest. Each spoke gets a shift direction (maintain/growth/revenue/custom) with urgency and investment profiles (time, money, attention). The gardener uses lathe weights to prioritize which spokes get tended first and how much budget each gets. Combined with the Gardener Priority (G) and User Attention (U) scores, the Lathe produces an actionable morning dashboard: here's where to spend your 30 minutes, here's what the gardener will handle overnight, here's what's trending toward your goals.",

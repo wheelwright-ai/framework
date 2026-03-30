@@ -2,5 +2,12 @@
   "last_scan_session": "track_20260315-2024",
   "last_scan_at": "2026-03-16T00:11:00Z",
   "total_sessions_scanned": 14,
-  "note": "Incremental scan: 2 new sessions (track_20260315-1906, track_20260315-2024). No new pattern occurrences found. Existing vectors unchanged."
+  "note": "Incremental scan: 2 new sessions (track_20260315-1906, track_20260315-2024). No new pattern occurrences found. Existing vectors unchanged.",
+  "mission_statement": "Ensure completeness of agreed ideas — track commitment fulfillment, feed work queue, build urgency for future work",
+  "data_sources": [
+    {"source": "WAI-Spoke/sessions/*/track.jsonl", "fields_used": ["decisions", "insights", "open", "focus"], "fields_needed": ["decisions"], "adequacy": "good"},
+    {"source": "WAI-Spoke/lugs/bytype/*/open/*.json", "fields_used": ["title", "status", "created_at"], "fields_needed": ["resolved_at"], "adequacy": "good"},
+    {"source": "WAI-Spoke/advisors/historian/vectors.jsonl", "fields_used": ["patterns"], "fields_needed": [], "adequacy": "good"}
+  ],
+  "self_sharpening_log": []
 }

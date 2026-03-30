@@ -388,3 +388,34 @@ Paired verification record. Required before any ozi-work lug can move to `ready_
 ```json
 {"task_type": "configuration_change", "target_file": "WAI-Spoke/WAI-State.json", "change_description": "Add hub_analysis section with spoke_count and last_sync fields", "tracking_only": true}
 ```
+
+---
+
+## Advisor Data Source Autonomy
+
+Each advisor declares its data sources in scan_state.json:
+
+```json
+{
+  "data_sources": [
+    {
+      "source": "path/to/data",
+      "fields_used": ["field1", "field2"],
+      "fields_needed": ["field3"],
+      "adequacy": "good|partial|missing"
+    }
+  ]
+}
+```
+
+**Adequacy check at activation:** When an advisor activates, it checks each data source:
+- `good`: source exists, all needed fields present
+- `partial`: source exists but missing fields → create gap lug
+- `missing`: source not found → create gap lug with higher priority
+
+**Gap lug template:**
+```json
+{"ty": "task", "t": "Advisor {name} needs {field} in {source}", "rt": "LOCAL", "gb": "advisor-{name}"}
+```
+
+Gap lugs are routed to the team responsible for the data source.

@@ -1,4 +1,5 @@
 {
+  "mission_statement": "Monitor Claude Code configuration health — detect gaps, track scores, suggest improvements across sessions",
   "advisor_id": "cc-advisor",
   "advisor_name": "ClaudeCode Configuration Advisor",
   "version": "1.0.0",
@@ -12,6 +13,7 @@
     {"source": "CLAUDE.md", "fields_used": ["rules", "anti-patterns", "hooks"], "adequacy": "good"},
     {"source": ".claude/hooks/", "fields_used": ["hook scripts"], "adequacy": "good"}
   ],
+  "self_sharpening_log": [],
   "rubric": {
     "categories": [
       {"id": "hooks", "name": "Hook Coverage", "weight": 3, "checks": ["session-start", "user-prompt-submit", "pre-tool-guard", "stop-hook", "pre-compact"]},
