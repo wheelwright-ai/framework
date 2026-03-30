@@ -1,0 +1,26 @@
+{
+  "i": "signal-foundation-evolution-from-attention-v1",
+  "t": "Foundation should evolve after prolonged interaction — sustained attention reveals identity drift",
+  "ty": "signal",
+  "s": "undelivered",
+  "ca": "2026-03-30T00:55:00Z",
+  "gb": "session-20260329-2315",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "va": "think",
+  "description": "_project_foundation is set once at init and rarely revisited. But after 100+ sessions, the project may have evolved past its original identity, boundaries, and success criteria. Foundation should update itself when sustained interaction reveals significant drift. The trigger: if the user has spent N hours over M sessions and the work pattern no longer matches the foundation's stated scope, surface a foundation review prompt. This is the foundation PEVing itself — perceive drift, execute review, verify updated identity.",
+  "connections": [
+    "signal-pev-fractal-attention-as-metric-v1",
+    "feature-advisor-data-source-autonomy-v1",
+    "wai-foundation.md (foundation skill)",
+    "wai-stewardship-guard.md (drift detection)"
+  ],
+  "implications": [
+    "Foundation gate (wai-foundation-gate.md) currently only fires when foundation is incomplete — extend to fire when stale",
+    "Define staleness: >30 sessions since last foundation review, OR >50% of recent work outside stated scope",
+    "Stewardship guard already detects drift — connect it to foundation review trigger",
+    "Foundation evolution_log should track when and why identity changed",
+    "This closes the loop: attention → drift detection → foundation review → updated identity"
+  ],
+  "teaching_candidate": true
+}
