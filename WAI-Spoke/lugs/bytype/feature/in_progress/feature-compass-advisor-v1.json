@@ -1,7 +1,7 @@
 {
   "id": "feature-compass-advisor-v1",
   "type": "feature",
-  "status": "open",
+  "status": "in_progress",
   "title": "Compass: Hub advisor \u2014 dynamic HTML dashboard, morning brief, decision tracker, productivity metrics",
   "impact": 10,
   "pev": {
@@ -51,5 +51,6 @@
     "what_this_is": "Feature lug for the Compass hub advisor \u2014 the user-facing dashboard and decision engine",
     "what_this_is_NOT": "Not just a report generator \u2014 this is the autopilot interface for the entire system"
   },
-  "va": "build"
+  "va": "build",
+  "updated_at": "2026-03-30T03:10:00Z"
 }
