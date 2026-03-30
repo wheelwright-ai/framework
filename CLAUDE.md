@@ -65,6 +65,7 @@ Living document. Add entries when Claude does something wrong.
 - **Guessing context %:** Never estimate context usage. Use `/context` output or state "unknown". Estimation was proven 2.4x inaccurate.
 - **Placeholder lugs:** Never create a lug without complete PEV, acceptance criteria, effort score, and file targets. Everything will be implemented — make it implementable at creation. After presenting a plan, immediately create the lugs. Don't wait to be asked.
 - **Deferring lug quality:** Don't walk away from the creation window without the artifact correctly defined. Test against principles and mission goals. Test again. Ozi enforces this.
+- **Hook path variables:** Never use `$CLAUDE_PROJECT_DIR` or other assumed env vars in settings.json hook commands. Always use absolute `/home/mario/` paths. Unresolved vars silently break every tool call in the session.
 
 ## Formatting Rules: Lists
 
