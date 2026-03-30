@@ -1,0 +1,20 @@
+{
+  "i": "idea-linkedin-conversation-to-implementation-wave-v1",
+  "t": "LinkedIn content: Conversations become implementations — the wave from idea to fleet-wide teaching",
+  "ty": "idea",
+  "s": "open",
+  "ca": "2026-03-30T00:32:00Z",
+  "gb": "session-20260329-2315",
+  "fw_ver": "3.0.0",
+  "va": "build",
+  "description": "Session 102 is a perfect case study. A conversation about 'Ozi should be smarter' became: ROI scorer → vibe tiebreaking → protocol updates → 16 lugs resolved → teachings for fleet. The metaphor: conversations are the swell building offshore, implementations are the wave forming, teachings are the break reaching every shore (spoke). This is the async dispatch vision in action. Write a LinkedIn post showing this flow with real numbers from Session 102.",
+  "content_hooks": [
+    "One conversation resolved 16 lugs and generated a scoring engine",
+    "Ideas → design → code → protocol → fleet distribution in a single session",
+    "AI as responsible partner: it didn't just do what was asked, it interrogated its own work and iterated",
+    "The wave metaphor: conversations build, implementations form, teachings break on every shore",
+    "Real numbers: 6 skills slimmed 50-68%, ~25k tokens saved per wakeup"
+  ],
+  "target": "nurturator spoke (LinkedIn content pipeline)",
+  "routed_to": "nurturator"
+}
