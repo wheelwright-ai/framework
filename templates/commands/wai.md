@@ -46,11 +46,15 @@ cat WAI-Spoke/WAI-State.md
 
 ---
 
-## Step 3: Load Skills
+## Step 3: Skills (Lazy-Load)
+
+**Do NOT read WAI-Skills.jsonl at wakeup.** Count entries only:
 
 ```bash
-cat WAI-Spoke/skills/WAI-Skills.jsonl
+wc -l < WAI-Spoke/skills/WAI-Skills.jsonl 2>/dev/null || echo 0
 ```
+
+Store the count for the briefing. Skills are loaded on-demand when a skill is invoked or `/wai-status` is called.
 
 **Skill resolution (hub nodes only):** Check `WAI-Hub/skills/{id}/{command_file}` first (hub override), fall back to `WAI-Spoke/skills/{id}/{command_file}`.
 
@@ -98,13 +102,21 @@ fi
 
 # Canonical storage: see wai-lug-schema.md
 
-Scan for active work across the `bytype/` hierarchy:
+**Count** active work across the `bytype/` hierarchy — do NOT read individual lug files:
 
 ```bash
-ls WAI-Spoke/lugs/bytype/*/open/*.json WAI-Spoke/lugs/bytype/*/in_progress/*.json WAI-Spoke/lugs/bytype/signal/undelivered/*.json 2>/dev/null
+# Count by type and status (fast — no file reads)
+for type_dir in WAI-Spoke/lugs/bytype/*/; do
+    type=$(basename "$type_dir")
+    open=$(ls "$type_dir/open/" 2>/dev/null | wc -l)
+    ip=$(ls "$type_dir/in_progress/" 2>/dev/null | wc -l)
+    undel=$(ls "$type_dir/undelivered/" 2>/dev/null | wc -l)
+    total=$((open + ip + undel))
+    [ "$total" -gt 0 ] && echo "$type: $open open, $ip in_progress, $undel undelivered"
+done
 ```
 
-Read each file found. These are the lugs that need attention this session.
+Store counts for the briefing. **Individual lugs are loaded on-demand** when user asks for details, during `/wai-status`, or when Ozi dispatches work.
 
 **Do NOT load completed/delivered lugs at wakeup.** The full index at `WAI-Spoke/WAI-LugIndex.jsonl` is for on-demand lookup when you need to find a specific archived lug.
 
@@ -308,14 +320,49 @@ For each file:
 
 ## Step 7: Display Briefing
 
+**Conditional briefing** — choose format based on whether ready work exists:
+
+### 7a: Check for ready work
+
+Run the ROI scorer to see if actionable items exist:
+
+```bash
+python3 tools/score_backlog.py ${SESSION_VIBE:-} 2>/dev/null | head -15
+```
+
+Count items with ROI >= 3.0 that are type `task`, `bug`, or `feature` (not epic/signal/other). These are "ready" items.
+
+### 7b: Needs-You Bucket
+
+Separate items that require human action (browser, credentials, UAT, deployment, OAuth) from agent-actionable items. Check each active lug's description and acceptance criteria for keywords:
+
+**Needs-You markers:** `browser`, `credential`, `oauth`, `deploy`, `UAT`, `manual test`, `login`, `real-world`, `physical`
+
+Items matching any marker go into the **Needs You** bucket. Everything else is **Agent-Actionable**.
+
+### 7c: Briefing Format
+
+**If ready items >= 1 → Simplified briefing:**
+
+```
+{project_name} v{version} | {total_open} open, {total_ip} in_progress | Context: {percent}%
+
+Agent-Actionable: {N} items (top: {top_item_title})
+Needs You: {M} items {list if M > 0}
+
+[W]ork top item / [R]efine backlog / [S]kip?
+```
+
+**If ready items == 0 → Full briefing (backward compatible):**
+
 Show unified WAI Point briefing:
 - Project identity and phase
-- Active work (from `bytype/*/open/` and `bytype/*/in_progress/`)
+- Active work counts (from Step 4 — counts only, not individual lugs)
   - **Include routing info:** Group by `routed_to` (LOCAL, FRAMEWORK, SIGNAL)
   - Announce: "Routing: X LOCAL (this project), Y FRAMEWORK (hub), Z SIGNAL (broadcast)"
   - **Stale in_progress detection:** Surface any lugs unchanged for >4 hours with options to abandon/resume/extend
 - **Teaching discovery** — action-gated:
-  - If `teachings_all_current`: one line: `Teachings: ✓ current (N adopted)` — no expansion
+  - If `teachings_all_current`: one line: `Teachings: current (N adopted)` — no expansion
   - If `actionable > 0`: show only what needs attention:
     - Path A pending: compact table (File | Summary | Impact)
     - Path B pending: list with reasons

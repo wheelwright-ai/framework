@@ -2,7 +2,7 @@
   "id": "task-from-signal-signal-wakeup-needs-you-bucket-20260326",
   "type": "task",
   "title": "signal-wakeup-needs-you-bucket-20260326",
-  "status": "open",
+  "status": "resolved",
   "created_at": "2026-03-26T06:00:00Z",
   "created_by": "hub-signal-triage",
   "impact": 8,
@@ -23,5 +23,7 @@
     "what_this_is": "Task derived from hub signal signal-wakeup-needs-you-bucket-20260326. Needs framework implementation.",
     "action": "implement"
   },
-  "va": "build"
+  "va": "build",
+  "resolved_at": "2026-03-30T00:15:00Z",
+  "resolved_by": "session-20260329-2315"
 }
