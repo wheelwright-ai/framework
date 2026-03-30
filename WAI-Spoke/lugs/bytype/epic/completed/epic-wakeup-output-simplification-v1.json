@@ -61,5 +61,9 @@
   "routed_to": "framework",
   "scope_verified_by": "user request (Session 73: 'wakeup output should leverage it to make the simple offer to the user - complete workable items; refine backlog')",
   "routing_notes": "UX/simplification feature for queue orchestration system. Feeds into epic-ozi-work-queue-orchestration-v1 + epic-ozi-queue-auto-discovery-v1.",
-  "va": "grind"
+  "va": "grind",
+  "s": "resolved",
+  "resolved_at": "2026-03-30T02:30:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Implemented: Session 102 added binary briefing (W/R/S), needs-you bucket, conditional simplified format, slim wakeup (lazy-load skills+lugs), and minimal mode."
 }

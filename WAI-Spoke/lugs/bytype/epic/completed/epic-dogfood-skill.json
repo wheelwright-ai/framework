@@ -2,10 +2,13 @@
   "i": "epic-dogfood-skill",
   "t": "Spoke skill: dogfood \u2014 sub-agent validation for ideas and modifications",
   "ty": "epic",
-  "s": "o",
+  "s": "resolved",
   "impact": 8,
   "ca": "2026-03-14T07:22:58Z",
   "gb": "Claude Opus 4.6",
   "description": "[skills] Every spoke gets this. Sends idea/modification to a sub-agent with only base WAI understanding. Proves idea is hallucination-proof and complete. For modifications: dry-run and report feedback. Returns structured assessment to improve the proposal before it ships.",
-  "va": "think"
+  "va": "think",
+  "resolved_at": "2026-03-30T02:30:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Superseded: wai-dogfood.md skill created in Session 102. Cold-reader sub-agent validation protocol is now a registered skill."
 }

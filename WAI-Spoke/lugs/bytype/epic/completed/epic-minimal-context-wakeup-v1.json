@@ -39,5 +39,9 @@
   "routed_to": "local",
   "scope_verified_by": "user feedback (Session 73: cross-project handoff feature for Wheelwright Framework)",
   "routing_notes": "Architectural improvement to Wheelwright's wakeup. Stays local. Becomes a teaching only if other spokes adopt similar pattern.",
-  "va": "grind"
+  "va": "grind",
+  "s": "resolved",
+  "resolved_at": "2026-03-30T02:30:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Implemented: Session 102 added Minimal Mode (--minimal flag, ~8k tokens), lazy-load skills (Step 3), lazy-load lugs (Step 4 counts only)."
 }
