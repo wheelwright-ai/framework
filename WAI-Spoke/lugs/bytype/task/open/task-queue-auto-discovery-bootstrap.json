@@ -14,6 +14,13 @@
   "perceive": "1. Read templates/commands/wai.md Steps 3-4 (skills + lugs loading) — where discovery would insert. 2. Confirm _work_queue schema from task-work-queue-schema-and-state is in WAI-State.json. 3. Count current open lugs by type: ls WAI-Spoke/lugs/bytype/*/open/*.json. 4. Check seed/ingest/ for pending teachings.",
   "execute": "1. Add Wakeup Step 4.5 to templates/commands/wai.md: after loading lugs, check if _work_queue exists in WAI-State.json. 2. If missing: run auto-discovery scan in priority order: (a) teachings in seed/ingest/ → priority 1, (b) lugs in incoming/ → priority 2, (c) signals in bytype/signal/undelivered/ → priority 3, (d) open task/bug/feature lugs → priority 4. 3. For each discovered item: assess readiness — has PEV or acceptance_criteria = 'ready', missing = 'needs_refinement'. 4. Write _work_queue to WAI-State.json with discovered items sorted by priority. 5. Present: 'Built queue from {N} items ({M} ready, {K} need refinement). Review: [W]ork / [R]efine / [A]djust order'. 6. One-time bootstrap: after first discovery, queue exists and is maintained by normal lug creation. 7. Sync wai.md to all targets.",
   "verify": "1. Remove _work_queue from WAI-State.json, run wakeup — queue auto-discovered and populated. 2. With _work_queue present — Step 4.5 skips silently. 3. Discovered items sorted correctly (teachings first, then inbound, then signals, then local). 4. Ready/needs_refinement assessment matches PEV presence.",
+  "pev": {"priority": "medium", "effort": 3, "value": 7},
+  "acceptance_criteria": [
+    "_work_queue auto-built from existing lugs when missing from WAI-State.json",
+    "Discovery scan follows priority order: teachings > incoming > signals > open lugs",
+    "Items tagged ready vs needs_refinement based on PEV presence",
+    "Step 4.5 skips silently when _work_queue already exists"
+  ],
   "_behavior_directive": {
     "what_this_is": "One-time bootstrap that builds _work_queue from existing lugs when queue doesn't exist yet",
     "what_this_is_NOT": "Not ongoing queue management — this runs once per spoke then the queue is maintained by normal operations"

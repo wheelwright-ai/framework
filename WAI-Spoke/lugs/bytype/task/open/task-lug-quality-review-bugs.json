@@ -13,6 +13,13 @@
   "perceive": "1. ls WAI-Spoke/lugs/bytype/bug/open/*.json and WAI-Spoke/lugs/bytype/bug/in_progress/*.json — list all bug lugs. 2. Read each bug lug. 3. Check against quality standards: id matches filename, title is 5+ words and descriptive, has perceive/execute/verify fields, self-contained for cold reader.",
   "execute": "For each bug lug: 1. Read the full lug. 2. Check: (a) id = filename (without .json), (b) title is meaningful 5+ words, (c) has PEV fields, (d) description explains the bug clearly for a cold reader. 3. If any gap: rewrite the lug with improvements — add PEV if missing, expand title if vague, ensure description is self-contained. 4. Dogfood: spawn a sub-agent with just the lug content, ask 'What is this bug? How would you fix it? What would you check?' — if sub-agent can't answer, the lug needs more detail. 5. Write improved version back to the same path.",
   "verify": "1. Every bug lug has: id matching filename, 5+ word title, perceive/execute/verify fields, description. 2. Dogfood sub-agent can explain what each bug is and how to verify the fix. 3. No lug has generic title like 'Bug: fix thing'.",
+  "pev": {"priority": "medium", "effort": "2", "value": "7"},
+  "acceptance_criteria": [
+    "Every open/in_progress bug lug has: id matching filename, 5+ word title, perceive/execute/verify fields",
+    "Each bug description is self-contained for a cold reader",
+    "Dogfood sub-agent can explain what each bug is and how to verify the fix",
+    "Note: scope reduced from original 11 to current 2 open + 1 in_progress bugs"
+  ],
   "_behavior_directive": {
     "what_this_is": "Batch review of all bug lugs for quality — the proof-of-concept batch for the lug quality epic",
     "what_this_is_NOT": "Not reviewing tasks, epics, or ideas — those are future batches"

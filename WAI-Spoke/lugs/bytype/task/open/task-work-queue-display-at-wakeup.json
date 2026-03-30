@@ -14,6 +14,14 @@
   "perceive": "1. Read templates/commands/wai.md Step 7-8 — where the briefing ends and session starts. 2. Confirm _work_queue exists in WAI-State.json (from task-work-queue-schema-and-state). 3. Count ready vs needs_refinement items.",
   "execute": "1. Add Step 9 to wai.md (after Initialize Session): if _work_queue is non-empty, display: 'Work Queue: {N} ready, {M} needs refinement'. 2. Show top 3 ready items by priority with one-line summaries. 3. Offer: '[W]ork next ready item / [R]eview refinements / [S]kip queue'. 4. If queue is empty: skip Step 9 silently. 5. Sync wai.md to all targets.",
   "verify": "1. With populated queue: wakeup shows queue summary + offer. 2. With empty queue: no queue section appears. 3. Selecting [W] starts the top priority ready item.",
+  "pev": {"priority": "high", "effort": "2", "value": "7"},
+  "acceptance_criteria": [
+    "wai.md Step 9 added: if _work_queue non-empty, display ready/refinement counts",
+    "Top 3 ready items shown by priority with one-line summaries",
+    "Work/Review/Skip offer presented to user",
+    "Empty queue: Step 9 skipped silently",
+    "Synced to all targets"
+  ],
   "_behavior_directive": {
     "what_this_is": "Wakeup presentation of the work queue — display and offer, not queue logic",
     "what_this_is_NOT": "Not implementing the queue itself (that's task-work-queue-schema-and-state) or chain mode"

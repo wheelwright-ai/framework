@@ -14,6 +14,13 @@
   "perceive": "1. Read templates/commands/wai-closeout.md — find where to add registry signal step (after Step 9c). 2. Read hub/hub-registry.json — current per-spoke fields. 3. Read WAI-Spoke/WAI-State.json — fields that map to registry entry.",
   "execute": "1. Add Step 9d to wai-closeout.md: generate spoke registry update signal from WAI-State.json fields (wheel_id, spoke_id, path, foundation_name, project_description, current_phase, framework_version, last_session). 2. Write as signal lug to bytype/signal/undelivered/ with target: 'hub'. 3. Hub gardener processes: reads signal, updates matching entry in hub-registry.json. 4. Sync closeout to all targets.",
   "verify": "1. After closeout, bytype/signal/undelivered/ has a registry update signal with all required fields. 2. Gardener can parse and apply the update to hub-registry.json.",
+  "pev": {"priority": "medium", "effort": 3, "value": 7},
+  "acceptance_criteria": [
+    "Closeout generates spoke registry update signal from WAI-State.json fields",
+    "Signal written to bytype/signal/undelivered/ with target hub",
+    "Signal contains wheel_id, spoke_id, path, foundation_name, project_description, current_phase, framework_version, last_session",
+    "Hub gardener can parse and apply update to hub-registry.json"
+  ],
   "_behavior_directive": {
     "what_this_is": "Auto-generate spoke registry entries at closeout — keeps hub-registry.json current",
     "what_this_is_NOT": "Not manual registry management — automatic, driven by closeout"

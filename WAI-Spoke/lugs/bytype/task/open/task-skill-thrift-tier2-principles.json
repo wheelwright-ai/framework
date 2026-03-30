@@ -13,6 +13,13 @@
   "perceive": "1. Read templates/commands/wai-principles.md (234 lines). 2. Identify core principle statements (P1-P11) vs verbose rationale and examples.",
   "execute": "1. Read full skill file. 2. Write slimmed primary: keep principle names, one-line definitions, behavioral rules. Drop verbose rationale paragraphs and examples. 3. Write wai-principles-reference.md with moved content. 4. Sync to all targets. 5. Verify.",
   "verify": "1. wc -l templates/commands/wai-principles.md — under 120 lines. 2. All P1-P11 names and definitions present. 3. diff sync across targets.",
+  "pev": {"priority": "low", "effort": 2, "value": 5},
+  "acceptance_criteria": [
+    "wai-principles.md under 120 lines",
+    "All P1-P11 names and one-line definitions present in primary",
+    "wai-principles-reference.md contains verbose rationale and examples",
+    "Synced across all targets"
+  ],
   "_behavior_directive": {
     "what_this_is": "Apply skill thrift to wai-principles.md",
     "what_this_is_NOT": "Not changing principles — only reorganizing verbose content to reference file"

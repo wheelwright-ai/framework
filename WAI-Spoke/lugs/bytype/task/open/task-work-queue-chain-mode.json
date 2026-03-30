@@ -14,6 +14,14 @@
   "perceive": "1. Read templates/commands/wai-ozi-work-queue-monitor.md — current dispatch logic. 2. Read templates/commands/wai-closeout.md — closeout steps that must run between items. 3. Read WAI-State.json _work_queue to understand item structure.",
   "execute": "1. Add chain mode option to wai-ozi-work-queue-monitor.md: after completing an item, run a mini-closeout (lug reconciliation, state update, track finalize) then auto-load next ready item. 2. Chain mode requires explicit user approval: 'Chain mode: implement all ready items sequentially? [Y]es / [N]o'. 3. Between items: update _work_queue (remove completed, advance next), increment session_count, write track entry. 4. Stop conditions: queue empty, context >70%, any item fails verification. 5. Sync to all targets.",
   "verify": "1. With 3 ready items and chain mode enabled: all 3 processed sequentially. 2. Context >70% between items: chain stops with warning. 3. Failed item: chain stops, item stays in queue with review_reason. 4. Each item gets its own track entries.",
+  "pev": {"priority": "low", "effort": "4", "value": "8"},
+  "acceptance_criteria": [
+    "Chain mode option exists in wai-ozi-work-queue-monitor.md with explicit user approval prompt",
+    "Mini-closeout runs between items (lug reconciliation, state update, track entry)",
+    "Stop conditions enforced: queue empty, context >70%, item verification failure",
+    "Each processed item gets its own track entries",
+    "Synced to all targets"
+  ],
   "_behavior_directive": {
     "what_this_is": "Chain mode for sequential work queue processing — mini-closeout between items, auto-advance",
     "what_this_is_NOT": "Not parallel execution — strictly sequential. Not bypassing closeout — each item gets proper state preservation."

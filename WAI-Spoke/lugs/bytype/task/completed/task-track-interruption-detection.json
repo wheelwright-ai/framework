@@ -2,7 +2,8 @@
   "i": "task-track-interruption-detection",
   "t": "Add track.jsonl interruption detection to wakeup — surface incomplete sessions with turn number and timestamp",
   "ty": "task",
-  "s": "o",
+  "s": "completed",
+  "resolution": "completed — wai.md Step 3b already implements this (duplicate of task-track-integrity-validation-wakeup)",
   "ca": "2026-03-29T09:45:00Z",
   "gb": "claude-opus-4-6",
   "fw_ver": "3.0.0",
@@ -16,5 +17,7 @@
   "_behavior_directive": {
     "what_this_is": "Add interruption detection to wakeup by validating the previous session's track.jsonl final entry",
     "what_this_is_NOT": "Not implementing full recovery — just detection and surfacing. Recovery is handled by /wai-green-light."
-  }
+  },
+  "updated_at": "2026-03-29T10:00:00Z",
+  "updated_by": "claude-opus-4-6"
 }

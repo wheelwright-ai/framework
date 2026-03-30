@@ -13,6 +13,13 @@
   "perceive": "1. Read templates/commands/wai-ide-setup.md (262 lines). 2. Identify behavioral instructions vs hook script templates and verbose setup guides.",
   "execute": "1. Read full skill file. 2. Write slimmed primary: keep setup checklist, hook registration rules, required vs optional hooks. Drop full hook script contents, verbose platform-specific guides. 3. Write wai-ide-setup-reference.md with moved content. 4. Sync to all targets. 5. Verify.",
   "verify": "1. wc -l templates/commands/wai-ide-setup.md — under 140 lines. 2. Setup checklist and hook rules in primary. 3. diff sync across targets.",
+  "pev": {"priority": "medium", "effort": 2, "value": 6},
+  "acceptance_criteria": [
+    "wai-ide-setup.md under 140 lines",
+    "Setup checklist and hook registration rules retained in primary",
+    "wai-ide-setup-reference.md contains hook scripts and platform guides",
+    "Synced across all targets"
+  ],
   "_behavior_directive": {
     "what_this_is": "Apply skill thrift to wai-ide-setup.md",
     "what_this_is_NOT": "Not changing IDE setup behavior"

@@ -8,6 +8,13 @@
   "impact": 8,
   "source_signal": "signal-wakeup-needs-you-bucket-20260326",
   "description": "Wakeup briefing should separate 'user-only' actions from 'agent-can-proceed' actions. Items requiring a browser, physical credential, or real-world action (UAT, OAuth test, deployment flip) should be bucketed distinctly so they don't dominate the agent's next-action list when the agent cannot unblock them.",
+  "pev": {"priority": "medium", "effort": "3", "value": "8"},
+  "acceptance_criteria": [
+    "Wakeup briefing separates items into 'agent-actionable' and 'needs-you' buckets",
+    "Items requiring browser, credentials, UAT, or real-world action appear in 'needs-you' bucket",
+    "Agent next-action list only contains items the agent can unblock independently",
+    "Bucket logic documented in wai.md wakeup protocol"
+  ],
   "_behavior_directive": {
     "what_this_is": "Task derived from hub signal signal-wakeup-needs-you-bucket-20260326. Needs framework implementation.",
     "action": "implement"

@@ -19,5 +19,13 @@
   "related_to": "epic-skill-thrift-v1 Tier 1, epic-minimal-context-wakeup-v1",
   "routed_to": "local",
   "scope_verified_by": "user feedback (Session 73: local optimization work for Wheelwright Framework)",
-  "routing_notes": "Work item for Wheelwright Framework's session 73. Stays local during execution. Becomes a signal if optimization proves broadly applicable."
+  "routing_notes": "Work item for Wheelwright Framework's session 73. Stays local during execution. Becomes a signal if optimization proves broadly applicable.",
+  "pev": {"priority": "medium", "effort": "2", "value": "7"},
+  "acceptance_criteria": [
+    "Wakeup Step 3 no longer loads WAI-Skills.jsonl by default",
+    "Wakeup Step 4 no longer lists individual lugs — shows count only",
+    "Briefing shows 'Active work: [count] items' with lazy-load note",
+    "Full lug/skill details accessible via /wai-status on demand",
+    "Measured token reduction documented (target: ~35% reduction)"
+  ]
 }

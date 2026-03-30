@@ -13,6 +13,13 @@
   "perceive": "1. Read templates/commands/wai-foundation.md (261 lines). 2. Identify behavioral instructions (question flow, field population rules) vs verbose examples and onboarding prose.",
   "execute": "1. Read full skill file. 2. Write slimmed primary: keep question sequence, field requirements, completion criteria. Drop example answers, verbose onboarding prose. 3. Write wai-foundation-reference.md with moved content. 4. Sync to all targets. 5. Verify.",
   "verify": "1. wc -l templates/commands/wai-foundation.md — under 140 lines. 2. Question sequence and field requirements in primary. 3. diff sync across targets.",
+  "pev": {"priority": "medium", "effort": 2, "value": 6},
+  "acceptance_criteria": [
+    "wai-foundation.md under 140 lines",
+    "Question sequence and field requirements retained in primary",
+    "wai-foundation-reference.md contains extracted verbose content",
+    "Synced across all targets"
+  ],
   "_behavior_directive": {
     "what_this_is": "Apply skill thrift to wai-foundation.md",
     "what_this_is_NOT": "Not changing foundation protocol"

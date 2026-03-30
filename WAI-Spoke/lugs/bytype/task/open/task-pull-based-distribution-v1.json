@@ -17,6 +17,14 @@
     ],
     "verify": "Wakeup briefing detects and pulls 1 new teaching file from hub broadcast without manual /wai-teach."
   },
+  "pev": {"priority": "high", "effort": "4", "value": "8"},
+  "acceptance_criteria": [
+    "WAI-State.json includes hub_broadcast_path configuration",
+    "Wakeup protocol (wai.md) checks hub/broadcast/teachings/ for new .teaching files",
+    "Wakeup protocol checks hub/broadcast/lugs/ for global signals",
+    "Sync logic copies from hub/broadcast/ to local seed/ingest/ automatically",
+    "Wakeup briefing reports newly pulled teachings without manual /wai-teach"
+  ],
   "_behavior_directive": {
     "what_this_is": "Requirement for spoke-side pull distribution logic.",
     "what_this_is_NOT": "The Hub-side implementation."
