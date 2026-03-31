@@ -1,18 +1,13 @@
 {
   "wheel": {
-    "version": "2.0.131",
+    "version": "2.0.132",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
     "hub_id": "TestHub",
-    "description": null,
     "created": "2026-02-08T13:28:21.240569",
     "last_modified": "2026-02-21T00:48:00+00:00",
     "hub_path": "/home/mario/projects/wheelwright/hub",
-    "abbrev": null,
-    "type": null,
-    "repository": null,
-    "last_updated": null,
     "status": "active",
     "workspace": {
       "ide_cmd": null,
@@ -33,8 +28,8 @@
         }
       }
     },
-    "last_modified_at": "2026-03-30T15:15:00Z",
-    "last_modified_by": "claude-opus-4-6",
+    "last_modified_at": "2026-03-31T04:05:30Z",
+    "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
   "_project_foundation": {
@@ -93,15 +88,14 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260330-1744",
-    "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-31T03:15:00Z",
-    "last_closeout": "2026-03-31T03:15:00Z",
-    "session_count": 110,
-    "track_path": "WAI-Spoke/sessions/session-20260330-1744/track.jsonl",
-    "next_session_recommendation": "Session 111: (1) Commit hub repo changes — wheel-tender.sh UX, wakeup docs, Expediter pre-Pass-2 integration (separate commit). (2) Close epic-session15-fleet-evolution — framework_version confirmed in template, mark done children. (3) Run Expediter on hub spoke. (4) Update historian.yaml activity_filter_exclude with new stop-verbs (scanned, session, validated, produced). (5) impl-librarian-execute-hub-lugs-v1 still pending — 11 child lugs, run in hub OPUS session. (6) Hub signals inbox still at 63 — triage pass needed.",
+    "last_session_id": "session-20260330-2016",
+    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-03-31T04:05:30Z",
+    "last_closeout": "2026-03-31T04:05:30Z",
+    "session_count": 111,
+    "track_path": "WAI-Spoke/sessions/session-20260330-2016/track.jsonl",
+    "next_session_recommendation": "Session 112: (1) Verify wakeup savings \u2014 run /wai then /context, expect messages < 8k (was 22.3k). (2) Commit hub repo changes \u2014 wheel-tender.sh UX, wakeup docs, Expediter pre-Pass-2. (3) Close epic-session15-fleet-evolution \u2014 framework_version confirmed in template, mark done children. (4) Implement tools/closeout.sh \u2014 lug lug-scripted-wakeup-closeout-20260330 has full spec. (5) impl-librarian-execute-hub-lugs-v1 still pending \u2014 11 child lugs, run in hub OPUS session. (6) Hub signals inbox still at 63 \u2014 triage pass needed.",
     "requires_review": false,
-    "review_reason": null,
     "mode": "execution",
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
@@ -110,7 +104,6 @@
   },
   "_work_queue": {
     "enabled": true,
-    "vibe": null,
     "last_scored_at": "2026-03-30T12:29:34Z",
     "items": [
       {
@@ -259,9 +252,7 @@
       "total_tokens_used": 0,
       "total_sessions": 0,
       "description": "Track metrics without Wheelwright optimizations for comparison"
-    },
-    "ai_wins": [],
-    "last_updated": null
+    }
   },
   "feature_toggles": {
     "_description": "Toggle marketing features for baseline comparison and testing",
@@ -272,14 +263,7 @@
     "hub_learning": true,
     "quality_gates": true
   },
-  "hub": {
-    "summary": null,
-    "objectives": [],
-    "decisions": [],
-    "constraints": []
-  },
   "spokes": {
-    "active": [],
     "available": [
       "meta-consultation",
       "document-analysis",
@@ -287,20 +271,13 @@
     ]
   },
   "context": {
-    "current_phase": null,
     "next_actions": [
       "Complete project foundation with AI assistant",
       "Define project identity, boundaries, and approach",
       "Begin development with clear context"
     ],
-    "blockers": [],
-    "insights": [],
     "hub_path_corrected_at": "2026-03-25T13:05:00Z"
   },
-  "stack": [],
-  "features": [],
-  "decisions": [],
-  "bugs": [],
   "ai_rules": {
     "context_loading": "Read WAI-Spoke/WAI-Guide.md first, then WAI-State.json and WAI-State.md",
     "session_state": "Update _session_state when making significant changes",
@@ -366,14 +343,5 @@
     "total_sessions": 9,
     "total_turns": 0,
     "last_closeout": "2026-03-13T18:21:27Z"
-  },
-  "_auto_implementation": {
-    "deprecated": true,
-    "enabled": false,
-    "notes": [
-      "Shared project-wide auto mode is deprecated.",
-      "Use session-local Ozi runtime files in WAI-Spoke/runtime/ozi-sessions/ instead.",
-      "Control current session with /wai-auto-on, /wai-auto-off, /wai-auto-status, and /wai-auto-parallel."
-    ]
   }
 }
