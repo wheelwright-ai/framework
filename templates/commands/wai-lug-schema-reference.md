@@ -367,6 +367,53 @@ Paired verification record. Required before any ozi-work lug can move to `ready_
 
 ---
 
+## Execute-When Gates — JSON Schemas
+
+### execute_when Schema
+```json
+{
+  "execute_when": {
+    "all_completed": ["lug-id-1", "lug-id-2"],
+    "any_completed": ["lug-id-3"],
+    "phase_completed": "p1-foundation",
+    "manual_gate": false
+  }
+}
+```
+
+### Phase Definitions in WAI-State.json
+```json
+{
+  "_work_queue": {
+    "phases": [
+      {"id": "p1-foundation", "title": "Foundation fixes", "order": 1},
+      {"id": "p2-orchestration", "title": "Queue orchestration", "order": 2}
+    ]
+  }
+}
+```
+
+---
+
+## Routing Fields — JSON Example and Test Case
+
+### scope_verified_by Example
+```json
+{
+  "routed_to": "FRAMEWORK",
+  "scope_verified_by": "user (Session 74: 'this is a wakeup protocol fix affecting all spokes')"
+}
+```
+
+### Routing Decision Test Case
+
+User requests "optimize wakeup for fast projects":
+- Ozi recognizes this improves wakeup (framework concern)
+- Routes to: `epic-minimal-context-wakeup-v1` (LOCAL) + `signal-ozi-routing-awareness` (SIGNAL)
+- Announces: "Creating epic → LOCAL + Creating signal → SIGNAL (all spokes learn from this)"
+
+---
+
 ## Anti-Pattern Examples
 
 ### Ambiguous action (bad)

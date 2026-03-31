@@ -51,15 +51,21 @@ Document unfinished work with enough detail to resume: status, what's done, what
 
 If a session track exists, also read `open` items from the last 3 track points.
 
-### 4. Version Increment
+### 4–5. Run Closeout Script
 
-Bump `wheel.version` patch: `2.0.7` -> `2.0.8`. This versions session state, not a release.
+```bash
+tools/closeout.sh --modified-by {model_id} --track-path {current_track_path}
+```
 
-### 5. State Update
+Handles automatically: version bump, `session_count++`, `last_closeout`/`last_modified_at`/`last_modified_by`, lug archival (`in_progress` → `completed` for status==completed lugs), `WAI-LugIndex.jsonl` regen, backlog scoring + `_work_queue` update.
 
-Update `WAI-State.json`: `session_count` += 1, `last_closeout` = now, `last_modified_by` = model, `last_modified_at` = now, `next_session_recommendation` = what next, `track_path` = current track.
+Add `--dry-run` to preview without writing.
 
-If capability adoptions/migrations occurred: update extended state accordingly.
+Review the printed summary, then complete the remaining AI-only fields:
+
+**AI completes in WAI-State.json:**
+- `_session_state.next_session_recommendation` = what the next session should focus on
+- `_session_state.track_path` = current session track path (if not passed via `--track-path`)
 
 **Capability check:** `test -d WAI-Spoke/lugs/bytype && echo BYTYPE_OK || echo FLAT_LUG` — if FLAT_LUG, skip 5b and 5c entirely.
 
@@ -67,19 +73,18 @@ If capability adoptions/migrations occurred: update extended state accordingly.
 
 For each implementation lug with `status = "implemented"`: check `_migration_state.adoption_markers` in extended state. If `adopted = false`, update to `true` with timestamp.
 
-### 5c. Lug Status Sync and Routing-Aware Archival
+### 5c. Hub Routing (FRAMEWORK / SIGNAL / SPOKE lugs only)
 
-1. Scan `bytype/*/open/` and `bytype/*/in_progress/` for status changes this session
-2. Route completed lugs by `routed_to`: LOCAL -> `bytype/{type}/completed/`, FRAMEWORK -> completed + hub teachings (Step 9b), SIGNAL -> `bytype/signal/delivered/` + hub bulletin (Step 9c), SPOKE/{id} -> copy to hub incoming + complete locally
-3. Move delivered signals from `undelivered/` to `delivered/`
-4. Regenerate `WAI-LugIndex.jsonl` — one line per lug: `{id, type, status, title, folder, created_at, routed_to}`
-5. Report: "Moved N lugs. Routing: M LOCAL, K FRAMEWORK, J SIGNAL, P SPOKE. Index: T entries."
+Script handles LOCAL archival. For non-LOCAL lugs, AI routes manually:
+- **FRAMEWORK** → completed + hub teachings (Step 9b)
+- **SIGNAL** → `bytype/signal/delivered/` + hub bulletin (Step 9c)
+- **SPOKE/{id}** → copy to hub incoming + complete locally
 
-### 5d. Tag Next Lug + Report Progress
+Move delivered signals from `undelivered/` to `delivered/`.
 
-**Tag next:** `python3 tools/score_backlog.py ${SESSION_VIBE:-} 2>/dev/null | head -15` — pick top task/bug/feature with ROI >= 3.0. Write to `next_session_recommendation`.
+### 5d. Changelog Entries
 
-**Report progress:** For each resolved lug, append to `WAI-Spoke/runtime/spoke-changelog.jsonl`. See `wai-closeout-reference.md` for changelog entry format. Framework-internal changes go in CHANGELOG.md, not spoke-changelog.
+For each resolved lug, append to `WAI-Spoke/runtime/spoke-changelog.jsonl`. See `wai-closeout-reference.md` for changelog entry format. Framework-internal changes go in CHANGELOG.md, not spoke-changelog.
 
 ### 6. Finalize Session Track
 

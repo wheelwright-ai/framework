@@ -2,9 +2,9 @@
   "id": "epic-skill-thrift-v1",
   "type": "epic",
   "title": "Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference files for verbose content",
-  "status": "open",
+  "status": "completed",
   "created_at": "2026-03-25T05:30:00Z",
-  "updated_at": "2026-03-25T03:45:00Z",
+  "updated_at": "2026-03-31T23:44:56Z",
   "created_by": "claude-opus-4-6",
   "session_id": "session-20260325-0500",
   "impact": 9,
@@ -17,7 +17,9 @@
     "wai-closeout.md (650\u2192137 lines, -77%) \u2014 wai-closeout-reference.md created",
     "wai-shipit.md (680\u2192113 lines, -79%)",
     "wai-lug-schema.md (795\u2192421 lines, -47%) \u2014 wai-lug-schema-reference.md created (349L). Duplicate dogfooding section fixed. All 6 sync targets updated.",
-    "wai-improve.md (656\u2192380 lines, -42%) \u2014 wai-improve-reference.md created (182L). All 6 sync targets updated."
+    "wai-improve.md (656\u2192380 lines, -42%) \u2014 wai-improve-reference.md created (182L). All 6 sync targets updated.",
+    "wai.md (605\u2192233L, -62%) \u2014 wai-reference.md created, all scripts/schemas/tables moved",
+    "wai-lug-schema.md (525\u2192471L) \u2014 Execute-When Gates + Routing Fields condensed, JSON examples to reference"
   ],
   "tier1_plan": {
     "wai-lug-schema.md": {
@@ -142,5 +144,7 @@
   "routed_to": "LOCAL",
   "model_fit": "SONNET",
   "next_step": "Identify top 5 remaining high-line-count skills that need thrifting. Run: grep -c \"\" templates/commands/wai-*.md | sort -t: -k2 -rn | head -10",
-  "blocked_by": []
+  "blocked_by": [],
+  "completed_at": "2026-03-31T23:44:56Z",
+  "completion_note": "wai.md 605\u2192233L (-62%), wai-reference.md created. wai-lug-schema.md 525\u2192471L (-10%, Execute-When Gates + Routing Fields condensed). All tier2 skills already under 200L. All sync targets updated."
 }

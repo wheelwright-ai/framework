@@ -88,12 +88,12 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260331-1610",
+    "last_session_id": "session-20260331-1632",
     "last_modified_by": "claude-sonnet-4-6",
     "last_modified_at": "2026-03-31T23:17:42Z",
     "last_closeout": "2026-03-31T23:17:42Z",
     "session_count": 116,
-    "track_path": "WAI-Spoke/sessions/session-20260331-1610/track.jsonl",
+    "track_path": "WAI-Spoke/sessions/session-20260331-1632/track.jsonl",
     "next_session_recommendation": "Session 116 priorities:\n(1) Fix track integrity check false-positive: wakeup INTERRUPTED detection must accept event==closeout as CLEAN (not just completed==true).\n(2) feature-tender-spoke-integrity-v1: env-var remediation in run_nightly.py + --spoke flag + post-tend verification per spoke.\n(3) Signal triage pass: 31 signals in queue, historian flagged for triage before adding more.\n(4) epic-ozi-work-queue-orchestration-v1 decomposition: break into child tasks for nightly pickup.\n(5) Hooks dimension scoring review: 5 hooks x 3pts = 15/20 cap, consider if formula is correct.",
     "requires_review": false,
     "mode": "execution",
@@ -158,7 +158,7 @@
         "roi": 4.5,
         "type": "signal",
         "status": "ready",
-        "title": "MEMORY.md silent truncation \u2014 Claude Code loads max 200 line",
+        "title": "MEMORY.md silent truncation — Claude Code loads max 200 line",
         "tagged_next": false
       },
       {
@@ -205,7 +205,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

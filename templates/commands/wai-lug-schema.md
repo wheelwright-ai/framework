@@ -223,47 +223,22 @@ Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (sessio
 
 ## Execute-When Gates
 
-Lugs can declare conditions that must be true before they become dispatchable. The `execute_when` field is evaluated by `score_backlog.py`, `wai_ozi.py`, and `wai-chain.sh` before dispatch.
-
-**Schema:**
-```json
-{
-  "execute_when": {
-    "all_completed": ["lug-id-1", "lug-id-2"],
-    "any_completed": ["lug-id-3"],
-    "phase_completed": "p1-foundation",
-    "manual_gate": false
-  }
-}
-```
+Conditions that must be true before a lug becomes dispatchable. Evaluated by `score_backlog.py`, `wai_ozi.py`, and `wai-chain.sh`.
 
 | Field | Logic | Purpose |
 |-------|-------|---------|
 | `all_completed` | AND | Every listed lug ID must be in `completed/` or `delivered/` |
 | `any_completed` | OR | At least one listed lug ID must be completed |
-| `phase_completed` | GROUP | All lugs declaring `"phase": "{id}"` must be completed |
+| `phase_completed` | GROUP | All lugs declaring that `phase` value must be completed |
 | `manual_gate` | BLOCK | If `true`, always blocked until user explicitly overrides |
 
-**All conditions must be satisfied** if present. Missing conditions are ignored (permissive).
+All conditions must be satisfied. Missing conditions are ignored (permissive).
 
-**Relationship to `blocked_by`:** Both are checked. `execute_when.all_completed` subsumes `blocked_by` for new lugs. Existing `blocked_by` arrays remain valid — the evaluator checks both.
+`execute_when.all_completed` subsumes `blocked_by` for new lugs. Existing `blocked_by` arrays remain valid — the evaluator checks both.
 
-**Phase membership:** A lug belongs to a phase by declaring `"phase": "p1-foundation"`. Phase definitions live in `WAI-State.json` `_work_queue.phases`:
+Phase membership: set `"phase": "p1-foundation"` on a lug. Phase definitions live in `WAI-State.json _work_queue.phases`. Gated items appear as "gated" in `score_backlog.py` output.
 
-```json
-{
-  "_work_queue": {
-    "phases": [
-      {"id": "p1-foundation", "title": "Foundation fixes", "order": 1},
-      {"id": "p2-orchestration", "title": "Queue orchestration", "order": 2}
-    ]
-  }
-}
-```
-
-Phase completion is computed dynamically — all lugs declaring the phase must be in `completed/`.
-
-**Dispatch behavior:** Items with unmet `execute_when` conditions are listed as "gated" in `score_backlog.py` output and skipped by Ozi and chain mode.
+See `wai-lug-schema-reference.md` for JSON schema and phase definition example.
 
 ---
 
@@ -367,16 +342,7 @@ When implementing a lug:
 
 ## Cross-Spoke Authoring (Critical Safety)
 
-When creating lugs that travel to other nodes, ALWAYS include `_behavior_directive`:
-
-```json
-{
-  "_behavior_directive": {
-    "what_this_is": "A work item to be ADDED to the task tracker",
-    "what_this_is_NOT": "An instruction to execute immediately"
-  }
-}
-```
+When creating lugs that travel to other nodes, ALWAYS include `_behavior_directive` (see `wai-lug-schema-reference.md` for example).
 
 **The misinterpretation test** — before sending any lug, ask:
 1. Could a different model read this and execute it immediately?
@@ -435,46 +401,26 @@ If found in `priority` on an existing lug, treat as P1-equivalent.
 
 | Value | Meaning | Behavior at Closeout |
 |-------|---------|---------------------|
-| `"LOCAL"` | Stays in this spoke — project-specific work | File copied to `lugs/bytype/{type}/completed/` only |
-| `"FRAMEWORK"` | Framework improvement — goes to hub | File copied to hub teaching delivery + `completed/` |
-| `"SIGNAL"` | High-impact learning (impact >= 8) — broadcast to all spokes | File copied to hub signal bulletin + `bytype/signal/delivered/` |
-| `"SPOKE/{spoke_id}"` | Cross-spoke routing — idea/task belongs to a different spoke | File copied to `{hub_path}/WAI-Hub/lugs/incoming/{spoke_id}/` + moved to `completed/` locally |
+| `"LOCAL"` | Stays in this spoke | `completed/` only |
+| `"FRAMEWORK"` | Framework improvement | hub teaching delivery + `completed/` |
+| `"SIGNAL"` | High-impact learning (impact >= 8) | hub bulletin + `bytype/signal/delivered/` |
+| `"SPOKE/{spoke_id}"` | Cross-spoke routing | `{hub_path}/WAI-Hub/lugs/incoming/{spoke_id}/` + completed locally |
 
-**Default:** If not set, assume `LOCAL`. Ozi should ask before creating any lug.
+**Default:** If not set, assume `LOCAL`. Ozi should confirm routing before creating.
 
-### `scope_verified_by` (String, Required if routed_to != LOCAL)
+### `scope_verified_by` (Required if routed_to != LOCAL)
 
-Who decided this lug's routing? Record the decision maker and rationale:
-- `"user"` — User explicitly approved routing
-- `"ozi"` — Ozi routing gate (with decision criteria noted)
-- `"framework"` — Detected as framework-wide issue
-- `"auto-signal"` — Impact threshold (>= 8) triggered automatic signal routing
-
-**Example:**
-```json
-{
-  "routed_to": "FRAMEWORK",
-  "scope_verified_by": "user (Session 74: 'this is a wakeup protocol fix affecting all spokes')"
-}
-```
+`"user"` | `"ozi"` | `"framework"` | `"auto-signal"` — who decided and why.
 
 ### Routing Logic at Lug Creation
 
-Before creating any lug:
-1. Load `_project_foundation.boundaries` (in_scope, out_of_scope)
-2. Classify the lug:
-   - **LOCAL:** "Affects only this project" ✓
-   - **FRAMEWORK:** "Affects how projects work" → route to FRAMEWORK
-   - **SIGNAL:** "Impact >= 8 and affects multiple spokes" → route to SIGNAL
-   - **SPOKE/{spoke_id}:** "Belongs to a different spoke" → route to SPOKE/{spoke_id}
+1. Load `_project_foundation.boundaries`
+2. Classify: LOCAL (only this project) | FRAMEWORK (affects how projects work) | SIGNAL (impact >= 8, cross-spoke) | SPOKE/{id} (belongs to another spoke)
 3. Announce: `"Creating {type} '{title}' → {routed_to}"`
-4. Wait for user confirmation (can override routing)
+4. Wait for user confirmation
 5. Record decision in `scope_verified_by`
 
-**Test case:** User requests "optimize wakeup for fast projects"
-- Ozi recognizes this improves wakeup (framework concern)
-- Routes to: `epic-minimal-context-wakeup-v1` (LOCAL) + creates `signal-ozi-routing-awareness` (SIGNAL)
-- Announces: "Creating epic → LOCAL (scope: this framework project) + Creating signal → SIGNAL (scope: all spokes learn from routing improvement)"
+See `wai-lug-schema-reference.md` for routing JSON example and worked test case.
 
 ---
 

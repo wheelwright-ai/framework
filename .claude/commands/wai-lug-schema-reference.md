@@ -32,6 +32,47 @@
 
 ---
 
+## Vibe Affinity — ROI Scoring Reference
+
+**Vibe categories** for Ozi work queue tiebreaking. When two items have similar ROI, the user's current vibe reshapes ordering:
+
+| Vibe | Energy | Best for | Suppresses |
+|------|--------|----------|------------|
+| `build` | Creative, generative | Features, epics, new code | Bugs, signal routing |
+| `fix` | Focused, corrective | Bugs, reliability, debt | Epics, features |
+| `think` | Reflective, strategic | Architecture, signals, decisions | Mechanical tasks |
+| `grind` | Steady, mechanical | Batch tasks, thrift, routing | Creative design |
+| `ship` | Closing, finishing | In-progress items, close lugs | Starting new work |
+
+**ROI formula:** `(impact × leverage) / effort`
+- `impact`: 1-10 (from lug field, or inferred from type)
+- `leverage`: 1.0-2.0 (1.0 standalone, 1.3 in-progress momentum, 1.5 foundational/unblocking)
+- `effort`: 1-5 (from lug field, or inferred from type)
+- Signals capped at ROI 5.0 (routing chores, not implementation)
+
+**Vibe multipliers** (applied to base ROI):
+
+| Type | build | fix | think | grind | ship |
+|------|-------|-----|-------|-------|------|
+| feature | 1.6x | 0.7x | 1.2x | 0.6x | 1.1x |
+| bug | 0.6x | 1.8x | 0.6x | 1.1x | 1.2x |
+| task | 1.0x | 1.1x | 0.7x | 1.4x | 1.1x |
+| epic | 1.3x | 0.6x | 1.6x | 0.5x | 0.7x |
+| signal | 0.5x | 0.8x | 1.3x | 1.2x | 0.6x |
+| other | 0.8x | 0.9x | 1.1x | 1.3x | 0.9x |
+| in_progress (ship only) | — | — | — | — | 1.8x |
+
+**Scorer tool:** `tools/score_backlog.py [vibe]`
+
+### Example
+
+```json
+{"i": "bug-auth-timeout", "ty": "bug", "t": "Fix auth timeout in API", "impact": 7, "effort": 2, "va": "fix"}
+```
+Base ROI = (7 × 1.0) / 2 = 3.5. With `fix` vibe: 3.5 × 1.8 = 6.3. With `build` vibe: 3.5 × 0.6 = 2.1.
+
+---
+
 ## Lug ID Generation — Extended Example
 
 ```
@@ -326,6 +367,53 @@ Paired verification record. Required before any ozi-work lug can move to `ready_
 
 ---
 
+## Execute-When Gates — JSON Schemas
+
+### execute_when Schema
+```json
+{
+  "execute_when": {
+    "all_completed": ["lug-id-1", "lug-id-2"],
+    "any_completed": ["lug-id-3"],
+    "phase_completed": "p1-foundation",
+    "manual_gate": false
+  }
+}
+```
+
+### Phase Definitions in WAI-State.json
+```json
+{
+  "_work_queue": {
+    "phases": [
+      {"id": "p1-foundation", "title": "Foundation fixes", "order": 1},
+      {"id": "p2-orchestration", "title": "Queue orchestration", "order": 2}
+    ]
+  }
+}
+```
+
+---
+
+## Routing Fields — JSON Example and Test Case
+
+### scope_verified_by Example
+```json
+{
+  "routed_to": "FRAMEWORK",
+  "scope_verified_by": "user (Session 74: 'this is a wakeup protocol fix affecting all spokes')"
+}
+```
+
+### Routing Decision Test Case
+
+User requests "optimize wakeup for fast projects":
+- Ozi recognizes this improves wakeup (framework concern)
+- Routes to: `epic-minimal-context-wakeup-v1` (LOCAL) + `signal-ozi-routing-awareness` (SIGNAL)
+- Announces: "Creating epic → LOCAL + Creating signal → SIGNAL (all spokes learn from this)"
+
+---
+
 ## Anti-Pattern Examples
 
 ### Ambiguous action (bad)
@@ -347,3 +435,34 @@ Paired verification record. Required before any ozi-work lug can move to `ready_
 ```json
 {"task_type": "configuration_change", "target_file": "WAI-Spoke/WAI-State.json", "change_description": "Add hub_analysis section with spoke_count and last_sync fields", "tracking_only": true}
 ```
+
+---
+
+## Advisor Data Source Autonomy
+
+Each advisor declares its data sources in scan_state.json:
+
+```json
+{
+  "data_sources": [
+    {
+      "source": "path/to/data",
+      "fields_used": ["field1", "field2"],
+      "fields_needed": ["field3"],
+      "adequacy": "good|partial|missing"
+    }
+  ]
+}
+```
+
+**Adequacy check at activation:** When an advisor activates, it checks each data source:
+- `good`: source exists, all needed fields present
+- `partial`: source exists but missing fields → create gap lug
+- `missing`: source not found → create gap lug with higher priority
+
+**Gap lug template:**
+```json
+{"ty": "task", "t": "Advisor {name} needs {field} in {source}", "rt": "LOCAL", "gb": "advisor-{name}"}
+```
+
+Gap lugs are routed to the team responsible for the data source.

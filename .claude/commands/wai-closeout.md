@@ -1,377 +1,190 @@
 # WAI Closeout
 
-**Session State Preservation Protocol**
-
-Save where we are so we can pick up seamlessly in a new session.
+Save session state so the next agent can pick up where we left off.
 
 ---
 
 ## Execution Context
 
 - **Nodes:** spoke, hub
-- **Exposure:** spoke.chat:local, spoke.chat:external
 - **Paths Required:** spoke_path (current directory with WAI-Spoke/)
-
----
-
-## When to Use
-
-- End of any work session
-- Before context fills up (>70% capacity)
-- Before breaks or stopping work
-- When switching to different task/project
-- After completing a milestone
-
-## Prerequisites
-
-- WAI-Spoke/ directory exists
-- WAI-State.json is valid
-- Git repository initialized
-- Work worth preserving exists
-
-## Follow-ons
-
-- New session — Will auto-learn from inbox on wakeup
-
-## Use Cases
-
-**Use Case 1: End of Day**
-- Situation: Finished working, need to preserve progress
-- Action: Run closeout to save state
-- Result: Next session loads exactly where you left off
-
-**Use Case 2: Context Near Capacity**
-- Situation: `/wai-time` shows >70% context used
-- Action: Run closeout before context overflow
-- Result: State saved, can continue in fresh session
-
-**Use Case 3: Incomplete Work**
-- Situation: Task partially done, need to stop
-- Action: Run closeout with detailed incomplete work capture
-- Result: New agent can identify and continue the work
-
-**Use Case 4: Milestone Complete**
-- Situation: Feature or fix finished
-- Action: Run closeout to checkpoint progress
-- Result: Clean save point, version incremented
-
----
-
-## Purpose
-
-Persist session state with enough detail that a new agent/session can:
-- Understand what was accomplished
-- Identify incomplete work remaining
-- Continue where we left off
 
 ---
 
 ## Closeout Procedure
 
-**Before beginning:** Read `_session_state.last_closeout` from `WAI-State.json` and store it as `old_last_closeout`. This value is used in Step 9b to identify new signals written this session. It must be captured now — Step 5 will overwrite it.
+**Before beginning:** Ask **Is this a production release? (y/n)**
+- **Yes:** Run full closeout + quality gates + git tag `v{version}`
+- **No:** Run standard closeout, skip gates and tagging
+
+Read `_session_state.last_closeout` from `WAI-State.json` and store as `old_last_closeout`. Step 5 will overwrite it; Step 9b needs the old value.
+
+### 0. Context Assessment
+
+Check context usage %. Ceremony level: <60% Full, 60-79% Standard, 80-89% Essential, >=90% Minimal.
+- **Full:** All steps, full banner, no shortcuts
+- **Standard:** All steps, compact banner, skip verbose doc updates
+- **Essential:** Lug reconciliation + version bump + state update + banner + commit only
+- **Minimal:** Version bump + state update + one-line banner + commit. Flag: "Context critical — full closeout deferred."
+
+Announce: **"Context at X% — running [Full/Standard/Essential/Minimal] ceremony."**
+
+### 0b. Quality Gates (Production Releases Only)
+
+Skip if not a production release. See `wai-closeout-reference.md` for gate details (0a-0f).
+
+Run in order: **0a** File Hygiene, **0b** Breaking Changes, **0c** Tests, **0d** Linting, **0e** Benchmarks, **0f** Falsification. Non-zero exit on tests/linting = abort. Report gate results. Proceed only after user confirms.
 
 ### 1. Lug Reconciliation
 
-**Purpose:** Consolidate autosave checkpoints into permanent record.
+Scan `WAI-Spoke/lugs/bytype/other/open/` for autosave lugs (`ty="autosave"`, `reconciled=false`). Consolidate into ONE session-summary lug. Mark autosaves `reconciled: true`, `s: "c"`. Write to `lugs/bytype/session-summary/{id}.json`.
 
-**Actions:**
-1. Read `WAI-Spoke/WAI-Lugs.jsonl`
-2. Find entries where `ty="autosave"` AND `reconciled=false` (or `reconciled` not set)
-3. Consolidate into ONE permanent `session-summary` lug capturing:
-   - Task context (what was the session about?)
-   - Actions taken
-   - Files touched
-   - Key decisions made
-   - **Incomplete work** (critical for session continuity)
-   - Final state
-4. Mark all autosave lugs: set `reconciled: true`, `s: "c"`
-5. Append session-summary lug to `WAI-Spoke/WAI-Lugs.jsonl`
-
-**Session-summary lug format:**
-```json
-{
-  "i": "session-YYYYMMDD-HHMMSS",
-  "ty": "session-summary",
-  "t": "Session N summary",
-  "s": "c",
-  "ca": "ISO-8601",
-  "gb": "agent-name",
-  "session_number": N,
-  "accomplished": ["list of accomplishments"],
-  "files_touched": ["list of files"],
-  "decisions": ["key decisions made"],
-  "incomplete_work": {
-    "tasks": ["what remains"],
-    "blockers": ["what's blocking"],
-    "next_steps": ["how to continue"]
-  },
-  "autosaves_reconciled": ["list of autosave lug ids"]
-}
-```
+See `wai-closeout-reference.md` for session-summary lug schema.
 
 ### 2. Signal Extraction
 
-**Purpose:** Capture high-impact decisions for cross-session learning.
-
-**Actions:**
-1. Review session for decisions or learnings with **impact >= 8**
-2. For each qualifying signal, create a signal entry in `WAI-Spoke/WAI-Signals.jsonl`:
-
-```json
-{
-  "timestamp": "ISO-8601",
-  "session_id": "session-YYYYMMDD-HHMMSS",
-  "signal": "what was decided/learned",
-  "impact": 8-10,
-  "rationale": "why it matters",
-  "by": "agent-name"
-}
-```
-
-**Impact scale:**
-- 10: Fundamental direction change
-- 9: Major architectural decision
-- 8: Significant protocol or pattern established
-- < 8: Normal decisions, no signal needed
-
-3. Flag signals that warrant hub consideration:
-   - Cross-project patterns
-   - Architectural insights
-   - Reusable solutions
-
-**Note:** This step absorbs the `wai-signal-capture.md` behavior — closeout is where signals get permanently captured.
+Review session for decisions/learnings with **impact >= 8**. Write each as a signal lug to `lugs/bytype/signal/undelivered/{id}.json`. Impact scale: 10=direction change, 9=architectural, 8=significant pattern, <8=skip.
 
 ### 3. Incomplete Work Capture
 
-**Critical for session continuity.**
+Document unfinished work with enough detail to resume: status, what's done, what remains, blockers, files, continuation instructions. Store in session-summary `incomplete_work` AND `_session_state.next_session_recommendation`.
 
-Document any unfinished work with enough detail to resume:
+If a session track exists, also read `open` items from the last 3 track points.
 
-```markdown
-## Incomplete Work
+### 4–5. Run Closeout Script
 
-### [Task Name]
-- **Status:** In Progress / Blocked / Pending Decision
-- **What's Done:** [completed steps]
-- **What Remains:** [specific next steps]
-- **Blockers:** [if any]
-- **Files Involved:** [paths]
-- **To Continue:** [exact instructions for next session]
+```bash
+tools/closeout.sh --modified-by {model_id} --track-path {current_track_path}
 ```
 
-Store in session-summary lug `incomplete_work` field AND in `_session_state.next_session_recommendation`.
+Handles automatically: version bump, `session_count++`, `last_closeout`/`last_modified_at`/`last_modified_by`, lug archival (`in_progress` → `completed` for status==completed lugs), `WAI-LugIndex.jsonl` regen, backlog scoring + `_work_queue` update.
 
-**Enhanced with Track:** If a session track exists (`_session_state.track_path`), also read the track's open threads and phase state. The track captures unresolved questions that may not surface in the lug reconciliation. Include any `open` items from the last 3 track points in the incomplete work section.
+Add `--dry-run` to preview without writing.
 
-### 4. Version Increment
+Review the printed summary, then complete the remaining AI-only fields:
 
-**Bump project state version:**
+**AI completes in WAI-State.json:**
+- `_session_state.next_session_recommendation` = what the next session should focus on
+- `_session_state.track_path` = current session track path (if not passed via `--track-path`)
 
-1. Read `WAI-Spoke/WAI-State.json`
-2. Parse `wheel.version` (semver format, e.g., "2.0.7")
-3. Increment patch: `2.0.7` → `2.0.8`
-4. Write back to `WAI-State.json`
+**Capability check:** `test -d WAI-Spoke/lugs/bytype && echo BYTYPE_OK || echo FLAT_LUG` — if FLAT_LUG, skip 5b and 5c entirely.
 
-This versions the *session state*, not a release.
+### 5b. Adoption Marker Sync
 
-### 5. State Update
+For each implementation lug with `status = "implemented"`: check `_migration_state.adoption_markers` in extended state. If `adopted = false`, update to `true` with timestamp.
 
-**Update session metadata in `WAI-State.json`:**
+### 5c. Hub Routing (FRAMEWORK / SIGNAL / SPOKE lugs only)
 
-- `_session_state.session_count` += 1
-- `_session_state.last_closeout` = current UTC timestamp (ISO-8601)
-- `_session_state.last_modified_by` = current AI model name
-- `_session_state.last_modified_at` = current UTC timestamp
-- `_session_state.next_session_recommendation` = summary of what to do next
-- `_session_state.track_path` = path to current session's track file (e.g., `WAI-Spoke/sessions/track_20260312-2100.jsonl`)
+Script handles LOCAL archival. For non-LOCAL lugs, AI routes manually:
+- **FRAMEWORK** → completed + hub teachings (Step 9b)
+- **SIGNAL** → `bytype/signal/delivered/` + hub bulletin (Step 9c)
+- **SPOKE/{id}** → copy to hub incoming + complete locally
+
+Move delivered signals from `undelivered/` to `delivered/`.
+
+### 5d. Changelog Entries
+
+For each resolved lug, append to `WAI-Spoke/runtime/spoke-changelog.jsonl`. See `wai-closeout-reference.md` for changelog entry format. Framework-internal changes go in CHANGELOG.md, not spoke-changelog.
 
 ### 6. Finalize Session Track
 
-**Close the session track (if active):**
-
-- Write a final point to `track.jsonl` recording the closeout activity (phase: `review`)
-- The track file is the permanent session record — do NOT delete or truncate it
-- The session track file is committed to git with other WAI-Spoke files
-
-**Legacy cleanup:**
-
-- Truncate `WAI-Spoke/WAI-Session-Log.jsonl` (if exists) — replaced by session tracks
-- Insights already extracted to lugs/signals
+Write a final track point (phase: `review`). Do NOT delete the track file.
 
 ### 7. Documentation Updates
 
-**Document what's known and can be captured:**
+Update `CHANGELOG.md` if applicable. Generate descriptive commit message.
 
-- Update `CHANGELOG.md` with session accomplishments
-- Update any documentation files affected by session work
-- Generate clear, descriptive commit message
+### 7b. Docs Sync (When Protocol Changes)
 
-### 8. Lug Dogfooding (Before Commit)
+**Trigger:** Session modified skills, protocol files, architecture, or lug schema.
 
-**Validate all lugs created or modified this session before they ship.**
+1. Update README.md version string and skill list if changed
+2. Regenerate `docs/llm-full.txt` — concatenate source files with `=== FILE: {path} ===` delimiters, target under 200KB
+3. If no protocol changes: note "Skip 7b: no protocol changes"
 
-Any lug intended for another agent (including future-you in a new session) must pass validation. This step catches gaps that are invisible in the current conversation but fatal for a cold reader.
+### 8. Lug Dogfooding
 
-1. **Identify lugs to validate** — all lugs created or modified this session (excluding session-summary and autosave types)
-2. **State what you'll test and how deep** — present to user:
-   ```
-   Dogfood check — N lugs created/modified this session:
-   - {lug i}: {lug title} — [schema + PEV + self-containment]
-   ...
-   Proceed? (yes / adjust scope)
-   ```
-3. **Wait for user approval** before running validation
-4. **Run validation** on each lug:
-   - Are PEV fields present and actionable? (required for task, bug, feature, review, epic)
-   - Does `perceive` point to real, findable files?
-   - Does `execute` describe concrete steps (not vague intentions)?
-   - Does `verify` define a concrete "done" state?
-   - Is the lug self-contained? (no "see above" or conversation-dependent references)
-   - Could a naive agent understand this without your current context?
-5. **Fix gaps found** — update lugs in WAI-Lugs.jsonl before proceeding
-6. **Report results** — "N lugs validated, M gaps filled" or "All lugs clean"
+Validate lugs created/modified this session (excluding session-summary and autosave). Check: PEV fields present? `perceive` points to real files? `execute` has concrete steps? `verify` defines done state? Self-contained? Present plan, wait for approval, fix gaps. Skip if no actionable lugs.
 
-**Skip conditions:** If no actionable lugs were created/modified this session, skip this step entirely.
+### 9. Outgoing Delivery
 
-### 9. Outbox Delivery
+Check `WAI-Spoke/lugs/outgoing/` for queued deliveries. If hub connected: copy to hub incoming. If hub unreachable: note in next_session_recommendation.
 
-**Deliver queued lugs to hub before committing.**
+### 9b. Teaching Generation + Hub Publish
 
-1. Check `WAI-Spoke/lugs/outbox/` for `.jsonl` files
-2. If outbox is empty → skip, note "Outbox empty" in summary
-3. If items found and `hub_path` is connected:
-   - For each file where `destination_wheel_id` matches hub or target: copy to `{hub_path}/WAI-Spoke/lugs/inbox/`
-   - Report: "N lugs delivered to hub"
-4. If hub unreachable: note in `_session_state.next_session_recommendation`, continue — do not block commit
+**If no teaching-worthy changes:** Skip. Note "No new teachings."
 
-### 9b. Signal Teach (Conditional)
+**If changes exist:** Group into families, determine version bump, generate to `teachings/`. Hard gate: each teaching MUST include Prerequisites block, Batch Sequence block, and `safe_to_auto_adopt` flag (default `true`, `false` only for breaking changes). Enforce single-current rule. If hub connected: publish + archive + rewrite index.
 
-**Automatically distribute new signals to the hub — no separate /wai (Step 9b: auto-teach on closeout) needed.**
+See `wai-closeout-reference.md` for teaching format details and hub publish layout.
 
-**Conditions (both must be true):**
-- `wheel.hub_path` is set and the directory exists
-- `WAI-Signals.jsonl` contains entries with `timestamp > old_last_closeout` (captured before Step 5)
+### 9c. Hub Signal Bulletin (Target-Routed)
 
-**If either condition is false:** Skip silently. Note "No new signals to teach" in summary.
+Deliver signals to `{hub_path}/WAI-Hub/signals/incoming/` with `target` field: `"hub"`, `"framework"`, `"spokes"`, or `"spokes/{id}"`.
 
-**If both conditions are true:**
-1. Collect all signal entries from `WAI-Signals.jsonl` where `timestamp > old_last_closeout`
-2. For each signal, derive a filename: sanitize `timestamp` to `YYYYMMDD-HHMM`, then append the sender spoke ID (from `wheel.name`, lowercased, spaces → hyphens) → `teachings/signal-YYYYMMDD-HHMM-from-{spoke_id}.md.teaching`. Example: `signal-20260316-0045-from-wheelwright.md.teaching`. If that filename already exists, append `-2`, `-3`, etc. until unique.
-3. Write the teaching file — substitute the actual signal JSON verbatim (one file per signal, not a placeholder):
+Deliver: routed_to=SIGNAL lugs, impact>7 signals, plus backlog sweep of `bytype/signal/undelivered/`. Report: "Delivered N signals (M new, K already present). Targets: X hub, Y framework, Z spokes."
 
-```markdown
-# Teaching: Signal — {signal content summary}
+**Signal lifecycle:** arrive -> triage -> incorporate -> teach -> clear. Signals must not accumulate.
 
-**Type:** signal
-**safe_to_auto_adopt:** true
+### 9d. Spoke Registry Update
 
----
+Extract from WAI-State.json: `spoke_id`, `name`, `version`, `status`, `one_liner`, `session_count`, `last_closeout`. Write to `{hub_path}/WAI-Hub/registry/incoming/{spoke_id}.json` with `reported_at`. If hub unreachable: note, don't block.
 
-## What This Teaching Does
+### 10. Autosave Cleanup
 
-Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
-
-## Embedded Signal
-
-```json
-{actual signal JSON object here}
-```
-
-## Post-Completion
-
-Move this file to `WAI-Spoke/seed/ingest/processed/`.
-```
-
-4. **Idempotency:** Receiving spokes may see the same signal teaching more than once (re-teach, restore). Before appending, check if a signal with the same `timestamp` and `signal` text already exists in `WAI-Signals.jsonl`. If it does, skip — do not duplicate.
-5. Report: "N signal teaching(s) written to teachings/"
-
-**Note:** The hub symlink (`hub/framework → ../framework/teachings/`) means these files are immediately visible to all connected spokes on their next wakeup. No further distribution step required.
-
-### 10. Summary Generation
-
-**Create and present session summary:**
-
-- What was accomplished
-- What decisions were made
-- What's incomplete (with continuation guidance)
-- New version number
-- Signals extracted
-- Files modified
-- **Track stats** (if session track exists): total turns, phase distribution, open threads carried forward
-
-Present to user before commit.
+Remove autosave checkpoints older than 3 sessions from `WAI-Spoke/.autosave/`. See `wai-closeout-reference.md` for cleanup script.
 
 ### 11. Git Commit + Push
 
-**Persist to repository and push — always.**
+Commit and push **immediately** — no user confirmation required. Banner displays AFTER.
 
 ```bash
-git add WAI-Spoke/
-git add [other session files]
-git status  # Review what's staged
-```
-
-**Commit with descriptive message:**
-```bash
-git commit -m "WAI Session [N]: [accomplishments] | Incomplete: [if any]"
-```
-
-**Push immediately after commit (no confirmation needed):**
-```bash
+git add WAI-Spoke/WAI-State.json WAI-Spoke/ [other session files]
+git commit -m "WAI Session [N]: [accomplishments] | [version]"
 git push origin main
 ```
 
-Push is mandatory. Do not ask. P10: Trust is the default.
+**Critical:** `WAI-Spoke/WAI-State.json` listed explicitly first to guarantee staging. If Minimal ceremony, include `(minimal closeout — full deferred)` in message.
 
-### 12. Verification
+### 12. Verification + Completion Banner
 
-**Confirm persistence:**
+Verify: `git status` (clean), `git log --oneline -1`, `git tag -l | tail -1` (if production).
 
-```bash
-git status                        # Must be clean
-git log --oneline -1              # Verify commit exists
-git log --oneline origin/main..HEAD  # Must show no commits ahead
+Display:
 ```
+-- CLOSEOUT Session-{N} [{track_name}] {timestamp}
+|  Accomplished: {bullets}  |  Incomplete: {list or "none"}
+|  Version: v{old} -> v{new}  |  Context: {X}%  |  Signals: {N}
+|  Ceremony: Full|Standard|Essential|Minimal  |  Commits: {N} files
+-- Session saved. Next wakeup loads exactly where we left off.
+```
+
+If Minimal: add "Context was critical -- full ceremony deferred. Run /wai-closeout next session."
+
+### 13. Release Tag (Production Releases Only)
+
+Skip if not production. Tag `v$VERSION`, push tag. If tag exists: stop and report conflict.
+
+### 14. Verification
+
+`git status` (clean), `git log --oneline -1`, `git tag -l | tail -1` (if production).
 
 ---
 
 ## Success Criteria
 
-- [ ] Autosave lugs reconciled into permanent session-summary
-- [ ] High-impact signals extracted (impact >= 8)
-- [ ] **Incomplete work documented with continuation guidance**
-- [ ] Version incremented in WAI-State.json
-- [ ] Session state updated (session_count, timestamps, track_path)
-- [ ] Session track finalized (final point written, track NOT deleted)
-- [ ] Legacy session log cleared (if exists)
-- [ ] Documentation updated where applicable
-- [ ] Lugs dogfooded (PEV fields validated, gaps filled)
-- [ ] Outbox delivered (or deferred with note if hub unreachable)
-- [ ] Signal teachings written to teachings/ (or skipped — hub disconnected or no new signals)
-- [ ] Changes committed with descriptive message (sessions/track file included)
-- [ ] Changes pushed to origin/main
+- Quality gates pass (if production)
+- Autosave lugs reconciled into session-summary
+- Signals extracted (impact >= 8)
+- Incomplete work documented
+- Version incremented, state updated
+- Lug status synced, index regenerated
+- Session track finalized
+- Lugs dogfooded (if applicable)
+- Teachings generated (if applicable)
+- Committed and pushed
+- Release tag applied (if production)
 
 ---
 
-## Language Rules
-
-**Never say:**
-- "Probably saved"
-- "Should be committed"
-- "I think it persisted"
-
-**Always say:**
-- "Verified with git status"
-- "Confirmed commit with git log"
-- "Incomplete work documented in [location]"
-
----
-
-## Related Commands
-
-- `/wai-shipit` - Quality gates + closeout (for releases)
-- `/wai-time` - Check context before closeout
-
----
-
-*Closeout = Save game. Capture enough detail to continue the adventure.*
+*Closeout = Save game. Next agent continues the adventure.*

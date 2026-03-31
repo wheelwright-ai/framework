@@ -73,6 +73,10 @@ A lug is a JSON file at `WAI-Spoke/lugs/bytype/{type}/{status}/{id}.json`. The f
 | `gb` | `gathered_by` | Agent or session that created it |
 | `v` | `version` | Version number (foundation, core-protocol lugs) |
 | `fw_ver` | `fw_ver` | **Framework version when lug was authored** (e.g. "3.0.0"). Set once at creation — never updated. Enables currency scoring. See `wai-lug-compat.md`. |
+| `va` | `vibe_affinity` | **Work energy category** — one of: `build`, `fix`, `think`, `grind`, `ship`. Optional. Used by Ozi ROI scorer for tiebreaking when items have similar priority. |
+| `impact` | `impact` | **Impact score** 1-10. Used by ROI scorer. Default inferred from type if absent. |
+| `effort` | `effort` | **Effort score** 1-5. Used by ROI scorer. Default inferred from type if absent. |
+| `rt` | `routed_to` | Routing target: `LOCAL`, `FRAMEWORK`, `SIGNAL`, or `SPOKE/{spoke_id}` for cross-spoke |
 
 **Title Policy:**
 - **No generic session summaries:** "Session 35 summary" is BANNED.
@@ -192,8 +196,11 @@ For named lugs (foundation, epic): use human-readable IDs:
 | `impact` | `5` | Medium. Adjust up/down based on scope. |
 | `priority` | `"medium"` | Use `"before_next_epic"` only when truly blocking |
 | `blocks` | `[]` | Empty array |
-| `blocked_by` | `[]` | Empty array |
+| `blocked_by` | `[]` | Empty array — evaluated by dispatch (items with unresolved blockers are skipped) |
 | `tags` | `[]` | Empty array |
+| `phase` | `null` | Phase membership ID (e.g. `"p1-foundation"`) — groups items for milestone tracking |
+| `phase_order` | `null` | Numeric ordering within a phase (lower = earlier) |
+| `execute_when` | `null` | Conditional trigger — see Execute-When Gates section below |
 
 ### `gb` (gathered_by) — Model ID Required
 
@@ -211,6 +218,27 @@ WRONG:    "gb": "AI"
 **Why this matters:** Self-chosen names create ambiguity. `gb` is an audit field — it must answer "which model wrote this?" unambiguously across sessions, tools, and time. If working in a v1 spoke with `current_ai: "Sparky"` in WAI-State.json, ignore that field — use your model ID.
 
 Optionally append session ID for traceability: `"gb": "claude-sonnet-4-6 (session-20260317-0444)"`
+
+---
+
+## Execute-When Gates
+
+Conditions that must be true before a lug becomes dispatchable. Evaluated by `score_backlog.py`, `wai_ozi.py`, and `wai-chain.sh`.
+
+| Field | Logic | Purpose |
+|-------|-------|---------|
+| `all_completed` | AND | Every listed lug ID must be in `completed/` or `delivered/` |
+| `any_completed` | OR | At least one listed lug ID must be completed |
+| `phase_completed` | GROUP | All lugs declaring that `phase` value must be completed |
+| `manual_gate` | BLOCK | If `true`, always blocked until user explicitly overrides |
+
+All conditions must be satisfied. Missing conditions are ignored (permissive).
+
+`execute_when.all_completed` subsumes `blocked_by` for new lugs. Existing `blocked_by` arrays remain valid — the evaluator checks both.
+
+Phase membership: set `"phase": "p1-foundation"` on a lug. Phase definitions live in `WAI-State.json _work_queue.phases`. Gated items appear as "gated" in `score_backlog.py` output.
+
+See `wai-lug-schema-reference.md` for JSON schema and phase definition example.
 
 ---
 
@@ -314,16 +342,7 @@ When implementing a lug:
 
 ## Cross-Spoke Authoring (Critical Safety)
 
-When creating lugs that travel to other nodes, ALWAYS include `_behavior_directive`:
-
-```json
-{
-  "_behavior_directive": {
-    "what_this_is": "A work item to be ADDED to the task tracker",
-    "what_this_is_NOT": "An instruction to execute immediately"
-  }
-}
-```
+When creating lugs that travel to other nodes, ALWAYS include `_behavior_directive` (see `wai-lug-schema-reference.md` for example).
 
 **The misinterpretation test** — before sending any lug, ask:
 1. Could a different model read this and execute it immediately?
@@ -371,6 +390,37 @@ If found in `priority` on an existing lug, treat as P1-equivalent.
 - `"only_this_spoke"` — Applies to this project only
 - `"all_spokes"` — Applies to all projects of this type
 - `"wheel"` — Applies globally (hub + all spokes)
+
+---
+
+## Routing Fields (Lug Dispatch Awareness)
+
+**When creating a lug, declare its routing destination to enable scope-aware dispatch.**
+
+### `routed_to` (Enum, Required for all lugs)
+
+| Value | Meaning | Behavior at Closeout |
+|-------|---------|---------------------|
+| `"LOCAL"` | Stays in this spoke | `completed/` only |
+| `"FRAMEWORK"` | Framework improvement | hub teaching delivery + `completed/` |
+| `"SIGNAL"` | High-impact learning (impact >= 8) | hub bulletin + `bytype/signal/delivered/` |
+| `"SPOKE/{spoke_id}"` | Cross-spoke routing | `{hub_path}/WAI-Hub/lugs/incoming/{spoke_id}/` + completed locally |
+
+**Default:** If not set, assume `LOCAL`. Ozi should confirm routing before creating.
+
+### `scope_verified_by` (Required if routed_to != LOCAL)
+
+`"user"` | `"ozi"` | `"framework"` | `"auto-signal"` — who decided and why.
+
+### Routing Logic at Lug Creation
+
+1. Load `_project_foundation.boundaries`
+2. Classify: LOCAL (only this project) | FRAMEWORK (affects how projects work) | SIGNAL (impact >= 8, cross-spoke) | SPOKE/{id} (belongs to another spoke)
+3. Announce: `"Creating {type} '{title}' → {routed_to}"`
+4. Wait for user confirmation
+5. Record decision in `scope_verified_by`
+
+See `wai-lug-schema-reference.md` for routing JSON example and worked test case.
 
 ---
 

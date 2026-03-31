@@ -13,130 +13,177 @@ Save session state so the next agent can pick up where we left off.
 
 ## Closeout Procedure
 
-**Before beginning:** Read `_session_state.last_closeout` from `WAI-State.json` and store as `old_last_closeout`. Step 5 will overwrite it; Step 9b needs the old value.
+**Before beginning:** Ask **Is this a production release? (y/n)**
+- **Yes:** Run full closeout + quality gates + git tag `v{version}`
+- **No:** Run standard closeout, skip gates and tagging
+
+Read `_session_state.last_closeout` from `WAI-State.json` and store as `old_last_closeout`. Step 5 will overwrite it; Step 9b needs the old value.
+
+### 0. Context Assessment
+
+Check context usage %. Ceremony level: <60% Full, 60-79% Standard, 80-89% Essential, >=90% Minimal.
+- **Full:** All steps, full banner, no shortcuts
+- **Standard:** All steps, compact banner, skip verbose doc updates
+- **Essential:** Lug reconciliation + version bump + state update + banner + commit only
+- **Minimal:** Version bump + state update + one-line banner + commit. Flag: "Context critical — full closeout deferred."
+
+Announce: **"Context at X% — running [Full/Standard/Essential/Minimal] ceremony."**
+
+### 0b. Quality Gates (Production Releases Only)
+
+Skip if not a production release. See `wai-closeout-reference.md` for gate details (0a-0f).
+
+Run in order: **0a** File Hygiene, **0b** Breaking Changes, **0c** Tests, **0d** Linting, **0e** Benchmarks, **0f** Falsification. Non-zero exit on tests/linting = abort. Report gate results. Proceed only after user confirms.
 
 ### 1. Lug Reconciliation
 
-Scan `WAI-Spoke/lugs/bytype/other/open/` for autosave lugs (`ty="autosave"`, `reconciled=false`). Consolidate into ONE session-summary lug covering: what the session was about, actions taken, files touched, decisions, incomplete work, final state. Mark autosaves `reconciled: true`, `s: "c"`. Write summary to `lugs/bytype/session-summary/{id}.json`.
+Scan `WAI-Spoke/lugs/bytype/other/open/` for autosave lugs (`ty="autosave"`, `reconciled=false`). Consolidate into ONE session-summary lug. Mark autosaves `reconciled: true`, `s: "c"`. Write to `lugs/bytype/session-summary/{id}.json`.
 
-Session-summary lug fields: `id`, `type: "session-summary"`, `title`, `status: "completed"`, `created_at`, `created_by`, `session_number`, `accomplished[]`, `files_touched[]`, `decisions[]`, `incomplete_work{tasks[], blockers[], next_steps[]}`, `autosaves_reconciled[]`.
+See `wai-closeout-reference.md` for session-summary lug schema.
 
 ### 2. Signal Extraction
 
-Review session for decisions/learnings with **impact >= 8**. Write each as a signal lug to `lugs/bytype/signal/undelivered/{id}.json`. Signal schema: see `wai-lug-schema.md`. Impact scale: 10=direction change, 9=architectural, 8=significant pattern, <8=skip.
+Review session for decisions/learnings with **impact >= 8**. Write each as a signal lug to `lugs/bytype/signal/undelivered/{id}.json`. Impact scale: 10=direction change, 9=architectural, 8=significant pattern, <8=skip.
 
 ### 3. Incomplete Work Capture
 
 Document unfinished work with enough detail to resume: status, what's done, what remains, blockers, files, continuation instructions. Store in session-summary `incomplete_work` AND `_session_state.next_session_recommendation`.
 
-If a session track exists, also read `open` items from the last 3 track points — tracks capture unresolved questions that lug reconciliation may miss.
+If a session track exists, also read `open` items from the last 3 track points.
 
-### 4. Version Increment
+### 4–5. Run Closeout Script
 
-Bump `wheel.version` patch: `2.0.7` → `2.0.8`. This versions session state, not a release.
+```bash
+tools/closeout.sh --modified-by {model_id} --track-path {current_track_path}
+```
 
-### 5. State Update
+Handles automatically: version bump, `session_count++`, `last_closeout`/`last_modified_at`/`last_modified_by`, lug archival (`in_progress` → `completed` for status==completed lugs), `WAI-LugIndex.jsonl` regen, backlog scoring + `_work_queue` update.
 
-Update `WAI-State.json`:
-- `_session_state.session_count` += 1
-- `_session_state.last_closeout` = now (UTC ISO-8601)
-- `_session_state.last_modified_by` = current model
-- `_session_state.last_modified_at` = now
-- `_session_state.next_session_recommendation` = what to do next
-- `_session_state.track_path` = current session track path
+Add `--dry-run` to preview without writing.
 
-If capability adoptions or migrations occurred: update extended state (`WAI-State-extended.json`) migration receipts and adoption markers accordingly.
+Review the printed summary, then complete the remaining AI-only fields:
+
+**AI completes in WAI-State.json:**
+- `_session_state.next_session_recommendation` = what the next session should focus on
+- `_session_state.track_path` = current session track path (if not passed via `--track-path`)
+
+**Capability check:** `test -d WAI-Spoke/lugs/bytype && echo BYTYPE_OK || echo FLAT_LUG` — if FLAT_LUG, skip 5b and 5c entirely.
 
 ### 5b. Adoption Marker Sync
 
-For each implementation lug with `status = "implemented"`: check `_migration_state.adoption_markers` in extended state. If `adopted = false`, update to `true` with timestamp. Log result.
+For each implementation lug with `status = "implemented"`: check `_migration_state.adoption_markers` in extended state. If `adopted = false`, update to `true` with timestamp.
 
-### 5c. Lug Status Sync and Index Regeneration
+### 5c. Hub Routing (FRAMEWORK / SIGNAL / SPOKE lugs only)
 
-1. Scan `bytype/*/open/` and `bytype/*/in_progress/` for lugs whose status changed this session
-2. Move completed lugs to `bytype/{type}/completed/`
-3. Move delivered signals from `undelivered/` to `delivered/`
-4. Regenerate `WAI-LugIndex.jsonl` — one line per lug: `{id, type, status, title, folder, created_at}`
-5. Report: "Moved N lugs. Index: T entries."
+Script handles LOCAL archival. For non-LOCAL lugs, AI routes manually:
+- **FRAMEWORK** → completed + hub teachings (Step 9b)
+- **SIGNAL** → `bytype/signal/delivered/` + hub bulletin (Step 9c)
+- **SPOKE/{id}** → copy to hub incoming + complete locally
+
+Move delivered signals from `undelivered/` to `delivered/`.
+
+### 5d. Changelog Entries
+
+For each resolved lug, append to `WAI-Spoke/runtime/spoke-changelog.jsonl`. See `wai-closeout-reference.md` for changelog entry format. Framework-internal changes go in CHANGELOG.md, not spoke-changelog.
 
 ### 6. Finalize Session Track
 
-Write a final track point (phase: `review`). Do NOT delete the track file — it's the permanent session record.
+Write a final track point (phase: `review`). Do NOT delete the track file.
 
 ### 7. Documentation Updates
 
 Update `CHANGELOG.md` if applicable. Generate descriptive commit message.
 
+### 7b. Docs Sync (When Protocol Changes)
+
+**Trigger:** Session modified skills, protocol files, architecture, or lug schema.
+
+1. Update README.md version string and skill list if changed
+2. Regenerate `docs/llm-full.txt` — concatenate source files with `=== FILE: {path} ===` delimiters, target under 200KB
+3. If no protocol changes: note "Skip 7b: no protocol changes"
+
 ### 8. Lug Dogfooding
 
-Validate lugs created/modified this session (excluding session-summary and autosave). Check: PEV fields present? `perceive` points to real files? `execute` has concrete steps? `verify` defines done state? Self-contained (no "see above")? Present validation plan to user, wait for approval, fix gaps found. Skip if no actionable lugs were created.
+Validate lugs created/modified this session (excluding session-summary and autosave). Check: PEV fields present? `perceive` points to real files? `execute` has concrete steps? `verify` defines done state? Self-contained? Present plan, wait for approval, fix gaps. Skip if no actionable lugs.
 
 ### 9. Outgoing Delivery
 
-Check `WAI-Spoke/lugs/outgoing/` for queued deliveries. If found and hub connected: copy to `{hub_path}/WAI-Spoke/lugs/incoming/`. If hub unreachable: note in next_session_recommendation, don't block.
+Check `WAI-Spoke/lugs/outgoing/` for queued deliveries. If hub connected: copy to hub incoming. If hub unreachable: note in next_session_recommendation.
 
 ### 9b. Teaching Generation + Hub Publish
 
-**Conditions:** Teaching-worthy changes exist this session (skill files modified, high-impact signals created since `old_last_closeout`, template/schema changes).
+**If no teaching-worthy changes:** Skip. Note "No new teachings."
 
-**If no changes:** Skip. Note "No new teachings" in summary.
+**If changes exist:** Group into families, determine version bump, generate to `teachings/`. Hard gate: each teaching MUST include Prerequisites block, Batch Sequence block, and `safe_to_auto_adopt` flag (default `true`, `false` only for breaking changes). Enforce single-current rule. If hub connected: publish + archive + rewrite index.
 
-**If changes exist:**
-1. Group changes into teaching families: `{object_type}-{object_name}` (e.g., `skill-wai-closeout`)
-2. Determine version bump: major (breaking), minor (new capability), patch (fix/clarification)
-3. Generate teaching files to `teachings/{family_key}-v{version}.md.teaching`
-4. Each teaching MUST include (hard gate — do not publish without these):
-   - What changed and why it matters
-   - Migration instructions
-   - `safe_to_auto_adopt` flag
-   - `## Prerequisites` block (runnable verify commands, or "None")
-   - `## Batch Sequence` block (apply order, depends-on, required-before, parallel-safe)
-   Missing either block = teaching is incomplete. Fix before publishing.
-5. Enforce single-current rule: archive superseded versions to `teachings/archive/{family_key}/`
-6. Signal teachings embed the actual lug JSON verbatim
-7. If hub connected: publish to `{hub_path}/teachings_repo/spoke/current/`, archive old versions, rewrite index.json
-8. If hub unavailable: keep local, note retry in next_session_recommendation
+See `wai-closeout-reference.md` for teaching format details and hub publish layout.
 
-Teaching format details: see `wai-closeout-reference.md` in this skill's folder.
+### 9c. Hub Signal Bulletin (Target-Routed)
 
-### 9c. Hub Signal Bulletin
+Deliver signals to `{hub_path}/WAI-Hub/signals/incoming/` with `target` field: `"hub"`, `"framework"`, `"spokes"`, or `"spokes/{id}"`.
 
-For each signal lug with `impact > 7` and `status != "archived"`: if not already at `{hub_path}/WAI-Hub/signals/incoming/{id}.json`, write it there. Skip if hub not connected.
+Deliver: routed_to=SIGNAL lugs, impact>7 signals, plus backlog sweep of `bytype/signal/undelivered/`. Report: "Delivered N signals (M new, K already present). Targets: X hub, Y framework, Z spokes."
 
-### 10. Summary Generation
+**Signal lifecycle:** arrive -> triage -> incorporate -> teach -> clear. Signals must not accumulate.
 
-Present to user: accomplishments, decisions, incomplete work with continuation guidance, new version, signals extracted, files modified, track stats.
+### 9d. Spoke Registry Update
+
+Extract from WAI-State.json: `spoke_id`, `name`, `version`, `status`, `one_liner`, `session_count`, `last_closeout`. Write to `{hub_path}/WAI-Hub/registry/incoming/{spoke_id}.json` with `reported_at`. If hub unreachable: note, don't block.
+
+### 10. Autosave Cleanup
+
+Remove autosave checkpoints older than 3 sessions from `WAI-Spoke/.autosave/`. See `wai-closeout-reference.md` for cleanup script.
 
 ### 11. Git Commit + Push
 
+Commit and push **immediately** — no user confirmation required. Banner displays AFTER.
+
 ```bash
-git add WAI-Spoke/ [other session files]
+git add WAI-Spoke/WAI-State.json WAI-Spoke/ [other session files]
 git commit -m "WAI Session [N]: [accomplishments] | [version]"
 git push origin main
 ```
 
-Push is mandatory. Do not ask for confirmation.
+**Critical:** `WAI-Spoke/WAI-State.json` listed explicitly first to guarantee staging. If Minimal ceremony, include `(minimal closeout — full deferred)` in message.
 
-### 12. Verification
+### 12. Verification + Completion Banner
 
-```bash
-git status          # Must be clean
-git log --oneline -1  # Verify commit
+Verify: `git status` (clean), `git log --oneline -1`, `git tag -l | tail -1` (if production).
+
+Display:
 ```
+-- CLOSEOUT Session-{N} [{track_name}] {timestamp}
+|  Accomplished: {bullets}  |  Incomplete: {list or "none"}
+|  Version: v{old} -> v{new}  |  Context: {X}%  |  Signals: {N}
+|  Ceremony: Full|Standard|Essential|Minimal  |  Commits: {N} files
+-- Session saved. Next wakeup loads exactly where we left off.
+```
+
+If Minimal: add "Context was critical -- full ceremony deferred. Run /wai-closeout next session."
+
+### 13. Release Tag (Production Releases Only)
+
+Skip if not production. Tag `v$VERSION`, push tag. If tag exists: stop and report conflict.
+
+### 14. Verification
+
+`git status` (clean), `git log --oneline -1`, `git tag -l | tail -1` (if production).
 
 ---
 
 ## Success Criteria
 
-- [ ] Autosave lugs reconciled into session-summary
-- [ ] Signals extracted (impact >= 8)
-- [ ] Incomplete work documented with continuation guidance
-- [ ] Version incremented, state updated
-- [ ] Lug status synced, index regenerated
-- [ ] Session track finalized
-- [ ] Lugs dogfooded (if applicable)
-- [ ] Teachings generated and published (if applicable)
-- [ ] Committed and pushed to origin/main
+- Quality gates pass (if production)
+- Autosave lugs reconciled into session-summary
+- Signals extracted (impact >= 8)
+- Incomplete work documented
+- Version incremented, state updated
+- Lug status synced, index regenerated
+- Session track finalized
+- Lugs dogfooded (if applicable)
+- Teachings generated (if applicable)
+- Committed and pushed
+- Release tag applied (if production)
 
 ---
 
