@@ -24,6 +24,12 @@ fi
 # Count active lugs
 ACTIVE_LUGS=$(ls "$PROJECT_DIR"/WAI-Spoke/lugs/bytype/*/open/*.json "$PROJECT_DIR"/WAI-Spoke/lugs/bytype/*/in_progress/*.json 2>/dev/null | wc -l)
 
+# Mark compaction in guard file so next turn can inject a recovery directive
+if [[ -f "$GUARD_FILE" ]]; then
+  TMP=$(mktemp)
+  jq '.compacted = true | .compacted_at = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' "$GUARD_FILE" > "$TMP" && mv "$TMP" "$GUARD_FILE"
+fi
+
 # Emit compaction context that survives into the compressed conversation
 cat << COMPACT
 <wai-pre-compact>
@@ -35,6 +41,10 @@ Context compaction occurring. Key state preserved:
 
 After compaction: Re-read WAI-State.json and recent track entries to rebuild context.
 Rules still active: P1-Persist, P2-Verify, P3-Steward, P10-Autonomy, P11-Lug-First.
+
+CLOSEOUT CRITICAL: If you need to close out this session, you MUST read the skill file first:
+  templates/commands/wai-closeout.md
+Do NOT attempt closeout from memory — the skill file is the source of truth.
 </wai-pre-compact>
 COMPACT
 

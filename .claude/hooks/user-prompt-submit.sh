@@ -46,6 +46,27 @@ fi
 # If protocol already ran, emit compact WAI essentials (survives /compact)
 if [[ "$GUARD_COMPLETED" == "true" ]]; then
   TRACK_PATH=$(jq -r '._session_state.track_path // ""' "$STATE_FILE" 2>/dev/null)
+
+  # Post-compaction recovery: inject once after a compaction event, then clear the flag
+  GUARD_COMPACTED=$(jq -r '.compacted // false' "$GUARD_FILE" 2>/dev/null || echo "false")
+  if [[ "$GUARD_COMPACTED" == "true" ]]; then
+    TMP=$(mktemp)
+    jq 'del(.compacted) | del(.compacted_at)' "$GUARD_FILE" > "$TMP" && mv "$TMP" "$GUARD_FILE"
+    cat << POST_COMPACT
+<wai-post-compact>
+WARNING: Context was compacted this session. Skill knowledge may have been lost.
+
+BEFORE closing out: Read templates/commands/wai-closeout.md — do not attempt from memory.
+BEFORE any skill: Read templates/commands/wai-{skill}.md — do not reconstruct from context.
+
+State files still intact:
+  WAI-Spoke/WAI-State.json — identity, session state, work queue
+  WAI-Spoke/lugs/bytype/ — all active lugs
+  ${TRACK_PATH} — session track (append every turn)
+</wai-post-compact>
+POST_COMPACT
+  fi
+
   cat << ESSENTIALS
 <wai-essentials>
 WAI project: Wheelwright Framework. State: WAI-Spoke/WAI-State.json
