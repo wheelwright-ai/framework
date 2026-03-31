@@ -1,3 +1,22 @@
+## [2.0.137] - 2026-03-31
+
+### Added — Spoke Integrity + Advisor Stubs + Closeout Hardening (Session 115)
+
+- **`tools/spoke_parity_check.py`:** Assertion-based parity verification against `hub/WAI-Hub/parity/head.json`; parity computed not stamped; exit 0=at parity, 1=behind, 2=error; `--json` flag for Tender
+- **`tools/spoke_integrity_score.py`:** 5-dimension composite score (structure/hooks/lugs/parity/hub) 0-100; `--json` + `--quiet` modes; exit codes for automated use; this spoke: 92/100 HEALTHY
+- **`session-start.sh`:** CONTEXT HEALTH section now shows integrity score + parity status on every wakeup
+- **Post-compaction closeout hardening:** `pre-compact.sh` writes `compacted=true` to guard file + adds CLOSEOUT CRITICAL directive to output; `user-prompt-submit.sh` detects flag and injects one-shot `<wai-post-compact>` block directing model to read skill files before acting
+- **Spoke advisor stubs (5):** Archie (Architect), Will (Release Engineer), Jordy (QA), Mark (Growth Analyst), Clara (Content Marketer) — `WAI-Spoke/advisors/{name}/scan_state.json` + `reports/`; hierarchy matches architecture v2
+
+### Fixed
+
+- `session-20260331-1524/track.jsonl`: appended `completed:true` entry so wakeup integrity check no longer flags S114 closeout session as INTERRUPTED
+- `task-rename-lathe-to-spinner-v1`: verified complete in hub (spinner/ exists, zero lathe refs), marked completed
+
+### Teaching Adoption (Session 115)
+
+- 8 teachings processed: 4 new signals (wheel-council-v1, octo-cos, subagent-parallelism, octo-v2-operational); 3 pre-existing; 1 minder migration (already clean)
+
 ## [2.0.136] - 2026-03-31
 
 ### Added — Octo v2: Hub Chief of Staff (Session 114)

@@ -1,0 +1,62 @@
+{
+  "id": "session-20260331-1535",
+  "ty": "session-summary",
+  "type": "session-summary",
+  "t": "Session 115 summary",
+  "title": "Session 115 summary",
+  "s": "c",
+  "status": "completed",
+  "ca": "2026-03-31T22:10:00Z",
+  "created_at": "2026-03-31T22:10:00Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 115,
+  "accomplished": [
+    "Post-compaction closeout hardening: pre-compact.sh sets compacted flag, user-prompt-submit.sh injects wai-post-compact block with skill-read directive after any compaction event",
+    "S114 track integrity fix: appended completed:true to session-20260331-1524 track so wakeup no longer flags it as interrupted",
+    "P1 Teachings (8 total): wrote 4 new signals (wheel-council/octo-cos/subagent-parallelism/octo-v2), confirmed 3 already existed, processed all 8 teaching files to processed/",
+    "P2 Work queue rescore: task-rename-lathe-to-spinner verified complete in hub (spinner/ exists, lathe/ gone), marked completed; work queue rebuilt with 10 fresh items",
+    "P3 Spoke advisor stubs: Archie/Will/Jordy/Mark/Clara created under WAI-Spoke/advisors/ with scan_state.json + reports/",
+    "P4 spoke_parity_check.py: assertion-based parity verification against hub/WAI-Hub/parity/head.json; this spoke at parity (1/1)",
+    "P4 spoke_integrity_score.py: 5-dimension composite score (structure/hooks/lugs/parity/hub); this spoke 92/100 HEALTHY",
+    "P4 session-start.sh wired: CONTEXT HEALTH section now shows integrity score + parity status on every wakeup"
+  ],
+  "files_touched": [
+    ".claude/hooks/pre-compact.sh",
+    ".claude/hooks/user-prompt-submit.sh",
+    ".claude/hooks/session-start.sh",
+    "tools/spoke_parity_check.py",
+    "tools/spoke_integrity_score.py",
+    "WAI-Spoke/lugs/bytype/signal/undelivered/signal-20260331-2120-wheel-council-v1.json",
+    "WAI-Spoke/lugs/bytype/signal/undelivered/signal-20260331-2121-octo-cos-clarification.json",
+    "WAI-Spoke/lugs/bytype/signal/undelivered/signal-20260331-2122-subagent-parallelism.json",
+    "WAI-Spoke/lugs/bytype/signal/undelivered/signal-20260331-2200-octo-v2-operational.json",
+    "WAI-Spoke/lugs/bytype/task/completed/task-rename-lathe-to-spinner-v1.json",
+    "WAI-Spoke/seed/ingest/processed/ (8 teaching files)",
+    "WAI-Spoke/advisors/archie/scan_state.json",
+    "WAI-Spoke/advisors/will/scan_state.json",
+    "WAI-Spoke/advisors/jordy/scan_state.json",
+    "WAI-Spoke/advisors/mark/scan_state.json",
+    "WAI-Spoke/advisors/clara/scan_state.json",
+    "WAI-Spoke/WAI-State.json",
+    "WAI-Spoke/sessions/session-20260331-1524/track.jsonl"
+  ],
+  "decisions": [
+    "Post-compaction hardening: one-shot wai-post-compact injection (cleared after first use) to avoid noise on every turn",
+    "Parity is COMPUTED from assertions not stamped — can't lie about alignment",
+    "spoke_integrity_score.py imports spoke_parity_check for DRY parity dimension",
+    "Session boundary at 16:10 treated as consolidation session; S115 work in session-20260331-1535",
+    "Minder's WAI-Lugs.jsonl migration teaching: framework spoke already clean (154 signals in bytype/, 0 unmigrated)"
+  ],
+  "incomplete_work": {
+    "tasks": [],
+    "blockers": [],
+    "next_steps": [
+      "Hooks dimension in integrity score scores 15/20 (5 hooks x 3pts = 15, not 20) — consider reviewing scoring formula",
+      "3 actionable lugs missing PEV fields (lug-expedite-asap-flag, lug-scripted-wakeup-closeout, lug-routing-intelligence) — fix when touched",
+      "feature-tender-spoke-integrity-v1 still open — next big feature: env-var remediation + --spoke flag + post-tend verification",
+      "Historian: signal queue at 31 — triage pass recommended",
+      "epic-ozi-work-queue-orchestration-v1 decomposition recommended for nightly pickup"
+    ]
+  },
+  "autosaves_reconciled": []
+}

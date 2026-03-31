@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.136",
+    "version": "2.0.137",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260331-1535",
+    "last_session_id": "session-20260331-1610",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-31T22:00:00Z",
-    "last_closeout": "2026-03-31T22:00:00Z",
-    "session_count": 115,
-    "track_path": "WAI-Spoke/sessions/session-20260331-1535/track.jsonl",
-    "next_session_recommendation": "Session 115 priorities:\n(1) Adopt 6 auto-adoptable teachings: signal-20260331-0542, -1654, -1720, -2120, -2121, -2122. Plus 1 manual: signal-20260331-0535-from-minder.\n(2) Rescore work queue \u2014 feature-lathe-portfolio-management-v1 and feature-compass-advisor-v1 still in _work_queue (both completed in S113, need cleanup).\n(3) Spoke advisor stubs \u2014 Archie, Will, Jordy, Mark, Clara (same parallel agent pattern as hub advisors).\n(4) spoke_parity_check.py + spoke_integrity_score.py (Phase 1 spoke integrity).\nHub Council status: fully operational. Octo v2 complete (work queue + council dispatch + escalation routing).",
+    "last_modified_at": "2026-03-31T23:17:42Z",
+    "last_closeout": "2026-03-31T23:17:42Z",
+    "session_count": 116,
+    "track_path": "WAI-Spoke/sessions/session-20260331-1610/track.jsonl",
+    "next_session_recommendation": "Session 116 priorities:\n(1) Fix track integrity check false-positive: wakeup INTERRUPTED detection must accept event==closeout as CLEAN (not just completed==true).\n(2) feature-tender-spoke-integrity-v1: env-var remediation in run_nightly.py + --spoke flag + post-tend verification per spoke.\n(3) Signal triage pass: 31 signals in queue, historian flagged for triage before adding more.\n(4) epic-ozi-work-queue-orchestration-v1 decomposition: break into child tasks for nightly pickup.\n(5) Hooks dimension scoring review: 5 hooks x 3pts = 15/20 cap, consider if formula is correct.",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
