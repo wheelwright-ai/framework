@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.132",
+    "version": "2.0.133",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260330-2016",
+    "last_session_id": "session-20260330-2111",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-31T04:05:30Z",
-    "last_closeout": "2026-03-31T04:05:30Z",
-    "session_count": 111,
-    "track_path": "WAI-Spoke/sessions/session-20260330-2016/track.jsonl",
-    "next_session_recommendation": "Session 112: (1) Verify wakeup savings \u2014 run /wai then /context, expect messages < 8k (was 22.3k). (2) Commit hub repo changes \u2014 wheel-tender.sh UX, wakeup docs, Expediter pre-Pass-2. (3) Close epic-session15-fleet-evolution \u2014 framework_version confirmed in template, mark done children. (4) Implement tools/closeout.sh \u2014 lug lug-scripted-wakeup-closeout-20260330 has full spec. (5) impl-librarian-execute-hub-lugs-v1 still pending \u2014 11 child lugs, run in hub OPUS session. (6) Hub signals inbox still at 63 \u2014 triage pass needed.",
+    "last_modified_at": "2026-03-31T05:42:38.987590+00:00",
+    "last_closeout": "2026-03-31T05:42:38.987590+00:00",
+    "session_count": 112,
+    "track_path": "WAI-Spoke/sessions/session-20260330-2111/track.jsonl",
+    "next_session_recommendation": "Session 113: (1) Check tonight's Tender log \u2014 verify REINSTALL_NEEDED fired for spokes with $CLAUDE_PROJECT_DIR in settings.json. (2) Hub signals inbox at 63 \u2014 triage pass needed. (3) feature-compass-advisor-v1 and feature-lathe-portfolio-management-v1 still in-progress. (4) epic-session15-fleet-evolution \u2014 close it (framework_version confirmed in template). (5) impl-librarian-execute-hub-lugs-v1 pending \u2014 11 child lugs, needs hub OPUS session.",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
