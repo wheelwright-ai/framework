@@ -60,7 +60,9 @@ Count only — do NOT read the file. Skills load on-demand when invoked.
 
 ## Step 3b: Track Integrity Check
 
-Check the PREVIOUS session's track (not the current one):
+**If `<wai-session-init>` present:** use `Prev session:` value from the CONTEXT HEALTH section — skip the bash commands below.
+
+Otherwise, check the PREVIOUS session's track (not the current one):
 
 ```bash
 LAST_TRACK="WAI-Spoke/sessions/$(ls -1t WAI-Spoke/sessions/ | sed -n '2p')/track.jsonl"
@@ -70,7 +72,7 @@ echo "$LAST_LINE" | jq -e '.completed == true or .event == "closeout"' >/dev/nul
 ```
 
 **If INTERRUPTED:** offer Green Light / Red Light / Skip / New Project options. See `wai-reference.md` for recovery details.
-**If CLEAN:** continue.
+**If CLEAN or EMPTY:** continue.
 
 Session guard state lives in `WAI-Spoke/runtime/session-guard.json` (gitignored) — do NOT write to WAI-State.json.
 

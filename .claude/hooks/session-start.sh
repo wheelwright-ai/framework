@@ -36,6 +36,28 @@ SESSION_DIR="$PROJECT_DIR/WAI-Spoke/sessions/$SESSION_NAME"
 mkdir -p "$SESSION_DIR"
 touch "$SESSION_DIR/track.jsonl"
 
+# ── 1b. Check previous session track integrity ──────────────────────────────
+PREV_SESSION_STATUS="FIRST_SESSION"
+PREV_SESSION_ID=""
+PREV_SESSION=$(ls -1t "$PROJECT_DIR/WAI-Spoke/sessions/" 2>/dev/null | grep -v "^${SESSION_NAME}$" | head -1)
+if [[ -n "$PREV_SESSION" ]]; then
+  PREV_TRACK="$PROJECT_DIR/WAI-Spoke/sessions/$PREV_SESSION/track.jsonl"
+  PREV_SESSION_ID="$PREV_SESSION"
+  if [[ -f "$PREV_TRACK" && -s "$PREV_TRACK" ]]; then
+    LAST_LINE=$(tail -1 "$PREV_TRACK")
+    # CLEAN = completed turn OR explicit closeout event
+    if echo "$LAST_LINE" | jq -e '.completed == true or .event == "closeout"' >/dev/null 2>&1; then
+      PREV_SESSION_STATUS="CLEAN"
+    elif echo "$LAST_LINE" | jq . >/dev/null 2>&1; then
+      PREV_SESSION_STATUS="INTERRUPTED"
+    else
+      PREV_SESSION_STATUS="INTERRUPTED"
+    fi
+  else
+    PREV_SESSION_STATUS="EMPTY"
+  fi
+fi
+
 # ── 2. Update WAI-State.json with new session ────────────────────────────────
 # NOTE: session_count is incremented at closeout only (not here).
 # Agent-initiated sessions must not inflate the count.
@@ -285,6 +307,7 @@ $(if [[ -n "$HISTORIAN_ADVICE" ]]; then printf "HISTORIAN ADVICE\n%b\n" "$HISTOR
 CONTEXT HEALTH
   Git: ${GIT_STATUS}
   Hub path: ${HUB_STATUS}
+  Prev session: ${PREV_SESSION_STATUS}$(if [[ -n "$PREV_SESSION_ID" ]]; then echo " (${PREV_SESSION_ID})"; fi)$(if [[ "$PREV_SESSION_STATUS" == "INTERRUPTED" ]]; then echo " ⚠ recovery options at wakeup"; fi)
 $(if [[ -n "$INTEGRITY_SCORE" ]]; then echo "$INTEGRITY_SCORE"; fi)
 $(if [[ -n "$PARITY_STATUS" ]]; then echo "$PARITY_STATUS"; fi)
 $(if [[ -n "$CC_GAPS" ]]; then printf "\nCC OPTIMIZATION (run /wai-claude-maximizer for details)\n%b" "$CC_GAPS"; fi)
