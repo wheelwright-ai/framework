@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.133",
+    "version": "2.0.134",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260330-2111",
-    "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-31T05:42:38.987590+00:00",
-    "last_closeout": "2026-03-31T05:42:38.987590+00:00",
-    "session_count": 112,
-    "track_path": "WAI-Spoke/sessions/session-20260330-2111/track.jsonl",
-    "next_session_recommendation": "Session 113: (1) Check tonight's Tender log \u2014 verify REINSTALL_NEEDED fired for spokes with $CLAUDE_PROJECT_DIR in settings.json. (2) Hub signals inbox at 63 \u2014 triage pass needed. (3) feature-compass-advisor-v1 and feature-lathe-portfolio-management-v1 still in-progress. (4) epic-session15-fleet-evolution \u2014 close it (framework_version confirmed in template). (5) impl-librarian-execute-hub-lugs-v1 pending \u2014 11 child lugs, needs hub OPUS session.",
+    "last_session_id": "session-20260331-0911",
+    "last_modified_by": "claude-opus-4-6",
+    "last_modified_at": "2026-03-31T19:42:22Z",
+    "last_closeout": "2026-03-31T19:42:22Z",
+    "session_count": 113,
+    "track_path": "WAI-Spoke/sessions/session-20260331-0911/track.jsonl",
+    "next_session_recommendation": "Session 114: (1) BUILD HUB ADVISOR LUGS FIRST — Octo, Gardener, Spinner, Cartologist, Quartermaster — user priority. (2) Cartologist web interface — user wants to see/engage the wheel from browser. (3) Intra-spoke messaging protocol — hub advisors ask spokes for data/modifications, spoke advisors send wish-lists up. (4) Build spoke_parity_check.py + spoke_integrity_score.py (Phase 1 integrity). (5) Wire parity into session-start.sh. (6) Adopt 2 pending teachings. (7) Rename: Lathe→Spinner, Compass→Cartologist across hub. (8) Create spoke advisor stubs (Archie, Will, Jordy, Mark, Clara).",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -111,7 +111,7 @@
         "roi": 5.0,
         "type": "feature",
         "status": "ready",
-        "title": "Lathe: Portfolio management layer \u2014 strategic weighting, shift directions, inves",
+        "title": "Lathe: Portfolio management layer — strategic weighting, shift directions, inves",
         "phase": null,
         "tagged_next": true
       },
@@ -138,7 +138,7 @@
         "roi": 3.38,
         "type": "epic",
         "status": "ready",
-        "title": "Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference f",
+        "title": "Apply Skill Thrift Principle to all WAI skills — lean primary files, reference f",
         "phase": null,
         "tagged_next": false
       },
@@ -147,7 +147,7 @@
         "roi": 3.33,
         "type": "feature",
         "status": "ready",
-        "title": "Compass: Hub advisor \u2014 dynamic HTML dashboard, morning brief, decision tracker, ",
+        "title": "Compass: Hub advisor — dynamic HTML dashboard, morning brief, decision tracker, ",
         "phase": null,
         "tagged_next": false
       },
@@ -156,7 +156,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes",
+        "title": "Interruption Detection & Recovery — Windows restarts, unexpected crashes",
         "phase": "planning",
         "tagged_next": false
       },
@@ -174,7 +174,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Routing Awareness \u2014 Scope-aware work dispatch & lug creation",
+        "title": "Ozi Routing Awareness — Scope-aware work dispatch & lug creation",
         "phase": "planning",
         "tagged_next": false
       },
@@ -183,7 +183,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
+        "title": "Ozi Work Queue Orchestration — Priority-ordered autonomous work dispatch",
         "phase": "planning",
         "tagged_next": false
       },
@@ -192,7 +192,7 @@
         "roi": 3.0,
         "type": "other",
         "status": "ready",
-        "title": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
+        "title": "WAI-Challenges.jsonl — problem-centric backlog as first-class file",
         "phase": null,
         "tagged_next": false
       }
@@ -216,7 +216,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
