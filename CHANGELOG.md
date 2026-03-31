@@ -1,3 +1,16 @@
+## [2.0.136] - 2026-03-31
+
+### Added — Octo v2: Hub Chief of Staff (Session 114)
+
+- **`hub/tools/octo_brief.py` v2.0.0:** Adds CoS operational layer on top of advisory brief
+  - `compute_hub_work_queue()`: scores all 17 spokes by `urgency * health_penalty + signal_pressure`, writes `hub_work_queue.json`
+  - `compute_council_directives()`: actionable lists for all 4 council members → `council_directives.json`
+  - `compute_escalation_items()`: surfaces high-impact pending signals, chronic RED spokes, orphan spokes
+  - `generate_latest_md()`: extended with Hub Work Queue + Escalations sections
+  - `scan_state.json` v2.0.0: adds `last_dispatch_at`, `directives_count`, `work_queue_size`
+- **`run_nightly.py`:** `sort_spokes_by_spinner()` now checks `hub_work_queue.json` first — Octo ordering takes precedence over pure Spinner urgency when file exists
+- **Hub outputs:** `hub_work_queue.json` (17 spokes sorted by priority), `council_directives.json` (4 council members with explicit tonight's directives)
+
 ## [2.0.135] - 2026-03-31
 
 ### Added — Wheel Council v1 (Session 113)

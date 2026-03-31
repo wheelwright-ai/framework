@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.135",
+    "version": "2.0.136",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260331-1403",
+    "last_session_id": "session-20260331-1524",
     "last_modified_by": "claude-sonnet-4-6",
-    "last_modified_at": "2026-03-31T21:25:00Z",
-    "last_closeout": "2026-03-31T21:25:00Z",
-    "session_count": 114,
-    "track_path": "WAI-Spoke/sessions/session-20260331-1403/track.jsonl",
-    "next_session_recommendation": "Session 114 priorities:\n(1) OCTO V2 (CoS/orchestration) \u2014 lug feature-octo-hub-cos-v2.json ready. Hub work queue + council dispatch + escalation routing. This makes the pipeline operational not just advisory.\n(2) Adopt 4 pending teachings (3 auto-adoptable: signal-20260331-0542, signal-20260331-1654, signal-20260331-1720; 1 manual: signal-20260331-0535-from-minder).\n(3) Spoke advisor stubs \u2014 Archie, Will, Jordy, Mark, Clara (from S112 carry-forward).\n(4) spoke_parity_check.py + spoke_integrity_score.py (Phase 1 spoke integrity).\nNext lug: feature-octo-hub-cos-v2 (ROI ~10, hub CoS \u2014 required for full council operation)",
+    "last_modified_at": "2026-03-31T22:00:00Z",
+    "last_closeout": "2026-03-31T22:00:00Z",
+    "session_count": 115,
+    "track_path": "WAI-Spoke/sessions/session-20260331-1524/track.jsonl",
+    "next_session_recommendation": "Session 115 priorities:\n(1) Adopt 6 auto-adoptable teachings: signal-20260331-0542, -1654, -1720, -2120, -2121, -2122. Plus 1 manual: signal-20260331-0535-from-minder.\n(2) Rescore work queue — feature-lathe-portfolio-management-v1 and feature-compass-advisor-v1 still in _work_queue (both completed in S113, need cleanup).\n(3) Spoke advisor stubs — Archie, Will, Jordy, Mark, Clara (same parallel agent pattern as hub advisors).\n(4) spoke_parity_check.py + spoke_integrity_score.py (Phase 1 spoke integrity).\nHub Council status: fully operational. Octo v2 complete (work queue + council dispatch + escalation routing).",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -104,17 +104,8 @@
   },
   "_work_queue": {
     "enabled": true,
-    "last_scored_at": "2026-03-30T12:29:34Z",
+    "last_scored_at": "2026-03-31T22:00:00Z",
     "items": [
-      {
-        "id": "feature-lathe-portfolio-management-v1",
-        "roi": 5.0,
-        "type": "feature",
-        "status": "ready",
-        "title": "Lathe: Portfolio management layer \u2014 strategic weighting, shift directions, inves",
-        "phase": null,
-        "tagged_next": true
-      },
       {
         "id": "decision-df884ede13e2",
         "roi": 4.5,
@@ -122,7 +113,7 @@
         "status": "ready",
         "title": "Open-source boundary: advisors are the pro differentiator, core schema stays ope",
         "phase": null,
-        "tagged_next": false
+        "tagged_next": true
       },
       {
         "id": "epic-cc-advisor-spoke-hub-v1",
@@ -138,16 +129,7 @@
         "roi": 3.38,
         "type": "epic",
         "status": "ready",
-        "title": "Apply Skill Thrift Principle to all WAI skills \u2014 lean primary files, reference f",
-        "phase": null,
-        "tagged_next": false
-      },
-      {
-        "id": "feature-compass-advisor-v1",
-        "roi": 3.33,
-        "type": "feature",
-        "status": "ready",
-        "title": "Compass: Hub advisor \u2014 dynamic HTML dashboard, morning brief, decision tracker, ",
+        "title": "Apply Skill Thrift Principle to all WAI skills — lean primary files, reference f",
         "phase": null,
         "tagged_next": false
       },
@@ -156,7 +138,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes",
+        "title": "Interruption Detection & Recovery — Windows restarts, unexpected crashes",
         "phase": "planning",
         "tagged_next": false
       },
@@ -174,7 +156,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Routing Awareness \u2014 Scope-aware work dispatch & lug creation",
+        "title": "Ozi Routing Awareness — Scope-aware work dispatch & lug creation",
         "phase": "planning",
         "tagged_next": false
       },
@@ -183,7 +165,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
+        "title": "Ozi Work Queue Orchestration — Priority-ordered autonomous work dispatch",
         "phase": "planning",
         "tagged_next": false
       },
@@ -192,7 +174,7 @@
         "roi": 3.0,
         "type": "other",
         "status": "ready",
-        "title": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
+        "title": "WAI-Challenges.jsonl — problem-centric backlog as first-class file",
         "phase": null,
         "tagged_next": false
       }
@@ -216,7 +198,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
+      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
