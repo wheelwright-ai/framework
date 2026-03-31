@@ -1,0 +1,15 @@
+{
+  "advisor_id": "will",
+  "advisor_name": "Will — Release Engineer",
+  "version": "0.1.0",
+  "status": "stub",
+  "mission_statement": "Own CI/CD, build pipelines, deployment health, and release cadence — monitor push success and uptime across all delivery targets",
+  "reports_to": "archie",
+  "direct_reports": [],
+  "activation": "all_spoke_types",
+  "scope": ["ci_cd", "builds", "deployments", "release_process", "uptime_monitoring"],
+  "output_file": "spoke_will.json",
+  "created_at": "2026-03-31T15:45:00Z",
+  "last_scan_at": null,
+  "reports_generated": 0
+}

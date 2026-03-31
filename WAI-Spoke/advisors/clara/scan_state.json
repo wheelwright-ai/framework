@@ -1,0 +1,15 @@
+{
+  "advisor_id": "clara",
+  "advisor_name": "Clara — Content Marketer",
+  "version": "0.1.0",
+  "status": "stub",
+  "mission_statement": "Own copy and content strategy — produce optimized messaging, iterate via Mark's data, and drive user acquisition through content-led growth",
+  "reports_to": "marge",
+  "direct_reports": [],
+  "activation": "product_spokes",
+  "scope": ["content_strategy", "copy_optimization", "user_acquisition", "messaging", "content_iteration"],
+  "output_file": "spoke_clara.json",
+  "created_at": "2026-03-31T15:45:00Z",
+  "last_scan_at": null,
+  "reports_generated": 0
+}

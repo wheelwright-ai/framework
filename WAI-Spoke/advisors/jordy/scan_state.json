@@ -1,0 +1,15 @@
+{
+  "advisor_id": "jordy",
+  "advisor_name": "Jordy — QA Engineer",
+  "version": "0.1.0",
+  "status": "stub",
+  "mission_statement": "Own test coverage, bug triage, and quality gates — define edge cases, run regression checks, and signal quality risk before promotion",
+  "reports_to": "archie",
+  "direct_reports": [],
+  "activation": "all_spoke_types",
+  "scope": ["test_coverage", "bug_triage", "quality_gates", "regression", "edge_cases"],
+  "output_file": "spoke_jordy.json",
+  "created_at": "2026-03-31T15:45:00Z",
+  "last_scan_at": null,
+  "reports_generated": 0
+}

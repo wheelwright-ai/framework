@@ -1,0 +1,15 @@
+{
+  "advisor_id": "archie",
+  "advisor_name": "Archie — Spoke Architect",
+  "version": "0.1.0",
+  "status": "stub",
+  "mission_statement": "Own stack, standards, and tooling decisions — audit code quality, select tools, define architecture guardrails, and lead the tech squad (Flo, Will, Jordy)",
+  "reports_to": "ozi",
+  "direct_reports": ["flo", "will", "jordy"],
+  "activation": "all_spoke_types",
+  "scope": ["code_quality", "tech_stack", "tooling", "architecture_decisions", "dependency_review"],
+  "output_file": "spoke_archie.json",
+  "created_at": "2026-03-31T15:45:00Z",
+  "last_scan_at": null,
+  "reports_generated": 0
+}

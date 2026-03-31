@@ -1,0 +1,15 @@
+{
+  "advisor_id": "mark",
+  "advisor_name": "Mark — Growth Analyst",
+  "version": "0.1.0",
+  "status": "stub",
+  "mission_statement": "Track metrics and run growth experiments — A/B tests, data-driven pivots, and performance measurement to guide product decisions",
+  "reports_to": "marge",
+  "direct_reports": [],
+  "activation": "product_spokes",
+  "scope": ["metrics", "ab_tests", "performance_measurement", "growth_experiments", "data_analysis"],
+  "output_file": "spoke_mark.json",
+  "created_at": "2026-03-31T15:45:00Z",
+  "last_scan_at": null,
+  "reports_generated": 0
+}
