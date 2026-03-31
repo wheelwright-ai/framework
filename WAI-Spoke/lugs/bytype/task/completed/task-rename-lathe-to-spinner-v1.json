@@ -1,0 +1,49 @@
+{
+  "id": "task-rename-lathe-to-spinner-v1",
+  "type": "task",
+  "status": "completed",
+  "title": "Rename hub advisor Lathe \u2192 Spinner across codebase",
+  "description": "User directive S113: rename the strategy advisor from Lathe to Spinner. Affects folder name, scan_state references, Compass reports, Tender config, run_nightly.py, memory files, and any skill references.",
+  "priority": "medium",
+  "effort": 2,
+  "roi": 3.5,
+  "model_fit": "sonnet",
+  "routed_to": "LOCAL",
+  "created_at": "2026-03-31T17:58:07Z",
+  "updated_at": "2026-03-31T23:01:47Z",
+  "perceive": {
+    "current_state": "Hub advisor folder is WAI-Hub/advisors/lathe/. Referenced in run_nightly.py (sort_spokes_by_lathe, spoke_lathe.json), compass_report.py, scan_state.json, MEMORY.md.",
+    "files": [
+      "hub/WAI-Hub/advisors/lathe/",
+      "hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py",
+      "hub/tools/lathe_score.py",
+      "hub/tools/compass_report.py"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. mv WAI-Hub/advisors/lathe/ \u2192 WAI-Hub/advisors/spinner/",
+      "2. Rename spoke_lathe.json \u2192 spoke_spinner.json inside the folder",
+      "3. Update all references in run_nightly.py (sort_spokes_by_lathe \u2192 sort_spokes_by_spinner)",
+      "4. Rename tools/lathe_score.py \u2192 tools/spinner_score.py, update imports",
+      "5. Update compass_report.py references",
+      "6. Update scan_state.json references if any",
+      "7. Grep fleet-wide for 'lathe' to catch stragglers"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "grep -ri 'lathe' hub/ returns zero matches (excluding git history)",
+      "WAI-Hub/advisors/spinner/ exists with spoke_spinner.json",
+      "python3 hub/tools/spinner_score.py runs without error",
+      "python3 hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py --spoke framework completes successfully"
+    ]
+  },
+  "acceptance_criteria": [
+    "Zero references to 'lathe' in hub codebase (live files, not git history)",
+    "All tools referencing the strategy advisor use 'spinner'"
+  ],
+  "dependencies": [],
+  "completed_at": "2026-03-31T21:20:00Z",
+  "completion_note": "Verified: spinner/ exists, lathe/ gone, zero live lathe refs in WAI-Hub/ (only archive/processed). Completed in S113."
+}

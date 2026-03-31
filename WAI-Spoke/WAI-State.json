@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260331-1524",
+    "last_session_id": "session-20260331-1535",
     "last_modified_by": "claude-sonnet-4-6",
     "last_modified_at": "2026-03-31T22:00:00Z",
     "last_closeout": "2026-03-31T22:00:00Z",
     "session_count": 115,
-    "track_path": "WAI-Spoke/sessions/session-20260331-1524/track.jsonl",
-    "next_session_recommendation": "Session 115 priorities:\n(1) Adopt 6 auto-adoptable teachings: signal-20260331-0542, -1654, -1720, -2120, -2121, -2122. Plus 1 manual: signal-20260331-0535-from-minder.\n(2) Rescore work queue — feature-lathe-portfolio-management-v1 and feature-compass-advisor-v1 still in _work_queue (both completed in S113, need cleanup).\n(3) Spoke advisor stubs — Archie, Will, Jordy, Mark, Clara (same parallel agent pattern as hub advisors).\n(4) spoke_parity_check.py + spoke_integrity_score.py (Phase 1 spoke integrity).\nHub Council status: fully operational. Octo v2 complete (work queue + council dispatch + escalation routing).",
+    "track_path": "WAI-Spoke/sessions/session-20260331-1535/track.jsonl",
+    "next_session_recommendation": "Session 115 priorities:\n(1) Adopt 6 auto-adoptable teachings: signal-20260331-0542, -1654, -1720, -2120, -2121, -2122. Plus 1 manual: signal-20260331-0535-from-minder.\n(2) Rescore work queue \u2014 feature-lathe-portfolio-management-v1 and feature-compass-advisor-v1 still in _work_queue (both completed in S113, need cleanup).\n(3) Spoke advisor stubs \u2014 Archie, Will, Jordy, Mark, Clara (same parallel agent pattern as hub advisors).\n(4) spoke_parity_check.py + spoke_integrity_score.py (Phase 1 spoke integrity).\nHub Council status: fully operational. Octo v2 complete (work queue + council dispatch + escalation routing).",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -103,79 +103,86 @@
     "teaching_audit_wired_to_wakeup": true
   },
   "_work_queue": {
-    "enabled": true,
-    "last_scored_at": "2026-03-31T22:00:00Z",
+    "last_scored_at": "2026-03-31T23:02:04Z",
     "items": [
+      {
+        "id": "signal-20260331-1720-advisor-architecture-v2",
+        "roi": 5.0,
+        "type": "signal",
+        "status": "ready",
+        "title": "signal-20260331-1720-advisor-architecture-v2",
+        "tagged_next": true
+      },
       {
         "id": "decision-df884ede13e2",
         "roi": 4.5,
         "type": "other",
         "status": "ready",
-        "title": "Open-source boundary: advisors are the pro differentiator, core schema stays ope",
-        "phase": null,
-        "tagged_next": true
-      },
-      {
-        "id": "epic-cc-advisor-spoke-hub-v1",
-        "roi": 3.38,
-        "type": "epic",
-        "status": "ready",
-        "title": "Persistent ClaudeCode configuration advisor with hub distribution",
-        "phase": null,
+        "title": "Open-source boundary: advisors are the pro differentiator, c",
         "tagged_next": false
       },
       {
-        "id": "epic-skill-thrift-v1",
-        "roi": 3.38,
-        "type": "epic",
+        "id": "signal-20260331-1654-silent-hook-failure-fleet",
+        "roi": 4.5,
+        "type": "signal",
         "status": "ready",
-        "title": "Apply Skill Thrift Principle to all WAI skills — lean primary files, reference f",
-        "phase": null,
+        "title": "signal-20260331-1654-silent-hook-failure-fleet",
         "tagged_next": false
       },
       {
-        "id": "epic-interruption-recovery-v1",
-        "roi": 3.0,
-        "type": "epic",
+        "id": "signal-20260331-2120-wheel-council-v1",
+        "roi": 4.5,
+        "type": "signal",
         "status": "ready",
-        "title": "Interruption Detection & Recovery — Windows restarts, unexpected crashes",
-        "phase": "planning",
+        "title": "signal-20260331-2120-wheel-council-v1",
         "tagged_next": false
       },
       {
-        "id": "epic-lug-quality-review-v1",
-        "roi": 3.0,
-        "type": "epic",
+        "id": "signal-20260331-2121-octo-cos-clarification",
+        "roi": 4.5,
+        "type": "signal",
         "status": "ready",
-        "title": "Review and improve all 65 active lugs for naming quality, detail, and PEV compli",
-        "phase": null,
+        "title": "signal-20260331-2121-octo-cos-clarification",
         "tagged_next": false
       },
       {
-        "id": "epic-ozi-routing-awareness-v1",
-        "roi": 3.0,
-        "type": "epic",
+        "id": "signal-20260331-2200-octo-v2-operational",
+        "roi": 4.5,
+        "type": "signal",
         "status": "ready",
-        "title": "Ozi Routing Awareness — Scope-aware work dispatch & lug creation",
-        "phase": "planning",
+        "title": "signal-20260331-2200-octo-v2-operational",
         "tagged_next": false
       },
       {
-        "id": "epic-ozi-work-queue-orchestration-v1",
-        "roi": 3.0,
-        "type": "epic",
+        "id": "signal-memory-truncation-silent-loss-v1",
+        "roi": 4.5,
+        "type": "signal",
         "status": "ready",
-        "title": "Ozi Work Queue Orchestration — Priority-ordered autonomous work dispatch",
-        "phase": "planning",
+        "title": "MEMORY.md silent truncation \u2014 Claude Code loads max 200 line",
         "tagged_next": false
       },
       {
-        "id": "idea-challenge-registry-v1",
-        "roi": 3.0,
-        "type": "other",
+        "id": "signal-repo-sanitization-auto-init-v1",
+        "roi": 4.5,
+        "type": "signal",
         "status": "ready",
-        "title": "WAI-Challenges.jsonl — problem-centric backlog as first-class file",
-        "phase": null,
+        "title": "Framework repo sanitized: WAI-Spoke/ gitignored with auto-in",
+        "tagged_next": false
+      },
+      {
+        "id": "signal-self-directed-model-routing-v1",
+        "roi": 4.5,
+        "type": "signal",
+        "status": "ready",
+        "title": "Self-directed model routing: lugs carry model_fit field, ten",
+        "tagged_next": false
+      },
+      {
+        "id": "signal-settings-json-env-var-hook-failure-v1",
+        "roi": 4.5,
+        "type": "signal",
+        "status": "ready",
+        "title": "settings.json hook commands with $CLAUDE_PROJECT_DIR silentl",
         "tagged_next": false
       }
     ]
@@ -198,7 +205,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {
