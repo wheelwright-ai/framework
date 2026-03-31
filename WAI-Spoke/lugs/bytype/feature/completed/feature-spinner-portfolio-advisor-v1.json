@@ -1,0 +1,44 @@
+{
+  "id": "feature-spinner-portfolio-advisor-v1",
+  "type": "feature",
+  "status": "completed",
+  "completed_at": "2026-03-31T20:45:00Z",
+  "title": "Spinner: Rename hub advisor Lathe→Spinner across all hub files — folder, tools, pipeline, docs",
+  "impact": 8,
+  "pev": {
+    "priority": "high",
+    "effort": "3",
+    "value": "8"
+  },
+  "perceive": "Read these files to map the full rename scope before touching anything: (1) hub/tools/lathe_score.py — note the LATHE_OUT path constant and output file reference. (2) hub/tools/compass_report.py line 21 — the LATHE path constant pointing to advisors/lathe/spoke_lathe.json. (3) hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh — find the post-tend pipeline section: look for lathe_score.py call and any --lathe flag passed to triumvirate_route.py. (4) hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py — find sort_spokes_by_lathe() function and any LATHE_OUT variable. (5) hub/tools/triumvirate_route.py — find the --lathe argument and its default path. (6) hub/AGENTS.md — grep for 'lathe'. (7) hub/WAI-Hub/skills/wai/wai.md — grep for 'lathe'. Map every occurrence before writing a single edit.",
+  "execute": "Step 1: mkdir -p hub/WAI-Hub/advisors/spinner. Copy all contents from hub/WAI-Hub/advisors/lathe/ to hub/WAI-Hub/advisors/spinner/ using \\cp -r hub/WAI-Hub/advisors/lathe/. hub/WAI-Hub/advisors/spinner/. Move hub/WAI-Hub/advisors/lathe/ to ~/projects/trash_bin/hub/WAI-Hub/advisors/lathe/ (use mkdir -p then mv). Step 2: Inside spinner/, rename spoke_lathe.json to spoke_spinner.json: mv hub/WAI-Hub/advisors/spinner/spoke_lathe.json hub/WAI-Hub/advisors/spinner/spoke_spinner.json. Open spoke_spinner.json and add advisor_id='spinner', advisor_name='Spinner — Portfolio Management', version='1.0.0', mission_statement='Shape where the wheel spins hardest — strategic shift directions, urgency scoring, and investment profiles per spoke' at the top level, preserving all existing spoke data. Step 3: Read hub/tools/lathe_score.py fully. Write hub/tools/spinner_score.py with: same logic but LATHE_OUT renamed to SPINNER_OUT, path updated from 'advisors/lathe/spoke_lathe.json' to 'advisors/spinner/spoke_spinner.json', any print/log strings updated from 'lathe' to 'spinner'. Move hub/tools/lathe_score.py to ~/projects/trash_bin/hub/tools/lathe_score.py. Step 4: In hub/tools/compass_report.py: update the LATHE constant (line 21) path from 'advisors/lathe/spoke_lathe.json' to 'advisors/spinner/spoke_spinner.json'. Also rename the variable from LATHE to SPINNER in that file and update all references to it within the file. Step 5: In hub/tools/triumvirate_route.py: find the --lathe argument parser definition and update its default path from 'lathe/spoke_lathe.json' to 'spinner/spoke_spinner.json'; update help text from 'lathe' to 'spinner'. Step 6: In hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh: replace all occurrences of 'lathe_score.py' with 'spinner_score.py'; replace any --lathe flag paths from 'lathe/spoke_lathe.json' to 'spinner/spoke_spinner.json'; replace any string 'lathe' in comments or variable names in that file. Step 7: In hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py: rename function sort_spokes_by_lathe() to sort_spokes_by_spinner(); rename LATHE_OUT variable to SPINNER_OUT; update path inside it from 'lathe/spoke_lathe.json' to 'spinner/spoke_spinner.json'; update all call sites of sort_spokes_by_lathe to sort_spokes_by_spinner. Step 8: In hub/WAI-Hub/advisors/compass/scan_state.json data_sources array: find the entry with source containing 'advisors/lathe/spoke_lathe.json' and update it to 'advisors/spinner/spoke_spinner.json'. Step 9: In hub/AGENTS.md: replace all occurrences of lathe_score, lathe/, spoke_lathe with spinner_score, spinner/, spoke_spinner respectively. Step 10: In hub/WAI-Hub/skills/wai/wai.md: same replacements as Step 9. Step 11: Run: grep -ri 'lathe' hub/WAI-Hub hub/tools hub/AGENTS.md 2>/dev/null to verify zero matches. If any remain, fix them before proceeding. Step 12: Move this lug to completed/.",
+  "verify": "python3 hub/tools/spinner_score.py exits 0 and writes hub/WAI-Hub/advisors/spinner/spoke_spinner.json. ls hub/WAI-Hub/advisors/spinner/spoke_spinner.json confirms file exists. python3 -c \"import json; d=json.load(open('hub/WAI-Hub/advisors/spinner/spoke_spinner.json')); assert d.get('advisor_id')=='spinner'\" exits 0. grep -ri 'lathe' hub/WAI-Hub hub/tools hub/AGENTS.md returns zero matches in live files.",
+  "verify_result": "PASS: spinner_score.py scored 17 spokes exit=0. spoke_spinner.json exists with advisor_id=spinner. Zero lathe refs in live pipeline files (tools/, gardener scripts, compass config, AGENTS.md, wai.md, WEB-INTERFACE.md, triumvirate_refresh.sh). Remaining refs only in immutable archives: signals/processed/ and docs/adr/ (historical, correct to preserve).",
+  "acceptance_criteria": [
+    "hub/WAI-Hub/advisors/spinner/ exists with spoke_spinner.json",
+    "hub/WAI-Hub/advisors/lathe/ moved to ~/projects/trash_bin/",
+    "hub/tools/spinner_score.py runs without error, writes spoke_spinner.json",
+    "hub/tools/lathe_score.py moved to trash_bin",
+    "compass_report.py reads from spinner/ path without error",
+    "triumvirate_route.py --lathe arg updated to spinner path",
+    "wheel-tender.sh post-tend calls spinner_score.py",
+    "run_nightly.py uses sort_spokes_by_spinner()",
+    "grep -ri lathe hub/WAI-Hub hub/tools hub/AGENTS.md returns zero matches"
+  ],
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/tools/lathe_score.py",
+    "/home/mario/projects/wheelwright/hub/tools/compass_report.py",
+    "/home/mario/projects/wheelwright/hub/tools/triumvirate_route.py",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/compass/scan_state.json",
+    "/home/mario/projects/wheelwright/hub/AGENTS.md",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/skills/wai/wai.md"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "va": "build",
+  "created_at": "2026-03-31T20:30:00Z",
+  "updated_at": "2026-03-31T20:45:00Z",
+  "created_by": "claude-sonnet-4-6"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "feature-gardener-hub-advisor-v1",
+  "type": "feature",
+  "status": "completed",
+  "completed_at": "2026-03-31T20:35:00Z",
+  "verify_result": "advisor_id=gardener confirmed, advisor.json valid",
+  "title": "Gardener: Promote to first-class hub advisor — add advisor_id metadata and advisor.json identity file",
+  "impact": 7,
+  "pev": {
+    "priority": "medium",
+    "effort": "1",
+    "value": "7"
+  },
+  "perceive": "Read hub/WAI-Hub/advisors/gardener/scan_state.json to see its current fields. Then read hub/WAI-Hub/advisors/compass/scan_state.json (the canonical advisor schema example) — it has advisor_id, advisor_name, version, mission_statement at the top level. Gardener's scan_state.json is missing these identity fields. The goal is to add them without touching any Python code.",
+  "execute": "Step 1: Read hub/WAI-Hub/advisors/gardener/scan_state.json to capture its full current content. Step 2: Add these fields at the top of the JSON object (prepend before any existing fields): advisor_id='gardener', advisor_name='Gardener — Fleet Health Monitor', version='1.0.0', mission_statement='Keep all spokes green — nightly fleet health scans, remediation, and skill sync across all registered wheels'. Preserve ALL existing fields unchanged. Write the updated scan_state.json. Step 3: Create hub/WAI-Hub/advisors/gardener/advisor.json as a stable identity file (this is the unchanging identity record; scan_state is runtime state): {\"id\": \"gardener\", \"name\": \"Gardener — Fleet Health Monitor\", \"role\": \"Expert\", \"version\": \"1.0.0\", \"mission\": \"Keep all spokes green — nightly fleet health scans, remediation, and skill sync across all registered wheels\", \"output_files\": [\"scan_state.json\", \"reports/{date}.json\", \"passes.jsonl\", \"vectors.jsonl\"], \"runs_in\": \"nightly via hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh post-tend pipeline\", \"position_in_council\": \"member\"}. Step 4: Move this lug from open/ to completed/ with status='completed' and completed_at set to now. Step 5: Append a turn entry to WAI-Spoke/sessions/session-20260331-1403/track.jsonl.",
+  "verify": "python3 -c \"import json; d=json.load(open('hub/WAI-Hub/advisors/gardener/scan_state.json')); assert d.get('advisor_id')=='gardener', 'advisor_id missing from gardener scan_state'\" exits 0. python3 -c \"import json; json.load(open('hub/WAI-Hub/advisors/gardener/advisor.json'))\" exits 0. No Python scripts were modified.",
+  "acceptance_criteria": [
+    "scan_state.json has advisor_id='gardener', advisor_name, version, mission_statement at top level",
+    "advisor.json exists at hub/WAI-Hub/advisors/gardener/advisor.json and is valid JSON",
+    "No code changes — all existing scripts (verify_health.py, run_nightly.py, etc.) are untouched",
+    "python3 hub/tools/verify_health.py still runs without error after changes"
+  ],
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scan_state.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/advisor.json"
+  ],
+  "model_fit": "HAIKU",
+  "routed_to": "LOCAL",
+  "va": "build",
+  "created_at": "2026-03-31T20:30:00Z",
+  "updated_at": "2026-03-31T20:35:00Z",
+  "created_by": "claude-sonnet-4-6"
+}

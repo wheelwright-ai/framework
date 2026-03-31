@@ -1,0 +1,36 @@
+{
+  "id": "feature-octo-hub-cos-v2",
+  "type": "feature",
+  "status": "open",
+  "title": "Octo v2: Hub Chief of Staff — hub work queue, council dispatch, escalation routing (Ozi equivalent for hub)",
+  "impact": 10,
+  "pev": {
+    "priority": "high",
+    "effort": "4",
+    "value": "10"
+  },
+  "perceive": "Read hub/tools/octo_brief.py — understand what Octo v1 does (briefing aggregator: reads 4 advisor outputs, writes strategic-brief JSON + latest.md). Octo v1 is advisory-only. Read framework/tools/score_backlog.py to understand how Ozi's ROI scorer works for spoke work queues — Octo v2 needs the hub equivalent. Read hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py to understand how Gardener currently selects which spokes to tend and in what order (sort_spokes_by_spinner). Read hub/hub-registry.json to understand the 17 spokes Octo will orchestrate. The gap: Octo knows what's wrong (via briefing) but cannot direct Gardener to act on specific spokes in a specific order, cannot queue council work, and cannot route decisions.",
+  "execute": "Extend hub/tools/octo_brief.py with CoS capabilities: (1) HUB WORK QUEUE: After compute_strategic_focus(), generate a hub_work_queue list: spokes sorted by combined score (urgency * health_penalty + signal_pressure). Write to hub/WAI-Hub/advisors/octo/hub_work_queue.json with [{spoke_id, priority_score, urgency, health_status, shift, recommended_action, signals_pending}]. This is what Gardener reads to decide tonight's tending order. (2) COUNCIL DISPATCH: Generate council_directives dict: for Gardener — list of spoke_ids to tend tonight in priority order (top 5 from hub_work_queue); for Spinner — list of spokes where urgency may need re-scoring (spokes newly RED since last brief); for Cartologist — flag if decision queue has items deferred >3 times; for Quartermaster — list of spokes to audit more deeply (stale_work anomalies). Write to hub/WAI-Hub/advisors/octo/council_directives.json. (3) ESCALATION ROUTING: Add escalation_items list to strategic brief: items that require human decision (signals with impact >= 9 pending > 2 days, spokes in RED for >3 consecutive briefs, any orphan_spoke anomalies). These surface to user via Cartologist dashboard. (4) Gardener integration: Update hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py to read hub_work_queue.json if it exists and use it to override sort_spokes_by_spinner() ordering — Octo's priority order takes precedence over pure spinner urgency when available. (5) Update scan_state.json to include last_dispatch_at and directives_count.",
+  "verify": "python3 hub/tools/octo_brief.py exits 0. hub/WAI-Hub/advisors/octo/hub_work_queue.json exists with 17 spoke entries sorted by priority_score desc. hub/WAI-Hub/advisors/octo/council_directives.json exists with keys: gardener, spinner, cartologist, quartermaster. run_nightly.py reads hub_work_queue.json when it exists: python3 -c \"import json; q=json.load(open('hub/WAI-Hub/advisors/octo/hub_work_queue.json')); assert len(q) >= 10; assert q[0]['priority_score'] >= q[-1]['priority_score']\" exits 0.",
+  "acceptance_criteria": [
+    "hub_work_queue.json generated with all spokes scored and sorted by priority",
+    "council_directives.json generated with actionable lists for each of 4 council members",
+    "escalation_items in strategic brief surfaces decisions requiring human action",
+    "run_nightly.py respects Octo's hub_work_queue order when file exists",
+    "octo_brief.py still runs without error if any council advisor is missing/stale (graceful degradation)",
+    "Octo scan_state.json updated with last_dispatch_at and directives_count"
+  ],
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/tools/octo_brief.py",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/octo/hub_work_queue.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/octo/council_directives.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "va": "build",
+  "_context": "Octo v1 (feature-octo-hub-strategist-v1) built the advisory brief foundation. v2 adds the operational CoS layer: hub work queue + council dispatch + escalation routing. This is what makes Octo the hub equivalent of Ozi (spoke CoS), not just a report generator.",
+  "created_at": "2026-03-31T21:20:00Z",
+  "updated_at": "2026-03-31T21:20:00Z",
+  "created_by": "claude-sonnet-4-6"
+}

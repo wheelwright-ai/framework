@@ -1,0 +1,41 @@
+{
+  "id": "feature-octo-hub-strategist-v1",
+  "type": "feature",
+  "status": "completed",
+  "title": "Octo: Build Wheel Council Strategist — aggregates all 4 advisor outputs into strategic brief + latest.md",
+  "impact": 10,
+  "pev": {
+    "priority": "high",
+    "effort": "3",
+    "value": "10"
+  },
+  "perceive": "Read: (1) hub/WAI-Hub/advisors/gardener/scan_state.json — note the spokes dict structure: each key is spoke_id, value has health_score (0-10 float), status ('GREEN'/'YELLOW'/'RED'/'NO_WAI'), passed_checks (int), failed_checks (int). (2) hub/WAI-Hub/advisors/spinner/spoke_spinner.json (after Spinner rename) — note the spokes dict: each key is spoke_id, value has shift_direction, urgency (int 1-5), budget, group. If spinner rename has not run yet, read hub/WAI-Hub/advisors/lathe/spoke_lathe.json as the pre-rename equivalent. (3) hub/WAI-Hub/advisors/cartologist/scan_state.json (after Cartologist rename) or compass/scan_state.json — note last_scan_at. (4) hub/WAI-Hub/advisors/cartologist/decisions.jsonl — note the record format: action field values ('approve'/'defer'/'reject'). (5) hub/WAI-Hub/signals/incoming/ directory — just count .json files. (6) hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh — find the exact invocation pattern for the last post-tend tool to replicate for octo_brief.py as the final step. CRITICAL: hub/octo/ (legacy Ozi dispatcher) is DIFFERENT from hub/WAI-Hub/advisors/octo/. Never touch hub/octo/.",
+  "execute": "Step 1: mkdir -p hub/WAI-Hub/advisors/octo/reports. Step 2: Create hub/tools/octo_brief.py. Structure: (a) Imports: json, os, glob, datetime, pathlib.Path. (b) Define HUB_DIR, and paths: GARDENER_STATE, SPINNER_DATA, CARTOLOGIST_STATE, CARTOLOGIST_DECISIONS, QM_INVENTORY, SIGNALS_DIR, OCTO_DIR, REPORTS_DIR. Use the post-rename paths (spinner/spoke_spinner.json, cartologist/) — with fallback to lathe/compass if rename not yet applied. (c) Helper load_json(path): return json.loads(Path(path).read_text()) if Path(path).exists() else {}. (d) load_decisions(path): read JSONL, return list of dicts. (e) check_council_readiness(): for each of gardener/spinner/cartologist/quartermaster, try to load their scan_state.json — check last_scan_at or last_brief_at field is within 25 hours of now; catch FileNotFoundError as False. Return dict {gardener:bool, spinner:bool, cartologist:bool, quartermaster:bool, all_ready:bool}. (f) compute_fleet_health(gardener_state): count spokes by status. Load yesterday's brief for trend: try REPORTS_DIR/strategic-brief-{yesterday}.json; compare today green_count to yesterday; return 'improving'/'stable'/'degrading'. Return {total_spokes:N, green:N, yellow:N, red:N, no_wai:N, trend:str}. (g) compute_portfolio(spinner_data): count spokes by shift_direction; find top 3 by urgency desc. Return {growth:N, maintain:N, revenue:N, research:N, sunset:N, top_urgency:[{spoke_id,urgency,shift}]}. (h) compute_decision_pressure(decisions, signals_dir): count len(list(Path(signals_dir).glob('*.json'))) for pending; count deferred=[d for d in decisions if d.get('action')=='defer']; count today_approved=[d for d in decisions if d.get('action')=='approve' and d.get('ts','')[:10]==today]. Return {pending_signals:N, deferred_decisions:N, approved_today:N}. (i) compute_inventory_alerts(qm_inventory): if qm_inventory empty return {stale_work:0, signal_overload:0, orphan_spokes:0, total_anomalies:0}. Count anomalies by type from qm_inventory['anomalies']. Return counts. (j) compute_strategic_focus(gardener_state, spinner_data): join by spoke_id. Select spokes where urgency >= 4 AND status not in ['GREEN']. Sort by urgency desc, take top 3. For each, generate recommended_action string: if health RED and shift growth -> 'Urgent: high-priority growth spoke in RED health — needs immediate attention'; if health YELLOW and shift growth -> 'Growth spoke lagging — health check before next sprint'; if health RED -> 'RED health blocking progress — remediate first'; else -> 'High urgency — monitor closely'. Return list of {spoke_id, urgency, shift, health_status, recommended_action}. (k) main(): load all inputs; now=datetime.datetime.utcnow(); today=str(datetime.date.today()); compute all sections; write REPORTS_DIR/strategic-brief-{today}.json with full schema; write REPORTS_DIR/latest.md as markdown (see schema); write OCTO_DIR/scan_state.json; print summary to stdout. (l) Brief JSON schema: {generated_at, council_readiness, fleet_health_summary, portfolio_summary, decision_pressure, inventory_alerts, strategic_focus, raw_inputs:{gardener_last_run, spinner_last_scored, cartologist_last_scan, quartermaster_last_scan}}. (m) latest.md format (under 30 lines): '# Octo Strategic Brief — {today}\\n\\n## Fleet Health\\n{green}/{total} GREEN | {yellow} YELLOW | {red} RED | trend: {trend}\\n\\n## Strategic Focus\\n{for each focus item: - {spoke_id} (urgency {N}, {shift}): {recommended_action}}\\n\\n## Decision Pressure\\n{pending} signals pending | {deferred} deferred decisions\\n\\n## Inventory\\n{total_anomalies} anomalies detected {or None}\\n\\n## Council Status\\n- [x/] Gardener: {fresh/stale}\\n- [x/] Spinner: {fresh/stale}\\n- [x/] Cartologist: {fresh/stale}\\n- [x/] Quartermaster: {fresh/stale}'. Step 3: In hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh: add 'python3 {HUB_TOOLS_PATH}/octo_brief.py' as the LAST step in the post-tend pipeline, using the same invocation pattern as other tools. Step 4: Move this lug to completed/.",
+  "verify": "python3 hub/tools/octo_brief.py exits 0. cat hub/WAI-Hub/advisors/octo/reports/latest.md shows sections: Fleet Health, Strategic Focus, Decision Pressure, Council Status. python3 -c \"import json, datetime; today=str(datetime.date.today()); d=json.load(open(f'hub/WAI-Hub/advisors/octo/reports/strategic-brief-{today}.json')); print('readiness:', d['council_readiness']); print('focus targets:', len(d['strategic_focus']))\" exits 0. python3 -c \"import json; d=json.load(open('hub/WAI-Hub/advisors/octo/scan_state.json')); assert d['advisor_id']=='octo'\" exits 0.",
+  "acceptance_criteria": [
+    "hub/tools/octo_brief.py runs without error",
+    "hub/WAI-Hub/advisors/octo/reports/strategic-brief-{today}.json written with all required schema keys",
+    "hub/WAI-Hub/advisors/octo/reports/latest.md written under 30 lines with all 5 sections",
+    "strategic_focus contains 0-3 highest-urgency non-GREEN spokes with recommended_action strings",
+    "council_readiness correctly detects which advisors have scan_states within 25 hours",
+    "fleet_health_summary derives green/yellow/red counts from gardener scan_state.json",
+    "decision_pressure counts real pending signals from signals/incoming/ directory",
+    "inventory_alerts gracefully handles missing quartermaster/inventory.json",
+    "hub/WAI-Hub/advisors/octo/scan_state.json has advisor_id='octo'",
+    "wheel-tender.sh post-tend runs octo_brief.py as the final step"
+  ],
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/tools/octo_brief.py",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/octo/scan_state.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/octo/reports/latest.md",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "va": "build",
+  "created_at": "2026-03-31T20:30:00Z",
+  "updated_at": "2026-03-31T21:10:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "completed_at": "2026-03-31T21:10:00Z",
+  "verify_result": "PASS — octo_brief.py ran exit 0; strategic-brief-2026-03-31.json valid with all schema keys; latest.md 27 lines with all 5 sections; scan_state.json advisor_id='octo'; council_readiness all_ready=true; fleet 9/17 GREEN 7 YELLOW 1 RED; 3 strategic focus targets identified; wheel-tender.sh wired at line 886 after quartermaster"
+}

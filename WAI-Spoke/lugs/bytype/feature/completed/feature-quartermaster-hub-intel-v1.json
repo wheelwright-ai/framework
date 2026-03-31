@@ -1,0 +1,40 @@
+{
+  "id": "feature-quartermaster-hub-intel-v1",
+  "type": "feature",
+  "status": "completed",
+  "title": "Quartermaster: Build cross-spoke inventory advisor — lug counts, signal depth, stale work detection per spoke",
+  "impact": 9,
+  "pev": {
+    "priority": "high",
+    "effort": "3",
+    "value": "9"
+  },
+  "perceive": "Read: (1) hub/hub-registry.json — note the top-level structure (is it a 'wheels' array or a top-level object?). For each entry, note the 'path' field (the absolute path to the spoke root) and 'id' or 'spoke_id' field. (2) /home/mario/projects/wheelwright/framework/WAI-Spoke/WAI-State.json — read _session_state fields: session_count (int), last_closeout (ISO string), and wheel.framework_version. This is the schema to use for all spokes. (3) hub/WAI-Hub/advisors/gardener/scan_state.json — see what per-spoke health data is already in the spokes dict (health_score, status, passed_checks, failed_checks). Quartermaster counts lugs/signals/stale work — does NOT duplicate what Gardener does. (4) hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh — find the exact pattern used to call other post-tend tools (e.g., compass_report.py call) to replicate the same pattern for quartermaster_scan.py.",
+  "execute": "Step 1: Create directory hub/WAI-Hub/advisors/quartermaster/. Step 2: Create hub/tools/quartermaster_scan.py. Structure: (a) Imports: json, os, glob, datetime, pathlib.Path. (b) Define HUB_DIR = Path(__file__).parent.parent, REGISTRY = HUB_DIR/'hub-registry.json', QM_DIR = HUB_DIR/'WAI-Hub'/'advisors'/'quartermaster'. (c) load_registry(): read REGISTRY; handle both formats — if top-level has 'wheels' key, use d['wheels']; otherwise use list(d.values()) if it's a dict of spoke objects; return list of wheel dicts. (d) find_wai_state(spoke_path): try Path(spoke_path)/'WAI-Spoke'/'WAI-State.json', then Path(spoke_path)/'WAI-State.json'; return parsed JSON or None. (e) count_lugs(spoke_path): for lug_types=['task','feature','bug','implementation','signal'], for statuses=['open','in_progress']: glob Path(spoke_path)/'WAI-Spoke'/'lugs'/'bytype'/lug_type/status/'*.json'. Count total open, total in_progress. For stale: check os.path.getmtime() on each open/ and in_progress/ lug file — flag as stale if (now_ts - mtime) > 14*86400. Also count undelivered signals: glob Path(spoke_path)/'WAI-Spoke'/'lugs'/'bytype'/'signal'/'undelivered'/'*.json'. Return dict {open:N, in_progress:N, stale:N, signals_undelivered:N}. (f) detect_anomalies(spoke_id, spoke_path, lug_counts, wai_state): list of {spoke_id, type, detail}. Add 'stale_work' if lug_counts['stale']>0, 'signal_overload' if lug_counts['signals_undelivered']>30, 'missing_wai_state' if wai_state is None, 'orphan_spoke' if not Path(spoke_path).exists(). (g) main(): load registry; now=datetime.datetime.utcnow(); all_anomalies=[]; spokes_data={}. For each wheel: resolve spoke_id=wheel.get('id') or wheel.get('spoke_id') or wheel.get('name'); spoke_path=wheel.get('path',''); wai=find_wai_state(spoke_path); lugs=count_lugs(spoke_path) if Path(spoke_path).exists() else {open:0,in_progress:0,stale:0,signals_undelivered:0}; anoms=detect_anomalies(spoke_id,spoke_path,lugs,wai); all_anomalies.extend(anoms); spokes_data[spoke_id]={path:spoke_path, wai_state_found:wai is not None, session_count:wai['_session_state']['session_count'] if wai else None, last_closeout:wai['_session_state'].get('last_closeout') if wai else None, framework_version:wai['wheel']['framework_version'] if wai else None, lugs_open:lugs['open'], lugs_in_progress:lugs['in_progress'], lugs_stale:lugs['stale'], signals_undelivered:lugs['signals_undelivered'], anomalies:[a for a in anoms if a['spoke_id']==spoke_id]}. Write inventory.json: {generated_at:now.isoformat()+'Z', spoke_count:len(spokes_data), anomalies:all_anomalies, spokes:spokes_data}. Write scan_state.json: {advisor_id:'quartermaster', advisor_name:'Quartermaster — Cross-Spoke Intel', version:'1.0.0', last_scan_at:now.isoformat()+'Z', spoke_count:len(spokes_data), anomaly_count:len(all_anomalies), mission_statement:'Know the inventory of every spoke — lugs, signals, registry completeness — and flag what needs attention'}. Print summary to stdout. Step 3: In hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh: find the post-tend pipeline section (after the cartologist_report.py call) and add a call to quartermaster_scan.py using the same invocation pattern as other tools in that section. Step 4: Move this lug to completed/.",
+  "verify": "python3 hub/tools/quartermaster_scan.py exits 0. python3 -c \"import json; d=json.load(open('hub/WAI-Hub/advisors/quartermaster/inventory.json')); assert d['spoke_count'] >= 10, f\\\"only {d['spoke_count']} spokes\\\"; print('PASS spoke_count=', d['spoke_count'])\" exits 0. python3 -c \"import json; d=json.load(open('hub/WAI-Hub/advisors/quartermaster/scan_state.json')); assert d['advisor_id']=='quartermaster'\" exits 0.",
+  "acceptance_criteria": [
+    "hub/tools/quartermaster_scan.py runs without error against all spokes in hub-registry.json",
+    "hub/WAI-Hub/advisors/quartermaster/inventory.json written with generated_at, spoke_count, anomalies list, spokes dict",
+    "Per-spoke data includes: session_count, last_closeout, framework_version, lugs_open, lugs_in_progress, lugs_stale, signals_undelivered",
+    "Stale detection: lug with mtime > 14 days appears in anomalies as 'stale_work'",
+    "Signal overload: spoke with >30 undelivered signals flagged",
+    "Missing WAI-State.json flagged as 'missing_wai_state' anomaly",
+    "hub/WAI-Hub/advisors/quartermaster/scan_state.json has advisor_id='quartermaster'",
+    "wheel-tender.sh post-tend calls quartermaster_scan.py after cartologist_report.py"
+  ],
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/tools/quartermaster_scan.py",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/quartermaster/scan_state.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/quartermaster/inventory.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "va": "build",
+  "created_at": "2026-03-31T20:30:00Z",
+  "updated_at": "2026-03-31T21:05:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "completed_at": "2026-03-31T21:05:00Z",
+  "completed_by": "claude-sonnet-4-6",
+  "verify_result": "PASS — spoke_count=17, 0 anomalies, scan_state advisor_id=quartermaster verified"
+}

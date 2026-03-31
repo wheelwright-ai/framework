@@ -1,3 +1,17 @@
+## [2.0.135] - 2026-03-31
+
+### Added — Wheel Council v1 (Session 113)
+
+- **Hub advisors (5 total):** Gardener (formal), Spinner (renamed from Lathe), Cartologist (renamed from Compass), Quartermaster (new), Octo (new)
+- **`hub/tools/spinner_score.py`:** Portfolio scoring (renamed from lathe_score.py — zero live lathe refs)
+- **`hub/tools/cartologist_report.py`:** Fleet dashboard HTML (renamed from compass_report.py)
+- **`hub/tools/cartologist_web.py`:** Flask web interface on port 8080 — live dashboard, decision capture, spoke detail
+- **`hub/tools/quartermaster_scan.py`:** Cross-spoke inventory — lug counts, stale work detection, signal depth per spoke
+- **`hub/tools/octo_brief.py`:** Wheel Council strategic brief — aggregates all 4 advisor outputs, fleet health, strategic focus
+- **Nightly pipeline wired:** `verify_health → spinner_score → cartologist_report → quartermaster_scan → octo_brief`
+- **`hub/WAI-Hub/advisors/gardener/advisor.json`:** First-class advisor identity file
+- **`feature-octo-hub-cos-v2.json`:** Octo v2 lug — CoS/orchestration role (hub work queue, council dispatch, escalation routing)
+
 ## [2.0.84] - 2026-03-28
 
 ### Fixed — Hook No Longer Dirties WAI-State.json (Session 90)

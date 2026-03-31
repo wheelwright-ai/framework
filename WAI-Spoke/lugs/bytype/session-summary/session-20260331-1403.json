@@ -1,0 +1,64 @@
+{
+  "i": "session-20260331-1403",
+  "ty": "session-summary",
+  "t": "Session 113: Wheel Council v1 — 5 hub advisors built + renames",
+  "s": "c",
+  "ca": "2026-03-31T21:25:00Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 113,
+  "accomplished": [
+    "Created 5 hub advisor lugs with complete PEV (Gardener, Spinner, Cartologist, Quartermaster, Octo)",
+    "Retired stale feature-lathe-portfolio-management-v1 and feature-compass-advisor-v1 lugs",
+    "Spinner rename: Lathe→Spinner across 10 hub files — zero live lathe refs",
+    "Gardener formal promotion: advisor_id metadata + advisor.json identity file",
+    "Cartologist rename: Compass→Cartologist across 9 hub files — zero live compass refs",
+    "Cartologist Flask web interface on port 8080 — 5 routes (GET /, /api/spokes, /api/signals, POST /api/decide, GET /spoke/{id})",
+    "Quartermaster built: quartermaster_scan.py — 17 spokes, anomaly detection (stale/overload/orphan/missing)",
+    "Octo built: octo_brief.py — fleet health, portfolio, decision pressure, inventory alerts, strategic focus",
+    "Full nightly pipeline wired: verify_health → spinner_score → cartologist_report → quartermaster_scan → octo_brief",
+    "Octo v2 lug created for next session: feature-octo-hub-cos-v2.json (CoS/orchestration role)"
+  ],
+  "files_touched": [
+    "hub/tools/spinner_score.py (new)",
+    "hub/tools/cartologist_report.py (new)",
+    "hub/tools/cartologist_decide.py (new)",
+    "hub/tools/cartologist_web.py (new)",
+    "hub/tools/quartermaster_scan.py (new)",
+    "hub/tools/octo_brief.py (new)",
+    "hub/WAI-Hub/advisors/spinner/ (new dir + spoke_spinner.json + scan_state.json)",
+    "hub/WAI-Hub/advisors/cartologist/ (renamed from compass)",
+    "hub/WAI-Hub/advisors/quartermaster/ (new)",
+    "hub/WAI-Hub/advisors/octo/ (new)",
+    "hub/WAI-Hub/advisors/gardener/scan_state.json (advisor_id added)",
+    "hub/WAI-Hub/advisors/gardener/advisor.json (new)",
+    "hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh (4 new post-tend steps)",
+    "hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py (sort_spokes_by_spinner)",
+    "hub/tools/triumvirate_route.py (spinner/cartologist paths)",
+    "hub/AGENTS.md (post-tend table)",
+    "WAI-Spoke/WAI-State.json (v2.0.135, session 114)",
+    "WAI-Spoke/WAI-Signals.jsonl (created, 3 signals)"
+  ],
+  "decisions": [
+    "Lugs created before any execution (P11 enforced)",
+    "Spinner rename ran sequentially before Cartologist (compass_report.py dependency)",
+    "Cartologist+Quartermaster+Octo ran in parallel (independent)",
+    "Octo v1 = advisory briefing only; Octo v2 (next session) = CoS/orchestration",
+    "Commit happens in closeout — no separate step 1 pre-commit",
+    "spinner_score.py historical attribution comment with 'lathe' kept (not functional)"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Octo v2: hub work queue + council dispatch + escalation routing (lug: feature-octo-hub-cos-v2.json)",
+      "4 pending teachings to adopt (3 auto-adoptable, 1 manual)",
+      "Spoke advisor stubs: Archie, Will, Jordy, Mark, Clara",
+      "spoke_parity_check.py + spoke_integrity_score.py (Phase 1 integrity)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Session 114: Start with Octo v2 lug (feature-octo-hub-cos-v2.json) — hub CoS makes council operational",
+      "Then adopt 3 auto-adoptable teachings before new work",
+      "Spoke advisor stubs can be parallelized (same pattern as hub advisor agents)"
+    ]
+  },
+  "autosaves_reconciled": []
+}
