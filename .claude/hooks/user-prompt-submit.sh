@@ -67,6 +67,16 @@ TMP=$(mktemp)
 jq '.protocol_completed = true |
     .protocol_last_run = (now | strftime("%Y-%m-%dT%H:%M:%SZ"))' "$GUARD_FILE" > "$TMP" && mv "$TMP" "$GUARD_FILE"
 
+# ── CC Advisor: log hook_fire for user-prompt-submit ─────────────────────────
+_CC_LOGS="$PROJECT_DIR/WAI-Spoke/advisors/cc-advisor/logs"
+_CC_SESSION=$(jq -r '._session_state.last_session_id // ""' "$STATE_FILE" 2>/dev/null)
+_CC_SPOKE=$(jq -r '.wheel.name // "unknown"' "$STATE_FILE" 2>/dev/null)
+if [[ -d "$_CC_LOGS" && -n "$_CC_SESSION" ]]; then
+  printf '{"ts":"%s","session":"%s","spoke":"%s","event":"hook_fire","data":{"hook_name":"user-prompt-submit","result":"ok","duration_ms":0,"error":null}}\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$_CC_SESSION" "$_CC_SPOKE" \
+    >> "$_CC_LOGS/hook-events.jsonl"
+fi
+
 # Inject wakeup directive — agent follows /wai skill (wai.md), no bash script needed
 cat << 'EOF'
 <wai-session-start>

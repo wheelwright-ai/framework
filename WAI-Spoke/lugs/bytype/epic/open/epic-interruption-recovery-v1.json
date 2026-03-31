@@ -44,13 +44,16 @@
   "scope_verified_by": "user request (Session 73: recovery mechanism for unexpected restarts)",
   "routing_notes": "Framework-wide improvement. Affects wakeup protocol, track schema, and state management. Should be delivered as teaching to all spokes.",
   "va": "ship",
-  "perceive": "Read the current state relevant to: Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes. Identify what exists, what's missing, and what needs to change.",
-  "execute": "Implement: Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes",
-  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "perceive": "Read WAI-Spoke/WAI-State.json for _session_state fields. Read templates/commands/wai.md Steps 6-8 (track detection, session check). Read .claude/hooks/session-start.sh for current session init logic. Read any existing autosave or recovery files in WAI-Spoke/.",
+  "execute": "1. Extend WAI-State.json schema: add _session_status.interrupted bool + interrupted_at timestamp. 2. Update session-start.sh: detect if last session has no closeout entry (compare last_session_id vs last_closeout timestamp). 3. Create recovery prompt in wakeup briefing: if interrupted, show \"Resume [task]? Green Light / Red Light / Skip\". 4. Add track integrity check: validate track.jsonl last entry has valid JSON, flag truncation. 5. Document autosave checkpoint pattern in wai.md Step 8. 6. Create teaching for all spokes.",
+  "verify": "Simulate interruption: set interrupted flag in WAI-State.json, run wakeup, verify recovery prompt appears. Track integrity: truncate a test track.jsonl mid-JSON, verify flag is set. Verify recovery prompt leads to correct resume/inspect/skip paths.",
   "impact": 8,
   "effort": 4,
   "_behavior_directive": {
     "what_this_is": "Epic: Interruption Detection & Recovery \u2014 Windows restarts, unexpe",
     "what_this_is_NOT": "Not an instruction to execute in other spokes. Framework-routed for planning."
-  }
+  },
+  "model_fit": "SONNET",
+  "next_step": "Create impl lug for phase 1 (WAI-State schema + session-start detection), then phases 2-3 (recovery prompt + track integrity)",
+  "blocked_by": []
 }

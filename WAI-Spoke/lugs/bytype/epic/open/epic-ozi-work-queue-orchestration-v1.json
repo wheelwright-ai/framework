@@ -116,13 +116,15 @@
   "scope_verified_by": "user request (Session 73: 'This will rock! With this I can do work building the queue')",
   "routing_notes": "Framework-wide orchestration feature. Will be delivered as teaching when implemented. Changes how all spokes work with Ozi.",
   "va": "grind",
-  "perceive": "Read the current state relevant to: Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch. Identify what exists, what's missing, and what needs to change.",
-  "execute": "Implement: Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
-  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "perceive": "Read WAI-Spoke/skills/WAI-Skills.jsonl for ozi-work-queue-monitor entry. Read templates/commands/wai-ozi-work-queue-monitor.md for current queue logic. Read WAI-State.json _work_queue items and scoring. Check current ROI scorer implementation.",
+  "execute": "1. Extend _work_queue schema: add readiness field (ready|needs_refinement|blocked), batch field, UAT_required flag. 2. Ozi auto-chains: when in auto mode, after completing a work item, automatically score next item and dispatch if readiness=ready. 3. Add UAT log to track.jsonl: after each completed item, record user acceptance decision. 4. Minimal context mode: chained items load only the target lug + previous 3 track points (not full wakeup). 5. Add \"Work the queue\" command that auto-chains with approval.",
+  "verify": "In auto mode, complete one work item and verify Ozi automatically proposes next item. UAT log appears in track.jsonl. Context load for chained item is minimal (no full wakeup). Queue readiness correctly blocks items that are needs_refinement.",
   "impact": 8,
   "effort": 4,
   "_behavior_directive": {
     "what_this_is": "Epic: Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous w",
     "what_this_is_NOT": "Not an instruction to execute in other spokes. Framework-routed for planning."
-  }
+  },
+  "model_fit": "OPUS",
+  "next_step": "Decompose into child implementation lugs. Phase 1: _work_queue readiness field + scoring. Phase 2: auto-chain logic. Phase 3: minimal context mode."
 }

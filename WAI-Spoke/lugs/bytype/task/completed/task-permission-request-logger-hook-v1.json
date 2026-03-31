@@ -1,8 +1,8 @@
 {
   "i": "task-permission-request-logger-hook-v1",
-  "t": "Create PermissionRequest logger hook — builds CC Advisor observation data",
+  "t": "Create PermissionRequest logger hook \u2014 builds CC Advisor observation data",
   "ty": "task",
-  "s": "o",
+  "s": "c",
   "ca": "2026-03-30T19:50:00Z",
   "gb": "claude-opus-4-6",
   "fw_ver": "3.0.0",
@@ -11,8 +11,12 @@
   "va": "grind",
   "rt": "LOCAL",
   "routed_to": "LOCAL",
-  "tags": ["cc-advisor", "hooks", "observability"],
-  "description": "CC Advisor needs data on what tool calls prompt the user for permission. A PermissionRequest hook logs each prompt to a JSONL file. This feeds the CC Advisor's Phase 2 (observation) and Phase 4 (auto-adjustment) — without it the advisor has no signal on what's causing friction.",
+  "tags": [
+    "cc-advisor",
+    "hooks",
+    "observability"
+  ],
+  "description": "CC Advisor needs data on what tool calls prompt the user for permission. A PermissionRequest hook logs each prompt to a JSONL file. This feeds the CC Advisor's Phase 2 (observation) and Phase 4 (auto-adjustment) \u2014 without it the advisor has no signal on what's causing friction.",
   "target_files": [
     "/home/mario/.claude/hooks/log-permission-prompts.sh",
     "/home/mario/projects/wheelwright/framework/.claude/settings.json"
@@ -24,7 +28,9 @@
     "~/.claude/hooks/log-permission-prompts.sh exists and is executable",
     "settings.json has PermissionRequest hook entry pointing to absolute path",
     "Hook appends JSONL line with timestamp, tool_name, command to permission-prompts.jsonl",
-    "Hook exits 0 (never blocks — observation only)"
+    "Hook exits 0 (never blocks \u2014 observation only)"
   ],
-  "model_fit": "HAIKU"
+  "model_fit": "HAIKU",
+  "completed_at": "2026-03-30T23:58:00Z",
+  "completed_by": "claude-haiku-4-5"
 }

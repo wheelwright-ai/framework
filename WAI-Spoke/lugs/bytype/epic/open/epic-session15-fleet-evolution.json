@@ -1,0 +1,109 @@
+{
+  "i": "epic-session15-fleet-evolution",
+  "ty": "epic",
+  "t": "Canonical Wheelwright evolution - object model, behavior, migration, and post-deploy skills",
+  "s": "o",
+  "ca": "2026-03-14T07:51:22Z",
+  "ua": "2026-03-24T22:25:00Z",
+  "updated_by": "claude-opus-4-6",
+  "gb": "Codex GPT-5",
+  "impact": 9,
+  "description": "Parent epic for the canonical Wheelwright redesign and refactor. Establishes canonical WAI object definitions, spoke/hub behavior, storage structure, and migration-safe closeout semantics.",
+  "canonical_focus": {
+    "source_track": "WAI-Spoke/seed/ingest/processed/WAI_Track-20260318-2138-OpenAI-GPT-5.3.jsonl",
+    "source_design_doc": "framework/docs/design/goal-state-wheelwright.md",
+    "goal": "Make Wheelwright canonical in its design before implementation expands again.",
+    "core_decisions": [
+      "Wheel / Hub / Spoke / Skills / Advisors / Lugs / Sessions / Tracks are the core model",
+      "PEV is represented as linked lugs, not embedded fields",
+      "WAI-State.json is the canonical spoke state file",
+      "sessions/session-YYYYMMDD-HHMM/track.jsonl is the canonical track layout",
+      "Signals are high-impact lugs routed through WAI-Hub/Signals/incoming/ and processed/",
+      "Closeout and migration must be idempotent and concurrency-safe",
+      "Ozi is identity/partner framing, not a persistence object"
+    ]
+  },
+  "incorporate_now": {
+    "description": "Work that was part of the canonical evolution.",
+    "children": [
+      {
+        "id": "epic-v1-v2-state-migration",
+        "status": "completed",
+        "note": "Done piecemeal sessions 51-67"
+      },
+      {
+        "id": "task-idempotent-closeout-concurrency",
+        "status": "completed",
+        "note": "implementation-idempotent-closeout-concurrency-v1 completed"
+      },
+      {
+        "id": "task-framework-version-in-template",
+        "status": "open",
+        "note": "Still pending"
+      }
+    ],
+    "rewrite_first": [
+      {
+        "id": "epic-skills-folder-architecture",
+        "status": "superseded",
+        "note": "Skills now in WAI-Spoke/skills/{id}/ subfolders \u2014 done via skill system evolution"
+      },
+      {
+        "id": "epic-working-agreement-skill",
+        "status": "superseded",
+        "note": "Working agreements now enforced via complexity-advisor and stewardship-advisor skills"
+      }
+    ]
+  },
+  "post_evolution": {
+    "description": "Remaining work after canonical core is stable.",
+    "children": [
+      {
+        "id": "epic-sharded-lugs-with-index",
+        "status": "superseded",
+        "note": "Replaced by epic-context-diet-v1 bytype/ structure"
+      },
+      {
+        "id": "task-spoke-self-registry-via-lug",
+        "status": "open"
+      },
+      {
+        "id": "epic-check-spokes-skill",
+        "status": "open"
+      },
+      {
+        "id": "epic-dogfood-skill",
+        "status": "open"
+      },
+      {
+        "id": "task-registry-git-tracking",
+        "status": "open"
+      },
+      {
+        "id": "task-custom-ai-file-indexing",
+        "status": "open"
+      },
+      {
+        "id": "task-multi-ai-case-study",
+        "status": "open"
+      }
+    ]
+  },
+  "reconciled_at": "2026-03-24T22:25:00Z",
+  "reconciled_reason": "Session 68 audit: updated child statuses to reflect actual completion state. 3 of 5 incorporate_now items completed, 2 rewrite_first items superseded by evolved skill system. 1 post_evolution item superseded. Remaining open items are valid backlog.",
+  "va": "think",
+  "perceive": "Read framework/docs/design/goal-state-wheelwright.md (source design doc). Read WAI-Spoke/seed/ingest/processed/WAI_Track-20260318-2138-OpenAI-GPT-5.3.jsonl (source track). Review completed child work list in this epic. Check if task-framework-version-in-template is still open.",
+  "execute": "1. Verify remaining open item: task-framework-version-in-template \u2014 add wheel.framework_version: null to templates/spoke/WAI-State.json.template if missing. 2. Review goal-state-wheelwright.md against current implementation to identify any remaining gaps. 3. Close this epic when all canonical decisions are implemented and documented.",
+  "verify": "templates/spoke/WAI-State.json.template has wheel.framework_version field. All 7 core_decisions in this epic are reflected in current WAI-State.json and protocol files. No remaining children with status: open.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Canonical Wheelwright evolution - object model, behavior, mi",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "effort": 4,
+  "routed_to": "LOCAL",
+  "model_fit": "SONNET",
+  "next_step": "Check templates/spoke/WAI-State.json.template for framework_version field. If missing, add it. Then close this epic.",
+  "phase": "planning",
+  "blocked_by": []
+}

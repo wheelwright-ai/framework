@@ -53,6 +53,16 @@
           }
         ]
       }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/mario/.claude/hooks/log-permission-prompts.sh"
+          }
+        ]
+      }
     ]
   },
   "permissions": {

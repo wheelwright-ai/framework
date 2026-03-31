@@ -1,3 +1,7 @@
+---
+memory: project
+---
+
 # Code Simplifier
 
 Review changed code for reuse, quality, and efficiency, then fix any issues found.

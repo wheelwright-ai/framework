@@ -12,6 +12,24 @@ set -o pipefail 2>/dev/null || true
 
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}"
 
+# ── CC Advisor: log session_end event ────────────────────────────────────────
+CC_ADVISOR_LOGS="$PROJECT_DIR/WAI-Spoke/advisors/cc-advisor/logs"
+STATE_FILE="$PROJECT_DIR/WAI-Spoke/WAI-State.json"
+if [[ -f "$STATE_FILE" && -d "$CC_ADVISOR_LOGS" ]]; then
+  SESSION_NAME=$(jq -r '._session_state.last_session_id // ""' "$STATE_FILE" 2>/dev/null)
+  SPOKE_NAME=$(jq -r '.wheel.name // "unknown"' "$STATE_FILE" 2>/dev/null)
+  printf '{"ts":"%s","session":"%s","spoke":"%s","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    "${SESSION_NAME}" \
+    "${SPOKE_NAME}" \
+    >> "$CC_ADVISOR_LOGS/session-events.jsonl"
+  printf '{"ts":"%s","session":"%s","spoke":"%s","event":"hook_fire","data":{"hook_name":"stop-test-runner","result":"ok","duration_ms":0,"error":null}}\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    "${SESSION_NAME}" \
+    "${SPOKE_NAME}" \
+    >> "$CC_ADVISOR_LOGS/hook-events.jsonl"
+fi
+
 # Bail early if not a git repo
 git -C "$PROJECT_DIR" rev-parse --git-dir >/dev/null 2>&1 || exit 0
 

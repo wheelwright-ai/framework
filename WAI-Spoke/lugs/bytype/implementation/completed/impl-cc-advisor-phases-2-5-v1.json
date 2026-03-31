@@ -1,0 +1,42 @@
+{
+  "i": "impl-cc-advisor-phases-2-5-v1",
+  "t": "CC Advisor: Complete Phases 2-5 \u2014 observation, analysis, adjustment, hub integration",
+  "ty": "implementation",
+  "s": "p",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "effort": 4,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "cc-advisor",
+    "advisor",
+    "spoke",
+    "phase-3"
+  ],
+  "phase": "p3-complete",
+  "phase_order": 2,
+  "blocks": [],
+  "blocked_by": [],
+  "description": "CC Advisor Phase 1 (foundation) is done: scan_state.json exists at hub/spokes/framework/advisors/cc-advisor/ with rubric defined. Phases 2-5 from epic-cc-advisor-spoke-hub-v1 need execution. Phase 2: Add event logging to hooks (permission-prompts.jsonl, session-events.jsonl, hook-events.jsonl). Phase 3: Periodic audit with score history + regression detection. Phase 4: Safe auto-apply for read-only permissions, CLAUDE.md patch proposals. Phase 5: Hub-level CC advisor with cross-spoke pattern aggregation and teaching generation. Each phase has acceptance criteria in the epic lug.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/spokes/framework/advisors/cc-advisor/",
+    "/home/mario/projects/wheelwright/framework/.claude/hooks/",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/cc-advisor/",
+    "/home/mario/projects/wheelwright/framework/WAI-Spoke/lugs/bytype/epic/open/epic-cc-advisor-spoke-hub-v1.json"
+  ],
+  "perceive": "Read epic-cc-advisor-spoke-hub-v1.json for phase details and acceptance criteria. Read existing scan_state.json at hub/spokes/framework/advisors/cc-advisor/. Read existing hook scripts to understand extension points.",
+  "execute": "Execute phases 2-5 sequentially per epic spec. Phase 2: Extend hook scripts to emit JSONL events. Phase 3: Build audit trigger (10 session threshold) + scoring + regression vectors. Phase 4: Permission auto-apply logic + CLAUDE.md proposal generator. Phase 5: Create WAI-Hub/advisors/cc-advisor/, cross-spoke aggregation, teaching generation.",
+  "verify": "Each phase verified against acceptance_criteria_per_phase in the epic lug. Phase 2: event logs populated after 3 sessions. Phase 3: audit pass in passes.jsonl. Phase 4: safe permission proposed. Phase 5: hub advisor state created.",
+  "acceptance_criteria": [
+    "All 4 phases completed per epic acceptance criteria",
+    "Event logging active in hooks (Phase 2)",
+    "Audit scoring and regression detection working (Phase 3)",
+    "Permission auto-apply and CLAUDE.md proposals functional (Phase 4)",
+    "Hub-level CC advisor exists with cross-spoke aggregation (Phase 5)"
+  ],
+  "model_fit": "OPUS",
+  "routed_to": "LOCAL"
+}

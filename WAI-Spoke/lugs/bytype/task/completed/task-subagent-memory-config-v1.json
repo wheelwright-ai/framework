@@ -2,7 +2,7 @@
   "i": "task-subagent-memory-config-v1",
   "t": "Configure persistent memory for lug-reviewer and code-simplifier subagents",
   "ty": "task",
-  "s": "o",
+  "s": "c",
   "ca": "2026-03-30T19:50:00Z",
   "gb": "claude-opus-4-6",
   "fw_ver": "3.0.0",
@@ -11,8 +11,12 @@
   "va": "grind",
   "rt": "LOCAL",
   "routed_to": "LOCAL",
-  "tags": ["subagents", "memory", "lug-quality"],
-  "description": "The lug-reviewer and code-simplifier agents in .claude/agents/ have no memory configuration. Without 'memory: project' they start blind every invocation — no recall of past lug quality decisions, no pattern learning across reviews. Given lug quality is a core concern (anti-pattern about placeholders, Ozi enforcement), giving lug-reviewer persistent memory of past decisions compounds significantly over time.",
+  "tags": [
+    "subagents",
+    "memory",
+    "lug-quality"
+  ],
+  "description": "The lug-reviewer and code-simplifier agents in .claude/agents/ have no memory configuration. Without 'memory: project' they start blind every invocation \u2014 no recall of past lug quality decisions, no pattern learning across reviews. Given lug quality is a core concern (anti-pattern about placeholders, Ozi enforcement), giving lug-reviewer persistent memory of past decisions compounds significantly over time.",
   "target_files": [
     "/home/mario/projects/wheelwright/framework/.claude/agents/lug-reviewer.md",
     "/home/mario/projects/wheelwright/framework/.claude/agents/code-simplifier.md"
@@ -26,5 +30,7 @@
     "Agent memory dirs created if needed",
     "Both agents still function correctly after config change"
   ],
-  "model_fit": "HAIKU"
+  "model_fit": "HAIKU",
+  "completed_at": "2026-03-30T23:58:00Z",
+  "completed_by": "claude-haiku-4-5"
 }

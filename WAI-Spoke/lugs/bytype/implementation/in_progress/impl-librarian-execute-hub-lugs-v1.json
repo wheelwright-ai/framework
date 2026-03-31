@@ -1,0 +1,46 @@
+{
+  "i": "impl-librarian-execute-hub-lugs-v1",
+  "t": "Librarian: Execute 11 existing hub child lugs \u2014 KB system, abstraction skill, delivery engine",
+  "ty": "implementation",
+  "s": "p",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "effort": 5,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "librarian",
+    "advisor",
+    "hub",
+    "kb-system",
+    "phase-3"
+  ],
+  "phase": "p3-complete",
+  "phase_order": 1,
+  "blocks": [],
+  "blocked_by": [],
+  "description": "Epic epic-hub-kb-system-librarian-gardener-v1 has 11 child implementation lugs on the hub spoke, all in_progress but actually open (health check caught this). After hub health is fixed, these need to be executed in order: (1) lug-kb-schema-learnings-structure-v1 \u2014 create learnings/ directory with index, (2) lug-distribution-history-schema-v1 \u2014 distribution_history.jsonl with 5 query ops, (3) lug-registry-schema-adoption-status-v1 \u2014 add adoption_status to hub-registry.json, (4) lug-librarian-abstraction-skill-v1 \u2014 signal \u2192 KB pattern abstraction, (5) lug-librarian-delivery-engine-v1 \u2014 pattern matching + spoke delivery, (6) lug-gardener-health-verification-skill-v1 \u2014 health verification, (7) lug-gardener-characteristics-scan-v1 \u2014 characteristics audit, (8) lug-trigger-detection-hub-wakeup-v1 \u2014 Step 0.5 triggers, (9) lug-hub-wakeup-protocol-update-v1 \u2014 integrate Librarian Step 1.5 + Gardener Step 6, (10) lug-hub-kb-system-tests-v1 \u2014 test suite, (11) lug-process-existing-inbox-signals-v1 \u2014 process 40+ inbox signals into KB. This is a hub-session task: run in the hub working directory.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/librarian/",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/learnings/",
+    "/home/mario/projects/wheelwright/hub/hub-registry.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Spoke/lugs/bytype/implementation/in_progress/"
+  ],
+  "perceive": "Read each of the 11 child lugs on the hub spoke. Read the parent epic for design principles and deliverables. Confirm hub health is GREEN before executing.",
+  "execute": "Execute the 11 child lugs sequentially in the order listed. Each lug has its own perceive/execute/verify cycle. This is a multi-session effort \u2014 complete as many as possible per session, update epic child status after each. Key outputs: learnings/ KB directory, distribution_history.jsonl, Librarian advisor at WAI-Hub/advisors/librarian/, trigger detection in wakeup, test suite, 40+ signals abstracted to KB patterns.",
+  "verify": "All 11 child lugs marked completed. Hub health check still GREEN. Librarian can abstract a test signal to a KB pattern. Delivery engine can match a pattern to a spoke. Test suite passes.",
+  "acceptance_criteria": [
+    "All 11 child lugs completed and moved to completed/",
+    "WAI-Hub/advisors/librarian/ exists with scan_state.json, passes.jsonl, vectors.jsonl",
+    "WAI-Hub/learnings/ exists with index and at least 25 abstracted patterns",
+    "distribution_history.jsonl operational with 5 query operations",
+    "Hub health check GREEN after all changes",
+    "Test suite passes (unit + integration)"
+  ],
+  "model_fit": "OPUS",
+  "routed_to": "LOCAL",
+  "blocker_cleared_at": "2026-03-30T23:55:00Z",
+  "blocker_cleared_note": "impl-hub-lug-health-fix-v1 completed 2026-03-30T13:15Z \u2014 hub lug health is fixed, librarian execution is unblocked"
+}

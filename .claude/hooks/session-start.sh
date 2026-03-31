@@ -196,6 +196,46 @@ if [[ -n "$HUB_PATH" && -d "$HUB_PATH/WAI-Hub/runtime/ozi-nightly-reports" ]]; t
   fi
 fi
 
+# ── CC Advisor: session counter + session_start event ────────────────────────
+CC_ADVISOR_STATE="$PROJECT_DIR/WAI-Spoke/advisors/cc-advisor/scan_state.json"
+CC_ADVISOR_LOGS="$PROJECT_DIR/WAI-Spoke/advisors/cc-advisor/logs"
+
+if [[ -f "$CC_ADVISOR_STATE" ]]; then
+  # Increment sessions_since_last_audit
+  TMP_CC=$(mktemp)
+  jq '.sessions_since_last_audit = (.sessions_since_last_audit // 0) + 1 |
+      if .sessions_since_last_audit >= 10 then .audit_pending = true else . end' \
+    "$CC_ADVISOR_STATE" > "$TMP_CC" && mv "$TMP_CC" "$CC_ADVISOR_STATE"
+
+  # Log session_start event
+  mkdir -p "$CC_ADVISOR_LOGS"
+  SPOKE_NAME=$(jq -r '.wheel.name // "unknown"' "$STATE_FILE" 2>/dev/null)
+  printf '{"ts":"%s","session":"%s","spoke":"%s","event":"session_start","data":{}}\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    "${SESSION_NAME}" \
+    "${SPOKE_NAME}" \
+    >> "$CC_ADVISOR_LOGS/session-events.jsonl"
+
+  # Log hook_fire for session-start itself
+  printf '{"ts":"%s","session":"%s","spoke":"%s","event":"hook_fire","data":{"hook_name":"session-start","result":"ok","duration_ms":0,"error":null}}\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+    "${SESSION_NAME}" \
+    "${SPOKE_NAME}" \
+    >> "$CC_ADVISOR_LOGS/hook-events.jsonl"
+fi
+
+# ── CC Advisor: surface pending proposals/regressions ────────────────────────
+CC_ADVISOR_PENDING=""
+if [[ -f "$CC_ADVISOR_STATE" ]]; then
+  AUDIT_PENDING=$(jq -r '.audit_pending // false' "$CC_ADVISOR_STATE" 2>/dev/null)
+  PENDING_PROPOSALS=$(jq -r '.pending_proposals | length' "$CC_ADVISOR_STATE" 2>/dev/null || echo 0)
+  REGRESSION_COUNT=$(grep -c '"status":"watching"' "$PROJECT_DIR/WAI-Spoke/advisors/cc-advisor/vectors.jsonl" 2>/dev/null || echo 0)
+
+  [[ "$AUDIT_PENDING" == "true" ]] && CC_ADVISOR_PENDING="  ⚠ CC Audit due (10 sessions reached) — run /cc-advisor"
+  [[ "$PENDING_PROPOSALS" -gt 0 ]] && CC_ADVISOR_PENDING="${CC_ADVISOR_PENDING}\n  ⚠ CC: ${PENDING_PROPOSALS} proposal(s) pending approval — see advisors/cc-advisor/reports/"
+  [[ "$REGRESSION_COUNT" -gt 0 ]] && CC_ADVISOR_PENDING="${CC_ADVISOR_PENDING}\n  ⚠ CC: ${REGRESSION_COUNT} regression vector(s) watching — run /cc-advisor for details"
+fi
+
 # ── Output ────────────────────────────────────────────────────────────────────
 cat << BRIEF
 <wai-session-init>
@@ -225,6 +265,7 @@ CONTEXT HEALTH
 $(if [[ -n "$CC_GAPS" ]]; then printf "\nCC OPTIMIZATION (run /wai-claude-maximizer for details)\n%b" "$CC_GAPS"; fi)
 NEXT ACTIONS (from session $((SESSION_COUNT - 1)))
   ${NEXT_REC}
+$(if [[ -n "$CC_ADVISOR_PENDING" ]]; then printf "\nCC ADVISOR\n%b\n" "$CC_ADVISOR_PENDING"; fi)
 </wai-session-init>
 BRIEF
 

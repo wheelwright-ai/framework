@@ -1,3 +1,7 @@
+---
+memory: project
+---
+
 # Lug Reviewer
 
 Validate lugs against PEV (Perceive-Execute-Verify) criteria before promotion or closeout.
