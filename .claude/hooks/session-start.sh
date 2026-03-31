@@ -116,6 +116,29 @@ fi
 NEXT_REC=$(jq -r '._session_state.next_session_recommendation // "None"' "$STATE_FILE" 2>/dev/null)
 SESSION_COUNT=$(jq -r '._session_state.session_count // 0' "$STATE_FILE" 2>/dev/null)
 
+# ── 7a. Spoke integrity score + parity check ────────────────────────────────
+INTEGRITY_SCORE=""
+PARITY_STATUS=""
+if [[ -f "$PROJECT_DIR/tools/spoke_integrity_score.py" ]]; then
+  _SCORE=$(python3 "$PROJECT_DIR/tools/spoke_integrity_score.py" --quiet 2>/dev/null)
+  if [[ -n "$_SCORE" ]]; then
+    if [[ "$_SCORE" -ge 80 ]]; then
+      INTEGRITY_SCORE="  Integrity: ${_SCORE}/100 [HEALTHY]"
+    elif [[ "$_SCORE" -ge 50 ]]; then
+      INTEGRITY_SCORE="  Integrity: ${_SCORE}/100 [DEGRADED]"
+    else
+      INTEGRITY_SCORE="  Integrity: ${_SCORE}/100 [CRITICAL]"
+    fi
+  fi
+fi
+if [[ -f "$PROJECT_DIR/tools/spoke_parity_check.py" ]]; then
+  if python3 "$PROJECT_DIR/tools/spoke_parity_check.py" --quiet 2>/dev/null; then
+    PARITY_STATUS="  Parity: at head"
+  else
+    PARITY_STATUS="  Parity: BEHIND HEAD — run spoke_parity_check.py"
+  fi
+fi
+
 # ── 7. Git status ─────────────────────────────────────────────────────────────
 GIT_DIRTY=$(git -C "$PROJECT_DIR" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
 GIT_STATUS="clean"
@@ -262,6 +285,8 @@ $(if [[ -n "$HISTORIAN_ADVICE" ]]; then printf "HISTORIAN ADVICE\n%b\n" "$HISTOR
 CONTEXT HEALTH
   Git: ${GIT_STATUS}
   Hub path: ${HUB_STATUS}
+$(if [[ -n "$INTEGRITY_SCORE" ]]; then echo "$INTEGRITY_SCORE"; fi)
+$(if [[ -n "$PARITY_STATUS" ]]; then echo "$PARITY_STATUS"; fi)
 $(if [[ -n "$CC_GAPS" ]]; then printf "\nCC OPTIMIZATION (run /wai-claude-maximizer for details)\n%b" "$CC_GAPS"; fi)
 NEXT ACTIONS (from session $((SESSION_COUNT - 1)))
   ${NEXT_REC}
