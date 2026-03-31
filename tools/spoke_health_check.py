@@ -418,11 +418,16 @@ def check_cc_hooks(report: HealthReport, wai_spoke: Path):
             for entry in entries:
                 for h in entry.get("hooks", []):
                     cmd = h.get("command", "")
-                    # Resolve $CLAUDE_PROJECT_DIR
-                    resolved = cmd.replace("$CLAUDE_PROJECT_DIR", str(project_root))
-                    if not Path(resolved).exists():
+                    # Fail immediately if hook uses $CLAUDE_PROJECT_DIR — CC never sets this var
+                    if "$CLAUDE_PROJECT_DIR" in cmd:
+                        report.add(f"hooks-{hook_name.lower()}-env-var", cat, "FAIL",
+                                   f"{hook_name} uses $CLAUDE_PROJECT_DIR — CC never sets this, hook silently fails")
+                        script_ok = False
+                        continue
+                    # Verify the script file exists (absolute path)
+                    if not Path(cmd).exists():
                         report.add(f"hooks-{hook_name.lower()}-script", cat, "FAIL",
-                                   f"{hook_name} script missing: {resolved}")
+                                   f"{hook_name} script missing: {cmd}")
                         script_ok = False
             if script_ok:
                 report.add(f"hooks-{hook_name.lower()}", cat, "PASS",
