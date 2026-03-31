@@ -1,0 +1,16 @@
+{
+  "advisor_id": "expediter",
+  "advisor_name": "Spoke-Local Expediter",
+  "version": "1.0.0",
+  "initialized_at": null,
+  "last_run_at": "2026-03-31T03:04:47.824735+00:00",
+  "refinement_queue_size": 4,
+  "stats": {
+    "lugs_scored": 7,
+    "runs": 1,
+    "last_quality_avg": 4.4,
+    "last_needs_refinement": 4,
+    "signals_triaged": 6,
+    "teaching_candidates_found": 4
+  }
+}

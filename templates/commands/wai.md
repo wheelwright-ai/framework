@@ -402,6 +402,7 @@ Show unified WAI Point briefing:
     - Unprocessed: list with WHY
     - Do NOT list pre-existing count — it is noise when nothing is new
 - Context health (git, hub, session state, **context budget**)
+- Expediter quality (if `WAI-Spoke/advisors/expediter/scan_state.json` exists — show avg quality, refinement count, last run)
 - Next actions (from `_session_state.next_session_recommendation`)
 
 ---

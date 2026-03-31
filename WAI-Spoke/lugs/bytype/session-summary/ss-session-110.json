@@ -1,0 +1,55 @@
+{
+  "id": "ss-session-110",
+  "type": "session-summary",
+  "title": "Session 110: Wheel Tender UX + Hub wakeup docs + Historian catch-up + Spoke Expediter",
+  "status": "completed",
+  "created_at": "2026-03-31T03:10:00Z",
+  "generated_by": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "session_number": 110,
+  "accomplished": [
+    "Added terminal UX to wheel-tender.sh — emit helpers, per-pass progress, cost accumulation, final summary box with SUCCESS/FAIL verdict",
+    "Fixed tender exit code propagation bug — now checks all passes, not just Pass 1",
+    "Added Gardener Tender schedule + pass structure to hub wakeup (AGENTS.md, CLAUDE.md, wai.md)",
+    "Ran Historian catch-up: 71 sessions, 173 points, 47 new vectors (was 14 days behind due to format mismatch)",
+    "Built spoke-local Expediter advisor: lug PEV quality scoring (0-10) + signal triage with categorization",
+    "Integrated Expediter into Gardener Tender (pre-Pass-2 scoring) and wakeup briefing",
+    "First Expediter run: 7 lugs scored (avg 4.4/10), 6 signals triaged (4 teaching candidates)"
+  ],
+  "files_touched": [
+    "hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh",
+    "hub/AGENTS.md",
+    "hub/CLAUDE.md",
+    "hub/WAI-Hub/skills/wai/wai.md",
+    "framework/tools/spoke_expediter.py (new)",
+    "framework/tools/historian_scan.py (new)",
+    "framework/WAI-Spoke/advisors/expediter/ (new)",
+    "framework/WAI-Spoke/advisors/historian/vectors.jsonl (updated)",
+    "framework/WAI-Spoke/advisors/historian/scan_state.json (updated)",
+    "framework/WAI-Spoke/skills/WAI-Skills.jsonl",
+    "framework/templates/commands/wai.md",
+    "framework/templates/spoke/WAI-Spoke/advisors/expediter/ (new)"
+  ],
+  "decisions": [
+    "Tender terminal UX uses millicents for cost accumulation (avoids float math in bash)",
+    "Color gated on [ -t 1 ] for cron safety",
+    "Expediter is a framework-distributed advisor, not hub-only",
+    "Expediter runs automatically via Gardener Tender pre-Pass-2, user never invokes directly",
+    "Wakeup reads existing Expediter results, does not re-run scorer",
+    "Signal triage enriches metadata (category, scope, teaching candidate) but doesn't move signals"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Hub repo changes not committed yet (wheel-tender.sh UX, wakeup docs, Expediter integration)",
+      "epic-session15-fleet-evolution ready to close (framework_version confirmed in template)",
+      "Historian activity_filter_exclude needs expansion (scanned, session, validated, produced)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Commit hub repo changes (separate commit from framework)",
+      "Close epic-session15-fleet-evolution after marking done children",
+      "Run Expediter on hub spoke too — same quality scoring benefits apply",
+      "Update historian.yaml activity_filter_exclude with new stop-verbs"
+    ]
+  }
+}

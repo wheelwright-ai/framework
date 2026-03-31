@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.130",
+    "version": "2.0.131",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -93,13 +93,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260330-1606",
+    "last_session_id": "session-20260330-1744",
     "last_modified_by": "claude-opus-4-6",
-    "last_modified_at": "2026-03-31T00:06:00Z",
-    "last_closeout": "2026-03-31T00:06:00Z",
-    "session_count": 109,
-    "track_path": "WAI-Spoke/sessions/session-20260330-1607/track.jsonl",
-    "next_session_recommendation": "Session 110: (1) Run impl-librarian-execute-hub-lugs-v1 in a hub session (OPUS) \u2014 11 child lugs, now unblocked. (2) Continue epic-lug-quality-review-v1 batch 2 (features in_progress). (3) Triage hub signals inbox (63 items \u2014 Historian flagged growth). (4) Check epic-session15-fleet-evolution: verify templates/spoke/WAI-State.json.template has framework_version, close if done. (5) 6 open epics now have PEV \u2014 any can be picked up. NOTE: CC Advisor now runs at session start (session counter) and every 10 sessions (full audit). PermissionRequest hook is live \u2014 permission-prompts.jsonl will populate over sessions.",
+    "last_modified_at": "2026-03-31T03:15:00Z",
+    "last_closeout": "2026-03-31T03:15:00Z",
+    "session_count": 110,
+    "track_path": "WAI-Spoke/sessions/session-20260330-1744/track.jsonl",
+    "next_session_recommendation": "Session 111: (1) Commit hub repo changes — wheel-tender.sh UX, wakeup docs, Expediter pre-Pass-2 integration (separate commit). (2) Close epic-session15-fleet-evolution — framework_version confirmed in template, mark done children. (3) Run Expediter on hub spoke. (4) Update historian.yaml activity_filter_exclude with new stop-verbs (scanned, session, validated, produced). (5) impl-librarian-execute-hub-lugs-v1 still pending — 11 child lugs, run in hub OPUS session. (6) Hub signals inbox still at 63 — triage pass needed.",
     "requires_review": false,
     "review_reason": null,
     "mode": "execution",
