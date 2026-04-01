@@ -30,11 +30,32 @@ fi
 # Exit silently if still no state file (not a WAI project)
 [[ ! -f "$STATE_FILE" ]] && exit 0
 
+# ── Guard check: prevent mid-session re-entry overwrite ─────────────────────
+# SessionStart can re-fire mid-session (e.g. /context, IDE reconnect).
+# If the guard shows an active session (wakeup done, not closed, track non-empty),
+# reuse it — do NOT create a new session dir or overwrite WAI-State.json.
+_GUARD_FILE="$PROJECT_DIR/WAI-Spoke/runtime/session-guard.json"
+SKIP_SESSION_INIT=false
+if [[ -f "$_GUARD_FILE" ]]; then
+  _GC=$(jq -r '.protocol_completed // false' "$_GUARD_FILE" 2>/dev/null || echo "false")
+  _GCLOSED=$(jq -r '.session_closed // false' "$_GUARD_FILE" 2>/dev/null || echo "false")
+  _GSID=$(jq -r '.session_id // ""' "$_GUARD_FILE" 2>/dev/null || echo "")
+  if [[ "$_GC" == "true" && "$_GCLOSED" != "true" && -n "$_GSID" ]]; then
+    _GTRACK="$PROJECT_DIR/WAI-Spoke/sessions/$_GSID/track.jsonl"
+    if [[ -f "$_GTRACK" && -s "$_GTRACK" ]]; then
+      SESSION_NAME="$_GSID"
+      SKIP_SESSION_INIT=true
+    fi
+  fi
+fi
+
 # ── 1. Create session directory ──────────────────────────────────────────────
+if [[ "$SKIP_SESSION_INIT" == "false" ]]; then
 SESSION_NAME="session-$(date +%Y%m%d-%H%M)"
 SESSION_DIR="$PROJECT_DIR/WAI-Spoke/sessions/$SESSION_NAME"
 mkdir -p "$SESSION_DIR"
 touch "$SESSION_DIR/track.jsonl"
+fi
 
 # ── 1b. Check previous session track integrity ──────────────────────────────
 PREV_SESSION_STATUS="FIRST_SESSION"
@@ -61,11 +82,14 @@ fi
 # ── 2. Update WAI-State.json with new session ────────────────────────────────
 # NOTE: session_count is incremented at closeout only (not here).
 # Agent-initiated sessions must not inflate the count.
+# Skipped if re-entering an active session (SKIP_SESSION_INIT=true).
+if [[ "$SKIP_SESSION_INIT" == "false" ]]; then
 TMP=$(mktemp)
 jq --arg sid "$SESSION_NAME" \
    '._session_state.last_session_id = $sid |
     ._session_state.track_path = ("WAI-Spoke/sessions/" + $sid + "/track.jsonl")' \
    "$STATE_FILE" > "$TMP" && mv "$TMP" "$STATE_FILE"
+fi
 
 # ── 3. Lug scan ──────────────────────────────────────────────────────────────
 LUGS_DIR="$PROJECT_DIR/WAI-Spoke/lugs/bytype"

@@ -45,7 +45,13 @@ fi
 
 # If protocol already ran, emit compact WAI essentials (survives /compact)
 if [[ "$GUARD_COMPLETED" == "true" ]]; then
-  TRACK_PATH=$(jq -r '._session_state.track_path // ""' "$STATE_FILE" 2>/dev/null)
+  # Use guard's session_id as authoritative source — WAI-State.json may have been
+  # overwritten by a re-fired SessionStart hook (e.g. triggered by /context).
+  if [[ -n "$GUARD_SESSION_ID" ]]; then
+    TRACK_PATH="WAI-Spoke/sessions/${GUARD_SESSION_ID}/track.jsonl"
+  else
+    TRACK_PATH=$(jq -r '._session_state.track_path // ""' "$STATE_FILE" 2>/dev/null)
+  fi
 
   # Post-compaction recovery: inject once after a compaction event, then clear the flag
   GUARD_COMPACTED=$(jq -r '.compacted // false' "$GUARD_FILE" 2>/dev/null || echo "false")

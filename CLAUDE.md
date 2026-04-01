@@ -66,6 +66,7 @@ Living document. Add entries when Claude does something wrong.
 - **Placeholder lugs:** Never create a lug without complete PEV, acceptance criteria, effort score, and file targets. Everything will be implemented — make it implementable at creation. After presenting a plan, immediately create the lugs. Don't wait to be asked.
 - **Deferring lug quality:** Don't walk away from the creation window without the artifact correctly defined. Test against principles and mission goals. Test again. Ozi enforces this.
 - **Hook path variables:** Never use `$CLAUDE_PROJECT_DIR` or other assumed env vars in settings.json hook commands. Always use absolute `/home/mario/` paths. Unresolved vars silently break every tool call in the session.
+- **Em-dash in bash JSON writes:** Never use em-dash (`—`) in `printf`/`echo` commands that write to `.jsonl` files. Shell encoding failures produce unparseable JSON. Use Python `json.dumps()` for any JSON serialization involving free-text strings.
 
 ## Formatting Rules: Lists
 

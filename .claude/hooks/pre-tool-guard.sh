@@ -66,5 +66,16 @@ if echo "$first_line" | grep -qE '^\s*\\?rm\s'; then
   fi
 fi
 
+# Block: em-dash (U+2014) in bash commands writing to .jsonl files.
+# Em-dash in printf/echo string interpolation corrupts JSON when shell
+# encoding fails, producing unparseable entries. Use Python json.dumps() instead.
+if printf '%s' "$cmd" | grep -qP '\xe2\x80\x94' 2>/dev/null || \
+   printf '%s' "$cmd" | grep -q $'\xe2\x80\x94' 2>/dev/null; then
+  if echo "$cmd" | grep -qE '(printf|echo).*>>\s*\S+\.jsonl'; then
+    echo "BLOCKED: em-dash in bash JSONL write — use Python json.dumps() for JSON encoding" >&2
+    exit 2
+  fi
+fi
+
 # Allow everything else
 exit 0
