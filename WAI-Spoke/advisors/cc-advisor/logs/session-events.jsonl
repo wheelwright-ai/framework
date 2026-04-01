@@ -118,3 +118,5 @@
 {"ts":"2026-04-01T06:47:01Z","session":"session-20260331-2347","spoke":"Wheelwright","event":"session_start","data":{}}
 {"ts":"2026-04-01T06:47:11Z","session":"session-20260331-2347","spoke":"Wheelwright","event":"session_start","data":{}}
 {"ts":"2026-04-01T06:47:40Z","session":"session-20260331-2347","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T06:56:54Z","session":"session-20260331-2347","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T06:57:04Z","session":"session-20260331-2357","spoke":"Wheelwright","event":"session_start","data":{}}
