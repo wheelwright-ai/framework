@@ -1,0 +1,48 @@
+{
+  "id": "feature-tender-autonomous-pipeline-v1",
+  "type": "feature",
+  "status": "completed",
+  "title": "Tender gap closure: signal triage + edge-case detection + PASS2 audit trail",
+  "one_liner": "Close the 4 gaps in wheel-tender.sh that prevent full autonomous spoke maintenance.",
+  "description": "wheel-tender.sh PASS2 already runs teaching adoption and lug execution nightly. The remaining gaps are:\n\n1. **Signal triage** (not in PASS1 or PASS2): Undelivered signals accumulate until manual tender session. Need: cross-check each spoke's `signal/undelivered/` against hub `signals/processed/` and `signals/incoming/`; mark delivered + move to `delivered/` if found. If not in hub: route to hub outbox.\n\n2. **Edge-case detection** (not in any gardener script): Two specific patterns not checked: (a) `.gitignore` has blanket `.claude/` entry \u2014 fix to specific ignores [`.provider`, `settings.local.json`]; (b) `.claude/commands/wai.md` missing \u2014 copy from framework spoke.\n\n3. **PASS2 audit trail** (line 715 of wheel-tender.sh: `rm -f \"$PASS2_RESULT\"`): Execution result is deleted after token parsing. No record of which teachings were applied, which lugs were executed, what failed. The JSON report (`reports/YYYY-MM-DD.json`) reflects `run_nightly.py` metrics, not PASS2 outcomes. Cannot verify tender worked.\n\n4. **score_backlog.py orphaned**: Never called by wheel-tender.sh. Quality-gated lug selection in PASS2 uses inline Python, not the scorer. `--update-state` flag never exercised by automation.",
+  "priority": "high",
+  "effort": 3,
+  "impact": 9,
+  "roi": 5.0,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "parent_epic": "epic-ozi-work-queue-orchestration-v1",
+  "created_at": "2026-04-01T00:00:00Z",
+  "updated_at": "2026-04-01T15:27:24Z",
+  "perceive": {
+    "current_state": "wheel-tender.sh PASS2 runs teaching adoption + lug execution nightly (02:27 cron). Signal triage is not in any pass. Edge cases (gitignore, wai.md) not checked. PASS2 result deleted line 715 \u2014 no audit record. run_nightly.py writes the JSON report but is not the executor.",
+    "files": [
+      "hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh (PASS1: line ~464, PASS2: line ~507, result-delete: line 715)",
+      "hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py (report writer only)",
+      "hub/WAI-Hub/advisors/gardener/reports/YYYY-MM-DD.json (currently reflects run_nightly.py, not wheel-tender)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. Add PASS0.5 (before PASS1) to wheel-tender.sh: edge-case scanner per spoke \u2014 check .gitignore for blanket .claude/ entry (fix inline), check .claude/commands/wai.md presence (copy from framework if missing)",
+      "2. Add signal triage to PASS1: after expediter scoring, for each undelivered signal cross-check hub signals/processed/ and signals/incoming/ by filename; if found, update status=delivered + move to delivered/; if not found, append to hub outbox",
+      "3. Add PASS2 audit log: instead of rm -f $PASS2_RESULT, parse for completed/skipped/failed teaching and lug outcomes; append structured JSON to reports/YYYY-MM-DD.json under per_spoke[spoke].pass2_audit",
+      "4. Wire score_backlog.py: call before PASS2 lug selection to populate _work_queue; use scored list for PASS2 lug priority instead of inline Python"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "reports/YYYY-MM-DD.json shows per-spoke pass2_audit field with teachings_applied[], lugs_executed[], failures[]",
+      "Automated run detects and fixes blanket .claude/ gitignore without human session",
+      "Automated run detects missing wai.md and installs from framework",
+      "Stale signals (already in hub) cleared in nightly run without manual intervention",
+      "score_backlog.py invoked per spoke before PASS2 lug selection"
+    ]
+  },
+  "acceptance_criteria": [
+    "After one nightly run: reports/YYYY-MM-DD.json is the single source of truth for what happened (not two disjoint files)",
+    "Signal queues self-clear when hub has already processed them",
+    "Edge cases detected and fixed without human tender session",
+    "score_backlog.py --update-state called per spoke in automation"
+  ]
+}

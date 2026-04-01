@@ -12,10 +12,11 @@ Default: no vibe filter (pure ROI ordering).
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 
-SPOKE = Path(__file__).parent.parent / "WAI-Spoke"
+SPOKE = Path(os.environ["WAI_SPOKE_PATH"]) if os.environ.get("WAI_SPOKE_PATH") else Path(__file__).parent.parent / "WAI-Spoke"
 BYTYPE = SPOKE / "lugs" / "bytype"
 
 # Import shared lug utilities

@@ -5,10 +5,11 @@ Used by score_backlog.py, wai_ozi.py, and wai-chain.sh (via inline Python).
 """
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
-SPOKE = Path(__file__).parent.parent / "WAI-Spoke"
+SPOKE = Path(os.environ["WAI_SPOKE_PATH"]) if os.environ.get("WAI_SPOKE_PATH") else Path(__file__).parent.parent / "WAI-Spoke"
 BYTYPE = SPOKE / "lugs" / "bytype"
 
 
