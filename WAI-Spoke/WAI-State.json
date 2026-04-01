@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.142",
+    "version": "2.0.143",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -28,8 +28,8 @@
         }
       }
     },
-    "last_modified_at": "2026-04-01T06:54:03Z",
-    "last_modified_by": "claude-opus-4-6",
+    "last_modified_at": "2026-04-01T15:10:13Z",
+    "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
   "_project_foundation": {
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260331-2357",
+    "last_session_id": "session-20260401-0613",
     "last_modified_by": "claude-sonnet-4-6",
     "last_modified_at": "2026-03-31T23:17:42Z",
-    "last_closeout": "2026-04-01T06:54:03Z",
-    "session_count": 121,
-    "track_path": "WAI-Spoke/sessions/session-20260331-2357/track.jsonl",
-    "next_session_recommendation": "S120 build session: 3 features done + advisor context feeds system built + signal architecture v2 decided. Priority for S121: (1) Decision: decision-df884ede13e2 (open-source boundary, impact 9) still open, needs dedicated focus. (2) Wire ANTHROPIC_API_KEY to Python subprocess so advisor context feeds can run ai_synthesis. (3) Run hub_context_refresh.py to populate hub shared context (claude-capabilities, wai-framework-updates). (4) Epic decomposition: epic-signal-rework-v1 needs child lugs with full PEV. (5) Hub signals inbox: 2 items (signal-s119-hub-inbox-cleared-v1, signal-false-blocker-pattern-v1) need local incorporation. (6) Historian flaky test S48: fix or mark known-flaky. (7) signal-linkedin-content-wave-reroute-v1 still needs routing to content spoke.",
+    "last_closeout": "2026-04-01T15:10:13Z",
+    "session_count": 122,
+    "track_path": "WAI-Spoke/sessions/session-20260401-0613/track.jsonl",
+    "next_session_recommendation": "S121 standard session: tender audits + gitignore fixes across fleet. Priority for S122: (1) Implement feature-tender-autonomous-pipeline-v1 \u2014 4 gaps in wheel-tender.sh: (a) add signal triage pass cross-checking hub processed/incoming to auto-clear stale signals, (b) add edge-case detection for blanket .claude/ gitignore and missing wai.md in .claude/commands/, (c) preserve PASS2 result instead of rm -f for audit trail, (d) wire score_backlog.py into automation. This is ROI 5.0, effort 3 \u2014 should complete in one session. (2) Navigator advisor: dedicated design session for spoke+hub architecture before implementation.",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -104,7 +104,7 @@
     "protocol_completed": false
   },
   "_work_queue": {
-    "last_scored_at": "2026-04-01T09:31:58.321698+00:00",
+    "last_scored_at": "2026-04-01T15:10:47.932751+00:00",
     "items": [
       {
         "id": "feature-ozi-octo-chief-of-staff-brief-v1",
@@ -147,6 +147,36 @@
         "tagged_next": false
       },
       {
+        "id": "signal-tender-autonomous-pipeline-s121",
+        "roi": 4.5,
+        "type": "signal",
+        "status": "ready",
+        "readiness": "needs_refinement",
+        "title": "Tender must apply EVERYTHING in order: signals \u2192 teachings \u2192 ready lugs + edge-c",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
+        "id": "signal-claude-gitignore-fleet-antipattern-s121",
+        "roi": 4.0,
+        "type": "signal",
+        "status": "ready",
+        "readiness": "needs_refinement",
+        "title": "Fleet anti-pattern: blanket .claude/ gitignore causes silent command drift",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
+        "id": "signal-navigator-advisor-vision-s121",
+        "roi": 4.0,
+        "type": "signal",
+        "status": "ready",
+        "readiness": "needs_refinement",
+        "title": "Navigator advisor: renamed from Conductor, spoke+hub architecture, usage stats l",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
         "id": "feature-hub-registry-teams-v1",
         "roi": 3.5,
         "type": "feature",
@@ -175,41 +205,11 @@
         "title": "Review and improve all 65 active lugs for naming quality, detail, and PEV compli",
         "phase": null,
         "tagged_next": false
-      },
-      {
-        "id": "epic-ozi-routing-awareness-v1",
-        "roi": 3.0,
-        "type": "epic",
-        "status": "ready",
-        "readiness": "ready",
-        "title": "Ozi Routing Awareness \u2014 Scope-aware work dispatch & lug creation",
-        "phase": "planning",
-        "tagged_next": false
-      },
-      {
-        "id": "epic-ozi-work-queue-orchestration-v1",
-        "roi": 3.0,
-        "type": "epic",
-        "status": "ready",
-        "readiness": "ready",
-        "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
-        "phase": "planning",
-        "tagged_next": false
-      },
-      {
-        "id": "idea-challenge-registry-v1",
-        "roi": 3.0,
-        "type": "other",
-        "status": "ready",
-        "readiness": "ready",
-        "title": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
-        "phase": null,
-        "tagged_next": false
       }
     ],
     "queue_state": {
-      "ready_count": 8,
-      "needs_refinement_count": 2,
+      "ready_count": 5,
+      "needs_refinement_count": 5,
       "blocked_count": 0
     }
   },

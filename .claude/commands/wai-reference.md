@@ -194,11 +194,27 @@ Keep rolling window of 3: `ls -1 WAI-Spoke/.autosave/turn-*.json | sort -V | hea
   "insights": ["New understandings"], "open": ["Unresolved threads"],
   "phase": "orientation|exploration|planning|execution|review|recovery",
   "evolution": "How understanding evolved",
+  "implementation_notes": "What was changed and why — captures context for future sessions",
+  "uat_recording": "User acceptance test result: pass/fail/partial + details",
   "completed": true
 }
 ```
 
 `completed: true` = clean turn. If absent at next wakeup → implies interruption.
+
+### Minimal Context Load (Auto-Chain Mode)
+
+When auto-chain is active, subsequent items load with minimal context (~15-20k tokens) instead of the full wakeup (~46k tokens):
+
+```
+Load order:
+1. WAI-State.json — identity section only (wheel + _project_foundation.identity)
+2. Target lug JSON — the next ready item from _work_queue
+3. Last 2 track entries — from current session's track.jsonl
+4. CLAUDE.md — always loaded by tool
+```
+
+Token estimate: ~15-20k vs ~46k full wakeup. Saves ~26-31k tokens per chained item.
 
 ---
 
