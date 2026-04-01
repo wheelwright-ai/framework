@@ -1,0 +1,11 @@
+{
+  "id": "signal-20260323-cluster2-product-architecture",
+  "type": "signal",
+  "title": "Cluster 2 product architecture defined — Handles, cohort sharing, demand and consultation exchange specs",
+  "description": "Four product architecture specs written to website/docs/: (1) cohort-sharing-contract.md — wheel registration, anonymized telemetry, 4-day free delay, hub routing hint; (2) handles-product-spec.md — product positioning, credit economy, Box.com track ingest, delayed reporting tiers, anti-gaming rankings; (3) demand-exchange-spec.md — feature voting, vendor segment mediation, no financial transactions v1; (4) consultation-exchange-spec.md — eject packet, trail preservation, return/provenance, per-eject consent, 72h purge. All 4 implementation lugs updated to 'implemented'. NOTE: specs are in website/docs/ markdown — architecture decisions not yet captured as decision lugs for WAI wakeup discoverability.",
+  "impact": 8,
+  "created_by": "claude-sonnet-4-6",
+  "created_at": "2026-03-23T10:15:00Z",
+  "session_id": "session-20260323-0806",
+  "rationale": "Cluster 1 (hub orchestration) and Cluster 2 (product layer) are now both defined. This unblocks Cluster 3 (implementation) whenever website/ infrastructure is ready."
+}

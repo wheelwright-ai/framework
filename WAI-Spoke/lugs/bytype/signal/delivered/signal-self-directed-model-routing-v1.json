@@ -1,0 +1,21 @@
+{
+  "i": "signal-self-directed-model-routing-v1",
+  "ty": "signal",
+  "t": "Self-directed model routing: lugs carry model_fit field, tender routes to cheapest capable model per task",
+  "s": "undelivered",
+  "ca": "2026-03-30T05:35:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "signal": "Lugs should carry a model_fit field (HAIKU/SONNET/OPUS) indicating the cheapest model that can execute them. The gardener tender reads this field and passes --model to the Claude CLI. Opus defines strategy and embeds decisions in lugs. Sonnet builds code. Haiku does mechanical plumbing. Cost ratio: Haiku 1x, Sonnet 3-5x, Opus 10-20x. The lug improve process should try to push model_fit DOWN by adding specificity.",
+  "rationale": "Self-directed cost efficiency across a 17-spoke fleet. If every lug defaults to Sonnet, we waste 3-5x on tasks Haiku handles perfectly. If we embed strategic decisions at Opus quality into the lug, downstream models just execute without judgment.",
+  "session_id": "session-20260330-0443",
+  "rt": "SIGNAL",
+  "routed_to": "SIGNAL",
+  "_behavior_directive": {
+    "what_this_is": "Signal observation from signal-self-directed-model-routing-v1",
+    "what_this_is_NOT": "Not an instruction to execute. Route and store only."
+  },
+  "status": "delivered",
+  "delivered_at": "2026-04-01T00:01:17Z"
+}

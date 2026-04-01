@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.137",
+    "version": "2.0.138",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -28,7 +28,7 @@
         }
       }
     },
-    "last_modified_at": "2026-03-31T04:05:30Z",
+    "last_modified_at": "2026-03-31T23:58:27Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -91,10 +91,10 @@
     "last_session_id": "session-20260331-1632",
     "last_modified_by": "claude-sonnet-4-6",
     "last_modified_at": "2026-03-31T23:17:42Z",
-    "last_closeout": "2026-03-31T23:17:42Z",
-    "session_count": 116,
+    "last_closeout": "2026-03-31T23:58:27Z",
+    "session_count": 117,
     "track_path": "WAI-Spoke/sessions/session-20260331-1632/track.jsonl",
-    "next_session_recommendation": "Session 116 priorities:\n(1) Fix track integrity check false-positive: wakeup INTERRUPTED detection must accept event==closeout as CLEAN (not just completed==true).\n(2) feature-tender-spoke-integrity-v1: env-var remediation in run_nightly.py + --spoke flag + post-tend verification per spoke.\n(3) Signal triage pass: 31 signals in queue, historian flagged for triage before adding more.\n(4) epic-ozi-work-queue-orchestration-v1 decomposition: break into child tasks for nightly pickup.\n(5) Hooks dimension scoring review: 5 hooks x 3pts = 15/20 cap, consider if formula is correct.",
+    "next_session_recommendation": "Session 117 priorities:\n(1) feature-tender-spoke-integrity-v1: env-var remediation in run_nightly.py + --spoke flag + post-tend verification per spoke.\n(2) Signal triage pass: 18 signals undelivered \u2014 deliver FRAMEWORK signals to hub, clear implemented ones.\n(3) epic-ozi-work-queue-orchestration-v1 decomposition: break into child tasks for nightly pickup.\n(4) Hooks dimension scoring review: 5 hooks x 3pts = 15/20 cap \u2014 check if formula is correct.\n(5) Publish teachings for S116 FRAMEWORK changes (closeout.sh + wai.md thrift) to hub.",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -103,7 +103,7 @@
     "teaching_audit_wired_to_wakeup": true
   },
   "_work_queue": {
-    "last_scored_at": "2026-03-31T23:02:04Z",
+    "last_scored_at": "2026-03-31T23:58:54.841763+00:00",
     "items": [
       {
         "id": "signal-20260331-1720-advisor-architecture-v2",
@@ -111,6 +111,7 @@
         "type": "signal",
         "status": "ready",
         "title": "signal-20260331-1720-advisor-architecture-v2",
+        "phase": null,
         "tagged_next": true
       },
       {
@@ -118,7 +119,8 @@
         "roi": 4.5,
         "type": "other",
         "status": "ready",
-        "title": "Open-source boundary: advisors are the pro differentiator, c",
+        "title": "Open-source boundary: advisors are the pro differentiator, core schema stays ope",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -127,6 +129,7 @@
         "type": "signal",
         "status": "ready",
         "title": "signal-20260331-1654-silent-hook-failure-fleet",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -135,6 +138,7 @@
         "type": "signal",
         "status": "ready",
         "title": "signal-20260331-2120-wheel-council-v1",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -143,6 +147,7 @@
         "type": "signal",
         "status": "ready",
         "title": "signal-20260331-2121-octo-cos-clarification",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -151,6 +156,7 @@
         "type": "signal",
         "status": "ready",
         "title": "signal-20260331-2200-octo-v2-operational",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -158,7 +164,8 @@
         "roi": 4.5,
         "type": "signal",
         "status": "ready",
-        "title": "MEMORY.md silent truncation — Claude Code loads max 200 line",
+        "title": "MEMORY.md silent truncation \u2014 Claude Code loads max 200 lines, critical rules we",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -166,7 +173,8 @@
         "roi": 4.5,
         "type": "signal",
         "status": "ready",
-        "title": "Framework repo sanitized: WAI-Spoke/ gitignored with auto-in",
+        "title": "Framework repo sanitized: WAI-Spoke/ gitignored with auto-init from template on ",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -174,7 +182,8 @@
         "roi": 4.5,
         "type": "signal",
         "status": "ready",
-        "title": "Self-directed model routing: lugs carry model_fit field, ten",
+        "title": "Self-directed model routing: lugs carry model_fit field, tender routes to cheape",
+        "phase": null,
         "tagged_next": false
       },
       {
@@ -182,7 +191,8 @@
         "roi": 4.5,
         "type": "signal",
         "status": "ready",
-        "title": "settings.json hook commands with $CLAUDE_PROJECT_DIR silentl",
+        "title": "settings.json hook commands with $CLAUDE_PROJECT_DIR silently fail \u2014 use absolut",
+        "phase": null,
         "tagged_next": false
       }
     ]
@@ -205,7 +215,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

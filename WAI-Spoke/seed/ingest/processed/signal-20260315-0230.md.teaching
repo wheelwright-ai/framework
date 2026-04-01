@@ -1,0 +1,20 @@
+# Teaching: Signal — wai-improve Step 6c structured dogfood audit
+
+**Type:** signal
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+
+## Embedded Signal
+
+```json
+{"timestamp":"2026-03-15T02:30:00Z","session_id":"session-20260315-0151","signal":"wai-improve Step 6c replaced with structured three-part dogfood audit (Perceive/Execute/Verify), each with explicit pass/fail criteria. No longer conversational. Reframed from standalone skill proposal — folded directly into existing skill.","impact":8,"rationale":"Protocol change affecting every plan approval across all spokes. Structured criteria make dogfood check consistent and auditable rather than judgment-dependent. Teaching file needs updating to distribute change.","by":"Claude Sonnet 4.6"}
+```
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

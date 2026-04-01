@@ -1,3 +1,17 @@
+## [2.0.138] - 2026-03-31
+
+### Added — Scripted Closeout + Skill Thrift + Track Integrity Fix (Session 116)
+
+- **`tools/closeout.sh`:** Mechanical closeout automation — version bump, `session_count++`, lug archival, `WAI-LugIndex.jsonl` regen, `score_backlog.py --update-state`; idempotent, `--dry-run` flag; reduces AI closeout tool calls ~15→5
+- **`wai.md` thrift:** 605→233L (-62%); `wai-reference.md` created; wakeup token cost ~22k→8k
+- **`wai-lug-schema.md` thrift:** 525→471L; Execute-When Gates + Routing Fields condensed to reference
+- **`wai-closeout.md`:** Steps 4+5 replaced with `tools/closeout.sh` call
+- **`session-start.sh` Step 1b:** Previous session track integrity check; surfaces `Prev session: CLEAN/INTERRUPTED/EMPTY` in wakeup init block
+
+### Fixed
+
+- Track integrity false-positive: `event==closeout` entries now accepted as CLEAN (not just `completed==true`)
+
 ## [2.0.137] - 2026-03-31
 
 ### Added — Spoke Integrity + Advisor Stubs + Closeout Hardening (Session 115)

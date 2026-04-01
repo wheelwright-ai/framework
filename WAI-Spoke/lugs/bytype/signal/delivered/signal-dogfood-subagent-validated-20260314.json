@@ -1,0 +1,19 @@
+{
+  "i": "signal-dogfood-subagent-validated-20260314",
+  "ty": "signal",
+  "t": "Dogfood subagent pattern validated: naive agent review caught 4 critical bugs",
+  "s": "c",
+  "ca": "2026-03-14T20:00:00Z",
+  "impact": 9,
+  "content": {
+    "timestamp": "2026-03-14T20:00:00Z",
+    "session_id": "session-20260314-200000",
+    "signal": "Dogfood subagent pattern validated: a naive agent reviewing protocol changes caught 4 critical implementation bugs (path mismatch, undefined build process, missing directory creation, unimplementable HMAC) that the authoring agent normalized over. Plan→Epic→Dogfood→Execute is now a mandatory protocol for multi-file changes.",
+    "rationale": "Meta-protocol that improves quality of all future framework changes. The dogfood subagent acts as a forcing function for self-contained, unambiguous protocol documentation.",
+    "by": "Claude Sonnet 4.6"
+  },
+  "_behavior_directive": {
+    "what_this_is": "Validation record for the dogfood subagent pattern.",
+    "what_this_is_NOT": "An instruction to run any dogfood check now."
+  }
+}

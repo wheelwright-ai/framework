@@ -1,0 +1,26 @@
+{
+  "id": "signal-behaviors-recorded-in-skills",
+  "type": "signal",
+  "title": "Behaviors and rules belong in the Skill or Lug file that governs them",
+  "status": "archived",
+  "_v1_status": "o",
+  "description": "When a behavioral rule or protocol convention is discussed, it must be codified in the relevant Skill .md file (e.g. wai.md for wakeup rules, wai-closeout.md for closeout rules) or as a policy lug. Not just in chat or state fields. CLAUDE.md is a pointer only - rules live in skills.",
+  "impact": 8,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-06T20:35:00Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "tags": [
+    "protocol",
+    "skills",
+    "governance"
+  ],
+  "_v1_type_code": "Behaviors and rules belong in the Skill or Lug file that governs them",
+  "_v1_status_code": "o",
+  "archived_at": "2026-03-18T10:54:51.004133Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

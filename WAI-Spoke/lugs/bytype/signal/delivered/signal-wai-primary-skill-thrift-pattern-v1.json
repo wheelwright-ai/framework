@@ -1,0 +1,15 @@
+{
+  "id": "signal-wai-primary-skill-thrift-pattern-v1",
+  "type": "signal",
+  "status": "delivered",
+  "title": "wai.md thrift: primary skill 605\u2192233L (-62%) by moving scripts/schemas to reference \u2014 applies to all over-200L primaries",
+  "timestamp": "2026-03-31T23:58:20Z",
+  "signal": "Applied skill thrift to wai.md (the wakeup protocol): 605\u2192233L (-62%) by moving all bash scripts, JSON templates, folder diagrams, and detail tables to wai-reference.md. Pattern: primary file = behavioral instructions only (what to do); reference file = scripts/schemas/examples (how to do it in detail). wai-lug-schema.md also trimmed 525\u2192471L. All tier2 skills were already under 200L. New wai-reference.md companion file created alongside wai.md.",
+  "impact": 8,
+  "rationale": "Wakeup was consuming ~22k tokens loading skill; now ~8k. The thrift pattern is reusable: any skill over 200L with embedded bash scripts or JSON examples is a candidate. Saves tokens on every invocation.",
+  "routed_to": "FRAMEWORK",
+  "session_id": "session-20260331-1632",
+  "created_at": "2026-03-31T23:58:20Z",
+  "created_by": "claude-sonnet-4-6",
+  "delivered_at": "2026-04-01T00:01:17Z"
+}

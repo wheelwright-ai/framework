@@ -1,0 +1,19 @@
+{
+  "i": "signal-false-blocker-pattern-v1",
+  "ty": "signal",
+  "t": "False blocker pattern: blocked_by refs not verified at lug creation \u2014 verify before gating",
+  "s": "undelivered",
+  "ca": "2026-03-30T20:36:00Z",
+  "gb": "claude-sonnet-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "signal": "False blocker pattern: impl lugs listed impl-lathe-spoke-scoring-v1 as blocked_by, but Lathe was already built. Blocked_by references are not verified at lug creation. Before treating a blocker as a gate, verify the blocking lug actually exists and is unresolved.",
+  "rationale": "Would have blocked Phase 2 work indefinitely if not caught during wakeup analysis.",
+  "routed_to": "SIGNAL",
+  "_behavior_directive": {
+    "what_this_is": "Signal observation",
+    "what_this_is_NOT": "Not an instruction to execute"
+  },
+  "status": "delivered",
+  "delivered_at": "2026-04-01T00:01:17Z"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "signal-hub-framework-delivery-folder-20260326",
+  "type": "signal",
+  "title": "Hub framework delivery folder: spokes deliver teachings via framework/teachings/",
+  "status": "delivered",
+  "created_at": "2026-03-27T19:26:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "impact": 8,
+  "rationale": "Without canonical handling, spoke-to-framework teaching files accumulate untracked.",
+  "_behavior_directive": {
+    "action": "track_only"
+  }
+}

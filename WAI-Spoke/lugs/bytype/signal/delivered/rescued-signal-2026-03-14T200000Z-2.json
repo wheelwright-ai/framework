@@ -1,0 +1,12 @@
+{
+  "id": "rescued-signal-2026-03-14T200000Z-2",
+  "type": "signal",
+  "status": "published",
+  "impact": 9,
+  "title": "Dogfood subagent pattern validated: a naive agent reviewing protocol changes caught 4 critical imple",
+  "description": "Meta-protocol that improves quality of all future framework changes. The dogfood subagent acts as a forcing function for self-contained, unambiguous protocol documentation.",
+  "created_at": "2026-03-14T20:00:00Z",
+  "created_by": "Claude Sonnet 4.6",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-03-14T20:00:00Z"
+}

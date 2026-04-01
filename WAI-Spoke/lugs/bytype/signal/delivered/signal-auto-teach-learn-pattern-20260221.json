@@ -1,0 +1,22 @@
+{
+  "id": "signal-auto-teach-learn-pattern-20260221",
+  "type": "signal",
+  "title": "Auto-Teach/Learn Protocol: Autonomous Lug Distribution",
+  "status": "archived",
+  "_v1_status": "o",
+  "description": "",
+  "impact": 10,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-21T09:15:59.735401Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "v": 10,
+  "_v1_type_code": "Auto-Teach/Learn Protocol: Autonomous Lug Distribution",
+  "_v1_status_code": "o",
+  "archived_at": "2026-03-18T10:54:51.004025Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

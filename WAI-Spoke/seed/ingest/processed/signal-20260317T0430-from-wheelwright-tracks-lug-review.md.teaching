@@ -1,0 +1,226 @@
+---
+_signal:
+  type: "review_request"
+  from: "wheelwright"
+  to: "framework"
+  priority: "high"
+  created: "2026-03-17T04:30:00Z"
+  author: "Sparky (code-puppy-025510)"
+---
+
+# Signal: Review and Improve Tracks Spoke Lug
+
+## Overview
+
+**Lug File:** `WAI-Spoke/lugs/inbox/lug_tracks_spoke_bootstrap_2026_03_16.md`
+**Spoke Name:** Tracks
+**Spoke Version:** 0.1.0
+**Status:** Proposed
+**Created:** 2026-03-16
+
+## What This Lug Contains
+
+The Tracks spoke bootstrap lug includes:
+
+1. **Framework Configuration**
+   - Spoke positioning in Wheelwright ecosystem
+   - Feature descriptions and capabilities
+   - Two bootstrap variants (best/base)
+   - Architecture and tech stack details
+   - Integration guides for PathFinder and Minder
+
+2. **User Documentation**
+   - Comprehensive README
+   - Quick start guides for both variants
+   - Usage examples and API reference
+   - Configuration and deployment guides
+
+3. **Bootstrap Scripts**
+   - Best variant (full-featured, 30-45 min setup)
+   - Base variant (minimal, 10-15 min setup)
+   - Both scripts executable and tested
+
+4. **Dogfooding Guide**
+   - Our actual dogfood track ("Build Tracks v0.1.0")
+   - What we learned from usage
+   - Pain points discovered and fixed
+   - Metrics and insights
+
+## Spoke Positioning
+
+```
+Wheelwright Framework
+├── PathFinder (Spoke 1) - Job search management
+├── Tracks (Spoke 2) - Progress tracking ← NEW SPOKE
+└── Minder (Spoke 3) - Task management
+```
+
+**Key Relationships:**
+- Tracks + PathFinder: Track job search journey (applications → interviews → offers)
+- Tracks + Minder: Track task completion and productivity trends
+- Tracks Standalone: Learning paths, career goals, fitness plans, project milestones
+
+## Request for Framework Review
+
+Please review the Tracks spoke lug and improve upon it in these areas:
+
+### 1. Framework Integration
+
+**Current:** Lug follows `_wheel` metadata pattern
+**Request:** Verify this integrates properly with framework lug processing
+
+**Questions:**
+- Is the `_wheel` frontmatter correct?
+- Should this have additional framework-specific metadata?
+- How should it be propagated to other spokes?
+
+### 2. Bootstrap Consistency
+
+**Current:** Two variants (best/base) similar to PathFinder approach
+**Request:** Ensure consistency with other spoke bootstraps
+
+**Questions:**
+- Are best/base variants the right pattern?
+- Should bootstrap use @wheelwright/create-tracks NPM package?
+- Is there a standard bootstrap script template I should follow?
+
+### 3. Spoke Dependencies
+
+**Current:** Tracks integrates with PathFinder and Minder
+**Request:** Validate integration approach
+
+**Questions:**
+- Should Tracks have hard dependencies on PathFinder/Minder?
+- Should integrations be optional?
+- Is there a standard spoke-to-spoke integration pattern?
+
+### 4. Data Model Alignment
+
+**Current:** Track, TrackItem, Progress models with Prisma schema
+**Request:** Ensure alignment with framework conventions
+
+**Questions:**
+- Are there framework-level data model conventions?
+- Should I use specific framework ORM patterns?
+- How should I handle cross-spoke data sharing?
+
+### 5. Documentation Standards
+
+**Current:** Comprehensive README with quick start, features, deployment
+**Request:** Align with framework documentation standards
+
+**Questions:**
+- Is there a framework documentation template?
+- Should README follow specific conventions?
+- Where should I link to framework docs?
+
+### 6. Testing Strategy
+
+**Current:** Vitest for unit, Playwright for E2E (best variant)
+**Request:** Validate testing approach
+
+**Questions:**
+- Are there framework testing requirements?
+- Should I use specific testing patterns?
+- What test coverage should I aim for?
+
+### 7. Deployment Standards
+
+**Current:** Vercel recommended, general cloud deployment guide
+**Request:** Align with framework deployment patterns
+
+**Questions:**
+- Are there preferred deployment platforms?
+- Should I include framework-specific deployment configs?
+- How should environment variables be managed?
+
+### 8. Dogfooding Approach
+
+**Current:** Using Tracks to build Tracks, documenting lessons learned
+**Request:** Validate dogfooding methodology
+
+**Questions:**
+- Is dogfooding a framework requirement?
+- Should I share dogfood tracks with framework?
+- How should I contribute dogfood learnings back?
+
+## Known Limitations
+
+1. **No NPM Package Yet:** Bootstrap scripts are local, not published as `@wheelwright/create-tracks`
+2. **Integration Not Tested:** PathFinder/Minder integrations are documented but not implemented
+3. **CI/CD Minimal:** Best variant has GitHub Actions but may need more sophistication
+4. **Security Basic:** Implemented best practices but may need framework-level hardening
+
+## Requested Improvements
+
+Please help improve:
+
+### High Priority
+1. ✅ **Framework Integration:** Ensure lug processes correctly
+2. ✅ **Bootstrap Pattern:** Validate best/base variant approach
+3. ✅ **Documentation Standards:** Align with framework conventions
+
+### Medium Priority
+4. ✅ **Integration Pattern:** Standardize spoke-to-spoke communication
+5. ✅ **Testing Strategy:** Validate and improve test coverage
+6. ✅ **Deployment**: Add framework-specific deployment guidance
+
+### Low Priority
+7. ✅ **NPM Package:** Create `@wheelwright/create-tracks` package
+8. ✅ **CI/CD:** Enhance GitHub Actions workflows
+9. ✅ **Dogfood Contribution:** Share dogfood tracks with community
+
+## Files to Review
+
+**Primary Lug:**
+`WAI-Spoke/lugs/inbox/lug_tracks_spoke_bootstrap_2026_03_16.md`
+
+**Documentation (for context):**
+`TRACKS_README.md` - User-facing documentation
+`TRACKS_DOGFOOD_GUIDE.md` - Dogfooding methodology
+`TRACKS_SPOKE_COMPLETE.md` - Complete package overview
+`TRACKS_QUICK_REFERENCE.md` - Quick reference guide
+
+**Bootstrap Scripts:**
+`BOOTSTRAP_TRACKS_BEST.sh` - Full-featured setup
+`BOOTSTRAP_TRACKS_BASE.sh` - Minimal setup
+
+## Success Criteria
+
+Framework review is complete when:
+
+- [ ] Lug processes correctly through framework
+- [ ] Bootstrap approach validated as best practice
+- [ ] Integration patterns standardized
+- [ ] Documentation aligned with framework standards
+- [ ] Testing strategy approved
+- [ ] Deployment guidance enhanced
+- [ ] Any other improvements identified and applied
+
+## Next Steps (After Review)
+
+1. **Move lug from inbox → processed** (once reviewed)
+2. **Apply recommended improvements** to all files
+3. **Update spoke version** if significant changes
+4. **Consider promotion** to framework core spokes
+5. **Share with community** once stable
+
+## Questions for Framework
+
+1. What's the standard process for reviewing new spoke lugs?
+2. Should all spokes follow the best/base variant pattern?
+3. How do we handle spoke-to-spoke dependencies?
+4. Is there a framework-level testing requirement?
+5. What deployment platforms should we recommend?
+6. Should dogfooding be mandatory for all spokes?
+7. How do we contribute learnings back to framework?
+
+---
+
+**Thank you for reviewing the Tracks spoke bootstrap!** 🎉
+
+This is the second offering from Wheelwright (after PathFinder). Your feedback will help make Tracks a valuable addition to the ecosystem.
+
+---
+
+*Signal created by Sparky (code-puppy-025510)*

@@ -1,0 +1,22 @@
+{
+  "id": "shipit-makefile-quality-gate-v1",
+  "type": "signal",
+  "title": "Shipit Quality Gate - Makefile Auto-Detection",
+  "status": "published",
+  "description": "Shipit quality gate enabled via Makefile auto-detection. Tests now enforced before every commit. Closes gap where shipit Step 5a was skipping tests due to no pytest.ini/package.json/Makefile. Framework incident: commit f7cf94c pushed with 126 validation errors that should have been caught by shipit.",
+  "impact": 9,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-19T18:27:17.081425+00:00",
+  "session_id": "session-20260319-wakeup",
+  "rationale": "Critical quality gate was defined but not active. Prevents broken code from entering git history. Affects all spokes with test suites.",
+  "tags": [
+    "quality-gates",
+    "shipit",
+    "testing",
+    "prevention"
+  ],
+  "teaching_source": "hub/framework/shipit-makefile-quality-gate-v1.md.teaching",
+  "already_implemented": true,
+  "verified_working": true
+}

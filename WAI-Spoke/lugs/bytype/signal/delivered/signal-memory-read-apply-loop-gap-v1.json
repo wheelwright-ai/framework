@@ -1,0 +1,26 @@
+{
+  "id": "signal-memory-read-apply-loop-gap-v1",
+  "type": "signal",
+  "status": "undelivered",
+  "created": "2026-03-26T00:05:00Z",
+  "title": "Memory write is half the loop \u2014 read-and-apply discipline is the other half",
+  "body": "Saving to memory and writing signals is only useful if the reading side is equally disciplined. The gap: an agent can save a feedback entry, then open the next session with the same bad impulse because MEMORY.md is loaded but not meaningfully acted on. The fix-impulse overrides the framing in the moment. Historian watching tracks helps but only if historian review is triggered and its output is acted on. This is a framing and protocol design problem: wakeup loads MEMORY.md but there is no enforcement that behavioral feedback entries actually shape in-session decisions. The loop is: write \u2192 load \u2192 apply. Currently strong on write, partial on load, weak on apply. The protocol needs a mechanism that closes the apply step \u2014 not just surfaces the memory but ties it to in-session behavior checks.",
+  "impact": 8,
+  "source": "session-81-framework",
+  "tags": [
+    "memory",
+    "learning-loop",
+    "historian",
+    "discipline",
+    "protocol-design"
+  ],
+  "routing": {
+    "intent": "framework-protocol-gap",
+    "suggested_home": "wai-principles.md or historian skill",
+    "adoption_path": "framework-spoke formal session"
+  },
+  "va": "think",
+  "s": "delivered",
+  "delivered_at": "2026-03-30T02:10:00Z",
+  "delivered_by": "session-20260329-2315"
+}

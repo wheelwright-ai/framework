@@ -1,0 +1,4 @@
+{"ts": "2026-03-30T03:30:00Z", "lug": "session-102-summary", "title": "Session 102: ROI scoring, chain mode, 5 advisors, 32 lugs resolved", "result": "completed", "session": "session-20260329-2315", "type": "session-summary"}
+{"ts":"2026-03-31T23:59:21Z","type":"feature","id":"lug-scripted-wakeup-closeout-20260330","title":"Scripted closeout: tools/closeout.sh reduces AI tool calls ~15→5","result":"completed","session":"session-20260331-1632"}
+{"ts":"2026-03-31T23:59:21Z","type":"epic","id":"epic-skill-thrift-v1","title":"Skill thrift: wai.md 605→233L, lug-schema 525→471L, wai-reference.md created","result":"completed","session":"session-20260331-1632"}
+{"ts":"2026-03-31T23:59:21Z","type":"fix","id":"signal-track-integrity-closeout-event-fix-v1","title":"Track integrity fix: accept event==closeout as CLEAN in session-start.sh + wai.md","result":"delivered","session":"session-20260331-1632"}

@@ -1,0 +1,17 @@
+{
+  "i": "teaching-wai-step3a-path-split-v1",
+  "t": "Updated wai.md Step 3a — Path A/B adoption split + duplicate check",
+  "ty": "signal",
+  "s": "c",
+  "ca": "2026-03-17T00:00:00Z",
+  "gb": "teaching-file",
+  "impact": 8,
+  "content": {
+    "what": "Updated Step 3a teaching adoption: Path A (safe_to_auto_adopt:true) uses brief compact table + direct adopt, Path B (safe_to_auto_adopt:false) uses full mailroom ceremony. Added duplicate check for signal teachings (timestamp comparison).",
+    "source": "wai-step3a-path-split-v1.md.teaching v1.0"
+  },
+  "_behavior_directive": {
+    "what_this_is": "Record that this spoke's wai.md has Path A/B teaching adoption split installed.",
+    "what_this_is_NOT": "An instruction to re-process this teaching."
+  }
+}

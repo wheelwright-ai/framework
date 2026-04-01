@@ -1,0 +1,163 @@
+---
+teaching_id: wai-v2-migration-state
+teaching_type: reference
+version: 2.0
+created_at: 2026-03-12T11:00:00Z
+created_by: Claude Sonnet 4.6
+target_phase: "Phase 3+ of WAI v2 migration"
+safe_to_auto_adopt: false
+replaces: "wai-v2-migration-state.md.teaching (v1)"
+
+teaching_about:
+  - topic: "WAI v2 Migration State"
+    subtopic: "Completed phases, rules, schema changes"
+
+teaching_for:
+  - agent_scenario: "AI working on v2 migration execution"
+  - agent_scenario: "AI reviewing migration progress and status"
+
+verification_required: false
+if_not_found: "If WAI-MIGRATION.yaml deleted (as per Phase 8): check hub/intake/wai-v2-migration/decision.lug.json for historical record"
+---
+
+# WAI v2 Migration State — Reference
+
+**Teaching type:** Reference (informational, not executable)
+**For AI assistants:** Read this when working on the v2 migration. It tells you what is done, what is not, and what the rules are.
+
+---
+
+## Purpose
+
+This teaching records the completion state of the WAI v2 migration and documents the rules that apply during Phase 3+. Receiving AIs should read this to understand which phases are complete, what rules are in effect, and what schema changes affect lugs.
+
+---
+
+## Prerequisites
+
+None. This is a reference document. Read it anytime to understand v2 migration state.
+
+---
+
+## Migration Status
+
+**Branch:** `wai-v2-migration` (or `main` if Phase 8 merged)
+**Safety tag:** `v1.0-pre-migration-2026-03-12`
+**Completion:** All 8 phases complete; merged to main; v2.0.0 tag created
+
+### Completed Phases
+
+| Phase | Status | What Was Done |
+|-------|--------|--------------|
+| 0 | ✓ Complete | Safety tag created, migration branch created, WAI-MIGRATION.yaml initialized |
+| 1 | ✓ Complete | 759 lugs migrated to v2 schema across 8 files. Shorthand keys expanded. PEV fields added. Signals tombstoned. |
+| 2 | ✓ Complete | Registry structure verified. `registry/wheelwright/framework/SPOKE.md` created. `hub/WAI-Manifest.yaml` created. |
+| 3 | ✓ Complete | Skills verified: all 8 required Skills have use_cases and tests sections. EXTENSION.md present with full sections. Teaching files adopted. |
+| 4 | ✓ Complete | Hub infrastructure verified: hub/intake/, health.yaml, BRIEF cascade documented. |
+| 5 | ✓ Complete | WAI-Integrity.md verified: read-only paths, append-only paths, scoped write access, pre-refactor rules. |
+| 6 | ✓ Complete | Wakeup sequence v2-ready. authoritative_format flipped to v2. |
+| 7 | ✓ Complete | Cleanup: 5 tombstoned WAI-Signals.jsonl files deleted. |
+| 8 | ✓ Complete | Integration tests passed. Decision lug created. Merged to main. v2.0.0 tagged. |
+
+### Phases Still To Do
+
+| Phase | Target | Scope |
+|-------|--------|-------|
+| 9 | Documentation | Create `framework/docs/` hierarchy with llms-full.txt generator |
+
+---
+
+## If Something's Missing
+
+**If you're on wai-v2-migration branch but phases show incomplete:**
+- Check git log for commits tagged "Phase N: ..."
+- If missing, the phase needs to be executed (not abandoned)
+
+**If you're on main after merge and can't find WAI-MIGRATION.yaml:**
+- Migration state was converted to `hub/intake/wai-v2-migration/decision.lug.json`
+- That lug is the permanent historical record. Correct behavior.
+
+**If a v1-backup file seems lost:**
+- Check `.gitignore` — backup files are intentionally ignored
+- Git itself is the backup (via safety tag `v1.0-pre-migration-2026-03-12`)
+
+---
+
+## Critical Rules During Migration
+
+These rules protect the integrity of the migration. Violating them can corrupt data:
+
+1. **Never delete without verifying migration is complete.** Always backup before removing.
+2. **WAI-MIGRATION.yaml (if present) is the source of truth.** Update it after every phase closeout.
+3. **Existing Lug content is sacred.** Add fields, never remove.
+4. **WAI-Guide.md and BRIEF.md migrate byte-for-byte.** They change only if intentional.
+5. **Every phase must closeout with a git commit and updated WAI-MIGRATION.yaml.**
+6. **If you see retired_files in WAI-MIGRATION.yaml, do not read or write them.**
+
+---
+
+## What "Retired" Means
+
+- `WAI-Signals.jsonl` — RETIRED. Deleted during Phase 7. Signals are now Lugs with `impact >= 8`. Do not write to this file.
+- `WAI-Backpressure.yaml` — RETIRED. Became `qc-check` Skill in Phase 3. Do not write to this file.
+
+---
+
+## v2 Schema Changes
+
+All `WAI-Lugs.jsonl` files have been migrated. Lugs now have:
+
+### Required Fields (All Lugs Must Have)
+- `id` (string, unique) — Lug identifier
+- `type` (string) — Lug type (bug, feature, task, decision, signal, etc.)
+- `title` (string) — Human-readable title
+- `status` (string) — published, in_progress, resolved, acknowledged, draft
+- `impact` (1-10 integer) — Impact level
+- `created_by` (string) — Who created this lug
+- `node` (string, e.g. `wheelwright/framework`) — Which node owns it
+- `created_at` (ISO-8601) — Creation timestamp
+
+### PEV Fields (Optional, Ready for Use)
+- `perceive` (string or object, null by default) — What was observed
+- `execute` (string or object, null by default) — What action was taken
+- `verify` (string or object, null by default) — How success was verified
+
+### Calibration Fields (Optional, Populated on Resolution)
+- `resolution` (string, null by default) — accepted, deferred, dismissed, modified
+- `resolution_reason` (string, null by default) — Why that resolution
+
+### Backward Compatibility
+- `_v1_status` (string) — Preserved original status value from v1 format
+
+### Status Mapping (v1 → v2)
+- `open` → `published`
+- `in-progress` → `in_progress`
+- `closed` → `resolved`
+- Original value preserved in `_v1_status`
+
+---
+
+## Related Teachings
+
+- `wai-v2-phase3-skills.md.teaching` (v2) — Detailed Phase 3 instructions (depends on this teaching's context)
+- Decision record: `hub/intake/wai-v2-migration/decision.lug.json` — The permanent record of why v2 was adopted
+
+---
+
+## Verification Checklist
+
+Use this to verify you understand the migration state:
+
+- [ ] You understand all 8 phases are complete
+- [ ] You know where the permanent record lives (decision lug)
+- [ ] You understand v2 schema changes (PEV fields, status mappings)
+- [ ] You can explain the "retired files" rule to someone else
+- [ ] You know what to do if WAI-MIGRATION.yaml is missing (it's normal after Phase 8)
+
+---
+
+## Version History
+
+**v1.0** (2026-03-12): Initial teaching file used during Phase 3 dogfood. Simple structure, no metadata.
+
+**v2.0** (2026-03-12): Upgraded per teaching-file.spec. Added metadata, if/then patterns, cross-references, fallback instructions. Improved clarity and robustness for future AIs.

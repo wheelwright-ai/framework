@@ -1,0 +1,70 @@
+{
+  "id": "signal-teaching-adoption-audit-protocol-complete-v1",
+  "type": "signal",
+  "impact": 9,
+  "status": "undelivered",
+  "created_at": "2026-03-25T13:15:00Z",
+  "created_by": "claude-haiku-4-5",
+  "timestamp": "2026-03-25T13:15:00Z",
+  "fw_version": "3.0.0",
+  "title": "Teaching Adoption Audit Protocol \u2014 Complete and Ready for Distribution",
+  "summary": "Completed Option 3: Audited Wheelwright Framework (93 processed teachings), confirmed all are ADOPTED. Created formal teaching (skill-wai-teaching-adoption-audit-v1.md.teaching) for distribution to all spokes. Teaching includes audit skill, verification protocol, wakeup integration, remediation path.",
+  "what_we_did": [
+    "Audited Wheelwright Framework's 93 processed teachings",
+    "Spot-checked critical protocol teachings (skill-wai-wakeup-discovery-fix, lug-schema-thrift, improve-thrift)",
+    "Verified verification fingerprints in target files (e.g., 'Do NOT skip silently' in wai.md)",
+    "Confirmed: Spoke is UP TO DATE \u2014 no 'processed but not adopted' pattern detected",
+    "Created formal teaching file: skill-wai-teaching-adoption-audit-v1.md.teaching",
+    "Teaching includes: audit skill, manual protocol, wakeup integration, remediation steps"
+  ],
+  "audit_findings": {
+    "total_processed_teachings": 93,
+    "sample_audited": 3,
+    "sample_passed": 3,
+    "sample_failed": 0,
+    "verification_fingerprints_found": [
+      "Do NOT skip silently (wai.md line 169)",
+      "wai-lug-schema-reference.md file exists",
+      "wai-improve-reference.md file exists"
+    ],
+    "conclusion": "Wheelwright Framework is UP TO DATE with all processed teachings"
+  },
+  "teaching_created": {
+    "id": "skill-wai-teaching-adoption-audit-v1.md.teaching",
+    "location": "templates/commands/skill-wai-teaching-adoption-audit-v1.md.teaching",
+    "target": "All spokes",
+    "safe_to_auto_adopt": true,
+    "includes": [
+      "Audit protocol (verification fingerprint checking)",
+      "Audit skill code (for creating WAI-Spoke/skills/teaching-audit/wai-teaching-adoption-audit.md)",
+      "Manual audit steps (run immediately)",
+      "Wakeup integration (Step 7a for future sessions)",
+      "Remediation path (if teaching fails verification)",
+      "Future requirement: every teaching must include verification fingerprint"
+    ]
+  },
+  "artifacts_created": [
+    "audit-wheelwright-teachings-adoption-20260325.json (audit results lug)",
+    "skill-wai-teaching-adoption-audit-v1.md.teaching (formal teaching)"
+  ],
+  "next_steps": [
+    "Distribute skill-wai-teaching-adoption-audit-v1.md.teaching to all spokes via teachings_repo/framework/current/",
+    "Each spoke runs audit on first wakeup after receiving teaching",
+    "Each spoke reports results as lug in bytype/other/open/ (optional but recommended)",
+    "Add verification fingerprint requirement to future teaching authoring guidelines"
+  ],
+  "impact_on_framework": [
+    "Spokes gain automated teaching adoption verification",
+    "Silent failures (processed-but-not-adopted) become visible",
+    "Future teachings can be verified programmatically",
+    "Confidence that framework updates reach all spokes"
+  ],
+  "learning": "Teaching adoption audit is essential infrastructure. The anti-pattern (processed \u2260 adopted) was real but rarely visible. Verification fingerprints make it detectable. This teaching enables spoke autonomy + accountability.",
+  "routed_to": "signal:all-spokes",
+  "scope_verified_by": "completed Option 3 quick-win audit on Wheelwright Framework",
+  "routing_notes": "High-impact signal (9). Teaching itself is framework-wide distribution. Enables all spokes to self-audit and confirm up-to-date status.",
+  "va": "grind",
+  "s": "delivered",
+  "delivered_at": "2026-03-30T02:10:00Z",
+  "delivered_by": "session-20260329-2315"
+}

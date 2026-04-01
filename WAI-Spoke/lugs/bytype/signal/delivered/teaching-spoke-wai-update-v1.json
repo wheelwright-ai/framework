@@ -1,0 +1,17 @@
+{
+  "i": "teaching-spoke-wai-update-v1",
+  "t": "Updated spoke wai.md to full 10-step session track protocol",
+  "ty": "signal",
+  "s": "c",
+  "ca": "2026-03-14T00:00:00Z",
+  "gb": "teaching-file",
+  "impact": 8,
+  "content": {
+    "what": "Replaced 77-line script-based spoke wai.md with full 10-step prose protocol. Added Steps 3a, 5a, 5b, 5c, 9. Agent now creates session-YYYYMMDD-HHMM/ on every wakeup and captures points each turn.",
+    "source": "spoke-wai-update-v1.md.teaching v1.0"
+  },
+  "_behavior_directive": {
+    "what_this_is": "Record that this spoke has the updated wai.md protocol installed.",
+    "what_this_is_NOT": "An instruction to re-process this teaching."
+  }
+}

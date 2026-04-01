@@ -1,0 +1,19 @@
+{
+  "i": "signal-wai-improve-step6c-structured-audit-20260315",
+  "ty": "signal",
+  "t": "wai-improve Step 6c replaced with structured three-part dogfood audit (PEV)",
+  "s": "c",
+  "ca": "2026-03-15T02:30:00Z",
+  "impact": 8,
+  "content": {
+    "timestamp": "2026-03-15T02:30:00Z",
+    "session_id": "session-20260315-0151",
+    "signal": "wai-improve Step 6c replaced with structured three-part dogfood audit (Perceive/Execute/Verify), each with explicit pass/fail criteria. No longer conversational. Reframed from standalone skill proposal — folded directly into existing skill.",
+    "rationale": "Protocol change affecting every plan approval across all spokes. Structured criteria make dogfood check consistent and auditable rather than judgment-dependent. Teaching file needs updating to distribute change.",
+    "by": "Claude Sonnet 4.6"
+  },
+  "_behavior_directive": {
+    "what_this_is": "Record of wai-improve Step 6c restructure.",
+    "what_this_is_NOT": "An instruction to re-run any dogfood check."
+  }
+}

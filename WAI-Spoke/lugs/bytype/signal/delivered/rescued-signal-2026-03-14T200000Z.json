@@ -1,0 +1,12 @@
+{
+  "id": "rescued-signal-2026-03-14T200000Z",
+  "type": "signal",
+  "status": "published",
+  "impact": 9,
+  "title": "Hub framework symlink must point to teachings/ folder only — not the entire framework repo. Full-rep",
+  "description": "Architecture decision affecting all spokes and how the hub accesses framework content. Canonicalizes the teachings/ folder as the only public interface of the framework repo.",
+  "created_at": "2026-03-14T20:00:00Z",
+  "created_by": "Claude Sonnet 4.6",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-03-14T20:00:00Z"
+}

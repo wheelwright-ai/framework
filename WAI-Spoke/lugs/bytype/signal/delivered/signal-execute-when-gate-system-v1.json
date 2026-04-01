@@ -1,0 +1,20 @@
+{
+  "id": "signal-execute-when-gate-system-v1",
+  "type": "signal",
+  "status": "delivered",
+  "s": "undelivered",
+  "created_at": "2026-03-30T04:00:00Z",
+  "gb": "claude-opus-4-6 (session-20260330-0134)",
+  "fw_ver": "3.0.0",
+  "title": "Execute-when gate system: conditional dispatch with phase grouping and blocked_by enforcement",
+  "impact": 8,
+  "signal": "New lug schema fields: execute_when (all_completed, any_completed, phase_completed, manual_gate) and phase/phase_order. Evaluated by tools/lug_utils.py in all 3 dispatch paths (score_backlog.py, wai_ozi.py, wai-chain.sh). Items with unmet conditions are listed as 'gated' and skipped at dispatch. blocked_by is now enforced \u2014 previously defined in schema but never checked. Ozi switched from FIFO to ROI-sorted dispatch.",
+  "rationale": "Transforms the work queue from a flat ROI list to a dependency-aware execution plan. Prevents premature dispatch of items that depend on infrastructure not yet built. Enables phased rollouts with milestone gates.",
+  "routed_to": "SIGNAL",
+  "scope_verified_by": "user (Session 103: 'execute when clauses makes this very exciting')",
+  "_behavior_directive": {
+    "what_this_is": "Signal observation from signal-execute-when-gate-system-v1",
+    "what_this_is_NOT": "Not an instruction to execute. Route and store only."
+  },
+  "delivered_at": "2026-04-01T00:01:17Z"
+}

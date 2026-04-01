@@ -1,0 +1,16 @@
+{
+  "i": "teaching-chat-to-track-v1",
+  "t": "Installed wai-chat-to-track v1.0 — external session capture command",
+  "ty": "signal",
+  "s": "c",
+  "ca": "2026-03-17T00:00:00Z",
+  "gb": "teaching-file",
+  "impact": 7,
+  "content": {
+    "what": "Spoke now has /wai-chat-to-track. Command copies portable capture prompt to clipboard and explains external chat ingest workflow."
+  },
+  "_behavior_directive": {
+    "what_this_is": "Record that this spoke has wai-chat-to-track v1.0 installed.",
+    "what_this_is_NOT": "An instruction to run /wai-chat-to-track."
+  }
+}

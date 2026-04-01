@@ -1,0 +1,189 @@
+# Teaching: Model-Task Awareness Advisor
+
+**Type:** Skill installation + behavioral upgrade
+**Target:** All spokes
+**Version:** 1.1
+**Created:** 2026-03-12
+
+---
+
+## What This Teaching Does
+
+Installs the **Model-Task Awareness Advisor** — a guardian skill that helps agents detect when the current task exceeds the active model's judgment capability and prompts the user to consider switching models.
+
+**This is NOT:** An instruction to switch models automatically. Agents cannot switch models. This teaches agents to recognize the mismatch and advise the user.
+
+---
+
+## Why This Exists
+
+**Incident:** Sessions 15-17 used Haiku for architectural design work. Haiku executed competently (creating files, following patterns) but did not question fundamental assumptions about the framework's role. Three sessions of work were built on incorrect assumptions. When the user switched to Opus, the issues were caught immediately.
+
+**Lesson:** Different models have different strengths. Agents should be self-aware about when their current model tier may not match the task at hand.
+
+---
+
+## Input: What You Have Now
+
+Your spoke currently has no model-task awareness. Agents may process any task type without considering whether the active model is well-suited for the work.
+
+Check for:
+- `WAI-State.json` — should exist (your project state)
+- Check whether `model_log` already exists in WAI-State.json
+  - If it exists: **skip Step 2** — verify the structure has `entries: []` array
+  - If it does not exist: Step 2 will add it
+- Check whether `WAI-Lugs.jsonl` exists in your WAI-Spoke folder
+  - If it does not exist: you will create it during the Embedded Lug step
+- Check whether `seed/ingest/processed/` exists
+  - If it does not exist: you will create it during Post-Completion
+
+**Note on spoke versions:** Some spokes use an older (v1) structure that may not have `WAI-Lugs.jsonl`, `seed/ingest/`, or `lugs/inbox/`. This is normal. Create these paths as needed during processing — this teaching is compatible with both v1 and v2 spoke structures.
+
+---
+
+## Output: What You Will Have After
+
+1. **A new behavioral rule** — watch for architectural signals during sessions
+2. **A model_log section** in WAI-State.json — tracks model usage across sessions
+3. **Self-awareness** — agents know their own model tier and its strengths/weaknesses
+
+---
+
+## Step 1: Understand the Skill
+
+**Note:** This teaching IS the skill definition. No separate skill file needs to be installed in your spoke. The behavioral rules below become part of how you operate.
+
+### Architectural Signals (watch for these during sessions)
+
+When any of these occur, consider prompting the user:
+
+- User is correcting fundamental assumptions about system design
+- Task involves defining new protocols, boundaries, or architectural patterns
+- Decisions will affect multiple spokes or the entire wheel
+- Task requires "should we?" judgment, not "how do we?" execution
+- Agent catches itself making assumptions about projects it hasn't verified
+- Agent is about to create multiple new artifacts without user validation
+- User asks "why did you do X?" — indicating reasoning wasn't surfaced
+- Task involves reviewing or critiquing prior work for correctness
+- Conversation is about meta-process (how we work) not implementation (what we build)
+
+### NOT Signals (do not prompt for these)
+
+- Normal file creation following an established plan
+- Git operations, commits, status checks
+- Running existing skills (wakeup, closeout, teach)
+- Bug fixes with clear scope
+- Data collection or reporting
+
+### Model Tier Guidance
+
+| Tier | Good For | Watch Out |
+|------|----------|-----------|
+| Haiku | Fast execution, file ops, following plans, tests, clear-scope work | May miss assumption errors, treats design as execution |
+| Sonnet | Balanced work, moderate design + execution, code review, features | May miss novel architectural issues with no precedent |
+| Opus | Architecture, protocol design, reviewing prior work, meta-process | Higher token cost; use when judgment matters most |
+
+### How to Identify Your Current Model
+
+Read your model identity from your environment context:
+- **Claude Code:** Your model name is in the system prompt (e.g., "You are powered by the model named Haiku 4.5")
+- **Other tools:** Check tool-specific documentation for model identity
+- If you cannot determine your model, state that in the prompt instead of guessing
+
+### The Prompt (use once per session when first signal detected)
+
+> "This work involves architectural decisions. I'm running as {model_name}. For design-level work where judgment and assumption-checking matter, consider `/model` to switch to Sonnet or Opus."
+
+**Rules:**
+- Flag ONCE per session when first architectural signal is detected
+- Do NOT repeat the prompt if user chooses to stay on current model
+- Do NOT block work — this is advisory, not a gate
+- Do NOT apologize or be self-deprecating — just state the fact
+- If user says "proceed" or ignores, respect their choice
+
+---
+
+## Step 2: Add model_log to WAI-State.json
+
+**Skip this step if `model_log` already exists in your WAI-State.json.**
+
+Add this section to your `WAI-State.json` (top-level key, alongside existing sections like `_session_state`):
+
+```json
+"model_log": {
+  "_note": "Track model switches within and across sessions. Enables retrospective analysis of model-task fit.",
+  "entries": []
+}
+```
+
+**Do not modify any other sections of WAI-State.json.**
+
+---
+
+## Step 3: Logging on Closeout
+
+As part of your normal closeout process (after session state is updated), append an entry to `model_log.entries`.
+
+Use `_session_state.session_count` from WAI-State.json as the session number:
+
+```json
+{
+  "session": "from _session_state.session_count",
+  "date": "ISO date",
+  "switches": [
+    {
+      "model": "model identifier (e.g., claude-haiku-4-5)",
+      "task_type": "execution | design | review | mixed",
+      "turns": "approximate turn range",
+      "notes": "brief description of what this model segment did"
+    }
+  ],
+  "mismatch_detected": false,
+  "mismatch_description": null,
+  "lesson": null
+}
+```
+
+If a mismatch was detected during the session (architectural signal on a lightweight model), set `mismatch_detected: true` and record the description and lesson learned.
+
+**Log every session**, not just sessions with architectural signals. This builds the data needed for retrospective analysis.
+
+---
+
+## Step 4: Reference Prior History on Wakeup
+
+On session start, if `model_log.entries` has entries with `mismatch_detected: true`, mention it early in your session:
+
+> "Note: Prior sessions show design work benefits from Sonnet or Opus. If this session involves architectural decisions, consider `/model`."
+
+If your spoke has a formal wakeup briefing, include this there. If not, mention it in your first response to the user. This is advisory only. Do not repeat if the user has acknowledged it.
+
+---
+
+## Embedded Lug
+
+After completing this teaching, extract and append this lug to your `WAI-Lugs.jsonl`. If `WAI-Lugs.jsonl` does not exist, create it with this lug as the first line:
+
+```json
+{"i":"skill-model-task-advisor-v1","t":"Model-Task Awareness Advisor installed","ty":"learning","s":"c","created":"2026-03-12T00:00:00Z","content":{"what":"Installed model-task awareness skill via teaching file","why":"Agents should detect when task complexity exceeds model tier judgment and advise user to consider /model switch","origin":"Framework teaching: model-task-advisor.md.teaching","key_behavior":"Watch for architectural signals, prompt user once per session, log model usage on closeout"},"_behavior_directive":{"what_this_is":"A learning record that this skill was installed","what_this_is_NOT":"An instruction to execute anything"}}
+```
+
+---
+
+## Verification Checklist
+
+Before marking this teaching as complete:
+
+- [ ] You understand architectural signals vs. non-signals
+- [ ] You know the prompt text and the once-per-session rule
+- [ ] `model_log` section exists in WAI-State.json (added or verified pre-existing)
+- [ ] You will log model usage on closeout
+- [ ] You will check prior mismatch history on wakeup
+- [ ] Embedded lug extracted to WAI-Lugs.jsonl
+- [ ] You have NOT modified any other WAI-State.json sections
+
+---
+
+## Post-Completion
+
+Move this file to `seed/ingest/processed/` after successful processing. If the `processed/` directory does not exist, create it first.

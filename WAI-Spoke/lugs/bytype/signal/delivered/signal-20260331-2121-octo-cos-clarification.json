@@ -1,0 +1,13 @@
+{
+  "id": "signal-20260331-2121-octo-cos-clarification",
+  "type": "signal",
+  "status": "delivered",
+  "timestamp": "2026-03-31T21:21:00Z",
+  "session_id": "session-20260331-1403",
+  "signal": "Octo role clarification: Octo is the hub equivalent of Ozi (Chief of Staff), not just a briefing aggregator. Octo v1 (advisory-only) is foundation; Octo v2 must add hub work queue, council dispatch, and escalation routing to make the pipeline operational.",
+  "impact": 9,
+  "rationale": "Fundamental architectural clarification. Octo v1 watches the wheel; Octo v2 steers it. Without v2 the council produces reports but takes no action.",
+  "by": "claude-sonnet-4-6",
+  "target": "framework",
+  "delivered_at": "2026-04-01T00:01:17Z"
+}

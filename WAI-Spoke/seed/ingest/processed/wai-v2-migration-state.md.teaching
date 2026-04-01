@@ -1,0 +1,67 @@
+# WAI v2 Migration — Current State
+
+**Teaching type:** Migration state briefing
+**For AI assistants:** Read this when working on the v2 migration. It tells you what is done, what is not, and what the rules are.
+
+---
+
+## Migration Status
+
+**Branch:** `wai-v2-migration`
+**Migration file:** `WAI-MIGRATION.yaml` (at repo root — read this first on every session)
+**Safety tag:** `v1.0-pre-migration-2026-03-12`
+
+### Completed Phases
+
+| Phase | What Was Done |
+|-------|--------------|
+| 0 | Safety tag created, migration branch created, WAI-MIGRATION.yaml initialized |
+| 1 | 759 lugs migrated to v2 schema across 8 files. Shorthand keys expanded. PEV fields added. Signals tombstoned. |
+| 2 | Registry structure verified. `registry/wheelwright/framework/SPOKE.md` created. `hub/WAI-Manifest.yaml` created. |
+
+### Phases Still To Do
+
+| Phase | What Needs To Happen |
+|-------|---------------------|
+| 3 | Skills directory + EXTENSION.md per spoke |
+| 4 | Hub infrastructure (largely done on main already — verify) |
+| 5 | WAI-Integrity.md (already exists at hub/ — verify) |
+| 6 | Wakeup sequence update |
+| 7 | Cleanup retired files |
+| 8 | Integration test + merge to main |
+| 9 | Documentation structure |
+
+---
+
+## Critical Rules During Migration
+
+1. **Never delete without verifying migration is complete.** Always backup before removing.
+2. **WAI-MIGRATION.yaml is the source of truth.** Update it after every phase closeout with the commit hash.
+3. **Existing Lug content is sacred.** Add fields, never remove.
+4. **WAI-Guide.md and BRIEF.md migrate byte-for-byte.**
+5. **Every phase must closeout with a git commit and updated WAI-MIGRATION.yaml.**
+6. **If you see retired_files in WAI-MIGRATION.yaml, do not read or write them.**
+
+---
+
+## What "Retired" Means
+
+- `WAI-Signals.jsonl` — RETIRED. Tombstoned. Signals are now Lugs with `impact >= 8`. Do not write to this file.
+- `WAI-Backpressure.yaml` — Will be RETIRED in Phase 3. Becomes a `qc-check` Skill.
+
+---
+
+## v2 Schema Changes (What Is Different Now)
+
+All `WAI-Lugs.jsonl` files have been migrated. Lugs now have:
+- Full field names (`id`, `type`, `title`, `status`) instead of shorthand (`i`, `ty`, `t`, `s`)
+- `impact` (1-10 integer) — required
+- `created_by` (string) — required
+- `node` (string, e.g. `wheelwright/framework`) — required
+- `created_at` (ISO 8601) — required
+- `perceive`, `execute`, `verify` (optional PEV fields, null by default)
+- `resolution`, `resolution_reason` (calibration fields, null until resolved)
+- `_v1_status` — preserved original status value for backward reference
+
+Status values are now: `published`, `in_progress`, `resolved`, `acknowledged`, `draft`
+(Old values `open`, `in-progress`, `closed` were mapped and preserved in `_v1_status`)

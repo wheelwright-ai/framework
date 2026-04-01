@@ -1,0 +1,28 @@
+# Teaching: Signal — Shipit Quality Gates enforced: wai-shipit.md Step 5-6 now ma...
+
+**Type:** signal
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+
+## Embedded Signal
+
+```json
+{
+  "timestamp": "2026-03-17T20:00:00Z",
+  "session_id": "session-20260317-wai-wakeup",
+  "signal": "Shipit Quality Gates enforced: wai-shipit.md Step 5-6 now mandatory with auto-abort on test/lint failures. Auto-detection for pytest/npm test/make test + ruff/flake8/eslint. Benchmark regression detection with user acknowledgment (abort/continue+log/update-baseline). Override mechanism via env vars (SHIPIT_SKIP_TESTS, SHIPIT_SKIP_LINT, SHIPIT_FORCE) for emergencies. Exit codes enforced: 0=pass, non-zero=abort. Clear failure reporting with first 5 test failures shown. Pattern: Quality gates catch issues before git history, not after.",
+  "impact": 9,
+  "rationale": "Fundamental change to shipit workflow - prevents broken code from entering git history. Affects all future commits across all spokes. Auto-detection makes it work out-of-box for Python/Node projects. Emergency overrides preserve flexibility while logging technical debt.",
+  "by": "Claude Sonnet 4.5",
+  "lug_id": "4f8a2e7520ba"
+}
+```
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

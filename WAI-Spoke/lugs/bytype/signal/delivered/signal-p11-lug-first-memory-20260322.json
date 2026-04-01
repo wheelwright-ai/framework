@@ -1,0 +1,21 @@
+{
+  "id": "signal-p11-lug-first-memory-20260322",
+  "type": "signal",
+  "title": "P11: Lug-First Memory — lugs outlive sessions, task tools and md files don't",
+  "description": "Lugs are the only durable memory layer in this system. Lugs are JSONL records in WAI-Spoke/WAI-Lugs.jsonl — the only storage the wakeup protocol reads at session start. Claude Code Task tools (TaskCreate etc.) do not survive session ends and are invisible to future agents. Standalone .md files are not indexed at wakeup and require knowing they exist to find them. When a session is interrupted, the next agent starts blind unless work state is in a lug. Store work intent, decisions, progress, open questions, and subagent dispatch prompts in a lug. The field workflow.subagent_prompt is the correct place for subagent prompts. Trigger: any time you are about to call TaskCreate, write a scratch .md file, or hold state in your head across a multi-step operation — stop, create or update a lug instead. Demonstrated: after session interruption, a subagent prompt was recovered intact from workflow.subagent_prompt on a lug. The equivalent in a Task would have been lost. Added as P11 to wai-principles.md.",
+  "impact": 9,
+  "status": "published",
+  "created_by": "claude-sonnet-4-6",
+  "created_at": "2026-03-22T00:00:00Z",
+  "session_id": "session-20260322-0000",
+  "node": "wheelwright/framework",
+  "rationale": "User demonstrated this principle directly: canonical revision session was interrupted, and the subagent prompt was recoverable only because it was embedded in the lug. Equivalent data in a Task or .md would have been unrecoverable. This is now P11 in wai-principles.md.",
+  "tags": [
+    "memory",
+    "lugs",
+    "principles",
+    "p11",
+    "session-continuity"
+  ],
+  "dogfood_notes": "Reviewed by cold-start subagent. Gaps fixed: added structural definition of lugs, front-loaded failure mode, added explicit trigger, added minimal example in principles file."
+}

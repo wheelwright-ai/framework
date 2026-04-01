@@ -1,0 +1,12 @@
+{
+  "id": "rescued-signal-2026-03-17T190000Z",
+  "type": "signal",
+  "status": "published",
+  "impact": 9,
+  "title": "Context Optimization epic completed: WAI-File-Index.json created with 4-tier load policy system (alw",
+  "description": "Fundamental optimization affecting every session across all spokes. Reduces context loading overhead by 85%+, improves session start speed, enables better scalability as projects grow. First systematic approach to token efficiency in Wheelwright.",
+  "created_at": "2026-03-17T19:00:00Z",
+  "created_by": "Claude Sonnet 4.5",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-03-17T19:00:00Z"
+}

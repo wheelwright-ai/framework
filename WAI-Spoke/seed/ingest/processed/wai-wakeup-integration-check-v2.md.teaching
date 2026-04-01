@@ -1,0 +1,165 @@
+# Teaching: WAI Wakeup Integration File Check v2.0
+
+**Target:** All spokes and hub  
+**Affects:** `WAI-Spoke/commands/wai.md` (or `WAI-Hub/commands/wai.md`)  
+**Type:** Skill enhancement  
+**Safe to auto-adopt:** true  
+**Version:** 2.0  
+**Created:** 2026-03-17  
+**Author:** Mario Vaccari + Claude Sonnet 4.5
+
+---
+
+## Prerequisites
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| Path split applied | `grep -q "safe_to_auto_adopt: true.*brief prompt" WAI-Spoke/commands/wai.md && echo PASS \|\| echo FAIL` | Step 0a requires Path A/B split already in place |
+
+## Batch Sequence
+**Batch:** wai-core-fixes
+**Apply order:** 3 of 3
+**Depends on:** wai-step3a-path-split-v1
+**Required before:** none
+**Parallel safe:** no — final step in wakeup core fix chain
+**Full batch order:** skill-wai-wakeup-discovery-fix-v1 → wai-step3a-path-split-v1 → wai-wakeup-integration-check-v2
+
+---
+
+## What This Teaching Does
+
+Adds **Step 0a: Check Integration File** to the wakeup protocol to ensure every agent reads their tool-specific configuration file (CLAUDE.md, GEMINI.md, etc.) during wakeup.
+
+This closes a gap where AGENTS.md references tool-specific files but the wakeup protocol doesn't enforce checking them.
+
+---
+
+## Challenge This Solves
+
+**Problem:** Agents may miss tool-specific configuration instructions because:
+1. AGENTS.md is injected via system prompt but references tool-specific files
+2. Wakeup protocol (wai.md) doesn't explicitly require reading them
+3. Result: Agent may skip CLAUDE.md/GEMINI.md even though they contain critical instructions
+
+**Solution:** Add explicit integration file check as Step 0a in wakeup protocol.
+
+---
+
+## Implementation
+
+### Location
+
+Edit: `WAI-Spoke/commands/wai.md` (or `WAI-Hub/commands/wai.md` for hub)
+
+### Change
+
+**Insert after line 22 ("Follow these steps in order. Produce the complete briefing at the end.") and before "### Step 1: Load Project Identity":**
+
+```markdown
+### Step 0a: Check Integration File (Tool-Specific Instructions)
+
+Detect your execution environment and read the corresponding integration file:
+
+**Tool detection:**
+- Claude Code → read `CLAUDE.md` (if exists)
+- Gemini CLI → read `GEMINI.md` (if exists)  
+- GitHub Copilot → read `WAI-Spoke/copilot-instructions.md` (if exists)
+- Cline, Roo Codebase, Windsurf, Cursor → read `AGENTS.md` only (universal fallback)
+
+**If integration file exists:**
+- Read it fully before proceeding
+- Apply any tool-specific wakeup directives (hook behavior, command aliases, etc.)
+- Note any tool-specific constraints (e.g., complexity gate, session tracking path)
+
+**If integration file missing:**
+- Continue with universal protocol from AGENTS.md
+- Proceed to Step 1
+
+**Rationale:** Integration files contain tool-specific hooks, commands, and behavioral tuning that may affect how wakeup is executed or reported. Reading them ensures consistency across tools.
+```
+
+### Full Step Sequence After Change
+
+- Step 0a: Check Integration File (NEW)
+- Step 1: Load Project Identity
+- Step 2: Check Git Status
+- Step 3: Check Hub Connection
+- Step 3a: Check Hub for New Teachings
+- Step 4: Query Active Work
+- Step 5: Detect Autosave Checkpoints
+- Step 5a: Read Session Track
+- Step 5b: Read Taste Files
+- Step 5c: Check Historian Threshold
+- Step 6: Detect Pending Teachings
+- Step 7: Context Health
+- Step 8: Show Next Actions
+- Step 9: Initialize Session Track
+- Step 10: Show Available Skills
+
+---
+
+## Behavioral Implication
+
+**Before:** Agent might skip CLAUDE.md even though it contains session tracking path or complexity gate instructions.
+
+**After:** Agent always checks for tool-specific integration file and reads it before proceeding with wakeup steps.
+
+**Impact:** Low-risk addition. Reading an extra file (50-100 lines) adds minimal overhead but ensures tool-specific instructions are never missed.
+
+---
+
+## Verification
+
+After adopting this teaching:
+
+```bash
+grep -n "Step 0a: Check Integration File" WAI-Spoke/commands/wai.md
+```
+
+Should return a line number. If empty, teaching was not applied.
+
+---
+
+## Adoption Instructions
+
+**For spokes:**
+1. Open `WAI-Spoke/commands/wai.md`
+2. Insert Step 0a after line 22 (before Step 1)
+3. Move to `WAI-Spoke/seed/processed/wai-wakeup-integration-check-v2.md.teaching`
+4. Append signal to `WAI-Spoke/WAI-Signals.jsonl`:
+
+```json
+{
+  "i": "teaching-wai-wakeup-integration-check-v2",
+  "t": "Installed wai-wakeup integration check v2.0",
+  "ty": "signal",
+  "s": "c",
+  "ca": "YYYY-MM-DDTHH:MM:SSZ",
+  "gb": "teaching-file",
+  "impact": 7,
+  "content": {
+    "what": "Wakeup protocol now checks tool-specific integration files (CLAUDE.md, GEMINI.md, etc.) before Step 1. Ensures tool-specific instructions are never skipped.",
+    "source": "wai-wakeup-integration-check-v2.md.teaching v2.0"
+  },
+  "_behavior_directive": {
+    "what_this_is": "Record that this spoke has wakeup integration file check installed.",
+    "what_this_is_NOT": "An instruction to re-read integration files multiple times per session."
+  }
+}
+```
+
+**For hub:**
+1. Same as spoke but edit `WAI-Hub/commands/wai.md`
+2. Record in `WAI-Hub/WAI-Signals.jsonl`
+
+---
+
+## Changelog
+
+**v2.0 (2026-03-17):**
+- Initial release
+- Adds Step 0a to wakeup protocol
+- Supports Claude Code, Gemini CLI, GitHub Copilot, and universal fallback
+
+---
+
+*Wheelwright Framework — Wakeup Protocol Enhancement*

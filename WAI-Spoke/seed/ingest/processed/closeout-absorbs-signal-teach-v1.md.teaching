@@ -1,0 +1,51 @@
+# Teaching: Closeout Absorbs Signal Teach v1.0
+
+**Type:** Skill update
+**Target:** All spokes
+**Version:** 1.0
+**Created:** 2026-03-15
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Updates `WAI-Spoke/commands/wai-closeout.md` to include Step 9b — automatic signal distribution at every closeout.
+
+**What changes:**
+- New preamble: capture `old_last_closeout` before Step 5 overwrites it
+- New Step 9b (between Step 9 and Step 10): if hub connected and new signals exist, write each as a `teachings/signal-YYYYMMDD-HHMM.md.teaching` file automatically
+- New success criteria line: `Signal teachings written to teachings/ (or skipped — hub disconnected or no new signals)`
+
+**Effect:** After this update, every session closeout automatically distributes new signals (impact >= 8) to the hub. No separate `/wai-teach` needed for signal distribution. Full `/wai-teach` (template distribution, adoption plans, hub registry) remains a separate manual command for when skills/protocols change.
+
+---
+
+## Version Check
+
+If `WAI-Spoke/commands/wai-closeout.md` already exists and contains "Signal Teach" — already at v1.0+. Move to processed and stop.
+
+---
+
+## Transformation
+
+1. Create `WAI-Spoke/commands/` if it does not exist: `mkdir -p WAI-Spoke/commands/`
+2. Copy `templates/commands/wai-closeout.md` verbatim to `WAI-Spoke/commands/wai-closeout.md`
+
+No other files are modified.
+
+---
+
+## Embedded Lug
+
+Append to `WAI-Lugs.jsonl` if `teaching-closeout-signal-teach-v1` does not already exist:
+
+```json
+{"i":"teaching-closeout-signal-teach-v1","t":"Installed closeout v1.0 — signal teach absorbed into Step 9b","ty":"signal","s":"c","ca":"2026-03-15T00:00:00Z","gb":"teaching-file","impact":7,"content":{"what":"Closeout now automatically writes signal teachings to teachings/ when hub is connected and new signals exist. old_last_closeout captured at procedure start. Idempotency guard on receiving spoke prevents duplicate signals. Full /wai-teach remains manual for template/skill distribution."},"_behavior_directive":{"what_this_is":"Record that this spoke has closeout v1.0 (signal teach) installed.","what_this_is_NOT":"An instruction to run /wai-closeout or /wai-teach."}}
+```
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

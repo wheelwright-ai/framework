@@ -1,0 +1,30 @@
+# Teaching: Signal — core-protocol established: Plan → Epic → Dogfood → Execute. ...
+
+**Type:** signal
+**safe_to_auto_adopt:** true
+
+---
+
+## What This Teaching Does
+
+Appends a high-impact signal to `WAI-Signals.jsonl` on this spoke.
+
+Before appending: check if a signal with the same `timestamp` and `signal` text already exists in `WAI-Signals.jsonl`. If it does, skip — do not duplicate.
+
+## Embedded Signal
+
+```json
+{
+  "timestamp": "2026-03-15T01:05:00Z",
+  "session_id": "session-20260315-0029",
+  "signal": "core-protocol established: Plan \u2192 Epic \u2192 Dogfood \u2192 Execute. Any change touching 2+ files or 6+ steps requires: (1) written plan, (2) epic lug authored, (3) naive subagent receives full lug + full file content and stress-tests for ambiguity, (4) iterate until clean, (5) explicit user approval before execution. Supersedes complexity-advisor bare 'PLAN ACCEPTED' shorthand. Exception: independent parallel changes (same operation class on N files) are a single logical unit. Rejection reasons and iteration history maintained in lug review_log. Lug id: decision-plan-dogfood-execute-protocol.",
+  "impact": 9,
+  "rationale": "Governs all complex multi-file work across all sessions and models. The dogfood step is the core value \u2014 a naive agent receiving the plan plus file content will surface gaps that the authoring agent normalizes over. Plans that survive dogfood are self-contained and portable across sessions.",
+  "by": "Claude Sonnet 4.6",
+  "lug_ref": "decision-plan-dogfood-execute-protocol"
+}
+```
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

@@ -1,0 +1,26 @@
+{
+  "i": "signal-gardener-attention-frequency-v1",
+  "t": "Gardener check frequency should scale with user attention \u2014 active spokes get tended more often",
+  "ty": "signal",
+  "s": "delivered",
+  "ca": "2026-03-30T00:55:00Z",
+  "gb": "session-20260329-2315",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "va": "think",
+  "description": "The gardener currently checks all spokes on a fixed schedule. But user attention is a signal: a spoke with 4 hours of activity today needs more frequent tending (signal routing, health checks, teaching distribution) than one untouched for a week. The attention-as-metric from the PEV fractal signal should drive gardener scheduling. Hot spokes get checked more often. Cold spokes get checked less. This is the gardener PEVing its own work schedule.",
+  "connections": [
+    "signal-pev-fractal-attention-as-metric-v1",
+    "feature-advisor-data-source-autonomy-v1",
+    "project_wheel_council memory (Gardener+Lathe+Compass)"
+  ],
+  "implications": [
+    "Gardener needs access to session duration per spoke (from hub session aggregation)",
+    "Define attention tiers: hot (active today), warm (active this week), cold (>7 days)",
+    "Hot spokes: check every gardener run. Cold spokes: check weekly.",
+    "This makes gardener resources scale with actual usage, not fixed schedule"
+  ],
+  "teaching_candidate": true,
+  "delivered_at": "2026-03-30T02:10:00Z",
+  "delivered_by": "session-20260329-2315"
+}

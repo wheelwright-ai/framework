@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-02-08T19:47:45.578270",
+  "session_id": "cli-v1-parity-20260208",
+  "signal_type": "governance",
+  "impact": 9,
+  "title": "Wheelwright artifact governance implemented",
+  "pattern": "Closeout: Inventory -> Classify -> Reconcile -> Confirm",
+  "rule": "Ephemeral artifacts discarded, canonical artifacts preserved",
+  "id": "rescued-signal-2026-02-08T1947455-4",
+  "type": "signal",
+  "status": "published",
+  "rescued_from_signals": true,
+  "original_signal_timestamp": "2026-02-08T19:47:45.578270",
+  "created_at": "2026-02-08T19:47:45.578270"
+}
