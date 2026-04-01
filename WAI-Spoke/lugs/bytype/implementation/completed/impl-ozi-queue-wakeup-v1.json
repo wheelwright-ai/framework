@@ -1,7 +1,9 @@
 {
   "id": "impl-ozi-queue-wakeup-v1",
   "type": "implementation",
-  "status": "open",
+  "status": "completed",
+  "completed_at": "2026-04-01T02:35:00Z",
+  "completed_by": "gardener-nightly",
   "parent_epic": "epic-ozi-work-queue-orchestration-v1",
   "title": "Ozi Queue Phase 2: wakeup queue display + Work/Review/Auto options",
   "description": "Add Step 9 to wai.md wakeup: display work queue status (ready items + pending refinements) and offer Work / Review / Auto-chain options. Reads _work_queue from WAI-State.json (populated by Phase 1).",

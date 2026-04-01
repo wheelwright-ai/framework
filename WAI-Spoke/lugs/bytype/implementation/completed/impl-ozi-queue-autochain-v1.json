@@ -1,7 +1,9 @@
 {
   "id": "impl-ozi-queue-autochain-v1",
   "type": "implementation",
-  "status": "open",
+  "status": "completed",
+  "completed_at": "2026-04-01T02:40:00Z",
+  "completed_by": "gardener-nightly",
   "parent_epic": "epic-ozi-work-queue-orchestration-v1",
   "title": "Ozi Queue Phase 3: auto-chain dispatch + minimal context mode",
   "description": "Implement auto-chain: after completing a work item, automatically load next ready item with minimal context (~15-20k tokens instead of full ~46k wakeup). Add implementation_notes + uat_recording fields to track schema. Add Closeout Step 10: update queue state, archive completed lug, auto-prepare next item.",

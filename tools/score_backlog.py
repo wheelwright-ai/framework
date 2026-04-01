@@ -69,6 +69,19 @@ TYPE_DEFAULTS = {
 }
 
 
+def classify_readiness(lug: dict, blocked: bool) -> str:
+    """Classify lug dispatch readiness: ready / needs_refinement / blocked."""
+    if blocked:
+        return "blocked"
+    # PEV completeness: has perceive + execute + verify, or acceptance_criteria
+    has_perceive = bool(lug.get("perceive"))
+    has_execute = bool(lug.get("execute"))
+    has_verify = bool(lug.get("verify") or lug.get("acceptance_criteria"))
+    if has_perceive and has_execute and has_verify:
+        return "ready"
+    return "needs_refinement"
+
+
 def infer_leverage(lug: dict) -> float:
     """Estimate leverage multiplier from lug content."""
     text = json.dumps(lug).lower()
@@ -222,24 +235,44 @@ def update_state_work_queue(scored: list[dict], phases: list[dict]) -> None:
         return
 
     wq = state.setdefault("_work_queue", {"enabled": True})
-    # Only include dispatchable items (not blocked/gated)
+    # Include all scored items (up to 15), classify readiness
     items = []
+    ready_count = 0
+    needs_refinement_count = 0
+    blocked_count = 0
     for entry in scored[:15]:
-        if entry.get("_blocked") or entry.get("_gated"):
-            continue
+        readiness = classify_readiness(
+            entry["lug"],
+            entry.get("_blocked", False),
+        )
+        # Gated items are blocked from dispatch perspective
+        if entry.get("_gated"):
+            readiness = "blocked"
+        if readiness == "ready":
+            ready_count += 1
+        elif readiness == "needs_refinement":
+            needs_refinement_count += 1
+        else:
+            blocked_count += 1
         items.append({
             "id": entry["lug"].get("id", entry["file"].replace(".json", "")),
             "roi": entry["roi"],
             "type": entry["type"],
-            "status": "ready",
+            "status": "ready" if not (entry.get("_blocked") or entry.get("_gated")) else "gated",
+            "readiness": readiness,
             "title": entry["title"][:80],
             "phase": entry["lug"].get("phase"),
-            "tagged_next": len(items) == 0,
+            "tagged_next": len(items) == 0 and readiness == "ready",
         })
         if len(items) >= 10:
             break
 
     wq["items"] = items
+    wq["queue_state"] = {
+        "ready_count": ready_count,
+        "needs_refinement_count": needs_refinement_count,
+        "blocked_count": blocked_count,
+    }
     wq["last_scored_at"] = __import__("datetime").datetime.now(
         __import__("datetime").timezone.utc
     ).isoformat()
@@ -247,7 +280,7 @@ def update_state_work_queue(scored: list[dict], phases: list[dict]) -> None:
         wq["phases"] = phases
 
     state_file.write_text(json.dumps(state, indent=2) + "\n")
-    print(f"\n  ✅ _work_queue updated ({len(items)} items written to WAI-State.json)")
+    print(f"\n  ✅ _work_queue updated ({len(items)} items: {ready_count} ready, {needs_refinement_count} needs_refinement, {blocked_count} blocked)")
 
 
 def main():

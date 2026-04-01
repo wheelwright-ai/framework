@@ -1,7 +1,9 @@
 {
   "id": "impl-ozi-queue-schema-v1",
   "type": "implementation",
-  "status": "open",
+  "status": "completed",
+  "completed_at": "2026-04-01T02:30:00Z",
+  "completed_by": "gardener-nightly",
   "parent_epic": "epic-ozi-work-queue-orchestration-v1",
   "title": "Ozi Queue Phase 1: schema + _work_queue state",
   "description": "Extend lug schema with queue_state/readiness fields. Add _work_queue section to WAI-State.json. Update score_backlog.py to populate readiness field (ready/needs_refinement/blocked) based on PEV completeness score.",

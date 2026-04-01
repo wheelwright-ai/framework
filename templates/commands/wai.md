@@ -213,14 +213,33 @@ Ask: `Vibe? (build / fix / think / grind / ship / refine) [skip]`
 
 Store vibe in session state for ROI tiebreaking.
 
-**Two paths:**
+### Work Queue
+
+Read `_work_queue` from `WAI-State.json`. If `queue_state` exists, display:
+
+```
+Queue: {ready_count} ready | {needs_refinement_count} need refinement | {blocked_count} blocked
+```
+
+If `ready_count > 0`, show top 3 ready items by ROI:
+
+```
+  1. {id} — {title} (ROI {roi})
+  2. ...
+  3. ...
+```
+
+**Three paths:**
 - **Vibe chosen** → proceed to Step 9b. Ozi takes priority and executes. User does not sequence.
+- **Queue action** → if ready_count > 0: `[W]ork top item / [R]eview refinements / [A]uto-chain / [S]kip`. If ready_count == 0 and needs_refinement_count > 0: `[R]eview / [S]kip`.
+  - **[A]uto-chain**: Set `auto_chain: true` in session state. After completing each item, closeout Step 10c auto-loads the next ready item with minimal context (~15-20k tokens). See `wai-reference.md` Minimal Context Load.
 - **Skipped** → show wakeup banner and wait for user direction.
 
 ```
 ┌─ WAI WAKEUP Session-{N} [{track_name}] {timestamp}
 │  Project: {name} v{version}
 │  Active work: {X} open, {Y} in_progress, {Z} signals
+│  Queue: {ready} ready | {refinement} refinement | {blocked} blocked
 │  Vibe: {vibe or "none"}  |  Context: {%} ({K}/{limit}K)
 │  Recent: {last 3 changelog entries}
 │  Next: {tagged lug or "run score_backlog.py"}

@@ -104,14 +104,15 @@
     "protocol_completed": false
   },
   "_work_queue": {
-    "last_scored_at": "2026-04-01T06:54:29.199306+00:00",
+    "last_scored_at": "2026-04-01T09:31:58.321698+00:00",
     "items": [
       {
         "id": "feature-ozi-octo-chief-of-staff-brief-v1",
         "roi": 6.75,
         "type": "feature",
         "status": "ready",
-        "title": "Ozi/Octo Chief of Staff Identity — Closeout Brief Capture",
+        "readiness": "ready",
+        "title": "Ozi/Octo Chief of Staff Identity \u2014 Closeout Brief Capture",
         "phase": null,
         "tagged_next": true
       },
@@ -120,6 +121,7 @@
         "roi": 4.5,
         "type": "other",
         "status": "ready",
+        "readiness": "ready",
         "title": "Open-source boundary: advisors are the pro differentiator, core schema stays ope",
         "phase": null,
         "tagged_next": false
@@ -129,7 +131,18 @@
         "roi": 4.5,
         "type": "other",
         "status": "ready",
-        "title": "Signal Architecture v2 — risk bulletins with patch semantics, separate from work",
+        "readiness": "needs_refinement",
+        "title": "Signal Architecture v2 \u2014 risk bulletins with patch semantics, separate from work",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
+        "id": "fix-closeout-banner-stall-v1",
+        "roi": 4.5,
+        "type": "signal",
+        "status": "ready",
+        "readiness": "needs_refinement",
+        "title": "Closeout Step 10: invert confirmation logic \u2014 proceed unless explicit cancel",
         "phase": null,
         "tagged_next": false
       },
@@ -138,7 +151,8 @@
         "roi": 3.5,
         "type": "feature",
         "status": "ready",
-        "title": "Hub registry: teams — spoke relationship groups with shared purpose and commerci",
+        "readiness": "ready",
+        "title": "Hub registry: teams \u2014 spoke relationship groups with shared purpose and commerci",
         "phase": null,
         "tagged_next": false
       },
@@ -147,7 +161,8 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Interruption Detection & Recovery — Windows restarts, unexpected crashes",
+        "readiness": "ready",
+        "title": "Interruption Detection & Recovery \u2014 Windows restarts, unexpected crashes",
         "phase": "planning",
         "tagged_next": false
       },
@@ -156,6 +171,7 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
+        "readiness": "ready",
         "title": "Review and improve all 65 active lugs for naming quality, detail, and PEV compli",
         "phase": null,
         "tagged_next": false
@@ -165,7 +181,8 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Routing Awareness — Scope-aware work dispatch & lug creation",
+        "readiness": "ready",
+        "title": "Ozi Routing Awareness \u2014 Scope-aware work dispatch & lug creation",
         "phase": "planning",
         "tagged_next": false
       },
@@ -174,7 +191,8 @@
         "roi": 3.0,
         "type": "epic",
         "status": "ready",
-        "title": "Ozi Work Queue Orchestration — Priority-ordered autonomous work dispatch",
+        "readiness": "ready",
+        "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
         "phase": "planning",
         "tagged_next": false
       },
@@ -183,20 +201,17 @@
         "roi": 3.0,
         "type": "other",
         "status": "ready",
-        "title": "WAI-Challenges.jsonl — problem-centric backlog as first-class file",
-        "phase": null,
-        "tagged_next": false
-      },
-      {
-        "id": "idea-taste-spoke-schema-v1",
-        "roi": 3.0,
-        "type": "other",
-        "status": "ready",
-        "title": "taste.spoke as living contract: finalize schema, add wakeup loading, create adop",
+        "readiness": "ready",
+        "title": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
         "phase": null,
         "tagged_next": false
       }
-    ]
+    ],
+    "queue_state": {
+      "ready_count": 8,
+      "needs_refinement_count": 2,
+      "blocked_count": 0
+    }
   },
   "_critical_directives": {
     "_READ_FIRST": "STOP. Read these directives before any action.",
@@ -216,7 +231,7 @@
     },
     "teaching_protocol": {
       "rule": "Before applying teachings, present verification summary",
-      "format": "Show: What I'm being taught → How I'll interpret it → What I WON'T do",
+      "format": "Show: What I'm being taught \u2192 How I'll interpret it \u2192 What I WON'T do",
       "wait_for": "User approval before applying"
     },
     "lug_authoring": {

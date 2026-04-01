@@ -144,6 +144,13 @@ Sync canonical skill source to installed copy so the next session runs current s
 
 Verify: `diff templates/commands/wai.md .claude/commands/wai.md` — no output = clean.
 
+### 10c. Work Queue Update
+
+Update `_work_queue` in `WAI-State.json`:
+1. Mark completed lugs in `_work_queue.items` as `status: "done"` (match by id against items moved to `completed/` this session)
+2. Run `python3 tools/score_backlog.py --update-state` to refresh readiness and queue_state counts
+3. If `auto_chain` is true in session state and `ready_count > 0`: prepare next item for minimal context load (see `wai-reference.md` Minimal Context Load schema)
+
 ### 11. Completion Banner + Git Commit + Push
 
 Display the banner **before** committing, then auto-proceed after 10s unless user cancels:

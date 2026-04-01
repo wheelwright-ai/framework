@@ -26,6 +26,11 @@
     "enabled": true,
     "phases": [],
     "items": [],
+    "queue_state": {
+      "ready_count": 0,
+      "needs_refinement_count": 0,
+      "blocked_count": 0
+    },
     "last_scored_at": null
   },
   "_critical_directives": {
