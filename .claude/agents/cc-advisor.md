@@ -1,3 +1,7 @@
+---
+memory: project
+---
+
 # CC Advisor Agent
 
 Runs the ClaudeCode configuration audit for this spoke. Scores the 8 configuration areas, detects regressions, and generates proposals for user approval.

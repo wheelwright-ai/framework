@@ -89,3 +89,11 @@
 {"ts":"2026-04-01T02:47:17Z","session":"session-20260331-1815","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
 {"ts":"2026-04-01T02:52:41Z","session":"session-20260331-1815","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
 {"ts":"2026-04-01T02:54:47Z","session":"session-20260331-1815","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T03:01:28Z","session":"session-20260331-1815","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T03:11:17Z","session":"session-20260331-1815","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T03:14:59Z","session":"session-20260331-1815","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T03:20:54Z","session":"session-20260331-1815","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T03:23:00Z","session":"session-20260331-2023","spoke":"Wheelwright","event":"session_start","data":{}}
+{"ts":"2026-04-01T03:23:37Z","session":"session-20260331-2023","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T03:24:16Z","session":"session-20260331-2023","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}
+{"ts":"2026-04-01T04:00:59Z","session":"session-20260331-2023","spoke":"Wheelwright","event":"session_end","data":{"duration_minutes":0,"tokens_used":0,"context_pct_at_end":0,"compact_count":0,"permission_prompts":0}}

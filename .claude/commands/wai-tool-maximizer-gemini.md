@@ -4,7 +4,7 @@ Proactive Gemini CLI optimization audit. Detects underweight configs and surface
 
 ## Type
 
-`guard` (advisory) — same pattern as wai-tool-maximizer-claude.
+`guard` (advisory) — same pattern as wai-claude-maximizer.
 
 ## When to Trigger
 
@@ -131,6 +131,6 @@ When asked to fix a specific gap:
 
 ## Related Skills
 
-- `/wai-tool-maximizer-claude` — Claude Code equivalent
+- `/wai-claude-maximizer` — Claude Code equivalent
 - `/wai-ide-setup` — Hook configuration guide
 - `/wai-status` — Quick health check

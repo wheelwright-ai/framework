@@ -14,3 +14,10 @@
 {"ts": "2026-03-31T19:20:00Z", "id": "lug-expedite-asap-flag-20260330", "title": "Tiered priority bands authored (PEV complete)", "action": "authored", "session": 118}
 {"ts": "2026-03-31T19:20:00Z", "id": "lug-routing-intelligence-20260330", "title": "Routing intelligence authored (PEV complete)", "action": "authored", "session": 118}
 {"ts": "2026-03-31T19:20:00Z", "id": "feature-hub-registry-teams-v1", "title": "Hub registry teams concept created", "action": "created", "session": 118}
+{"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"hub_signals_cleared","detail":"18 hub incoming signals triaged: 16 archived as already-covered, 2 new lugs created"}
+{"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"lug_created","id":"feature-expediter-wakeup-integration-v1","roi":9.0,"detail":"Wire Spoke-Local Expediter into session wakeup"}
+{"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"lug_created","id":"feature-skill-sync-detection-v1","roi":8.0,"detail":"session-start: detect .claude/commands/ sync gap"}
+{"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"cc_audit","detail":"CC Audit #3: 6/8, delta 0. Regression fixed: cc-advisor.md + ozi-nightly.md missing memory:project"}
+{"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"lug_closed","id":"idea-fit-check-caching-v1","detail":"Closed P4-defer as low-ROI noise"}
+{"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"lug_triage","detail":"Groups 2-4 triage: 7 kept, 1 closed, 1 re-routed to content spoke"}
+{"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"pev_fix","id":"impl-ozi-queue-schema-v1","detail":"Fixed blocker_list→blocked_by field name error"}

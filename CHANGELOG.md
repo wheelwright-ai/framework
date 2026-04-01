@@ -1,3 +1,13 @@
+## [2.0.141] - 2026-03-31
+
+### Changed — Hub Inbox Cleared + CC Audit + Lug Triage (Session 119)
+
+- **`.claude/agents/cc-advisor.md`, `.claude/agents/ozi-nightly.md`:** Added missing `memory: project` frontmatter — regression fix (CC Audit #3: 6/8, delta 0)
+- **`WAI-Spoke/lugs/`:** Created `feature-expediter-wakeup-integration-v1` (ROI 9.0) — wire Spoke-Local Expediter into session wakeup; `feature-skill-sync-detection-v1` (ROI 8.0) — detect .claude/commands/ sync gap in session-start hook
+- **`WAI-Spoke/lugs/`:** Fixed `impl-ozi-queue-schema-v1` field name: `blocker_list` → `blocked_by` in PEV execute steps and acceptance criteria
+- **Hub signals:** Triaged 18 incoming signals — 16 archived as already-covered, 2 converted to local lugs; all 6 `by-target/framework/` signals processed
+- **Lug triage:** Groups 2-4 complete — `idea-fit-check-caching` closed (P4 noise); linkedin idea re-routed to content spoke; 7 lugs retained with disposition notes
+
 ## [2.0.140] - 2026-03-31
 
 ### Added — Refine Vibe + Ozi Auto-Execute + Backlog Clustering (Session 118)

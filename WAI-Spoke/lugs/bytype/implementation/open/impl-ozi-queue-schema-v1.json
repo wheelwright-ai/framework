@@ -29,7 +29,7 @@
   "execute": {
     "steps": [
       "1. Read WAI-State.json _work_queue section + score_backlog.py logic",
-      "2. Add readiness classification to score_backlog.py: ready (PEV complete + ROI>=3), needs_refinement (PEV incomplete), blocked (has blocker_list entries not done)",
+      "2. Add readiness classification to score_backlog.py: ready (PEV complete + ROI>=3), needs_refinement (PEV incomplete), blocked (has blocked_by entries not done — field is blocked_by, not blocker_list)",
       "3. Update _work_queue items in WAI-State.json to include readiness field",
       "4. Add _work_queue.queue_state summary: ready_count, needs_refinement_count, blocked_count",
       "5. Update WAI-State.json.template to include readiness in _work_queue schema",
@@ -46,7 +46,7 @@
   "acceptance_criteria": [
     "score_backlog.py classifies each item as ready/needs_refinement/blocked",
     "WAI-State.json reflects readiness state after --update-state run",
-    "Blocked check: lug has blocker_list with at least one item not in completed/"
+    "Blocked check: lug has blocked_by with at least one item not in completed/ (field name is blocked_by, enforced by lug_utils.is_blocked)"
   ],
   "blocks": ["impl-ozi-queue-wakeup-v1", "impl-ozi-queue-autochain-v1"]
 }
