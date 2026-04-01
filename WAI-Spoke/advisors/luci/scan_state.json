@@ -205,5 +205,11 @@
       "skip": 0
     }
   ],
-  "self_sharpening_log": []
+  "self_sharpening_log": [],
+  "last_context_refresh_at": "2026-04-01T06:47:03.902138+00:00",
+  "context_snapshot_file": "advisors/luci/context/snapshot-2026-04-01.md",
+  "context_feeds_status": {
+    "python-advisories": "ok",
+    "synthesis": "empty"
+  }
 }

@@ -62,6 +62,18 @@
 | other | 0.8x | 0.9x | 1.1x | 1.3x | 0.9x |
 | in_progress (ship only) | — | — | — | — | 1.8x |
 
+**Urgency tiers** (sort before ROI — all tier-1 before any tier-2):
+
+| Value | Band | Meaning |
+|-------|------|---------|
+| 1 | URGENT | Immediate — bypasses scheduled windows |
+| 2 | HIGH | Before normal queue |
+| 3 | NORMAL | Default (omitting urgency = tier 3) |
+| 4 | LOW | After normal queue |
+| 5 | DEFER | Process last |
+
+Sort key: `(urgency asc, ROI desc)`. An urgency=1 lug with ROI 2.0 dispatches before an urgency=3 lug with ROI 10.0.
+
 **Scorer tool:** `tools/score_backlog.py [vibe]`
 
 ### Example

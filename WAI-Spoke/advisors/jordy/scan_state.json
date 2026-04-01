@@ -1,15 +1,27 @@
 {
   "advisor_id": "jordy",
-  "advisor_name": "Jordy — QA Engineer",
+  "advisor_name": "Jordy \u2014 QA Engineer",
   "version": "0.1.0",
   "status": "stub",
-  "mission_statement": "Own test coverage, bug triage, and quality gates — define edge cases, run regression checks, and signal quality risk before promotion",
+  "mission_statement": "Own test coverage, bug triage, and quality gates \u2014 define edge cases, run regression checks, and signal quality risk before promotion",
   "reports_to": "archie",
   "direct_reports": [],
   "activation": "all_spoke_types",
-  "scope": ["test_coverage", "bug_triage", "quality_gates", "regression", "edge_cases"],
+  "scope": [
+    "test_coverage",
+    "bug_triage",
+    "quality_gates",
+    "regression",
+    "edge_cases"
+  ],
   "output_file": "spoke_jordy.json",
   "created_at": "2026-03-31T15:45:00Z",
   "last_scan_at": null,
-  "reports_generated": 0
+  "reports_generated": 0,
+  "last_context_refresh_at": "2026-04-01T06:47:03.343055+00:00",
+  "context_snapshot_file": "advisors/jordy/context/snapshot-2026-04-01.md",
+  "context_feeds_status": {
+    "pytest-changelog": "ok",
+    "synthesis": "empty"
+  }
 }

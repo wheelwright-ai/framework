@@ -1,0 +1,16 @@
+refresh_interval_days: 7
+keep_snapshots: 5
+
+feeds:
+  - id: git-releases
+    type: web_fetch
+    url: "https://raw.githubusercontent.com/git/git/master/Documentation/RelNotes/2.49.0.txt"
+    description: "Latest git release notes"
+    required: false
+
+  - id: synthesis
+    type: ai_synthesis
+    depends_on: [git-releases]
+    model: claude-haiku-4-5
+    description: "Release engineering advisory brief"
+    required: false

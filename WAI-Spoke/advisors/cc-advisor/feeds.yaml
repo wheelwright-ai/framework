@@ -1,0 +1,22 @@
+refresh_interval_days: 7
+keep_snapshots: 5
+
+feeds:
+  - id: claude-capabilities
+    type: shared
+    topic: claude-capabilities
+    description: "Current Claude model capabilities, context windows, tool support"
+    required: false
+
+  - id: cc-overview
+    type: web_fetch
+    url: "https://docs.anthropic.com/en/docs/claude-code/overview"
+    description: "Claude Code official documentation — features, hooks, settings"
+    required: false
+
+  - id: synthesis
+    type: ai_synthesis
+    depends_on: [claude-capabilities, cc-overview]
+    model: claude-haiku-4-5
+    description: "Advisory brief for Claude Code configuration health"
+    required: false

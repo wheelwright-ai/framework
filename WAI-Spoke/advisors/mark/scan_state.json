@@ -1,15 +1,27 @@
 {
   "advisor_id": "mark",
-  "advisor_name": "Mark — Growth Analyst",
+  "advisor_name": "Mark \u2014 Growth Analyst",
   "version": "0.1.0",
   "status": "stub",
-  "mission_statement": "Track metrics and run growth experiments — A/B tests, data-driven pivots, and performance measurement to guide product decisions",
+  "mission_statement": "Track metrics and run growth experiments \u2014 A/B tests, data-driven pivots, and performance measurement to guide product decisions",
   "reports_to": "marge",
   "direct_reports": [],
   "activation": "product_spokes",
-  "scope": ["metrics", "ab_tests", "performance_measurement", "growth_experiments", "data_analysis"],
+  "scope": [
+    "metrics",
+    "ab_tests",
+    "performance_measurement",
+    "growth_experiments",
+    "data_analysis"
+  ],
   "output_file": "spoke_mark.json",
   "created_at": "2026-03-31T15:45:00Z",
   "last_scan_at": null,
-  "reports_generated": 0
+  "reports_generated": 0,
+  "last_context_refresh_at": "2026-04-01T06:47:03.905847+00:00",
+  "context_snapshot_file": "advisors/mark/context/snapshot-2026-04-01.md",
+  "context_feeds_status": {
+    "analytics-tools": "empty",
+    "synthesis": "empty"
+  }
 }

@@ -1,0 +1,79 @@
+{
+  "id": "decision-signal-architecture-v2",
+  "type": "decision",
+  "status": "decided",
+  "title": "Signal Architecture v2 — risk bulletins with patch semantics, separate from work lugs",
+  "decided_at": "2026-03-31T22:30:00Z",
+  "decided_by": "mario (session-20260331-2155)",
+  "created_at": "2026-03-31T22:30:00Z",
+  "created_by": "claude-sonnet-4-6 (session-20260331-2155)",
+  "fw_ver": "3.0.0",
+  "routed_to": "FRAMEWORK",
+
+  "decision": "Signals are risk bulletins, not work items. They carry either a JIT patch (apply now, clean up when proper fix lands) or a delivery (lug in an envelope for the spoke's backlog). They live separately from the lug bytype/ tree, have a risk_score instead of ROI, and are auto-applied on wakeup without manual triage.",
+
+  "architecture": {
+    "two_flavors": {
+      "patch": "Carries a minimal JIT fix applied automatically at spoke wakeup. Temporary — cleaned up when the framework delivers the proper fix as a teaching. Applied without user prompt; user notified of what was applied.",
+      "delivery": "Wraps a ready-to-use lug and drops it into the spoke backlog. No patch, no urgency. 'Here you go.'"
+    },
+    "signal_schema_v2": {
+      "id": "string — intuitive name like lugs (signal-null-ref-on-empty-state-v1)",
+      "flavor": "patch | delivery",
+      "risk_score": "integer 1-10 (replaces ROI — signals are hazard mitigation not opportunity)",
+      "risk_level": "CRITICAL | HIGH | NORMAL (derived from risk_score: >=8=CRITICAL, 5-7=HIGH, <5=NORMAL)",
+      "title": "string — plain language, describes the risk or what's being delivered",
+      "signal": "string — full description of the problem or insight",
+      "patch": "optional object — see patch schema below",
+      "delivery_lug": "optional object — full lug to drop in backlog (for delivery flavor)",
+      "target": "spoke_id | hub | framework | all_spokes",
+      "source_spoke": "string — originating spoke",
+      "created_at": "ISO timestamp",
+      "expires_after": "optional — ISO timestamp or null (patches without expiry stay until proper fix)"
+    },
+    "patch_schema": {
+      "type": "behavioral | file",
+      "behavioral": {
+        "instruction": "string — plain language directive: 'if X, do Y instead of Z'",
+        "scope": "string — when this applies (e.g. 'during wakeup', 'when creating lugs')"
+      },
+      "file": {
+        "path": "string — relative file path",
+        "operation": "append | prepend | replace | insert_after",
+        "target_text": "string — anchor for insert_after/replace",
+        "content": "string — the patch content"
+      },
+      "cleanup": "string — how to verify/remove when proper fix lands (e.g. 'remove line matching X')"
+    },
+    "storage": {
+      "spoke_signals_home": "WAI-Spoke/signals/",
+      "inbound": "WAI-Spoke/signals/inbound/ — signals arriving from hub",
+      "registry": "WAI-Spoke/signals/registry.json — lightweight: applied patch IDs + applied_at",
+      "processed": "WAI-Spoke/signals/processed/ — originals after apply (not deleted)",
+      "hub_inbound": "WAI-Hub/signals/incoming/ — signals from spokes awaiting framework processing",
+      "not_in_bytype": "signals removed from WAI-Spoke/lugs/bytype/signal/ — that was the old model"
+    },
+    "wakeup_behavior": {
+      "step": "early in session-start.sh, before wai-session-init block",
+      "action": "read registry.json, apply any unapplied patches, update registry applied_at",
+      "notification": "SIGNALS: Applied N patches: [id1, id2] — appears in CONTEXT HEALTH if registry non-empty",
+      "on_empty_registry": "silent — no noise if nothing to apply"
+    },
+    "hub_to_framework_trigger": {
+      "condition": "WAI-Hub/signals/incoming/ has >= 1 file",
+      "action": "Tender wakes framework spoke session",
+      "sla": "within 2 tender cycles of signal arrival",
+      "framework_response": "implement proper fix → auto-generate teaching → deliver to affected spokes → archive signal"
+    },
+    "loop_close": {
+      "trigger": "framework teaching arrives at spoke",
+      "action": "spoke removes patch from registry, adopts teaching, marks signal processed",
+      "result": "behavioral patch no longer applied — proper fix is now baked in"
+    },
+    "score_backlog_change": "signals excluded entirely from score_backlog.py — they are not work items"
+  },
+
+  "rationale": "Current model mixes signals with work lugs (bytype/signal/), gives them ROI scores (wrong mental model), and requires manual triage at wakeup (friction). New model: signals are hazard bulletins that self-apply and self-clean. Spokes stay lean. Framework acts as signal processor. Loop closes automatically when the teaching lands.",
+
+  "migration_notes": "Existing signals in bytype/signal/undelivered/ to be triaged: patch flavor → move to signals/inbound/ with new schema; delivery flavor → extract embedded lug, drop in backlog, archive signal. Old bytype/signal/ directories removed after migration."
+}

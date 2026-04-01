@@ -1,0 +1,17 @@
+refresh_interval_days: 7
+keep_snapshots: 5
+
+feeds:
+  - id: content-trends
+    type: web_search
+    query: "SaaS content marketing trends product-led growth 2026"
+    max_results: 5
+    description: "Content marketing trends for product-led growth (product spokes only)"
+    required: false
+
+  - id: synthesis
+    type: ai_synthesis
+    depends_on: [content-trends]
+    model: claude-haiku-4-5
+    description: "Content strategy advisory brief for product spokes"
+    required: false

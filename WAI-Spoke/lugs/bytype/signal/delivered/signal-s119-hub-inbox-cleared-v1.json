@@ -1,0 +1,13 @@
+{
+  "id": "signal-s119-hub-inbox-cleared-v1",
+  "type": "signal",
+  "status": "undelivered",
+  "title": "Hub signals inbox triage pattern: 16/18 already covered, batch archive viable",
+  "signal": "S119 triaged 18 hub incoming signals. 16 already had corresponding spoke teachings, implemented code, or existing lugs — batch-archived without new lug creation. Pattern: hub inbox accumulates signals that were already incorporated via other paths (session teachings, direct commits, CLAUDE.md). A fast pre-triage check (compare signal IDs against processed/ + existing lugs) can clear 80-90% of inbox in one pass before detailed review.",
+  "impact": 8,
+  "rationale": "Inbox triage was blocked at 19 items for 3 sessions. Root cause: no fast pre-check for already-processed signals. Pattern reusable across all spokes.",
+  "target": "framework",
+  "created_at": "2026-03-31T23:55:00Z",
+  "session_id": "session-20260331-2023",
+  "created_by": "claude-sonnet-4-6"
+}

@@ -1,15 +1,27 @@
 {
   "advisor_id": "will",
-  "advisor_name": "Will — Release Engineer",
+  "advisor_name": "Will \u2014 Release Engineer",
   "version": "0.1.0",
   "status": "stub",
-  "mission_statement": "Own CI/CD, build pipelines, deployment health, and release cadence — monitor push success and uptime across all delivery targets",
+  "mission_statement": "Own CI/CD, build pipelines, deployment health, and release cadence \u2014 monitor push success and uptime across all delivery targets",
   "reports_to": "archie",
   "direct_reports": [],
   "activation": "all_spoke_types",
-  "scope": ["ci_cd", "builds", "deployments", "release_process", "uptime_monitoring"],
+  "scope": [
+    "ci_cd",
+    "builds",
+    "deployments",
+    "release_process",
+    "uptime_monitoring"
+  ],
   "output_file": "spoke_will.json",
   "created_at": "2026-03-31T15:45:00Z",
   "last_scan_at": null,
-  "reports_generated": 0
+  "reports_generated": 0,
+  "last_context_refresh_at": "2026-04-01T06:47:04.162626+00:00",
+  "context_snapshot_file": "advisors/will/context/snapshot-2026-04-01.md",
+  "context_feeds_status": {
+    "git-releases": "empty",
+    "synthesis": "empty"
+  }
 }

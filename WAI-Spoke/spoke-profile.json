@@ -1,0 +1,8 @@
+{
+  "_schema": "spoke-profile-v1",
+  "spoke_id": "wheelwright-framework",
+  "spoke_name": "Wheelwright Framework",
+  "last_updated": null,
+  "last_synced_to_hub": null,
+  "advisor_findings": {}
+}

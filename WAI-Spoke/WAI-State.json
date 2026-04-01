@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.141",
+    "version": "2.0.142",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -28,8 +28,8 @@
         }
       }
     },
-    "last_modified_at": "2026-04-01T04:11:05Z",
-    "last_modified_by": "claude-sonnet-4-6",
+    "last_modified_at": "2026-04-01T06:54:03Z",
+    "last_modified_by": "claude-opus-4-6",
     "spoke_id": "a055479fb9bf"
   },
   "_project_foundation": {
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260331-2023",
+    "last_session_id": "session-20260331-2347",
     "last_modified_by": "claude-sonnet-4-6",
     "last_modified_at": "2026-03-31T23:17:42Z",
-    "last_closeout": "2026-04-01T04:11:05Z",
-    "session_count": 120,
-    "track_path": "WAI-Spoke/sessions/session-20260331-2023/track.jsonl",
-    "next_session_recommendation": "S119 refine pass complete. Hub inbox cleared (18→0). CC Audit #3 done (6/8, regression fixed). Triage done (9 lugs). Priority for S120: (1) Decision session: decision-df884ede13e2 (open-source boundary, impact 9) — strategic, needs dedicated focus. (2) Epic promotion: idea-memory-read-apply-loop (P1), idea-challenge-registry + idea-taste-spoke-schema + idea-distribor-advisor (P2 epics). (3) BUILD: feature-skill-sync-detection-v1 (ROI 15.6 refine, effort 1) + feature-expediter-wakeup-integration-v1 (ROI 11.7, effort 1) — both high ROI, small. (4) Historian flaky test S48: fix or mark known-flaky. (5) impl-ozi-queue-schema-v1 (ROI 4.5) still top build candidate after decision on open-source boundary.",
+    "last_closeout": "2026-04-01T06:54:03Z",
+    "session_count": 121,
+    "track_path": "WAI-Spoke/sessions/session-20260331-2125/track.jsonl",
+    "next_session_recommendation": "S120 build session: 3 features done + advisor context feeds system built + signal architecture v2 decided. Priority for S121: (1) Decision: decision-df884ede13e2 (open-source boundary, impact 9) still open, needs dedicated focus. (2) Wire ANTHROPIC_API_KEY to Python subprocess so advisor context feeds can run ai_synthesis. (3) Run hub_context_refresh.py to populate hub shared context (claude-capabilities, wai-framework-updates). (4) Epic decomposition: epic-signal-rework-v1 needs child lugs with full PEV. (5) Hub signals inbox: 2 items (signal-s119-hub-inbox-cleared-v1, signal-false-blocker-pattern-v1) need local incorporation. (6) Historian flaky test S48: fix or mark known-flaky. (7) signal-linkedin-content-wave-reroute-v1 still needs routing to content spoke.",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -104,34 +104,16 @@
     "protocol_completed": false
   },
   "_work_queue": {
-    "last_scored_at": "2026-04-01T04:11:31.330841+00:00",
+    "last_scored_at": "2026-04-01T06:54:29.199306+00:00",
     "items": [
       {
-        "id": "feature-skill-sync-detection-v1",
-        "roi": 12.0,
+        "id": "feature-ozi-octo-chief-of-staff-brief-v1",
+        "roi": 6.75,
         "type": "feature",
         "status": "ready",
-        "title": "session-start hook: detect .claude/commands/ out-of-sync with templates/commands",
+        "title": "Ozi/Octo Chief of Staff Identity \u2014 Closeout Brief Capture",
         "phase": null,
         "tagged_next": true
-      },
-      {
-        "id": "feature-expediter-wakeup-integration-v1",
-        "roi": 9.0,
-        "type": "feature",
-        "status": "ready",
-        "title": "Wire Spoke-Local Expediter into session wakeup \u2014 surface quality score in briefi",
-        "phase": null,
-        "tagged_next": false
-      },
-      {
-        "id": "lug-expedite-asap-flag-20260330",
-        "roi": 6.0,
-        "type": "feature",
-        "status": "ready",
-        "title": "Tiered priority bands for lug dispatch \u2014 urgency field with ROI within tiers",
-        "phase": null,
-        "tagged_next": false
       },
       {
         "id": "decision-df884ede13e2",
@@ -143,11 +125,11 @@
         "tagged_next": false
       },
       {
-        "id": "signal-s119-hub-inbox-cleared-v1",
-        "roi": 4.0,
-        "type": "signal",
+        "id": "decision-signal-architecture-v2",
+        "roi": 4.5,
+        "type": "other",
         "status": "ready",
-        "title": "Hub signals inbox triage pattern: 16/18 already covered, batch archive viable",
+        "title": "Signal Architecture v2 \u2014 risk bulletins with patch semantics, separate from work",
         "phase": null,
         "tagged_next": false
       },
@@ -194,6 +176,24 @@
         "status": "ready",
         "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
         "phase": "planning",
+        "tagged_next": false
+      },
+      {
+        "id": "idea-challenge-registry-v1",
+        "roi": 3.0,
+        "type": "other",
+        "status": "ready",
+        "title": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
+        "id": "idea-taste-spoke-schema-v1",
+        "roi": 3.0,
+        "type": "other",
+        "status": "ready",
+        "title": "taste.spoke as living contract: finalize schema, add wakeup loading, create adop",
+        "phase": null,
         "tagged_next": false
       }
     ]

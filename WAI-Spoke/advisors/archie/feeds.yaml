@@ -1,0 +1,22 @@
+refresh_interval_days: 7
+keep_snapshots: 5
+
+feeds:
+  - id: claude-capabilities
+    type: shared
+    topic: claude-capabilities
+    description: "Claude model capabilities relevant to architecture decisions"
+    required: false
+
+  - id: python-releases
+    type: web_fetch
+    url: "https://www.python.org/downloads/"
+    description: "Python version releases and EOL notices"
+    required: false
+
+  - id: synthesis
+    type: ai_synthesis
+    depends_on: [claude-capabilities, python-releases]
+    model: claude-haiku-4-5
+    description: "Architecture advisory brief"
+    required: false

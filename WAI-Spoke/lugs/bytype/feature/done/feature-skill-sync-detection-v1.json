@@ -1,0 +1,48 @@
+{
+  "id": "feature-skill-sync-detection-v1",
+  "ty": "feature",
+  "s": "o",
+  "title": "session-start hook: detect .claude/commands/ out-of-sync with templates/commands/",
+  "type": "feature",
+  "status": "done",
+  "summary": "session-start.sh compares mtimes of templates/commands/wai-*.md vs .claude/commands/ counterparts. Any newer source file triggers a SYNC WARNING in the session init block.",
+  "why_bother": "Skill sync gap caused 15-18k tokens/session waste for multiple sessions without detection. Keys skills were 370 lines behind the installed versions. The gap went undetected until manual discovery.",
+  "goal": "SYNC WARNING appears in <wai-session-init> naming the specific out-of-sync files whenever templates/commands/ is ahead of .claude/commands/. No warning when in sync.",
+  "scope": [
+    "session-start.sh: mtime comparison for all wai-*.md files across both dirs",
+    "Inject SYNC WARNING into <wai-session-init> CONTEXT HEALTH section if gap detected",
+    "Optional: add sync check to spoke_integrity_score.py (-2 points if gap > 0)"
+  ],
+  "constraints": [
+    "Only compare wai-*.md files (not teaching files, manifests, or other files in templates/commands/)",
+    "If .claude/commands/ file doesn't exist at all: that's also a sync warning",
+    "Warning must name the specific file(s), not just a count",
+    "No-op if all in sync \u2014 zero output impact"
+  ],
+  "created_at": "2026-03-31T23:31:00Z",
+  "created_by": "claude-sonnet-4-6 (session-20260331-2023)",
+  "source_signal": "signal-wai-skill-sync-gap-v1",
+  "impact": 8,
+  "effort": 1,
+  "roi": 8.0,
+  "priority": "P1",
+  "model_fit": "haiku",
+  "routed_to": "LOCAL",
+  "updated_at": "2026-03-31T23:31:00Z",
+  "perceive": "session-start.sh runs checks (historian, session guard, cc health) but does NOT compare templates/commands/ vs .claude/commands/. Currently in sync (diff shows 0 lines for wai.md, wai-closeout.md, wai-lug-schema.md). But .claude/commands/ has 2 extra files (wai-closeout-feedback-v2.md, wai-next.md) not in templates/commands/ \u2014 those are fine. templates/commands/ has manifest.json and a .teaching file not in .claude/commands/ \u2014 also fine. The risk is: any shipit delay causes the gap to silently reopen.",
+  "execute": "1. Read .claude/hooks/session-start.sh to find correct insertion point (after cc-advisor check, before outputting wai-session-init). 2. Add sync check bash block: iterate over templates/commands/wai-*.md; for each, check if corresponding .claude/commands/$(basename) exists and if templates version is newer (-nt test); collect out-of-sync names. 3. Build SYNC_WARNING string listing out-of-sync filenames. 4. In the wai-session-init CONTEXT HEALTH section output, add: if SYNC_WARNING non-empty: `SYNC: \u26a0 out of sync: {files} \u2014 run /shipit`; if empty: `SYNC: OK`. 5. (Optional) In spoke_integrity_score.py: add a sync_gap check function that runs the same comparison and deducts 2 points from hooks dimension if gap found.",
+  "verify": "Run: touch templates/commands/wai.md; bash .claude/hooks/session-start.sh 2>/dev/null | grep -i sync \u2192 should show 'SYNC: \u26a0 out of sync: wai.md'. Then: touch .claude/commands/wai.md; bash .claude/hooks/session-start.sh | grep -i sync \u2192 'SYNC: OK'.",
+  "acceptance_criteria": [
+    "templates/commands/wai.md newer than .claude/commands/wai.md \u2192 SYNC WARNING appears naming wai.md",
+    "All wai-*.md files in sync \u2192 SYNC: OK in session init, no noise",
+    ".claude/commands/ missing a file that exists in templates/commands/ \u2192 named in warning",
+    "Warning text includes the specific filename(s), not just a count",
+    "session-start.sh exits 0 regardless of sync state (warning only, not blocking)"
+  ],
+  "file_targets": [
+    ".claude/hooks/session-start.sh",
+    "tools/spoke_integrity_score.py"
+  ],
+  "completed_at": "2026-03-31T21:50:00Z",
+  "completed_by": "session-20260331-2125"
+}

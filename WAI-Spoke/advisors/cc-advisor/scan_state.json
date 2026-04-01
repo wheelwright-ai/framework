@@ -16,8 +16,8 @@
     "MCP_Servers": "fail",
     "Git_Worktrees": "fail"
   },
-  "sessions_since_last_audit": 0,
-  "audit_pending": false,
+  "sessions_since_last_audit": 11,
+  "audit_pending": true,
   "total_audits": 3,
   "pending_proposals": [],
   "auto_applied_count": 0,
@@ -61,5 +61,12 @@
       ],
       "adequacy": "phase-2"
     }
-  ]
+  ],
+  "last_context_refresh_at": "2026-04-01T06:47:02.834064+00:00",
+  "context_snapshot_file": "advisors/cc-advisor/context/snapshot-2026-04-01.md",
+  "context_feeds_status": {
+    "claude-capabilities": "empty",
+    "cc-overview": "ok",
+    "synthesis": "empty"
+  }
 }

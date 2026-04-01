@@ -24,7 +24,7 @@
     "expected_outcome": "Urgent lugs bypass scheduled windows; blocking issues resolved faster"
   },
   "type": "feature",
-  "status": "open",
+  "status": "done",
   "priority": "P2",
   "effort": 2,
   "roi": 4.0,
@@ -41,5 +41,7 @@
     "URGENT lug with low ROI ranks above NORMAL lug with high ROI",
     "Step 9b execute loop respects tier order",
     "Backward compatible: lugs without urgency treated as tier 3"
-  ]
+  ],
+  "completed_at": "2026-03-31T22:25:00Z",
+  "completed_by": "session-20260331-2125"
 }

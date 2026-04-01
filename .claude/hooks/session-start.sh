@@ -193,6 +193,23 @@ if [[ ! -d "$AGENTS_DIR" ]] || [[ -z "$(ls -A "$AGENTS_DIR" 2>/dev/null)" ]]; th
   CC_GAPS="${CC_GAPS}  - No subagent definitions in .claude/agents/\n"
 fi
 
+# ── 8b. Skill sync check ─────────────────────────────────────────────────────
+SYNC_STATUS="OK"
+TEMPLATES_CMDS="$PROJECT_DIR/templates/commands"
+CLAUDE_CMDS="$PROJECT_DIR/.claude/commands"
+if [[ -d "$TEMPLATES_CMDS" && -d "$CLAUDE_CMDS" ]]; then
+  SYNC_OUT_OF_SYNC=""
+  for src in "$TEMPLATES_CMDS"/wai*.md; do
+    [[ -f "$src" ]] || continue
+    fname=$(basename "$src")
+    dst="$CLAUDE_CMDS/$fname"
+    if [[ ! -f "$dst" ]] || [[ "$src" -nt "$dst" ]]; then
+      SYNC_OUT_OF_SYNC="$SYNC_OUT_OF_SYNC $fname"
+    fi
+  done
+  [[ -n "$SYNC_OUT_OF_SYNC" ]] && SYNC_STATUS="⚠ out of sync:$SYNC_OUT_OF_SYNC — run /shipit"
+fi
+
 # ── 9. Historian advice (latest review) ──────────────────────────────────────
 HISTORIAN_ADVICE=""
 HISTORIAN_DIR="$PROJECT_DIR/WAI-Spoke/advisors/historian/reviews"
@@ -205,6 +222,73 @@ if [[ -d "$HISTORIAN_DIR" ]]; then
       REVIEW_DATE=$(basename "$LATEST_REVIEW" .md | sed 's/review-//')
       HISTORIAN_ADVICE="  Historian ($REVIEW_DATE):\n$(echo "$ADVICE" | sed 's/^/    /')"
     fi
+  fi
+fi
+
+# ── 9b. Expediter summary ────────────────────────────────────────────────────
+EXPEDITER_SUMMARY=""
+EXPEDITER_STATE="$PROJECT_DIR/WAI-Spoke/advisors/expediter/scan_state.json"
+if [[ -f "$PROJECT_DIR/tools/spoke_expediter.py" ]]; then
+  python3 "$PROJECT_DIR/tools/spoke_expediter.py" --spoke-path "$PROJECT_DIR" >/dev/null 2>&1 || true
+fi
+if [[ -f "$EXPEDITER_STATE" ]]; then
+  EXP_AVG=$(jq -r '.stats.last_quality_avg // "?"' "$EXPEDITER_STATE" 2>/dev/null)
+  EXP_QUEUE=$(jq -r '.refinement_queue_size // 0' "$EXPEDITER_STATE" 2>/dev/null)
+  EXP_RUN=$(jq -r '.last_run_at // ""' "$EXPEDITER_STATE" 2>/dev/null | cut -c1-10)
+  EXPEDITER_SUMMARY="  Expediter: avg ${EXP_AVG}/10 | ${EXP_QUEUE} need refinement | last ${EXP_RUN}"
+fi
+
+# ── 9c. Advisor context feed staleness check ─────────────────────────────────
+CONTEXT_FEED_STATUS=""
+ADVISORS_DIR="$PROJECT_DIR/WAI-Spoke/advisors"
+if [[ -d "$ADVISORS_DIR" && -f "$PROJECT_DIR/tools/advisor_context_refresh.py" ]]; then
+  STALE_ADVISORS=""
+  UNINIT_ADVISORS=""
+  NOW_TS=$(date +%s)
+
+  for advisor_dir in "$ADVISORS_DIR"/*/; do
+    [[ -f "${advisor_dir}feeds.yaml" ]] || continue
+    advisor=$(basename "$advisor_dir")
+    context_dir="${advisor_dir}context"
+
+    # Get refresh interval (default 7 days)
+    interval=$(python3 -c "
+import sys, yaml
+try:
+    d = yaml.safe_load(open('${advisor_dir}feeds.yaml'))
+    print(d.get('refresh_interval_days', 7))
+except: print(7)
+" 2>/dev/null || echo 7)
+
+    # Find most recent snapshot
+    if [[ -d "$context_dir" ]]; then
+      latest_snap=$(ls -1t "$context_dir"/snapshot-*.md 2>/dev/null | head -1)
+    else
+      latest_snap=""
+    fi
+
+    if [[ -z "$latest_snap" ]]; then
+      UNINIT_ADVISORS="$UNINIT_ADVISORS $advisor"
+    else
+      snap_ts=$(date -r "$latest_snap" +%s 2>/dev/null || echo 0)
+      age_days=$(( (NOW_TS - snap_ts) / 86400 ))
+      if [[ "$age_days" -gt "$interval" ]]; then
+        STALE_ADVISORS="$STALE_ADVISORS ${advisor}[${age_days}d]"
+      fi
+    fi
+  done
+
+  # Auto-init uninit advisors in background
+  if [[ -n "$UNINIT_ADVISORS" ]]; then
+    mkdir -p "$HOME/.claude/logs"
+    python3 "$PROJECT_DIR/tools/advisor_context_refresh.py" \
+      --init --quiet --spoke-path "$PROJECT_DIR" \
+      >> "$HOME/.claude/logs/context-refresh-$(date +%Y%m%d).log" 2>&1 &
+    UNINIT_COUNT=$(echo $UNINIT_ADVISORS | wc -w | tr -d ' ')
+    CONTEXT_FEED_STATUS="  Context feeds: ${UNINIT_COUNT} initializing in background (${UNINIT_ADVISORS# })"
+  elif [[ -n "$STALE_ADVISORS" ]]; then
+    STALE_COUNT=$(echo $STALE_ADVISORS | wc -w | tr -d ' ')
+    CONTEXT_FEED_STATUS="  Context feeds: ${STALE_COUNT} stale — run: python3 tools/advisor_context_refresh.py"
   fi
 fi
 
@@ -310,6 +394,9 @@ CONTEXT HEALTH
   Prev session: ${PREV_SESSION_STATUS}$(if [[ -n "$PREV_SESSION_ID" ]]; then echo " (${PREV_SESSION_ID})"; fi)$(if [[ "$PREV_SESSION_STATUS" == "INTERRUPTED" ]]; then echo " ⚠ recovery options at wakeup"; fi)
 $(if [[ -n "$INTEGRITY_SCORE" ]]; then echo "$INTEGRITY_SCORE"; fi)
 $(if [[ -n "$PARITY_STATUS" ]]; then echo "$PARITY_STATUS"; fi)
+  Sync: ${SYNC_STATUS}
+$(if [[ -n "$EXPEDITER_SUMMARY" ]]; then echo "$EXPEDITER_SUMMARY"; fi)
+$(if [[ -n "$CONTEXT_FEED_STATUS" ]]; then echo "$CONTEXT_FEED_STATUS"; fi)
 $(if [[ -n "$CC_GAPS" ]]; then printf "\nCC OPTIMIZATION (run /wai-claude-maximizer for details)\n%b" "$CC_GAPS"; fi)
 NEXT ACTIONS (from session $((SESSION_COUNT - 1)))
   ${NEXT_REC}

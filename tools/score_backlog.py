@@ -279,7 +279,15 @@ def main():
             "_gate_reason": gate_reason,
         })
 
-    scored.sort(key=lambda x: x["roi"], reverse=True)
+    # Extract urgency tier (1-5, default 3 = NORMAL)
+    for entry in scored:
+        try:
+            entry["_urgency"] = int(entry["lug"].get("urgency", 3))
+        except (TypeError, ValueError):
+            entry["_urgency"] = 3
+
+    # Sort: urgency tier ascending (1=first), then ROI descending within tier
+    scored.sort(key=lambda x: (x["_urgency"], -x["roi"]))
 
     # Partition into dispatchable and gated
     dispatchable = [s for s in scored if not s["_gated"]]
@@ -312,9 +320,17 @@ def main():
                     print(f"       {'':>5}  {'':10} {'':13}   • {item['title'][:52]}{phase_tag}")
                 slot += 1
     else:
+        TIER_LABELS = {1: "URGENT", 2: "HIGH", 3: "NORMAL", 4: "LOW", 5: "DEFER"}
         print(f"  {'#':>3}  {'ROI':>5}  {'Type':<10} {'Status':<13} {'Title'}")
         print(f"  {'─'*3}  {'─'*5}  {'─'*10} {'─'*13} {'─'*40}")
+        current_tier = None
         for i, item in enumerate(dispatchable, 1):
+            tier = item.get("_urgency", 3)
+            if tier != current_tier:
+                current_tier = tier
+                label = TIER_LABELS.get(tier, f"TIER{tier}")
+                if tier != 3:  # only show band header for non-default tiers
+                    print(f"\n  ── {label} ──")
             phase_tag = f" [{item['lug'].get('phase', '')}]" if item["lug"].get("phase") else ""
             print(f"  {i:>3}  {item['roi']:>5.1f}  {item['type']:<10} {item['status']:<13} {item['title'][:60]}{phase_tag}")
             if i == 10 and len(dispatchable) > 10:

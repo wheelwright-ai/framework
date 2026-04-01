@@ -69,6 +69,29 @@ Options: **Abandon** (→ completed with "abandoned" note) | **Resume** (→ ope
 
 ---
 
+## Step 4b: Spoke-Local Expediter
+
+The Spoke-Local Expediter scores lug quality and triages undelivered signals. It runs automatically at session start and its stats appear in the wakeup briefing.
+
+**State location:** `WAI-Spoke/advisors/expediter/scan_state.json`
+
+**Manual run:**
+```bash
+python3 tools/spoke_expediter.py                # score lugs
+python3 tools/spoke_expediter.py --signals      # also triage signals
+```
+
+**Output fields in scan_state.json:**
+- `stats.last_quality_avg` — average quality score (0-10) from most recent run
+- `refinement_queue_size` — number of lugs below threshold needing refinement
+- `last_run_at` — ISO timestamp of last run
+
+**Refinement queue:** `WAI-Spoke/advisors/expediter/refinement-queue.jsonl` — one entry per lug needing improvement.
+
+**Session init line:** `Expediter: avg {q}/10 | {n} need refinement | last {date}` — appears in CONTEXT HEALTH if state file exists.
+
+---
+
 ## Step 4b: Historian Watermark Script
 
 ```bash
@@ -201,6 +224,48 @@ for line in sys.stdin:
 "
 fi
 ```
+
+---
+
+## Advisor Context Feeds
+
+Each advisor can declare a `feeds.yaml` specifying what external context it needs. A refresh tool fulfills these feeds automatically.
+
+**File structure per advisor:**
+```
+WAI-Spoke/advisors/{name}/
+  feeds.yaml           ← context appetite declaration
+  context_prompt.md    ← synthesis prompt (Ozi-authored)
+  context/
+    snapshot-YYYY-MM-DD.md   ← latest fetched context
+    ... (N snapshots kept)
+```
+
+**feeds.yaml feed types:**
+
+| Type | Requires | Description |
+|------|----------|-------------|
+| `shared` | Hub connectivity | Pull from `WAI-Hub/context/snapshots/{topic}-{date}.md` |
+| `web_fetch` | httpx | Fetch a specific URL, strip HTML |
+| `web_search` | duckduckgo_search (optional) | Search web, format top-N results |
+| `ai_synthesis` | anthropic SDK + ANTHROPIC_API_KEY | Claude API call; `context_prompt.md` + feed results injected |
+
+**Refresh tool:**
+```bash
+python3 tools/advisor_context_refresh.py                    # all stale advisors
+python3 tools/advisor_context_refresh.py --advisor NAME     # single advisor
+python3 tools/advisor_context_refresh.py --force            # re-fetch all
+python3 tools/advisor_context_refresh.py --init             # first-run mode
+python3 tools/advisor_context_refresh.py --dry-run          # show plan only
+```
+
+**On-install:** session-start.sh detects advisors with no snapshot and launches `--init` in background. First context lands before next session start.
+
+**Spoke profile:** High-impact findings (impact_score >= 7) are promoted to `WAI-Spoke/spoke-profile.json`. Synced to hub registry at closeout.
+
+**Hub shared context:** Common topics (claude-capabilities, wai-framework-updates) live at `WAI-Hub/context/`. Refresh: `python3 hub/tools/hub_context_refresh.py`.
+
+**Optional dep for web_search:** `pip install duckduckgo_search` (see `requirements-context.txt`). All other feed types work without it.
 
 ---
 

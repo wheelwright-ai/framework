@@ -1,0 +1,16 @@
+refresh_interval_days: 7
+keep_snapshots: 5
+
+feeds:
+  - id: pytest-changelog
+    type: web_fetch
+    url: "https://docs.pytest.org/en/stable/changelog.html"
+    description: "pytest changelog — new features, breaking changes, deprecations"
+    required: false
+
+  - id: synthesis
+    type: ai_synthesis
+    depends_on: [pytest-changelog]
+    model: claude-haiku-4-5
+    description: "QA tooling advisory brief"
+    required: false

@@ -159,6 +159,7 @@ Needs You: {M} items
 - Stale in_progress lugs (if any)
 - Teachings: if current → one line; if actionable → compact table
 - Context health (git, hub, integrity, context budget)
+- Expediter: avg {q}/10 | {n} need refinement (one line, from `WAI-Spoke/advisors/expediter/scan_state.json`; omit if file missing)
 - Next actions from `_session_state.next_session_recommendation`
 
 **Hub path error format:**
@@ -258,6 +259,8 @@ Proceeding in 5s… (reply to redirect)
 Wait 5 seconds, then begin.
 
 ### Execute Loop
+
+Items are ordered by urgency tier first (URGENT → HIGH → NORMAL → LOW → DEFER), then ROI descending within each tier. All tier-1 items execute before any tier-2 items.
 
 For each item in ranked order:
 

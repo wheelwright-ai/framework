@@ -76,6 +76,7 @@ A lug is a JSON file at `WAI-Spoke/lugs/bytype/{type}/{status}/{id}.json`. The f
 | `va` | `vibe_affinity` | **Work energy category** — one of: `build`, `fix`, `think`, `grind`, `ship`. Optional. Used by Ozi ROI scorer for tiebreaking when items have similar priority. |
 | `impact` | `impact` | **Impact score** 1-10. Used by ROI scorer. Default inferred from type if absent. |
 | `effort` | `effort` | **Effort score** 1-5. Used by ROI scorer. Default inferred from type if absent. |
+| `urgency` | `urgency` | **Dispatch priority tier** 1-5 (default 3). 1=URGENT (immediate), 2=HIGH, 3=NORMAL, 4=LOW, 5=DEFER. Tiers sort before ROI — all tier-1 items dispatch before any tier-2. Backward compatible: omitted = tier 3. |
 | `rt` | `routed_to` | Routing target: `LOCAL`, `FRAMEWORK`, `SIGNAL`, or `SPOKE/{spoke_id}` for cross-spoke |
 
 **Title Policy:**

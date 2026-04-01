@@ -1,3 +1,23 @@
+## [2.0.142] - 2026-04-01
+
+### Added — Build Session: Sync Detection + Expediter Wakeup + Urgency Tiers + Advisor Context Feeds (Session 120)
+
+- **`.claude/hooks/session-start.sh`:** Section 8b: skill sync check (wai*.md mtime comparison), Section 9b: expediter summary in CONTEXT HEALTH, Section 9c: advisor context feed staleness detection + auto-init
+- **`tools/spoke_integrity_score.py`:** Sync gap penalty (-2pts in hooks dimension) when templates/commands/ ahead of .claude/commands/
+- **`tools/score_backlog.py`:** Urgency tiers 1-5 (URGENT→DEFER), sort key `(urgency, -roi)`, tier band headers in output
+- **`tools/advisor_context_refresh.py`:** New tool — fetches external context for advisors (web_fetch, web_search, ai_synthesis via Claude API), writes dated snapshots, promotes high-impact findings to spoke-profile.json
+- **`WAI-Spoke/advisors/{9}/feeds.yaml + context_prompt.md`:** Per-advisor feed config + Ozi-authored synthesis prompts for all 9 spoke advisors
+- **`WAI-Spoke/spoke-profile.json`:** Spoke intelligence profile — auto-populated from high-impact advisor findings
+- **`hub/tools/hub_context_refresh.py`:** Hub-side shared topic refresh (claude-capabilities, wai-framework-updates)
+- **`hub/WAI-Hub/context/manifest.json`:** Shared context manifest for hub-level dedup
+- **`templates/commands/wai.md`:** Expediter summary in Full Briefing, urgency tier-aware execute loop
+- **`templates/commands/wai-reference.md`:** Expediter section + Advisor Context Feeds documentation
+- **`templates/commands/wai-lug-schema.md`, `wai-lug-schema-reference.md`:** `urgency` field (1-5, default 3) + urgency tier reference table
+
+### Decided
+
+- **`decision-signal-architecture-v2`:** Signals are risk bulletins with patch semantics, separate from work lugs. Two flavors: patch (JIT fix) and delivery (lug in envelope). New epic: `epic-signal-rework-v1`.
+
 ## [2.0.141] - 2026-03-31
 
 ### Changed — Hub Inbox Cleared + CC Audit + Lug Triage (Session 119)

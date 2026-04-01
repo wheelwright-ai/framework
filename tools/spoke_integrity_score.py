@@ -67,6 +67,19 @@ def score_hooks(spoke: Path) -> tuple[int, list[str]]:
         score = max(0, score - 5)
         notes.append("$CLAUDE_PROJECT_DIR in hook commands (use absolute paths)")
 
+    # Skill sync gap penalty: templates/commands/wai-*.md newer than .claude/commands/
+    templates_cmds = spoke / "templates" / "commands"
+    claude_cmds = spoke / ".claude" / "commands"
+    if templates_cmds.exists() and claude_cmds.exists():
+        sync_gaps = []
+        for src in templates_cmds.glob("wai*.md"):
+            dst = claude_cmds / src.name
+            if not dst.exists() or src.stat().st_mtime > dst.stat().st_mtime:
+                sync_gaps.append(src.name)
+        if sync_gaps:
+            score = max(0, score - 2)
+            notes.append(f"skill sync gap: {', '.join(sync_gaps[:3])}{'…' if len(sync_gaps) > 3 else ''} — run /shipit")
+
     return min(score, 20), notes
 
 

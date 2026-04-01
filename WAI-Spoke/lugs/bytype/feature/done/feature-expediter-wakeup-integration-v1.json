@@ -1,0 +1,50 @@
+{
+  "id": "feature-expediter-wakeup-integration-v1",
+  "ty": "feature",
+  "s": "o",
+  "title": "Wire Spoke-Local Expediter into session wakeup \u2014 surface quality score in briefing",
+  "type": "feature",
+  "status": "done",
+  "summary": "Expediter runs at session start and its stats (avg quality, refinement queue size) appear in the wakeup briefing. Currently the tool and state exist but are invisible to the session flow.",
+  "why_bother": "The expediter has already run 3 times and found avg quality 4.7/10 with 4 lugs needing refinement \u2014 but this is invisible to every session. Token waste: lug quality problems go unnoticed until dispatch fails.",
+  "goal": "session-start.sh runs the expediter; <wai-session-init> includes an EXPEDITER line; wai.md briefing surfaces the summary.",
+  "scope": [
+    "session-start.sh: run spoke_expediter.py --signals at startup, write stats to expediter state",
+    "Inject EXPEDITER summary line into <wai-session-init> block",
+    "wai-reference.md: add expediter section (what it is, state location, output interpretation)",
+    "wai.md Step 4 or Step 7: surface expediter stats when state exists"
+  ],
+  "constraints": [
+    "If WAI-Spoke/advisors/expediter/scan_state.json missing: silent, no error",
+    "Expediter run adds <5s to session-start (timeout guard if needed)",
+    "Do not duplicate expediter output between session-init block and wakeup briefing \u2014 one surface only"
+  ],
+  "created_at": "2026-03-31T23:30:00Z",
+  "created_by": "claude-sonnet-4-6 (session-20260331-2023)",
+  "source_signal": "signal-spoke-local-expediter-v1",
+  "impact": 9,
+  "effort": 1,
+  "roi": 9.0,
+  "priority": "P1",
+  "model_fit": "sonnet",
+  "routed_to": "LOCAL",
+  "updated_at": "2026-03-31T23:30:00Z",
+  "perceive": "WAI-Spoke/advisors/expediter/ exists with scan_state.json showing: 3 runs, avg quality 4.7/10, 4 lugs needing refinement, last_run_at 2026-03-31. tools/spoke_expediter.py is the scoring engine. session-start.sh has no reference to spoke_expediter.py or the expediter advisor. templates/commands/wai.md and wai-reference.md have no expediter mentions. Stats are computed but never surfaced to the user.",
+  "execute": "1. Read session-start.sh to understand current wai-session-init block structure. 2. Add expediter invocation: after historian check section, run `python3 tools/spoke_expediter.py 2>/dev/null` and read scan_state.json for last_quality_avg, refinement_queue_size, last_run_at. 3. Append EXPEDITER line to <wai-session-init>: `EXPEDITER: avg {quality}/10 | {n} need refinement | last {timestamp}`. If no state file: skip line silently. 4. Read wai-reference.md, add 'Spoke-Local Expediter' section: advisor location, how to run manually, output fields. 5. Read wai.md Step 7 (Display Briefing) and add expediter summary to the Full Briefing section: `Expediter: avg {q}/10 | {n} need refinement` (one line, after context health).",
+  "verify": "session-start.sh runs spoke_expediter.py and <wai-session-init> includes EXPEDITER line. wai.md briefing shows expediter summary. If scan_state.json deleted: no error in session init. Manual run: python3 tools/spoke_expediter.py shows scored lugs.",
+  "acceptance_criteria": [
+    "session-start.sh runs spoke_expediter.py and reads scan_state.json",
+    "<wai-session-init> EXPEDITER line shows avg quality, refinement count, last run timestamp",
+    "wai-reference.md has Expediter section with state location and manual run command",
+    "wai.md briefing includes expediter summary in Full Briefing path",
+    "Missing scan_state.json: no error, section silently absent",
+    "No duplicate expediter output between session-init and briefing"
+  ],
+  "file_targets": [
+    ".claude/hooks/session-start.sh",
+    "templates/commands/wai.md",
+    "templates/commands/wai-reference.md"
+  ],
+  "completed_at": "2026-03-31T22:05:00Z",
+  "completed_by": "session-20260331-2125"
+}

@@ -1,0 +1,80 @@
+{
+  "id": "epic-signal-rework-v1",
+  "type": "epic",
+  "status": "open",
+  "phase": "planning",
+  "title": "Signal Architecture v2 — risk bulletins with patch semantics and auto-apply lifecycle",
+  "one_liner": "Rebuild the signal system: separate storage, risk_score, patch flavor, auto-apply on wakeup, hub-triggers-framework, loop-close on teaching arrival.",
+  "created_at": "2026-03-31T22:30:00Z",
+  "created_by": "claude-sonnet-4-6 (session-20260331-2155)",
+  "fw_ver": "3.0.0",
+  "routed_to": "FRAMEWORK",
+  "priority": "P1",
+  "impact": 9,
+  "effort": 5,
+  "decision_ref": "decision-signal-architecture-v2",
+
+  "summary": "Signals in v1 are stored alongside work lugs (bytype/signal/), scored by ROI, and require manual triage at wakeup. In v2: signals are risk bulletins with their own home (WAI-Spoke/signals/), carry either a JIT patch or a lug delivery, have risk_score instead of ROI, are auto-applied at wakeup, and the framework closes the loop when the proper fix lands as a teaching.",
+
+  "motivation": "The current model creates unnecessary friction: signals compete with real work items in score_backlog.py, require manual wakeup triage, and have no patch semantics. The v2 model makes hazard mitigation automatic and lightweight — patches apply during wakeup, users are notified but not blocked, and the loop closes when the framework delivers the fix.",
+
+  "acceptance_criteria": [
+    "Signals live in WAI-Spoke/signals/{inbound,registry,processed}/ — not in bytype/signal/",
+    "Signal schema v2: risk_score (not roi), flavor (patch|delivery), optional patch field, target field",
+    "score_backlog.py excludes signals entirely",
+    "session-start.sh reads registry.json, applies unapplied patches, emits SIGNALS line in CONTEXT HEALTH if non-empty",
+    "Patch registry is lightweight JSON: {id, flavor, applied_at, patch_type} — no content copies",
+    "Hub has WAI-Hub/signals/incoming/ — Tender wakes framework when >= 1 signal present",
+    "Framework processes signals within ~2 tender cycles: implements fix + auto-generates teaching",
+    "When teaching arrives at spoke: patch removed from registry, teaching adopted, signal archived",
+    "Existing bytype/signal/ lugs migrated: patch→signals/inbound/, delivery→backlog lug + archived",
+    "wai-lug-schema.md updated: signals documented as separate system, not a lug type",
+    "wai-reference.md updated: signal lifecycle section added",
+    "wai-signal-capture.md updated: authoring guidance for v2 schema"
+  ],
+
+  "scope": [
+    "New storage layout: WAI-Spoke/signals/ directory tree",
+    "Signal schema v2: risk_score, flavor, patch (behavioral|file), delivery_lug, target",
+    "Patch registry: WAI-Spoke/signals/registry.json — read/write by session-start.sh",
+    "session-start.sh: auto-apply patches, SIGNALS line in CONTEXT HEALTH",
+    "score_backlog.py: exclude signals (they are not in bytype/ anymore anyway)",
+    "Hub Tender trigger: detect >= 1 signal in WAI-Hub/signals/incoming/",
+    "Teaching auto-generation: framework closes signal → generates .teaching file",
+    "Loop-close: spoke wakeup detects matching teaching → removes registry entry",
+    "Migration script: triage existing bytype/signal/ lugs",
+    "Skill updates: wai-lug-schema.md, wai-reference.md, wai-signal-capture.md"
+  ],
+
+  "out_of_scope": [
+    "File patch execution (v1 patches are behavioral only — plain language directives)",
+    "Signal encryption or authentication",
+    "Cross-hub signal routing (single hub only in v1)",
+    "Patch conflict resolution (assume signals are non-overlapping in v1)"
+  ],
+
+  "child_lugs": [
+    "impl-signal-schema-v2 — new schema: risk_score, flavor, patch, delivery_lug, target",
+    "impl-signal-storage-v2 — new WAI-Spoke/signals/ directory tree + migration",
+    "impl-signal-registry-v1 — registry.json structure + read/write logic",
+    "impl-signal-wakeup-v2 — session-start.sh auto-apply + SIGNALS notify line",
+    "impl-signal-hub-trigger-v1 — Tender wakes framework on hub signals >= 1",
+    "impl-signal-teaching-autogen-v1 — framework auto-generates teaching on signal close",
+    "impl-signal-loop-close-v1 — spoke detects incoming teaching, removes registry entry",
+    "impl-signal-skill-updates-v1 — wai-lug-schema.md, wai-reference.md, wai-signal-capture.md"
+  ],
+
+  "implementation_phases": {
+    "phase_1_foundation": ["impl-signal-schema-v2", "impl-signal-storage-v2", "impl-signal-registry-v1"],
+    "phase_2_runtime": ["impl-signal-wakeup-v2"],
+    "phase_3_hub": ["impl-signal-hub-trigger-v1", "impl-signal-teaching-autogen-v1", "impl-signal-loop-close-v1"],
+    "phase_4_docs": ["impl-signal-skill-updates-v1"]
+  },
+
+  "design_notes": {
+    "patch_type_v1": "Behavioral only in v1 — plain language directives ('if X, do Y instead of Z'). File patches deferred — more complexity, less urgency.",
+    "risk_score_bands": "1-4=NORMAL, 5-7=HIGH, 8-10=CRITICAL. CRITICAL signals wake framework within 1 tender cycle.",
+    "registry_format": "{\"applied\": [{\"id\": \"...\", \"flavor\": \"patch\", \"applied_at\": \"...\", \"risk_score\": 8}]}",
+    "wakeup_placement": "Apply patches before wai-session-init block — patches may affect how the rest of session-start.sh behaves"
+  }
+}

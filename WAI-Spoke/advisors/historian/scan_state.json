@@ -3,7 +3,7 @@
   "last_scan_at": "2026-03-31T02:53:29Z",
   "total_sessions_scanned": 71,
   "note": "Full scan: 71 sessions, 173 points. 47 new vectors, 0 existing updated. 47 patterns met thresholds.",
-  "mission_statement": "Ensure completeness of agreed ideas — track commitment fulfillment, feed work queue, build urgency for future work",
+  "mission_statement": "Ensure completeness of agreed ideas \u2014 track commitment fulfillment, feed work queue, build urgency for future work",
   "data_sources": [
     {
       "source": "WAI-Spoke/sessions/*/track.jsonl",
@@ -39,5 +39,11 @@
       "adequacy": "good"
     }
   ],
-  "self_sharpening_log": []
+  "self_sharpening_log": [],
+  "last_context_refresh_at": "2026-04-01T06:47:02.841754+00:00",
+  "context_snapshot_file": "advisors/historian/context/snapshot-2026-04-01.md",
+  "context_feeds_status": {
+    "wai-framework-updates": "empty",
+    "synthesis": "empty"
+  }
 }
