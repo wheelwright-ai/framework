@@ -3,3 +3,7 @@
 {"ts":"2026-03-31T23:59:21Z","type":"epic","id":"epic-skill-thrift-v1","title":"Skill thrift: wai.md 605→233L, lug-schema 525→471L, wai-reference.md created","result":"completed","session":"session-20260331-1632"}
 {"ts":"2026-03-31T23:59:21Z","type":"fix","id":"signal-track-integrity-closeout-event-fix-v1","title":"Track integrity fix: accept event==closeout as CLEAN in session-start.sh + wai.md","result":"delivered","session":"session-20260331-1632"}
 {"event":"completion","session":"session-20260331-1705","lug_id":"feature-tender-spoke-integrity-v1","title":"Tender: hook-path fix + per-spoke integrity verification","type":"feature","timestamp":"2026-03-31T17:10:00Z"}
+{"event":"fix","session":"session-20260331-1705","lug_id":"spoke_integrity_score.py","title":"hooks scoring formula 3pts→4pts","type":"fix","timestamp":"2026-04-01T01:12:38.905037+00:00Z"}
+{"event":"signal_triage","session":"session-20260331-1705","detail":"30 signals cleared from 36 total; 14 incoming routed; 6 remain pending","timestamp":"2026-04-01T01:12:38.905037+00:00Z"}
+{"event":"epic_decomposed","session":"session-20260331-1705","lug_id":"epic-ozi-work-queue-orchestration-v1","detail":"3 child impl lugs created (schema/wakeup/autochain)","timestamp":"2026-04-01T01:12:38.905037+00:00Z"}
+{"event":"lug_closed","session":"session-20260331-1705","lug_id":"feature-tender-spoke-integrity-v1","detail":"Verified complete from S116","timestamp":"2026-04-01T01:12:38.905037+00:00Z"}

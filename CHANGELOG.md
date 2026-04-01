@@ -1,3 +1,12 @@
+## [2.0.139] - 2026-03-31
+
+### Fixed — Hooks Scoring Formula + Signal Triage + Epic Decomposition (Session 117)
+
+- **`tools/spoke_integrity_score.py`:** Hooks dimension scoring bug fixed — `score_hooks()` awarded 3pts/hook (5×3=15 cap) while declaring `max=20`; changed to 4pts/hook (5×4=20); framework spoke: 89→94/100
+- **Signal triage:** 30 of 36 framework-inbox signals cleared; 14 incoming routed; 6 remain as pending work items
+- **`epic-ozi-work-queue-orchestration-v1` decomposed:** 3 child impl lugs: schema → wakeup → autochain (phase-blocked)
+- **`feature-tender-spoke-integrity-v1` closed:** Fleet run confirmed complete — all 17 spokes GREEN
+
 ## [2.0.138] - 2026-03-31
 
 ### Added — Scripted Closeout + Skill Thrift + Track Integrity Fix (Session 116)
