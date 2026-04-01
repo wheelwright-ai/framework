@@ -400,12 +400,21 @@ def test_hook_behavior(suite: Suite):
                 "_session_state": {
                     "protocol_completed": True,
                     "last_session_id": "sess-old",
-                    "current_session": {
-                        "session_id": "sess-new"
-                    },  # different = same session
+                    "track_path": "",
                 },
             }
             (spoke / "WAI-State.json").write_text(json.dumps(state))
+
+            # Hook reads protocol_completed from session-guard.json (runtime file),
+            # not WAI-State.json. Guard session_id != last_session_id → same session.
+            runtime = spoke / "runtime"
+            runtime.mkdir()
+            guard = {
+                "session_id": "sess-current",  # != last_session_id → not a new session
+                "protocol_completed": True,
+                "started_at": "2026-01-01T00:00:00Z",
+            }
+            (runtime / "session-guard.json").write_text(json.dumps(guard))
 
             env = {**os.environ, "CLAUDE_PROJECT_DIR": str(tmp_path)}
             result = subprocess.run(

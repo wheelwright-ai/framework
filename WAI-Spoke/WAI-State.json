@@ -100,7 +100,8 @@
     "teaching_audit_completed": true,
     "teaching_audit_date": "2026-03-25",
     "teaching_audit_result": "all_94_teachings_verified_adopted",
-    "teaching_audit_wired_to_wakeup": true
+    "teaching_audit_wired_to_wakeup": true,
+    "protocol_completed": false
   },
   "_work_queue": {
     "last_scored_at": "2026-04-01T02:58:50.042911+00:00",
