@@ -19,6 +19,10 @@ venv/
 .DS_Store
 Thumbs.db
 
+# Claude — track commands/agents/hooks/settings, ignore local-only files
+.claude/.provider
+.claude/settings.local.json
+
 # WAI runtime (session-local, not persisted)
 WAI-Spoke/runtime/
 WAI-Spoke/.autosave/
