@@ -1,0 +1,46 @@
+{
+  "id": "feature-spoke-activity-log-cartographer-v1",
+  "type": "feature",
+  "status": "open",
+  "title": "Spoke activity log: session outcomes in Quartermaster + Cartographer anomaly surface",
+  "one_liner": "Expose per-spoke session outcome history so Cartographer can surface fleet anomalies.",
+  "description": "Each spoke already has session tracks in WAI-Spoke/sessions/*/track.jsonl. The signal value is not in the raw logs but in anomalies: INTERRUPTED sessions (lost work risk), gardener-only streaks (no human sessions), dormant spokes. Quartermaster scan should add last_session_outcome per spoke (CLEAN/INTERRUPTED/GARDENER/EMPTY) and session frequency (last 7 days). Cartographer renders this as a fleet-pulse section showing anomalies only, not raw dumps.",
+  "priority": "normal",
+  "effort": 3,
+  "impact": 6,
+  "roi": 3.0,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "parent_epic": "epic-hub-evolution-structure",
+  "created_at": "2026-04-01T00:00:00Z",
+  "updated_at": "2026-04-01T00:00:00Z",
+  "perceive": {
+    "current_state": "Quartermaster scans cross-spoke inventory (lugs, signals, stale work) but does not read session track outcomes. Cartographer renders spoke health scores and decisions but has no session activity view.",
+    "files": [
+      "hub/tools/quartermaster_scan.py (add per-spoke session outcome scan)",
+      "hub/WAI-Hub/advisors/cartologist/reports/latest.html (add fleet-pulse section)",
+      "hub/tools/cartologist_report.py (render fleet-pulse from quartermaster data)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. In quartermaster_scan.py: for each spoke, scan WAI-Spoke/sessions/ sorted by date, take the last 7 days of sessions, classify each as CLEAN (track ends with completed=true or event=closeout), INTERRUPTED (track non-empty but no closeout), GARDENER (committed by gardener commit pattern), or EMPTY (no track entries). Write last_session_outcome + session_counts_7d to per-spoke output.",
+      "2. In cartologist_report.py: add fleet_pulse section to the report JSON using quartermaster session data. Flag anomalies: INTERRUPTED sessions, spokes with 0 human sessions in 7 days, spokes dormant > 14 days.",
+      "3. In latest.html template: add a fleet-pulse panel showing only anomalies (not raw log). INTERRUPTED badge, gardener-only streak badge, dormant indicator. Healthy spokes collapse to a summary line."
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "quartermaster_scan.py output includes last_session_outcome per spoke",
+      "Cartographer report.json includes fleet_pulse section with anomaly flags",
+      "latest.html fleet-pulse panel shows INTERRUPTED spokes highlighted",
+      "Healthy spokes do not generate noise (collapsed or omitted)"
+    ]
+  },
+  "acceptance_criteria": [
+    "Cartographer surfaces INTERRUPTED sessions without requiring manual spoke inspection",
+    "Gardener-only streaks visible at fleet level (no human sessions in N days)",
+    "Dormant spokes flagged (no sessions > 14 days)",
+    "Raw session log is NOT displayed \u2014 only derived anomaly signals"
+  ]
+}

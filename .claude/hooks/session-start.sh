@@ -32,15 +32,19 @@ fi
 
 # ── Guard check: prevent mid-session re-entry overwrite ─────────────────────
 # SessionStart can re-fire mid-session (e.g. /context, IDE reconnect).
-# If the guard shows an active session (wakeup done, not closed, track non-empty),
-# reuse it — do NOT create a new session dir or overwrite WAI-State.json.
+# Reuse the existing session only if ALL conditions are true:
+#   1. Guard shows wakeup completed (not a cold start)
+#   2. Guard is from TODAY (stale guards from previous days are ignored)
+#   3. Guard session track has entries (actual work was done)
+#   4. Guard not explicitly closed by closeout
 _GUARD_FILE="$PROJECT_DIR/WAI-Spoke/runtime/session-guard.json"
+_TODAY_PREFIX="session-$(date +%Y%m%d)"
 SKIP_SESSION_INIT=false
 if [[ -f "$_GUARD_FILE" ]]; then
   _GC=$(jq -r '.protocol_completed // false' "$_GUARD_FILE" 2>/dev/null || echo "false")
   _GCLOSED=$(jq -r '.session_closed // false' "$_GUARD_FILE" 2>/dev/null || echo "false")
   _GSID=$(jq -r '.session_id // ""' "$_GUARD_FILE" 2>/dev/null || echo "")
-  if [[ "$_GC" == "true" && "$_GCLOSED" != "true" && -n "$_GSID" ]]; then
+  if [[ "$_GC" == "true" && "$_GCLOSED" != "true" && "$_GSID" == "${_TODAY_PREFIX}"* ]]; then
     _GTRACK="$PROJECT_DIR/WAI-Spoke/sessions/$_GSID/track.jsonl"
     if [[ -f "$_GTRACK" && -s "$_GTRACK" ]]; then
       SESSION_NAME="$_GSID"
