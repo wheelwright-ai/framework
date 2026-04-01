@@ -26,3 +26,5 @@ Thumbs.db
 # WAI runtime (session-local, not persisted)
 WAI-Spoke/runtime/
 WAI-Spoke/.autosave/
+WAI-Spoke/ozi-brief.json
+WAI-Hub/octo-brief.json

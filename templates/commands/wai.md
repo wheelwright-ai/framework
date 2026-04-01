@@ -141,6 +141,42 @@ Check `WAI-Spoke/seed/ingest/WAI_Track-*.jsonl`. For valid files (first line: `{
 
 ## Step 7: Display Briefing
 
+### 7a. Brief Freshness Check
+
+Before running shell commands for lug counts / teaching status / expediter stats, check for pre-computed briefs:
+
+**Ozi Brief:** Check if `WAI-Spoke/ozi-brief.json` exists and is fresh (`generated_at` within 8 hours):
+
+```bash
+python3 -c "
+import json, datetime, os, sys
+bp = 'WAI-Spoke/ozi-brief.json'
+if not os.path.isfile(bp):
+    print('OZI_BRIEF=MISSING'); sys.exit(0)
+b = json.load(open(bp))
+gen = datetime.datetime.fromisoformat(b['generated_at'])
+age = (datetime.datetime.now(datetime.timezone.utc) - gen).total_seconds() / 3600
+if age < 8:
+    print(f'OZI_BRIEF=FRESH age={age:.1f}h')
+    lq = b.get('lug_queue', {})
+    ts = b.get('teaching_status', {})
+    ex = b.get('expediter', {})
+    print(f'  Lugs: {lq.get(\"open\",0)} open, {lq.get(\"in_progress\",0)} ip, {lq.get(\"undelivered_signals\",0)} signals')
+    print(f'  Teachings: {ts.get(\"pending\",0)} pending, {ts.get(\"adopted\",0)} adopted')
+    print(f'  Expediter: avg {ex.get(\"avg_quality\",0)}/10 | {ex.get(\"needs_refinement\",0)} need refinement')
+    print(f'  Next: {b.get(\"next_recommendation\",\"\")[:120]}')
+else:
+    print(f'OZI_BRIEF=STALE age={age:.1f}h')
+"
+```
+
+- **If FRESH:** Use brief data for lug counts, teaching status, expediter stats. Skip the shell commands in Steps 4/5 that compute these. Display: `State: from Ozi brief ({N}min ago)`
+- **If STALE or MISSING:** Run shell commands as normal. Display: `State: live scan`
+
+**Octo Brief (hub projects only):** Same freshness check on `WAI-Hub/octo-brief.json` for fleet section. If fresh, use `fleet_snapshot`, `priority_order`, `signal_pipeline` from the brief instead of re-scanning advisor state files. Display: `Fleet: from Octo brief ({N}min ago)` vs `Fleet: live scan`
+
+---
+
 **If task/bug/feature items with ROI >= 3.0 exist → Simplified briefing:**
 
 ```
