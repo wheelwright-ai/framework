@@ -1,0 +1,51 @@
+{
+  "id": "session-71-2026-03-25",
+  "type": "session-summary",
+  "title": "Session 71: WAI-Spoke/commands/ structural fix + 3 teachings applied",
+  "status": "completed",
+  "created_at": "2026-03-25T03:37:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "session_number": 71,
+  "accomplished": [
+    "Applied 3 hub teachings: wai-shipit-release-tag-v1, wai-step3a-path-split-v1, wai-wakeup-integration-check-v2",
+    "Created WAI-Spoke/commands/ with 33 real file copies of templates/commands/ — framework now dogfoods spoke structure",
+    "Updated wai-shipit.md Step 1 to sync templates/commands/ -> WAI-Spoke/commands/ at every shipit",
+    "Synced .claude/commands/wai.md to canonical (replaced 390-line stale version with 236-line canonical)",
+    "Added '(brief prompt, no ceremony)' marker to wai.md Path A heading",
+    "Moved task-fix-teaching-target-path-convention to completed (root cause: framework missing WAI-Spoke/commands/, not a teaching authoring bug)",
+    "Identified and confirmed: WAI-Spoke/commands/ exists in real spokes — framework was the exception",
+    "Replaced initial symlink approach with real copies after user challenged the synthetic nature of symlinks"
+  ],
+  "files_touched": [
+    "WAI-Spoke/commands/ (33 new files)",
+    "templates/commands/wai.md",
+    "templates/commands/wai-shipit.md",
+    ".claude/commands/wai.md",
+    ".claude/commands/wai-shipit.md",
+    "WAI-Spoke/seed/ingest/processed/ (3 teaching files)",
+    "WAI-Spoke/lugs/bytype/task/completed/task-fix-teaching-target-path-convention.json",
+    "WAI-Spoke/sessions/session-20260325-0244/track.jsonl",
+    "WAI-Spoke/sessions/session-20260325-0312/track.jsonl",
+    "WAI-Spoke/sessions/session-20260325-0314/track.jsonl"
+  ],
+  "decisions": [
+    "WAI-Spoke/commands/ must be real file copies, not symlinks — symlinks bypass the teaching application process and create synthetic scenarios",
+    "Framework dogfoods spoke structure: shipit Step 1 syncs templates/commands/ -> WAI-Spoke/commands/ (same as applying a teaching)",
+    "Teaching convention is correct for spokes (WAI-Spoke/commands/). Framework was the exception, not the convention.",
+    "wai-wakeup-integration-check-v2 satisfied by canonical Step 1 (Load Integration File) — equivalent to Step 0a"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "templates/spoke/commands/ sync still needs verification (mentioned in track open items)",
+      "AGENTS.md teaching discovery fallback — hub path validation + batch sequence handling (pending since S69)",
+      "epic-skill-thrift-v1 Tier 1 — wai-lug-schema (795L) or wai-improve (656L)",
+      "epic-prompt-validation-bench-move needs applying on wheelwright-ai-website spoke"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Verify templates/spoke/commands/ is in sync with templates/commands/ (or update wai-shipit Step 1 to also sync there)",
+      "Tackle epic-skill-thrift-v1 Tier 1 next session"
+    ]
+  },
+  "autosaves_reconciled": []
+}

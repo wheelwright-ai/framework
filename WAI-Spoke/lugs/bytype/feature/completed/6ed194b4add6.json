@@ -1,0 +1,29 @@
+{
+  "id": "6ed194b4add6",
+  "type": "feature",
+  "title": "Teaching Discovery Reconciliation - Auto-detect Already-Implemented Teachings",
+  "status": "completed",
+  "description": "Fix false-positive 'new teachings pending' by automatically reconciling hub teachings with local implementation state. When wakeup discovers teachings in hub/framework/, check if already implemented locally (via light verification: signals + file existence). If implemented, auto-copy to WAI-Spoke/seed/processed/ to prevent future false positives. Solves: Hub teachings are canonical/immutable, so we can't move them - must use copy-on-reconcile pattern.",
+  "impact": 8,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-18T10:15:00Z",
+  "priority": "high",
+  "tags": [
+    "wakeup",
+    "teaching-adoption",
+    "reconciliation",
+    "hub-spoke",
+    "automation"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "scope": "framework",
+  "category": "feature",
+  "perceive": "User observes wakeup reporting '9 new teachings found' every session, even though features (Track Chain Protocol, E1-E7 Skill System, etc.) are already implemented. Root cause: teachings stay in hub/ (immutable), never copied to WAI-Spoke/seed/processed/, so wakeup can't detect they're done. Current Step 3a only checks filename match in processed/, doesn't verify implementation status.",
+  "execute": "Phase 1: Create light verification function is_implemented() using: (1) grep WAI-Signals.jsonl for teaching name in last 30 days, (2) parse teaching's ## Verification section for file paths, check if any exist. Return true if signal mention OR file exists. Phase 2: Enhance templates/commands/wai.md Step 3a - for each hub teaching: check processed/ (skip if present), run is_implemented(), if true auto-copy to processed/ and log 'reconciled', else add to new queue. Update briefing output to show 'X scanned, Y reconciled, Z new'. Phase 3: Sync to .claude/commands/wai.md. Phase 4: Test on framework spoke with current 9 hub teachings - expect '9 scanned, 9 reconciled, 0 new' after first enhanced wakeup.",
+  "verify": "After implementation: (1) Run wakeup - should show '9 teachings scanned, 9 already implemented (reconciled), 0 new', (2) Check WAI-Spoke/seed/processed/ contains all 9 current hub teachings, (3) Create test teaching in hub with non-existent feature - wakeup should detect as 'new', (4) Implement test feature, add signal - next wakeup should auto-reconcile it. Success: Zero false positives for already-implemented teachings across all future wakeups.",
+  "completed_at": "2026-03-18T10:54:51.004368Z",
+  "resolution": "implemented",
+  "resolution_reason": "Verified complete during lug cleanup Session 42"
+}

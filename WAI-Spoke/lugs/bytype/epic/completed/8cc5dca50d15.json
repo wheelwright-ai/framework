@@ -1,0 +1,30 @@
+{
+  "id": "8cc5dca50d15",
+  "type": "epic",
+  "title": "WAI CLI Rebuild v2 — Zero Contamination",
+  "status": "completed",
+  "_v1_status": "resolved",
+  "description": "This epic outlines a non-negotiable, clean-slate rebuild of the WAI CLI (v2). It defines a clear menu structure, explicit selection/navigation rules, a 'Wheel Momentum' welcome visualization, and mandatory testing. The full authoritative plan is detailed in the conversation history as 'WAI CLI Rebuild Plan &#x2014; v2'.",
+  "impact": 10,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-10T09:05:34Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "accepted",
+  "resolution_reason": "Completed as confirmed by user",
+  "priority": "critical",
+  "tags": [
+    "cli",
+    "rebuild",
+    "clean-slate",
+    "architecture",
+    "design",
+    "v2"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "scope": "framework",
+  "completed_at": "2026-03-18T10:54:51.003913Z"
+}

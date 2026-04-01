@@ -1,0 +1,40 @@
+{
+  "i": "idea-distribor-advisor-v1",
+  "ty": "idea",
+  "t": "Distribor: framework-only advisor for scan-interrogate teaching evolution",
+  "s": "proposed",
+  "ca": "2026-03-26T16:30:00Z",
+  "gb": "session-81-framework via incoming signal",
+  "challenge": "No mechanism exists to scan spoke behavior and improve teaching framing based on what agents actually do vs what teachings intend. Teaching framing is written once and never evolved from behavioral evidence.",
+  "hypothesis": "New framework-only advisor named Distribor. Dual role: (1) SCAN \u2014 polls spokes for behavioral telemetry: settings.local.json permission patterns, track files, teaching adoption deltas, lug type distributions. (2) INTERROGATE \u2014 analyzes scan data to identify gaps between intended behavior (teaching framing) and actual behavior (agent actions). Output: revised teaching files and framing recommendations for framework maintainer. Lives exclusively in framework \u2014 never distributed. Scan-interrogate cycle IS the evolution loop.",
+  "origin": "signal",
+  "challenge_id": "chal-distribor-teaching-evolution",
+  "scope": "multi",
+  "spoke_context_loaded": true,
+  "fit_classification": "net_new",
+  "related_lugs": [],
+  "scores": {
+    "velocity_lift": "medium",
+    "implementation_cost": "high",
+    "system_fit": "aligned",
+    "generality": "framework"
+  },
+  "priority": "P2",
+  "next_step": "epic needed \u2014 design Distribor advisor structure, scan inputs, interrogate algorithm, output format",
+  "_behavior_directive": {
+    "what_this_is": "Improvement idea: Distribor advisor for scan-interrogate teaching evolution loop.",
+    "what_this_is_NOT": "An instruction to build immediately \u2014 requires epic design session."
+  },
+  "va": "build",
+  "perceive": "Read the current state relevant to: Distribor: framework-only advisor for scan-interrogate teaching evolution. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: Distribor: framework-only advisor for scan-interrogate teaching evolution",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: Distribor: framework-only advisor for scan-interrogate teach",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "impact": 4,
+  "effort": 2,
+  "routed_to": "LOCAL"
+}

@@ -1,0 +1,17 @@
+{
+  "id": "learning-help-internal-feedback-loop",
+  "type": "learning",
+  "title": "Help System Creates Feedback Loop for Wheel Improvement",
+  "status": "archived",
+  "description": "Help is an internal agent capability (not user-facing) that enables agents to discover local knowledge, navigate the registry, and surface gaps. Unanswered questions create lugs that show the wheel what's missing.",
+  "impact": 8,
+  "created_by": "Claude Sonnet 4.6",
+  "created_at": "2026-03-12T19:38:26.681535Z",
+  "node": "wheelwright/framework",
+  "perceive": "Agents need to: (1) know what they know locally, (2) find who specializes in what, (3) ask the right expert, (4) surface gaps",
+  "execute": "Implemented help as framework/skills/help.yaml. Agents use it internally to navigate registry, discover expertise, and create lugs when answers aren't found.",
+  "verify": "Help enables feedback loop: agent finds gap → lug created → receiver sees gap → improves → next agent benefits",
+  "why_not_user_facing": "User experience is simple: 'Agent, do X'. Agent internally uses help to navigate. No user sees /help prompts or registry details.",
+  "archived_at": "2026-03-18T10:54:51.004157Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

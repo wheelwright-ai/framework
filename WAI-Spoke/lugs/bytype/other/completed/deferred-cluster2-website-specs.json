@@ -1,0 +1,23 @@
+{
+  "id": "deferred-cluster2-website-specs",
+  "type": "deferred",
+  "title": "Cluster 2 product specs deferred to wheelwright-ai-website spoke",
+  "status": "deferred",
+  "description": "Cohort sharing contract, Handles product spec, Demand Exchange, and Consultation Exchange specs belong to the wheelwright-ai-website spoke — not the framework. Written to website/docs/ in Session 58 as design artifacts. When wheelwright-ai-website spoke is created, these 4 docs should seed its WAI-Spoke context. Framework has no further action.",
+  "impact": 6,
+  "created_at": "2026-03-23T22:30:00Z",
+  "created_by": "claude-sonnet-4-6",
+  "target_spoke": "wheelwright-ai-website",
+  "source_docs": [
+    "website/docs/cohort-sharing-contract.md",
+    "website/docs/handles-product-spec.md",
+    "website/docs/demand-exchange-spec.md",
+    "website/docs/consultation-exchange-spec.md"
+  ],
+  "composes": [
+    "implementation-wheelwright-web-cohort-sharing-v1",
+    "implementation-wheelwright-handles-v1",
+    "implementation-handles-demand-exchange-v1",
+    "implementation-handles-consultation-exchange-v1"
+  ]
+}

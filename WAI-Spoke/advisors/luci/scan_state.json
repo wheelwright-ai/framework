@@ -1,0 +1,209 @@
+{
+  "advisor_id": "luci",
+  "advisor_name": "Luci \u2014 Uptime Engineer",
+  "version": "1.0.0",
+  "mission_statement": "Ensure every spoke is usable when it needs to be usable and doing what it needs to be doing \u2014 availability, instrumentation, error detection, and proactive remediation",
+  "last_scan_at": "2026-03-30T01:01:47Z",
+  "scan_count": 1,
+  "uptime_tier": "internal",
+  "data_sources": [
+    {
+      "source": "spoke health endpoints / URLs",
+      "fields_used": [
+        "status_code",
+        "response_time"
+      ],
+      "fields_needed": [
+        "uptime_target"
+      ],
+      "adequacy": "unknown"
+    },
+    {
+      "source": "analytics (GA, Plausible, etc.)",
+      "fields_used": [
+        "tracking_active",
+        "events_firing"
+      ],
+      "fields_needed": [
+        "analytics_provider",
+        "property_id"
+      ],
+      "adequacy": "unknown"
+    },
+    {
+      "source": "application logs",
+      "fields_used": [
+        "error_count",
+        "error_patterns"
+      ],
+      "fields_needed": [
+        "log_path",
+        "log_format"
+      ],
+      "adequacy": "unknown"
+    },
+    {
+      "source": "WAI-Spoke/WAI-State.json",
+      "fields_used": [
+        "_project_foundation.identity"
+      ],
+      "fields_needed": [],
+      "adequacy": "good"
+    },
+    {
+      "source": "deployment config",
+      "fields_used": [
+        "deploy_method",
+        "hosting_provider"
+      ],
+      "fields_needed": [
+        "deploy_url",
+        "deploy_method"
+      ],
+      "adequacy": "unknown"
+    }
+  ],
+  "uptime_tiers": {
+    "critical": {
+      "description": "Revenue-generating, user-facing, must be up 24/7",
+      "target": "99.9%",
+      "check_interval": "5m",
+      "alert_on": [
+        "http_error",
+        "analytics_down",
+        "error_spike",
+        "ssl_expiry",
+        "dns_failure"
+      ],
+      "auto_remediate": true
+    },
+    "standard": {
+      "description": "Active project, users expect it to work during business hours",
+      "target": "99%",
+      "check_interval": "15m",
+      "alert_on": [
+        "http_error",
+        "error_spike",
+        "ssl_expiry"
+      ],
+      "auto_remediate": false
+    },
+    "development": {
+      "description": "In active development, uptime nice-to-have but not critical",
+      "target": "95%",
+      "check_interval": "1h",
+      "alert_on": [
+        "http_error"
+      ],
+      "auto_remediate": false
+    },
+    "internal": {
+      "description": "Internal tool, framework, or library \u2014 no server, code health only",
+      "target": null,
+      "check_interval": "daily",
+      "alert_on": [
+        "test_failure",
+        "lint_error",
+        "dependency_vulnerability"
+      ],
+      "auto_remediate": false
+    }
+  },
+  "checks": {
+    "availability": {
+      "description": "Is the service reachable and responding correctly?",
+      "methods": [
+        "http_get",
+        "tcp_connect",
+        "dns_resolve"
+      ],
+      "applies_to": [
+        "critical",
+        "standard",
+        "development"
+      ]
+    },
+    "instrumentation": {
+      "description": "Is analytics/tracking working? Are we measuring what matters?",
+      "methods": [
+        "ga_realtime_check",
+        "tag_verification",
+        "event_firing"
+      ],
+      "applies_to": [
+        "critical",
+        "standard"
+      ]
+    },
+    "error_detection": {
+      "description": "Are logs clean? Any error patterns emerging?",
+      "methods": [
+        "log_tail",
+        "error_rate_calc",
+        "pattern_match"
+      ],
+      "applies_to": [
+        "critical",
+        "standard",
+        "development"
+      ]
+    },
+    "ssl_dns": {
+      "description": "Certificate valid? DNS resolving correctly?",
+      "methods": [
+        "ssl_expiry_check",
+        "dns_propagation"
+      ],
+      "applies_to": [
+        "critical",
+        "standard"
+      ]
+    },
+    "dependency_health": {
+      "description": "Are dependencies up to date? Any known vulnerabilities?",
+      "methods": [
+        "npm_audit",
+        "pip_audit",
+        "dependabot_status"
+      ],
+      "applies_to": [
+        "critical",
+        "standard",
+        "development",
+        "internal"
+      ]
+    },
+    "code_health": {
+      "description": "Tests passing? Lint clean? Build succeeding?",
+      "methods": [
+        "test_runner",
+        "linter",
+        "build_check"
+      ],
+      "applies_to": [
+        "internal",
+        "development"
+      ]
+    }
+  },
+  "remediation_actions": {
+    "error_spike": "Create bug lug with error details, escalate to work queue as P1",
+    "analytics_down": "Create task lug to re-verify tracking setup, check tag injection",
+    "ssl_expiry_soon": "Create task lug with renewal steps, escalate if <7 days",
+    "http_error": "Check hosting status, create bug lug if persistent (>3 checks)",
+    "test_failure": "Create bug lug with failing test details",
+    "dependency_vulnerability": "Create task lug with affected package and fix version"
+  },
+  "passes": [
+    {
+      "ts": "2026-03-30T01:01:47Z",
+      "tier": "internal",
+      "checks": 3,
+      "pass": 1,
+      "fail": 1,
+      "warn": 1,
+      "skip": 0
+    }
+  ],
+  "self_sharpening_log": []
+}

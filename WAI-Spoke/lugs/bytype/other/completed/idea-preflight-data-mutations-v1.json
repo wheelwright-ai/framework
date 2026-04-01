@@ -1,0 +1,32 @@
+{
+  "i": "idea-preflight-data-mutations-v1",
+  "ty": "idea",
+  "t": "Pre-flight declaration before any destructive data mutation",
+  "s": "resolved",
+  "ca": "2026-03-26T16:30:00Z",
+  "gb": "PathFinder Historian first pass (2026-03-25) via incoming signal",
+  "challenge": "Agents execute write/delete/restructure operations on production data files without pausing to state intent. Users discover the change after it happens. PathFinder session 16 had 3 jobs.json wipes from agents executing destructive ops without pre-stating intent.",
+  "hypothesis": "Add pre-flight declaration to stewardship guard (wai-stewardship-guard.md): before any shell command or API call that writes/deletes/mutates a data file, agent states exactly what it will change and the effect, then waits for user acknowledgment. One sentence, not a ceremony. Applies to any file outside WAI-Spoke/ that contains user data.",
+  "origin": "signal",
+  "challenge_id": "chal-preflight-data-mutations",
+  "scope": "protocol",
+  "spoke_context_loaded": true,
+  "fit_classification": "extends",
+  "related_lugs": [],
+  "scores": {
+    "velocity_lift": "high",
+    "implementation_cost": "medium",
+    "system_fit": "aligned",
+    "generality": "all-spokes"
+  },
+  "priority": "P1",
+  "next_step": "add pre-flight rule to wai-stewardship-guard.md; trigger: any write/delete on non-WAI-Spoke files",
+  "_behavior_directive": {
+    "what_this_is": "Improvement idea: mandatory pre-flight before destructive data operations.",
+    "what_this_is_NOT": "An instruction to implement immediately without user direction."
+  },
+  "va": "grind",
+  "resolved_at": "2026-03-30T03:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Captured in pre-tool-guard hook. Destructive ops already blocked."
+}

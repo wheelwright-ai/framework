@@ -1,0 +1,11 @@
+{
+  "id": "signal-routing-intelligence-spoke-profiles-v1",
+  "type": "signal",
+  "status": "undelivered",
+  "title": "Ozi routing intelligence: spoke-profile-aware dispatch + proactive cross-spoke suggestions",
+  "impact": 8,
+  "target": "spokes",
+  "description": "When dispatching to multiple spokes, Ozi reads each spoke's profile (focus, audience, purpose) from hub registry and drafts tailored messages. Proactive suggestions surface only for impact >= 8 completions. Ask-once protocol for missing profiles. Trivial work is silent. Depends on hub registry spoke profiles + teams. Captured in lug-routing-intelligence-20260330.",
+  "created_at": "2026-03-31T19:15:00Z",
+  "session": 118
+}

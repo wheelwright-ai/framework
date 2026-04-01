@@ -1,0 +1,36 @@
+{
+  "i": "session-20260324-0419",
+  "ty": "session-summary",
+  "t": "Session 61 — chat-to-track v0.10 integration",
+  "s": "c",
+  "ca": "2026-03-24T04:25:00Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 61,
+  "accomplished": [
+    "Integrated WAI Track Prompt v0.10 into skills/chat-to-track.md (replaced v3.9)",
+    "Updated templates/commands/wai-chat-to-track.md: export directions updated (closeout chat → Export WAI Track), added 'after: {turn_number}' export mode",
+    "Hub signal duplicate (signal-step9c-type-filter-fix-20260324) detected and moved to processed"
+  ],
+  "files_touched": [
+    "skills/chat-to-track.md",
+    "templates/commands/wai-chat-to-track.md",
+    "WAI-Spoke/sessions/session-20260324-0419/track.jsonl"
+  ],
+  "decisions": [
+    "v0.10 replaces v3.9 entirely — no coexistence, single source of truth",
+    "Export command updated from 'closeout chat' to 'Export WAI Track' to match prompt spec"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "epic-teaching-generation-canonical-evolution-v1 (P1) still in_progress — generate + dogfood teaching files",
+      "Build Spoke ID System from scratch (wai/spoke_id.py + wai/file_validator.py)",
+      "refactor-chat-to-track-skill-location (P3)",
+      "refactor-mail-routing-language-v1 (P4)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Start Spoke ID System or pick up teaching epic — user to decide"
+    ]
+  },
+  "autosaves_reconciled": []
+}

@@ -1,0 +1,40 @@
+{
+  "id": "task-lug-storage-cleanup-v1",
+  "type": "task",
+  "title": "Lug storage cleanup - rescue backup and temp artifacts",
+  "status": "implemented",
+  "description": "When lug storage is reworked (e.g., migration to sharded structure), the system must scan for and rescue trapped information from backup/temp/sidecar lug artifacts before cleanup. This preserves review trails, implementation history, and other valuable data that may exist outside the primary WAI-Lugs.jsonl file.",
+  "impact": 7,
+  "created_by": "claude-sonnet-4-20250514",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-19T09:10:00Z",
+  "parent_epic": "epic-session15-fleet-evolution",
+  "priority": "medium",
+  "tags": [
+    "canonical-evolution",
+    "lug-storage",
+    "backup-rescue",
+    "data-preservation"
+  ],
+  "category": "maintenance",
+  "scope": "framework",
+  "artifacts_to_rescue": [
+    "WAI-Spoke/WAI-Lugs.jsonl.backup - Contains implementation lug history",
+    "Other .backup files with lug data",
+    "Temp files created during migrations",
+    "Sidecar files with review/reconciliation data"
+  ],
+  "rescue_requirements": [
+    "Scan all WAI-Spoke directories for lug-related backup files",
+    "Extract and validate any trapped review notes, implementation feedback, ownership records",
+    "Merge valuable data back into canonical lug storage",
+    "Verify no review trails or implementation history lost",
+    "Document rescue process for future migrations"
+  ],
+  "blocked_by": [],
+  "prerequisites": [
+    "Canonical lug storage architecture finalized",
+    "Migration tooling ready",
+    "Backup scanning logic implemented"
+  ]
+}

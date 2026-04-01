@@ -1,0 +1,209 @@
+{
+  "id": "implementation-hub-intent-based-spoke-launch-v1",
+  "type": "implementation",
+  "title": "Implement hub intent-based spoke launch and context shaping",
+  "status": "implemented",
+  "description": "Build a hub-side launcher that starts the right spoke session from the user's intended class of work. The launcher should infer which spoke to open, which model class to use from the hub routing table, and what context to load or ignore so startup is surgical rather than full wakeup by default. This launcher becomes the hub entrypoint for deliberate human-directed work.",
+  "impact": 9,
+  "created_by": "OpenCode GPT-5.4",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-20T06:18:18.111082+00:00",
+  "priority": "high",
+  "tags": [
+    "hub",
+    "launcher",
+    "intent",
+    "context-shaping",
+    "model-routing"
+  ],
+  "category": "architecture",
+  "composes": [
+    "task-hub-intent-taxonomy",
+    "task-hub-intent-to-spoke-routing",
+    "task-hub-intent-to-model-class-routing",
+    "task-hub-startup-profile-selection",
+    "task-hub-minimal-prompt-packet"
+  ],
+  "target_files": [
+    "hub/launch/intent-taxonomy.json",
+    "hub/launch/startup-profiles.json",
+    "hub/launch/context-policies.json",
+    "templates/commands/",
+    "WAI-Spoke/WAI-Lugs.jsonl"
+  ],
+  "non_goals": [
+    "Do not require full wakeup for every launched session",
+    "Do not bind intent routing to a single provider or exact model forever",
+    "Do not replace Octo or Ozi; this launcher should feed them"
+  ],
+  "sequence": {
+    "must_be_sequential": [
+      "1. Define the user intent taxonomy (big think, coding, refactoring, verification, bug hunt, spoke gardening, etc.).",
+      "2. Define how intent maps to target spoke selection.",
+      "3. Define how intent maps to model class using the hub routing table.",
+      "4. Define startup profiles (full wakeup, Ozi preflight, surgical minimal prompt).",
+      "5. Define the minimal dispatch packet containing target spoke, model class, startup profile, and context include/ignore rules.",
+      "6. Persist examples showing how a user intent becomes a launched spoke session."
+    ],
+    "can_parallelize": [
+      "Draft intent taxonomy and startup profiles in parallel",
+      "Draft spoke routing and context include/ignore rules in parallel"
+    ]
+  },
+  "verification_requirements": [
+    "Verify intent routing can select a spoke, model class, and startup profile from a single user request",
+    "Verify context shaping is explicit about what to load and what to skip",
+    "Verify the launcher complements Octo and the hub model routing table rather than duplicating them",
+    "Verify the design is optimized for minimal context / surgical strike launches",
+    "Verify launch packets include recommended_confidence_tier and explicit context_policy fields"
+  ],
+  "acceptance_tests": [
+    {
+      "description": "Intent-to-launch mapping is explicit",
+      "command": "Review implementation lug",
+      "expected": "A future implementer can trace user intent to target spoke, model class, and startup profile"
+    },
+    {
+      "description": "Context shaping is explicit",
+      "command": "Review implementation lug",
+      "expected": "The design states what context to load or ignore for each startup profile"
+    }
+  ],
+  "implementer_review": {
+    "required_before_implementation": true,
+    "review_status": "approved_to_implement",
+    "review_sources": [
+      "implementation-hub-model-routing-table-v1",
+      "implementation-octo-gardener-dispatch-v1"
+    ],
+    "review_questions": [
+      "Is the intent taxonomy specific enough to launch the right spoke with the right context?",
+      "Does the launcher depend cleanly on the hub model routing table?",
+      "Is the startup-profile design surgical enough to avoid carpet-bombing context?"
+    ],
+    "review_history": [
+      {
+        "cycle": 1,
+        "reviewed_at": "2026-03-23T04:00:00Z",
+        "reviewed_by": "claude-sonnet-4-6",
+        "model": "claude-sonnet-4-6",
+        "result": "approved_to_implement",
+        "summary": "Lug is approvable. Hub exists so hub/launch/ is a valid creation target. All three target files (intent-taxonomy.json, startup-profiles.json, context-policies.json) are concrete. The launcher_contract section is thorough: inputs, outputs, startup_profiles (full_wakeup, ozi_preflight, surgical_minimal), context_policy_fields (must_load/may_load/must_ignore), and minimal_dispatch_packet_fields are all enumerated. The dependency on implementation-hub-model-routing-table-v1 is explicit and correct. All ready_to_build_gate checks pass. One structural concern: lug lists implementation-octo-gardener-dispatch-v1 as a dependency, but the launcher is logically upstream of Octo (Octo consumes the launcher). The dependency may be inverted — the launcher should feed Octo, not depend on it. This does not block the build since the launcher can be built from this lug alone, but the dependency field should be corrected in a follow-up.",
+        "blocking_issues": [],
+        "recommendations": [
+          "Dependency on implementation-octo-gardener-dispatch-v1 appears inverted: the launcher feeds Octo, not the reverse. Correct the dependency field to remove Octo as a required predecessor.",
+          "Intent taxonomy concrete examples are sparse — the sequence says \"big think, coding, refactoring, verification, bug hunt, spoke gardening\" but the lug has no intent-taxonomy.json skeleton. Builder should derive taxonomy entries from dynamic_advice_model.work_class_examples in the routing-table lug (since routing-table must be built first).",
+          "Builder should document the mapping table from user_intent string to (target_spoke, work_class) as the primary deliverable in intent-taxonomy.json — this mapping logic is implied but not written out."
+        ]
+      }
+    ]
+  },
+  "workflow": {
+    "current_phase": "plan",
+    "current_owner": "claude-sonnet-4-6",
+    "current_state": "implemented",
+    "assigned_at": "2026-03-20T06:18:18.111082+00:00",
+    "updated_at": "2026-03-23T16:20:00Z",
+    "handoff_reason": "Implementer review passed. Builder can claim."
+  },
+  "implementation_record": {
+    "implementer": "OpenCode GPT-5.4",
+    "started_at": "2026-03-20T06:18:18.111082+00:00",
+    "progress": [
+      "✅ Captured intent-driven spoke launch concept",
+      "✅ Captured context load/ignore shaping requirement",
+      "✅ Captured dependency on model class routing rather than hardcoded model names",
+      "✅ Tightened into review-ready shape with concrete target files, ready-to-build gate, and acceptance rubric"
+    ]
+  },
+  "ownership": {
+    "tracks_who_worked_on_it": true,
+    "current_owner": "OpenCode GPT-5.4",
+    "contributors": [
+      "OpenCode GPT-5.4"
+    ]
+  },
+  "launcher_contract": {
+    "inputs": [
+      "user_intent",
+      "optional target spoke",
+      "optional urgency"
+    ],
+    "outputs": [
+      "target_spoke",
+      "recommended_work_class",
+      "recommended_model_class",
+      "startup_profile",
+      "minimal_prompt_packet"
+    ],
+    "startup_profiles": [
+      "full_wakeup",
+      "ozi_preflight",
+      "surgical_minimal"
+    ],
+    "context_policy_fields": [
+      "must_load",
+      "may_load",
+      "must_ignore"
+    ],
+    "minimal_dispatch_packet_fields": [
+      "target_spoke",
+      "recommended_work_class",
+      "recommended_confidence_tier",
+      "selected_model_class",
+      "selected_provider_model",
+      "startup_profile",
+      "context_policy",
+      "min_wai_prompt"
+    ],
+    "context_policy": {
+      "must_load": [
+        "target lug or teaching",
+        "ozi-status preflight",
+        "required local constraints"
+      ],
+      "may_load": [
+        "adjacent tasks",
+        "recent local tracks",
+        "relevant model advice slices"
+      ],
+      "must_ignore": [
+        "full repo-wide history unless startup profile requires it",
+        "unrelated spoke backlog",
+        "broad wakeup loads when surgical mode suffices"
+      ]
+    }
+  },
+  "dependencies": [
+    "implementation-hub-model-routing-table-v1",
+    "implementation-octo-gardener-dispatch-v1"
+  ],
+  "notes": [
+    "Refined as the human-facing hub launch entrypoint that consumes the hub model routing table.",
+    "Tightened minimal dispatch packet to include confidence tier and explicit context policy."
+  ],
+  "ready_to_build_gate": {
+    "required": true,
+    "checks": [
+      "Intent taxonomy is explicit",
+      "Startup profiles are explicit",
+      "Context include/ignore rules are explicit",
+      "Launcher depends on model routing rather than hardcoded model names"
+    ]
+  },
+  "review_rubric": {
+    "self_review_required": true,
+    "ready_to_build": [
+      "Can a future builder map a user intent to spoke, model class, and startup profile from this lug alone?",
+      "Are minimal prompt packets concrete enough to generate launch calls?"
+    ],
+    "acceptance_checks": [
+      {
+        "id": "intent_mapping",
+        "question": "Is intent-to-launch mapping complete enough to implement?",
+        "pass_condition": "Intent taxonomy, spoke selection, model class routing, and startup profile selection are all durable",
+        "failure_action": "Return to planning and clarify mapping rules"
+      }
+    ]
+  }
+}

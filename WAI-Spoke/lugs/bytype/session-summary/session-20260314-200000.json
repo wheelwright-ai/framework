@@ -1,0 +1,64 @@
+{
+  "i": "session-20260314-200000",
+  "ty": "session-summary",
+  "t": "Session 17 summary",
+  "s": "c",
+  "ca": "2026-03-14T20:00:00Z",
+  "gb": "Claude Sonnet 4.6",
+  "session_number": 17,
+  "accomplished": [
+    "Created framework/teachings/ as canonical teaching file outbox",
+    "Fixed hub framework symlink: now points to teachings/ only (not entire repo)",
+    "Removed 3 stale basher teaching files from hub staging",
+    "Deleted dead wai-cli-launch.sh from templates/spoke/ and WAI-Spoke/",
+    "Removed WAI CLI references from all active template and spoke files (wai-rules.md, wai-teach.md, WAI-Guide.md, WAI-State.json, HUB templates)",
+    "Updated wai.md Step 3a: hub teaching detection via teachings/ symlink pattern",
+    "Updated wai.md Step 6: simplified to local-only inbox checks, consolidated hub check into Step 3a",
+    "Updated wai-teach.md: .teaching build defined as plain copy+rename, removed HMAC signing, adoption plan location fixed, processed/ dir added to init",
+    "Fixed wheel.hub_path missing from spoke template",
+    "Authored decision-plan-dogfood-execute-protocol lug: governance rule for multi-file changes",
+    "Authored signal-no-wai-cli-v1 in outbox for hub distribution",
+    "Ran two-round dogfood subagent review: found 4 critical issues, all fixed before marking ready"
+  ],
+  "files_touched": [
+    "teachings/ (new folder, 5 files)",
+    "WAI-Spoke/WAI-Guide.md",
+    "WAI-Spoke/WAI-Lugs.jsonl",
+    "WAI-Spoke/WAI-State.json",
+    "WAI-Spoke/lugs/outbox/signal-no-wai-cli.jsonl (new)",
+    ".claude/commands/wai-rules.md",
+    "templates/commands/wai.md",
+    "templates/commands/wai-teach.md",
+    "templates/commands/wai-rules.md",
+    "templates/spoke/WAI-Guide.md",
+    "templates/spoke/WAI-State.json",
+    "templates/spoke/commands/wai-teach.md",
+    "templates/HUB/hub-profile.json",
+    "templates/HUB/wheel-projects.json",
+    "templates/HUB/WAI-Spoke/WAI-State.json"
+  ],
+  "decisions": [
+    "teachings/ folder is the canonical teaching outbox — hub symlinks here, not to entire repo",
+    "Hub framework symlink must point to teachings/ only to prevent data pollution",
+    "wai-teach build step = plain file copy with .teaching extension appended — no transformation",
+    "adoption plan goes to target/WAI-Spoke/seed/ingest/ not target root",
+    "processed/ must be created at spoke init time",
+    "HMAC signing removed — was aspirational, not implementable",
+    "Multi-file changes require plan→epic→dogfood→execute sequence (decision-plan-dogfood-execute-protocol)",
+    "WAI CLI does not exist — all references must be removed from active files"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Sync templates/commands/ → .claude/commands/ (this project's live skills are stale)",
+      "Remove remaining WAI CLI refs in examples/demo-wheel/ (tracked: task-remove-wai-cli-refs)",
+      "Push signal-no-wai-cli-v1 to hub via /wai-teach"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "PRIORITY 1: Read decision-plan-dogfood-execute-protocol lug before making any multi-file change",
+      "PRIORITY 2: Sync .claude/commands/ from templates/commands/ — use plan→dogfood→execute protocol",
+      "PRIORITY 3: /wai-teach to push outbox signal lug to hub"
+    ]
+  },
+  "autosaves_reconciled": []
+}

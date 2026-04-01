@@ -1,0 +1,19 @@
+{
+  "id": "ss-skill-migration-2026-02-08",
+  "type": "session-summary",
+  "title": "Session: WAI Skill System — KB/SOP Migration (partial)",
+  "status": "archived",
+  "_v1_status": "published",
+  "description": "",
+  "impact": 3,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-08T09:51:56.668905+00:00",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "archived_at": "2026-03-18T10:54:51.003900Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

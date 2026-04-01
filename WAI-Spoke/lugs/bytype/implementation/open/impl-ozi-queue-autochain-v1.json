@@ -1,0 +1,53 @@
+{
+  "id": "impl-ozi-queue-autochain-v1",
+  "type": "implementation",
+  "status": "open",
+  "parent_epic": "epic-ozi-work-queue-orchestration-v1",
+  "title": "Ozi Queue Phase 3: auto-chain dispatch + minimal context mode",
+  "description": "Implement auto-chain: after completing a work item, automatically load next ready item with minimal context (~15-20k tokens instead of full ~46k wakeup). Add implementation_notes + uat_recording fields to track schema. Add Closeout Step 10: update queue state, archive completed lug, auto-prepare next item.",
+  "priority": "medium",
+  "effort": 3,
+  "roi": 3.5,
+  "model_fit": "opus",
+  "routed_to": "FRAMEWORK",
+  "phase": 3,
+  "created_at": "2026-04-01T00:33:46.120440+00:00Z",
+  "updated_at": "2026-04-01T00:33:46.120440+00:00Z",
+  "blocker_list": ["impl-ozi-queue-schema-v1", "impl-ozi-queue-wakeup-v1"],
+  "perceive": {
+    "current_state": "Each job requires a full wakeup (~46k tokens). No auto-chain between work items. Track schema has no implementation_notes or uat_recording fields. Closeout has no queue state update step.",
+    "evidence": [
+      "wai.md wakeup loads ~46k tokens per session",
+      "track.jsonl has event/note fields but no implementation_notes/uat_recording",
+      "wai-closeout.md has no queue state update step"
+    ],
+    "files": [
+      "templates/commands/wai.md (auto-chain trigger in Step 9 after item completion)",
+      "templates/commands/wai-closeout.md (add Step 10: queue update)",
+      "templates/commands/wai-reference.md (minimal context load schema)",
+      "WAI-Spoke/WAI-State.json (_work_queue auto-chain state)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. Define minimal context load: WAI-State.json (identity only) + target lug + last 2 track turns",
+      "2. Add auto-chain trigger to wai.md: when Work [A]uto selected, set auto_chain=true in session state",
+      "3. Add implementation_notes and uat_recording fields to track.jsonl turn schema (wai-reference.md)",
+      "4. Add Closeout Step 10 to wai-closeout.md: mark item done in _work_queue, auto-load next if auto_chain=true",
+      "5. Test: manually chain two items and verify context stays minimal"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "wai-closeout.md has Step 10 that updates _work_queue item status",
+      "track.jsonl entries from auto-chain sessions have implementation_notes field",
+      "Minimal context mode documented in wai-reference.md with token estimate"
+    ]
+  },
+  "acceptance_criteria": [
+    "Auto-chain mode documented and triggerable via wakeup Step 9",
+    "Closeout Step 10 marks queue items done and prepares next",
+    "Minimal context load defined: WAI-State identity + lug + 2 track turns",
+    "Track schema updated with implementation_notes + uat_recording"
+  ]
+}

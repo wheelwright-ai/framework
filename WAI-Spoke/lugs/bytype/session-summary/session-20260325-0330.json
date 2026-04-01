@@ -1,0 +1,46 @@
+{
+  "id": "session-20260325-0330",
+  "type": "session-summary",
+  "title": "Session 66: Context diet — bytype restructure, bug promotion, template sync",
+  "status": "completed",
+  "created_at": "2026-03-25T03:30:00Z",
+  "created_by": "claude-opus-4-6",
+  "session_number": 66,
+  "accomplished": [
+    "Promoted bug to its own bytype/ folder (was hidden in other/)",
+    "Reclassified other/open/ — moved decisions, deferred items to completed; only ideas remain open",
+    "Updated spoke_cleanup.py, wai.md, wai-lug-advisor.md with bug as promoted type",
+    "Regenerated WAI-LugIndex.jsonl (355 entries with updated folder paths)",
+    "Synced all 26 stale template spoke skills from templates/commands/ to templates/spoke/skills/",
+    "Identified propagation gap: template spoke was out of sync with framework source",
+    "Established principle: decisions/policies → enforce in skills, lug is the receipt"
+  ],
+  "files_touched": [
+    "tools/spoke_cleanup.py",
+    "templates/commands/wai.md",
+    "templates/commands/wai-lug-advisor.md",
+    "templates/spoke/skills/*/wai-*.md (26 files synced)",
+    "WAI-Spoke/lugs/bytype/bug/{open,in_progress,completed}/ (created + populated)",
+    "WAI-Spoke/WAI-LugIndex.jsonl"
+  ],
+  "decisions": [
+    "bug promoted to own bytype/ folder — only actionable type that was hidden in other/",
+    "Decisions/core-protocols enforce via skills, not lug presence — lug is historical receipt",
+    "Deferred items from other spokes → other/completed/ (done from this spoke's perspective)",
+    "Template spoke sync is a manual step — needs automation or closeout hook"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Teaching file for bytype restructure not yet created — existing spokes won't get changes until taught",
+      "Template spoke sync automation — currently manual, should be part of closeout or commit hook",
+      "wai-context-advisor.md storage health checks not yet added"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Create teaching for bytype restructure + spoke_cleanup.py for distribution to existing spokes",
+      "Consider adding template spoke sync step to closeout protocol",
+      "Add storage health checks (lug count, folder sizes, index freshness) to wai-context-advisor.md"
+    ]
+  },
+  "autosaves_reconciled": []
+}

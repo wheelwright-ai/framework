@@ -1,0 +1,2 @@
+{"bead_id": "7f9c6e21b7bc8f25", "session_id": "s1", "parent_id": null, "timestamp": "2026-01-19T12:43:33.322837", "summary": "Bead 1", "files_modified": []}
+{"bead_id": "0cc2c9725f237d94", "session_id": "s2", "parent_id": "7f9c6e21b7bc8f25", "timestamp": "2026-01-19T12:43:33.323010", "summary": "Bead 2", "files_modified": []}

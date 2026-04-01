@@ -1,0 +1,47 @@
+{
+  "id": "feature-closeout-banner-invert-v1",
+  "type": "feature",
+  "status": "done",
+  "title": "Closeout: banner-before-commit with 10s proceed-unless-cancel",
+  "description": "Current wai-closeout.md autocommits (banner displays after commit). Better UX tested in Minder: show banner BEFORE commit with a 10s countdown \u2014 auto-proceeds unless user types no/cancel/stop/abort/wait. Strictly better than autocommit: user sees what will be committed, has a visible escape window, but no friction for the normal case.",
+  "priority": "medium",
+  "effort": 1,
+  "roi": 3.5,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "created_at": "2026-04-01T00:32:35.323390+00:00Z",
+  "updated_at": "2026-04-01T00:32:35.323390+00:00Z",
+  "signal_source": "signal-closeout-banner-invert-better-than-autocommit-v1",
+  "perceive": {
+    "current_state": "wai-closeout.md Step 11 says 'Commit and push immediately \u2014 no user confirmation required. Banner displays AFTER.' This is fine for explicit invocations but gives no escape window.",
+    "evidence": [
+      "wai-closeout.md line 139: 'no user confirmation required. Banner displays AFTER.'",
+      "signal-closeout-banner-invert describes 10s countdown tested in Minder as strictly better"
+    ],
+    "files": [
+      "templates/commands/wai-closeout.md (Step 11, ~line 139)",
+      "tools/closeout.sh (if it handles the banner step)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. Read wai-closeout.md Step 11-12 in full",
+      "2. Update Step 11 to: display banner summary, then read -t 10 with message 'Proceeding in 10s... type cancel to abort'",
+      "3. Only abort if user types: no/cancel/stop/abort/wait (case-insensitive)",
+      "4. Proceed to commit on timeout or any other input",
+      "5. Update Step 12 to note banner was pre-commit"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "wai-closeout.md shows banner BEFORE commit with 10s proceed-unless-cancel pattern",
+      "Step 11 does not say 'no user confirmation required'"
+    ]
+  },
+  "acceptance_criteria": [
+    "Closeout displays banner before commit with 10s countdown",
+    "Only explicit cancel keywords abort the commit",
+    "Auto-proceeds on timeout"
+  ],
+  "completed_at": "2026-04-01T01:42:40.145668+00:00"
+}

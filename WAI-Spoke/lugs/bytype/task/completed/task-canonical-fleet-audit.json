@@ -1,0 +1,47 @@
+{
+  "id": "task-canonical-fleet-audit",
+  "type": "task",
+  "title": "Spoke fleet migration audit for canonical evolution",
+  "status": "analyzed",
+  "description": "Comprehensive audit of the local spoke fleet to identify migration-relevant variation that will complicate temp-folder rebuild and swap migration. Supports the canonical Wheelwright evolution epic with detailed inventory of 15 active spokes and their schema/pattern variations.",
+  "impact": 8,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-19T08:15:00Z",
+  "parent_epic": "epic-session15-fleet-evolution",
+  "priority": "high",
+  "tags": [
+    "canonical-evolution",
+    "migration",
+    "fleet-audit",
+    "schema-variation"
+  ],
+  "category": "architecture",
+  "blocks": [],
+  "blocked_by": [],
+  "findings": {
+    "spoke_count": 15,
+    "schema_generations": 3,
+    "track_storage_patterns": 3,
+    "legacy_file_contamination": "BRIEF.md and WAI-Manifest.yaml widespread",
+    "hardcoded_path_issues": "All /mnt/c and /home/mario paths will break during temp-folder migration",
+    "signal_semantic_conflicts": "Two incompatible signal models in active use",
+    "high_risk_migration_cases": [
+      "Schema v1/v2/v3 incompatibilities",
+      "Hardcoded hub/framework paths",
+      "Track path references becoming invalid"
+    ],
+    "medium_risk_cases": [
+      "Legacy file cleanup decisions",
+      "Signal format reconciliation",
+      "Session continuity across patterns"
+    ],
+    "special_cases": [
+      "Framework repo self-hosting",
+      "Hub registry path atomicity",
+      "Multi-tool session tracking"
+    ]
+  },
+  "deliverable_location": "Detailed audit report delivered to parent agent",
+  "verification_status": "Analysis complete, findings confirmed across all 15 spokes"
+}

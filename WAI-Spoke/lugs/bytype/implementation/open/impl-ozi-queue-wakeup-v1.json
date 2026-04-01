@@ -1,0 +1,50 @@
+{
+  "id": "impl-ozi-queue-wakeup-v1",
+  "type": "implementation",
+  "status": "open",
+  "parent_epic": "epic-ozi-work-queue-orchestration-v1",
+  "title": "Ozi Queue Phase 2: wakeup queue display + Work/Review/Auto options",
+  "description": "Add Step 9 to wai.md wakeup: display work queue status (ready items + pending refinements) and offer Work / Review / Auto-chain options. Reads _work_queue from WAI-State.json (populated by Phase 1).",
+  "priority": "high",
+  "effort": 2,
+  "roi": 4.0,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "phase": 2,
+  "created_at": "2026-04-01T00:33:33.234473+00:00Z",
+  "updated_at": "2026-04-01T00:33:33.234473+00:00Z",
+  "blocker_list": ["impl-ozi-queue-schema-v1"],
+  "perceive": {
+    "current_state": "wai.md Step 9 asks 'Vibe?' and surfaces tagged lug from next_session_recommendation. No work queue display. User must ask 'what should I work on?' to discover the queue.",
+    "evidence": [
+      "templates/commands/wai.md Step 9 — only shows vibe + changelog + tagged next lug",
+      "WAI-State.json _work_queue.items populated by score_backlog.py but never shown at wakeup"
+    ],
+    "files": [
+      "templates/commands/wai.md (Step 9)",
+      "templates/commands/wai-reference.md (add work queue display script)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. Read templates/commands/wai.md Step 9 in full",
+      "2. After existing vibe/changelog section, add: read _work_queue from WAI-State.json",
+      "3. Display compact table: ready items (count + top 3 by ROI), needs_refinement (count), blocked (count)",
+      "4. If ready_count > 0: offer '[W]ork top item / [R]eview refinements / [A]uto-chain / [S]kip'",
+      "5. If ready_count == 0 and needs_refinement > 0: offer '[R]eview / [S]kip'",
+      "6. Move queue display scripts/jq commands to wai-reference.md"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "wai.md Step 9 contains work queue display section",
+      "WAI wakeup shows queue status when _work_queue.items has ready items",
+      "Work/Review/Auto/Skip options presented based on queue state"
+    ]
+  },
+  "acceptance_criteria": [
+    "Wakeup Step 9 shows ready_count, needs_refinement_count, blocked_count",
+    "Top 3 ready items shown by ROI",
+    "User presented with Work/Review/Auto/Skip choice when queue has items"
+  ]
+}

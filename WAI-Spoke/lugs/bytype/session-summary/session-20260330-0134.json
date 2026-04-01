@@ -1,0 +1,69 @@
+{
+  "id": "session-20260330-0134",
+  "type": "session-summary",
+  "status": "completed",
+  "s": "c",
+  "created_at": "2026-03-30T04:00:00Z",
+  "gb": "claude-opus-4-6 (session-20260330-0134)",
+  "fw_ver": "3.0.0",
+  "title": "Session 103: Sanitize repo for open-source + phase-gated work queue + tool maximizer",
+  "session_number": 103,
+  "accomplished": [
+    "Fixed critical bug: wai_ozi.py switched from retired WAI-Lugs.jsonl to bytype/ folder scanning",
+    "Built complete execute_when gate system — blocked_by enforcement in all 3 dispatch paths",
+    "Created tools/lug_utils.py — shared utilities for gate evaluation across scorer, Ozi, chain mode",
+    "Added execute_when + phase fields to lug schema with full documentation",
+    "Added --update-state flag to score_backlog.py for auto-refreshing _work_queue",
+    "Full repo sanitization: WAI-Spoke/ gitignored, auto-init from template, 118K lines of personal data removed",
+    "Archived 87 sessions + 515 lugs + state to hub/spokes/framework/",
+    "Zero /home/mario references in active code (50+ files sanitized)",
+    "Created wai-tool-maximizer-gemini skill + reference (8-area audit)",
+    "Decision lug: open-source boundary = hub advisor layer",
+    "3 feedback memories saved (status updates, lug dedup, tool naming)"
+  ],
+  "files_touched": [
+    "wai_ozi.py — rewritten scan, dispatch, status update, prompt generation",
+    "tools/score_backlog.py — gate checks, --update-state, phase annotations",
+    "tools/lug_utils.py — NEW: shared lug utilities",
+    "tools/wai-chain.sh — gate checks in item picker",
+    "templates/commands/wai-lug-schema.md — execute_when + phase fields",
+    "templates/commands/wai-tool-maximizer-gemini.md — NEW: Gemini skill",
+    "templates/commands/wai-tool-maximizer-gemini-reference.md — NEW: Gemini reference",
+    ".gitignore — WAI-Spoke/ fully gitignored",
+    ".claude/hooks/session-start.sh — auto-init from template",
+    ".claude/hooks/user-prompt-submit.sh — auto-init from template",
+    ".claude/settings.json — session-start hook path updated",
+    "templates/spoke/WAI-State.json.template — NEW: clean state for cloners",
+    "tools/lathe_score.py — env var for hub path",
+    "tools/compass_report.py — env var for hub path",
+    "50+ files sanitized for hardcoded paths"
+  ],
+  "decisions": [
+    "execute_when subsumes blocked_by — both checked, new lugs prefer execute_when",
+    "Phase membership via field on lug, dynamic completion check",
+    "Open-source boundary = hub advisor layer (decision-df884ede13e2)",
+    "WAI-Spoke/ fully gitignored — auto-init from template on first session",
+    "Personal data archived to hub/spokes/framework/",
+    "Tool maximizer naming: wai-tool-maximizer-{app}",
+    "Ozi dispatch switched from FIFO to ROI-sorted"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Phase 4: Signal triage script (tools/triage_hub_signals.py) — 58 hub signals still stuck in incoming/",
+      "Phase 5: Update existing epics (epic-ozi-work-queue-orchestration-v1, epic-ozi-routing-awareness-v1) with new scope",
+      "Phase 6: Create public/v1.0.0 orphan branch for open-source release",
+      "Rename wai-claude-maximizer to wai-tool-maximizer-claude",
+      "Wakeup automation reminder — surface cron jobs/scripts at session start",
+      "Hub commit of archived framework data (hub/spokes/framework/)",
+      "Gemini key integration for gardener/scheduler"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Run hub session to commit archived data and triage 58 stuck signals",
+      "Create signal triage script with --dry-run mode",
+      "Update epic-ozi-work-queue-orchestration-v1 to include phase gates and execute-when in scope",
+      "Rename claude-maximizer skill to wai-tool-maximizer-claude for consistency",
+      "Add _automation.scripts[] to WAI-State.json for wakeup reminders"
+    ]
+  }
+}

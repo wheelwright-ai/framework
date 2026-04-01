@@ -1,0 +1,9 @@
+{
+  "id": "task-state-track-path-schema",
+  "type": "task",
+  "status": "resolved",
+  "resolution": "implemented",
+  "resolution_reason": "Documented track_path in WAI-State-Schema-Spec.md and updated templates/spoke/WAI-State.json.",
+  "reconciled": true,
+  "created_at": "2026-03-13T07:42:00Z"
+}

@@ -1,0 +1,105 @@
+{
+  "i": "response-stale-spokes-v1",
+  "ty": "response",
+  "t": "Hub registry: 1 spoke(s) stale (>30d since last teach)",
+  "s": "c",
+  "ca": "2026-03-14T10:42:00Z",
+  "from": "hub",
+  "destination_wheel_id": "framework",
+  "in_response_to": "request-stale-spokes-v1",
+  "result": {
+    "query": "list_stale_spokes",
+    "as_of": "2026-03-14",
+    "threshold_days": 30,
+    "stale_count": 1,
+    "current_count": 15,
+    "stale_spokes": [
+      {
+        "wheel_id": "project-name",
+        "last_taught": "2026-02-01",
+        "days_ago": 41
+      }
+    ],
+    "current_spokes": [
+      {
+        "wheel_id": "why-go-bye",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "wheelwright-ai-website",
+        "last_taught": "2026-03-06",
+        "days_ago": 7
+      },
+      {
+        "wheel_id": "wheelwright-hub",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "wheelwright-framework",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "sound-association-management-website",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "solutions-by-mv",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "pathfinder",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "ezorg-email-website",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "considerthis",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "basher",
+        "last_taught": "2026-02-26",
+        "days_ago": 15
+      },
+      {
+        "wheel_id": "space_rust",
+        "last_taught": "2026-03-03",
+        "days_ago": 11
+      },
+      {
+        "wheel_id": "emailinator",
+        "last_taught": "2026-03-03",
+        "days_ago": 11
+      },
+      {
+        "wheel_id": "ezorg-leadfinder",
+        "last_taught": "2026-03-11",
+        "days_ago": 3
+      },
+      {
+        "wheel_id": "analysing-local-mcp",
+        "last_taught": "2026-03-06",
+        "days_ago": 7
+      },
+      {
+        "wheel_id": "framework",
+        "last_taught": "2026-03-13",
+        "days_ago": 0
+      }
+    ]
+  },
+  "_behavior_directive": {
+    "what_this_is": "Hub's response to a registry query from framework. Read-only data.",
+    "what_this_is_NOT": "An instruction to take action on any spoke."
+  }
+}

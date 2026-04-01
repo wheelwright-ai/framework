@@ -1,0 +1,40 @@
+{
+  "i": "impl-hub-lug-health-fix-v1",
+  "t": "Fix hub spoke YELLOW health: 12 lug schema violations + 11 mislocated lugs",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "effort": 2,
+  "va": "fix",
+  "rt": "LOCAL",
+  "tags": [
+    "hub",
+    "health",
+    "lug-quality",
+    "phase-1"
+  ],
+  "phase": "p1-unblock",
+  "phase_order": 1,
+  "blocks": [],
+  "blocked_by": [],
+  "description": "Hub spoke health check returns YELLOW with 3 failures: lug-schema (12/12 active lugs have violations), lug-pev (12 actionable lugs missing PEV fields), lug-location (11 lugs in wrong bytype/ location). All 12 lugs are the Librarian epic children at WAI-Spoke/lugs/bytype/implementation/in_progress/ but their status field says 'open' not 'in_progress' \u2014 they're in the wrong folder. They also use full key names ('id', 'title') but are missing required fields (fw_ver, rt, impact, effort, perceive/execute/verify).",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Spoke/lugs/bytype/implementation/in_progress/*.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Spoke/lugs/bytype/epic/open/epic-hub-kb-system-librarian-gardener-v1.json"
+  ],
+  "perceive": "Run spoke_health_check.py --json on hub spoke. Read each of the 12 active lugs. Document exact violations per lug (missing fields, wrong folder, key format).",
+  "execute": "For each lug: (1) Add missing fields: fw_ver='3.0.0', rt='LOCAL', impact/effort scores, perceive/execute/verify fields. (2) Move status='open' lugs from in_progress/ to open/ folder OR update status to 'p' if work has genuinely started. (3) Fix the 2 skill registry warnings (4 skills without local dirs, 1 orphan dir). (4) Re-run health check to verify GREEN.",
+  "verify": "Run python3 tools/spoke_health_check.py /home/mario/projects/wheelwright/hub \u2014 must return GREEN with 0 failures.",
+  "acceptance_criteria": [
+    "Hub spoke health check returns GREEN (0 failures)",
+    "All 12 lugs pass schema validation",
+    "All lugs in correct bytype/ folder matching their status",
+    "Skill registry warnings resolved"
+  ],
+  "model_fit": "HAIKU",
+  "completed_at": "2026-03-30T13:15:00Z",
+  "completed_by": "claude-sonnet-4-6"
+}

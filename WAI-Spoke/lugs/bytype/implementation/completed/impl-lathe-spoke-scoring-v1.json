@@ -1,0 +1,149 @@
+{
+  "i": "impl-lathe-spoke-scoring-v1",
+  "t": "Lathe: Score all 17 spokes with shift direction, urgency, and investment profiles",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 10,
+  "effort": 3,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "lathe",
+    "advisor",
+    "hub",
+    "phase-1"
+  ],
+  "phase": "p1-unblock",
+  "phase_order": 2,
+  "blocks": [
+    "impl-compass-full-dashboard-v1"
+  ],
+  "blocked_by": [],
+  "description": "Lathe spoke_lathe.json has 'spokes: {}' \u2014 zero spokes scored. This blocks the entire Compass dashboard (which shows '0 spokes'). Create tools/lathe_score.py that reads hub-registry.json + gardener scan_state and populates spoke_lathe.json with the pre-classified spoke data below.",
+  "spoke_classifications": {
+    "_note": "Pre-classified by Opus. Sonnet: use these values directly, do not re-evaluate.",
+    "wheelwright-framework": {
+      "shift": "growth",
+      "urgency": 5,
+      "group": "wheelwright",
+      "reason": "Core product, active daily development"
+    },
+    "wheelwright-hub": {
+      "shift": "growth",
+      "urgency": 5,
+      "group": "wheelwright",
+      "reason": "Hub orchestration, advisor system lives here"
+    },
+    "tracks": {
+      "shift": "maintain",
+      "urgency": 2,
+      "group": "wheelwright",
+      "reason": "Track archive, stable, rarely changes"
+    },
+    "wheelwright-ai-website": {
+      "shift": "growth",
+      "urgency": 3,
+      "group": "wheelwright",
+      "reason": "Public face, needs content updates"
+    },
+    "basher": {
+      "shift": "growth",
+      "urgency": 4,
+      "group": null,
+      "reason": "Active development tool project"
+    },
+    "minder": {
+      "shift": "growth",
+      "urgency": 4,
+      "group": null,
+      "reason": "Active development, notification/monitoring"
+    },
+    "pathfinder": {
+      "shift": "maintain",
+      "urgency": 2,
+      "group": null,
+      "reason": "Stable, occasional updates"
+    },
+    "considerthis": {
+      "shift": "research",
+      "urgency": 2,
+      "group": null,
+      "reason": "Experimental/idea project"
+    },
+    "nurturator": {
+      "shift": "growth",
+      "urgency": 3,
+      "group": null,
+      "reason": "Active development, user engagement"
+    },
+    "emailinator": {
+      "shift": "maintain",
+      "urgency": 2,
+      "group": "ezorg",
+      "reason": "Stable email tool"
+    },
+    "ezorg-email-website": {
+      "shift": "maintain",
+      "urgency": 1,
+      "group": "ezorg",
+      "reason": "Stable website, minimal changes"
+    },
+    "ezorg-leadfinder": {
+      "shift": "maintain",
+      "urgency": 2,
+      "group": "ezorg",
+      "reason": "Lead gen tool, stable"
+    },
+    "solutions-by-mv": {
+      "shift": "revenue",
+      "urgency": 3,
+      "group": null,
+      "reason": "Business-facing, revenue potential"
+    },
+    "sound-association-management-website": {
+      "shift": "maintain",
+      "urgency": 1,
+      "group": null,
+      "reason": "Niche tool, stable"
+    },
+    "why-go-bye": {
+      "shift": "research",
+      "urgency": 1,
+      "group": null,
+      "reason": "Experimental/dormant"
+    },
+    "space_rust": {
+      "shift": "research",
+      "urgency": 1,
+      "group": null,
+      "reason": "Learning project, Rust exploration"
+    },
+    "analysing-local-mcp": {
+      "shift": "research",
+      "urgency": 2,
+      "group": null,
+      "reason": "POC, MCP investigation"
+    }
+  },
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/lathe/spoke_lathe.json",
+    "/home/mario/projects/wheelwright/hub/tools/lathe_score.py",
+    "/home/mario/projects/wheelwright/hub/hub-registry.json"
+  ],
+  "perceive": "Read hub-registry.json for all 17 spokes. Read gardener scan_state.json for last_tended and health. Read each spoke's WAI-State.json for session_count and last_closeout. Understand each spoke's purpose from its foundation identity.",
+  "execute": "Create tools/lathe_score.py that: (1) reads hub-registry.json, (2) reads gardener scan_state.json, (3) for each spoke: reads WAI-State.json _project_foundation.identity, (4) assigns shift_direction based on activity pattern (active dev = growth, stable = maintain, dormant = sunset/research), (5) assigns urgency 1-5 based on session recency and open lug count, (6) writes investment_profile with time_hours and attention_minutes estimates, (7) defines inter_relation groups, (8) writes populated spoke_lathe.json. Run the script to populate initial data.",
+  "verify": "spoke_lathe.json has 17 entries in spokes dict. Each entry has shift_direction, urgency, investment_profile. Script runs without error: python3 tools/lathe_score.py",
+  "acceptance_criteria": [
+    "spoke_lathe.json spokes dict has 17 entries",
+    "Each spoke has shift_direction from valid set (maintain/growth/revenue/research/sunset)",
+    "Each spoke has urgency 1-5 and investment_profile",
+    "Inter-relation groups defined for related spokes",
+    "tools/lathe_score.py runs idempotently and can be re-run by gardener"
+  ],
+  "model_fit": "SONNET",
+  "completed_at": "2026-03-30T13:15:00Z",
+  "completed_by": "claude-sonnet-4-6"
+}

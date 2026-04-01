@@ -1,0 +1,42 @@
+{
+  "i": "impl-gardener-lathe-integration-v1",
+  "t": "Gardener: Use Lathe weights to prioritize spoke tending order and budget allocation",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "effort": 2,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "gardener",
+    "lathe",
+    "hub",
+    "phase-2"
+  ],
+  "phase": "p2-render",
+  "phase_order": 3,
+  "blocks": [],
+  "blocked_by": [
+    "impl-lathe-spoke-scoring-v1"
+  ],
+  "description": "Gardener currently tends spokes in registry order. With Lathe data populated, the gardener should: (1) sort spokes by Lathe urgency (high urgency first), (2) allocate more work items to 'growth' and 'revenue' spokes vs 'maintain' spokes, (3) skip 'sunset' spokes unless they have health issues, (4) respect inter-relation groups (tend related spokes together). Modify wheel-tender.sh filter logic to read spoke_lathe.json and reorder the SPOKE_LIST.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh"
+  ],
+  "perceive": "Read wheel-tender.sh lines 69-155 (active-spoke filter). Read spoke_lathe.json for urgency and shift_direction fields. Understand current filter: activity detection, never-tended, non-GREEN re-evaluate.",
+  "execute": "After the Python filter builds the active list, add a sort step that reads spoke_lathe.json and reorders by: (1) urgency desc, (2) shift_direction priority (revenue > growth > research > maintain > sunset), (3) existing logic for never-tended and non-GREEN. Add budget field: max_items_per_spoke derived from shift_direction (growth=5, revenue=5, maintain=2, research=3, sunset=1). Pass budget to the per-spoke Claude session prompt.",
+  "verify": "Run wheel-tender.sh --all in dry-run mode (add --dry-run flag). Verify spoke list is reordered by Lathe weights. Verify budget limits appear in per-spoke prompts.",
+  "acceptance_criteria": [
+    "Spoke tending order reflects Lathe urgency and shift direction",
+    "Budget allocation varies by shift direction",
+    "Sunset spokes skipped unless non-GREEN health",
+    "Dry-run mode shows ordering without executing"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "completed_at": "2026-03-30T13:10:00Z",
+  "completed_by": "claude-sonnet-4-6 (session-20260330-1255)"
+}

@@ -1,0 +1,53 @@
+{
+  "id": "ss-session-20260330-2016",
+  "ty": "session-summary",
+  "title": "Session 111: Context minimalism — MEMORY.md lossless compression + wakeup skill sync + WAI-State.json slim",
+  "s": "c",
+  "created_at": "2026-03-30T20:35:00Z",
+  "session_number": 111,
+  "model": "claude-sonnet-4-6",
+  "accomplished": [
+    "MEMORY.md compressed 276→47 lines (lossless): 4 topic files created (architecture.md, working_agreements.md, user_preferences.md, completed_s51.md). All 76 previously truncated lines now visible via pointer files.",
+    ".claude/commands/wai.md synced from templates/commands/wai.md (235→605 lines). Pre-check section now active — skips WAI-State.json read, lug ls scan, teaching scan when session-start hook present. Expected to reduce wakeup message tokens from ~22k to ~5-8k.",
+    "WAI-State.json slimmed 379→346 lines: removed empty arrays (stack, features, decisions, bugs), deprecated _auto_implementation block, null hub block, null fields in wheel/context/_session_state/_work_queue/analytics.",
+    "Lug lug-scripted-wakeup-closeout-20260330 updated with full PEV + workflow.completed_steps + subagent_prompt for closeout.sh remaining work.",
+    "Teaching signal-20260331-0315-from-wheelwright.md.teaching adopted (duplicate signal, marked processed)."
+  ],
+  "files_touched": [
+    "/home/mario/.claude/projects/-home-mario-projects-wheelwright-framework/memory/MEMORY.md",
+    "/home/mario/.claude/projects/-home-mario-projects-wheelwright-framework/memory/architecture.md",
+    "/home/mario/.claude/projects/-home-mario-projects-wheelwright-framework/memory/working_agreements.md",
+    "/home/mario/.claude/projects/-home-mario-projects-wheelwright-framework/memory/user_preferences.md",
+    "/home/mario/.claude/projects/-home-mario-projects-wheelwright-framework/memory/completed_s51.md",
+    ".claude/commands/wai.md",
+    "WAI-Spoke/WAI-State.json",
+    "WAI-Spoke/lugs/bytype/feature/open/lug-scripted-wakeup-closeout-20260330.json",
+    "WAI-Spoke/seed/ingest/processed/signal-20260331-0315-from-wheelwright.md.teaching"
+  ],
+  "decisions": [
+    "Lossless MEMORY.md compression: all prose sections moved to topic files, MEMORY.md becomes pure dense index",
+    "Wakeup optimization via skill sync (not hook changes) — templates already had pre-check, just not installed",
+    "Closeout script deferred to dedicated session — lug has full spec + subagent_prompt",
+    "WAI-State.json slim: remove empty/deprecated only, no structural changes"
+  ],
+  "signals": [
+    "wai.md pre-check existed in templates/ but was never synced to .claude/commands/ — shipit gap. Fixed this session.",
+    "MEMORY.md truncation was silently hiding 76 lines of critical rules (sessions 62-88) at every session start."
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "tools/closeout.sh — implements mechanical closeout steps (version bump, WAI-State.json updates, lug archival, LugIndex regen, backlog scoring). Lug: lug-scripted-wakeup-closeout-20260330.",
+      "templates/commands/wai-closeout.md update to call the script",
+      "WAI-Spoke/skills/ wai.md sync (spoke installed copy not yet updated)"
+    ],
+    "next_steps": [
+      "Verify wakeup token savings in next session — run /wai then /context, expect messages < 8k",
+      "Run Expediter on hub spoke (from session 110 recommendations)",
+      "Commit hub repo changes (wheel-tender.sh UX, wakeup docs, Expediter pre-Pass-2)",
+      "Close epic-session15-fleet-evolution",
+      "impl-librarian-execute-hub-lugs-v1 (11 child lugs) — hub OPUS session",
+      "Hub signals inbox triage (63 items)"
+    ]
+  },
+  "autosaves_reconciled": []
+}

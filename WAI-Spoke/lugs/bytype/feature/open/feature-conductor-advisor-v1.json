@@ -1,0 +1,37 @@
+{
+  "id": "feature-conductor-advisor-v1",
+  "type": "feature",
+  "status": "open",
+  "title": "Conductor: dynamic work routing advisor for hub",
+  "description": "New hub advisor that routes work to the right agent/model/provider dynamically. Sits above the Wheel Council (Gardener/Spinner/Compass). Chooses model tier (Haiku/Sonnet/Opus/local LLM), provider (Claude Max, other providers), and dispatches to the appropriate spoke or hub session. User has Claude Max and multiple providers — effective routing across these is the multiplier.",
+  "priority": "high",
+  "effort": 5,
+  "roi": 4.0,
+  "model_fit": "opus",
+  "routed_to": "FRAMEWORK",
+  "created_at": "2026-03-31T17:58:07Z",
+  "updated_at": "2026-03-31T17:58:07Z",
+  "perceive": {
+    "current_state": "Work routing is implicit — model_fit field in lugs suggests tier, but no automated dispatch. Tender uses Haiku. Human sessions use whatever model is active. No cross-provider routing. No cost awareness.",
+    "files": ["hub/WAI-Hub/advisors/", "templates/commands/wai-lug-schema.md (model_fit field)"]
+  },
+  "execute": {
+    "steps": [
+      "1. Design Conductor advisor architecture (how it reads lug model_fit, provider availability, cost)",
+      "2. Define routing rules: Haiku for extraction/health, Sonnet for implementation, Opus for architecture",
+      "3. Implement provider registry (Claude Max, local LLM endpoints, API keys)",
+      "4. Build dispatch mechanism (how Conductor triggers a session on a specific provider)",
+      "5. Wire into Ozi: when Ozi decides work should happen, Conductor decides WHERE",
+      "6. Add cost tracking per dispatch"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "Conductor can route a lug to Haiku, Sonnet, or Opus based on model_fit",
+      "Conductor tracks cost per dispatch",
+      "Ozi delegates to Conductor for provider selection"
+    ]
+  },
+  "acceptance_criteria": ["Automated model/provider routing for lug execution", "Cost visibility per dispatch", "Works with Claude Max + at least one other provider"],
+  "dependencies": ["task-rename-lathe-to-spinner-v1"]
+}

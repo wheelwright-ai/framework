@@ -1,0 +1,30 @@
+{
+  "i": "task-subagent-memory-config-v1",
+  "t": "Configure persistent memory for lug-reviewer and code-simplifier subagents",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-30T19:50:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 6,
+  "effort": 1,
+  "va": "grind",
+  "rt": "LOCAL",
+  "routed_to": "LOCAL",
+  "tags": ["subagents", "memory", "lug-quality"],
+  "description": "The lug-reviewer and code-simplifier agents in .claude/agents/ have no memory configuration. Without 'memory: project' they start blind every invocation — no recall of past lug quality decisions, no pattern learning across reviews. Given lug quality is a core concern (anti-pattern about placeholders, Ozi enforcement), giving lug-reviewer persistent memory of past decisions compounds significantly over time.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/framework/.claude/agents/lug-reviewer.md",
+    "/home/mario/projects/wheelwright/framework/.claude/agents/code-simplifier.md"
+  ],
+  "perceive": "Read .claude/agents/lug-reviewer.md and code-simplifier.md for current configuration. Check CC docs for agent memory configuration format. Check if agent memory dirs exist at ~/.claude/agents/memory/.",
+  "execute": "Add memory configuration to both agent definition files. For lug-reviewer: enable project-scoped memory so it remembers past lug quality decisions, common violations, and patterns across sessions. For code-simplifier: enable project-scoped memory for code style patterns observed.",
+  "verify": "Both agent files have memory config. Spawning lug-reviewer agent shows it can access memory. No regressions in agent behavior.",
+  "acceptance_criteria": [
+    "lug-reviewer.md has memory configuration enabling project-scoped persistence",
+    "code-simplifier.md has memory configuration enabling project-scoped persistence",
+    "Agent memory dirs created if needed",
+    "Both agents still function correctly after config change"
+  ],
+  "model_fit": "HAIKU"
+}

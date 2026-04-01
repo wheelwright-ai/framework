@@ -1,0 +1,52 @@
+{
+  "id": "impl-ozi-queue-schema-v1",
+  "type": "implementation",
+  "status": "open",
+  "parent_epic": "epic-ozi-work-queue-orchestration-v1",
+  "title": "Ozi Queue Phase 1: schema + _work_queue state",
+  "description": "Extend lug schema with queue_state/readiness fields. Add _work_queue section to WAI-State.json. Update score_backlog.py to populate readiness field (ready/needs_refinement/blocked) based on PEV completeness score.",
+  "priority": "high",
+  "effort": 2,
+  "roi": 4.5,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "phase": 1,
+  "created_at": "2026-04-01T00:33:22.436988+00:00Z",
+  "updated_at": "2026-04-01T00:33:22.436988+00:00Z",
+  "perceive": {
+    "current_state": "Lugs have no queue_state field. WAI-State.json has _work_queue.items (list of scored ROI items) but no readiness field. score_backlog.py scores by ROI but does not check PEV completeness for dispatch readiness.",
+    "evidence": [
+      "cat WAI-State.json | jq '._work_queue' — items exist but no readiness field",
+      "cat WAI-Spoke/lugs/bytype/feature/open/*.json | jq '.queue_state' — returns null for all",
+      "tools/score_backlog.py — scores ROI but no readiness check"
+    ],
+    "files": [
+      "WAI-Spoke/WAI-State.json (_work_queue section)",
+      "tools/score_backlog.py (add readiness scoring)",
+      "templates/spoke/WAI-State.json.template (update _work_queue schema)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. Read WAI-State.json _work_queue section + score_backlog.py logic",
+      "2. Add readiness classification to score_backlog.py: ready (PEV complete + ROI>=3), needs_refinement (PEV incomplete), blocked (has blocker_list entries not done)",
+      "3. Update _work_queue items in WAI-State.json to include readiness field",
+      "4. Add _work_queue.queue_state summary: ready_count, needs_refinement_count, blocked_count",
+      "5. Update WAI-State.json.template to include readiness in _work_queue schema",
+      "6. Run score_backlog.py --update-state to populate readiness for all current items"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "python3 tools/score_backlog.py --update-state exits 0 and populates readiness fields",
+      "WAI-State.json _work_queue.items all have readiness field (ready/needs_refinement/blocked)",
+      "_work_queue.queue_state shows correct counts"
+    ]
+  },
+  "acceptance_criteria": [
+    "score_backlog.py classifies each item as ready/needs_refinement/blocked",
+    "WAI-State.json reflects readiness state after --update-state run",
+    "Blocked check: lug has blocker_list with at least one item not in completed/"
+  ],
+  "blocks": ["impl-ozi-queue-wakeup-v1", "impl-ozi-queue-autochain-v1"]
+}

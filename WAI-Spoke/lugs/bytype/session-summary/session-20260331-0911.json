@@ -1,0 +1,70 @@
+{
+  "i": "session-20260331-0911",
+  "ty": "session-summary",
+  "t": "Session 113: Tender fleet fix ( auto-heal) + advisor architecture v2",
+  "s": "c",
+  "ca": "2026-03-31T19:31:24Z",
+  "gb": "claude-opus-4-6",
+  "session_number": 113,
+  "accomplished": [
+    "Diagnosed hub startup errors:  in all hook paths + wai.md missing from hub commands",
+    "Fixed hub settings.json (absolute paths) + synced 3 missing skills to hub",
+    "Built Tender auto-heal: env-var detection in spoke_health_check.py, remediation handler in run_nightly.py router",
+    "Fixed 3 bugs found during pilot: router precedence, rc!=0 handling, _health_status from warnings",
+    "Added verify_spoke_current() with framework_version, hook cleanliness, open impl lugs checks",
+    "Added --spoke flag for targeted single-spoke Tender runs",
+    "Added live progress logging (fleet-progress-{date}.log) for observability",
+    "Fleet run: 18/18 spokes GREEN, 14 remediated (13 from fleet + 1 new-solutions-by-mv discovered)",
+    "Falsified: zero  across all spokes (grep verified)",
+    "Designed three-layer spoke integrity system: parity assertions + lug tests + composite score",
+    "Designed complete advisor architecture v2: 9 spoke advisors + 5 hub advisors with hierarchy",
+    "Named all advisors: Ozi, Marge, Archie, Flo, Will, Jordy, Thad, Mark, Clara (spoke); Octo, Gardener, Spinner, Cartologist, Quartermaster (hub)",
+    "Created hub parity/head.json with first patch entry",
+    "Added framework_parity field to WAI-State template"
+  ],
+  "files_touched": [
+    "tools/spoke_health_check.py",
+    "templates/spoke/.claude/settings.json",
+    "templates/spoke/WAI-State.json",
+    "hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py",
+    "hub/.claude/settings.json",
+    "hub/.claude/commands/wai.md",
+    "hub/.claude/commands/wai-next.md",
+    "hub/.claude/commands/wai-closeout-feedback-v2.md",
+    "hub/WAI-Hub/parity/head.json"
+  ],
+  "decisions": [
+    "Parity is COMPUTED from assertions, not stamped — can't lie about alignment",
+    "Fix routing hierarchy: framework > spoke > JIT patch; retroactive non-negotiable",
+    "Hub advisor roles corrected: Gardener=thinker, Spinner=executor, Cartologist=director",
+    "9 spoke advisors (Ozi/Marge/Archie + 6 team), 5 hub advisors (Octo + Council + Quartermaster)",
+    "Quartermaster evaluates model fitness for purpose, not just inventory",
+    "Advisors coordinate via lug messages with impact ratings; NOT everything gets done",
+    "Lathe renamed to Spinner, Compass renamed to Cartologist",
+    "new-solutions-by-mv added to fleet (was missing from SPOKES list)"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Build spoke_parity_check.py (assertion-based parity verification tool)",
+      "Build spoke_integrity_score.py (composite score with 5 dimensions)",
+      "Wire parity + score into session-start.sh for wakeup visibility",
+      "Build spoke_burndown.py for wakeup burndown + refinement charts",
+      "Rename Expediter→Marge, Historian→Thad, LUCI→Flo, Lathe→Spinner, Compass→Cartologist",
+      "Create advisor stub scan_states for new advisors (Archie, Will, Jordy, Mark, Clara, Octo, Quartermaster)",
+      "Define lug message schema (advisor coordination envelope format)",
+      "Build lug test lifecycle (Jordy/QA core — test generation + runner)",
+      "2 new teachings still pending adoption from wakeup",
+      "framework_version stale on 13/18 spokes (range 2.0.18 to 3.1.1)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Phase 1: Build spoke_parity_check.py + spoke_integrity_score.py + wire into session-start.sh",
+      "Phase 2: Rename advisors (folder + code), create stubs for new advisors",
+      "Phase 3: Lug test lifecycle, burndown charts, advisor communication schema",
+      "Adopt 2 pending teachings",
+      "Task: rename Lathe→Spinner across hub codebase (lug exists)",
+      "Task: rename Compass→Cartologist across hub codebase (needs lug)"
+    ]
+  },
+  "autosaves_reconciled": []
+}

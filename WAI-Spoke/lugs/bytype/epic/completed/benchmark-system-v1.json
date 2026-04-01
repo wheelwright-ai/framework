@@ -1,0 +1,71 @@
+{
+  "id": "benchmark-system-v1",
+  "type": "epic",
+  "title": "Wheelwright Benchmarking System - Dual-Purpose Validation",
+  "status": "published",
+  "_v1_status": "published",
+  "description": "DUAL-PURPOSE BENCHMARKING SYSTEM demonstrating Wheelwright's orchestration superiority vs naive baseline.\n\nPURPOSE 1: PERFORMANCE MEASUREMENT\n- Quantify Wheelwright's efficiency gains via WEI scoring\n- Prove selective loading prevents token waste\n- Demonstrate 10-250x improvements over baseline\n- CRITICAL TEST: Reference file avoidance (graduated sizes (20MB, 100MB, 400MB))\n\nPURPOSE 2: FEATURE REGRESSION TESTING\n- Verify lug-documented features persist through evolution\n- Test core capabilities (selective loading, persistence, resumption)\n- Catch feature degradation before it ships\n\nBASELINE BEHAVIOR (What We're Measuring Against):\n- Naive file loading (loads ALL files including 100MB reference docs)\n- No persistence (forgets constraints mid-task)\n- No resumability (starts over after interruption)\n- No learning (same mistakes every run)\n- Typical AI agent pattern: slow, expensive, unfocused\n\nWHEELWRIGHT SOLUTION (What We're Proving):\n- Selective loading (only necessary files via WAI-Spoke)\n- Reference file avoidance (100MB never touched)\n- Constraint persistence (lugs maintain state)\n- Instant resumption (state saves/restores)\n- Learning velocity (improves across runs)\n- Result: 10-250x efficiency gains\n\n## Goals\n- PROVE Wheelwright never loads unnecessarily (reference file test)\n- Measure orchestration efficiency (not base model intelligence)\n- Verify core features haven't regressed\n- Run automatically on ShipIt for minor version bumps\n- Generate reproducible, statistically significant results\n- Capture observations for continuous improvement\n- Track improvement over time via lug persistence\n- Publish results proudly on website\n\n## Key Requirements\n- Three benchmark tiers (small, medium, large)\n- Each tier includes 100MB reference files GENERATED AT RUNTIME (never committed)\n- Scores recorded in WAI-Lugs.jsonl\n- Report automatically updated in README.md",
+  "impact": 9,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-06T09:00:00.000000",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "priority": "high",
+  "tags": [
+    "benchmarking",
+    "performance",
+    "regression-testing",
+    "v2"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "scope": "framework",
+  "implementer_review": {
+    "required_before_implementation": true,
+    "review_status": "approved_to_implement",
+    "review_sources": [
+      "benchmarks/runner/benchmark_runner.py",
+      "benchmarks/runner/benchmark_skills.py",
+      "benchmarks/e2e/test_skills.py"
+    ],
+    "review_questions": [
+      "Does the WEI scoring model in calculate_scores.py match the benchmarking spec?",
+      "Are the three tiers (small/medium/large) with runtime-generated reference files implemented?",
+      "Does the benchmark integrate with shipit quality gates?"
+    ],
+    "review_history": [
+      {
+        "cycle": 1,
+        "reviewed_at": "2026-03-23T07:30:00Z",
+        "reviewed_by": "claude-sonnet-4-6",
+        "model": "claude-sonnet-4-6",
+        "result": "approved_to_implement",
+        "summary": "Benchmark infrastructure exists: benchmark_runner.py, benchmark_skills.py, calculate_scores.py, calculate_scores_complete.py, generate_reference_files.py, and e2e/test_skills.py (22k). Framework is substantially built. Epic needs a builder to wire the three tiers together, confirm WEI scoring matches the spec, and add shipit integration. No blocking gaps — infrastructure is ready to extend.",
+        "blocking_issues": [],
+        "recommendations": [
+          "Builder should start with benchmarks/runner/benchmark_runner.py as the entry point.",
+          "generate_reference_files.py already handles runtime file generation — verify it covers 20MB, 100MB, 400MB sizes.",
+          "Confirm calculate_scores.py WEI formula matches the 10-250x efficiency goal stated in epic."
+        ]
+      }
+    ]
+  },
+  "ready_to_build_gate": {
+    "required": true,
+    "checks": [
+      "benchmark_runner.py is the implementation entry point",
+      "Three size tiers are defined (small/medium/large)",
+      "Reference files are generated at runtime (never committed)",
+      "Scores are recorded in WAI-Lugs.jsonl or benchmark-results.jsonl",
+      "Shipit integration is planned (add to shipit quality gates)"
+    ]
+  },
+  "workflow": {
+    "current_state": "ready",
+    "current_owner": "builder"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "gemini-manifest-inference",
+  "type": "decision",
+  "title": "Inferred node_path and framework_version due to missing WAI-Spoke/WAI-Manifest.yaml",
+  "status": "archived",
+  "_v1_status": "open",
+  "description": "WAI-Spoke/WAI-Manifest.yaml was requested but not found. Inferred node_path as current working directory and framework_version from WAI-Spoke/WAI-State.json. This could be a critical issue if WAI-Manifest.yaml is mandatory or has other essential fields.",
+  "impact": 8,
+  "created_by": "agent",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-16T20:23:13.899211+00:00",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "tags": [
+    "manifest",
+    "missing-file",
+    "inference",
+    "state-management"
+  ],
+  "archived_at": "2026-03-18T10:54:51.003978Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

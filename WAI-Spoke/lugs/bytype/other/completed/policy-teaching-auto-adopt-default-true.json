@@ -1,0 +1,58 @@
+{
+  "id": "policy-teaching-auto-adopt-default-true",
+  "type": "other",
+  "status": "resolved",
+  "created_at": "2026-03-25T13:45:00Z",
+  "created_by": "claude-haiku-4-5",
+  "timestamp": "2026-03-25T13:45:00Z",
+  "fw_version": "3.0.0",
+  "category": "framework-policy",
+  "title": "POLICY: Teachings Default to safe_to_auto_adopt: true",
+  "priority": "ARCHITECTURE",
+  "summary": "All teachings distributed by the framework should default to `safe_to_auto_adopt: true`. Manual approval gates slow framework velocity. If a teaching isn't safe to auto-adopt, it shouldn't be distributed. Exception: CRITICAL teachings that block other processing (like audit) \u2014 still auto-adopt, but with blocking rule.",
+  "policy": {
+    "default": "Every teaching created by framework has `safe_to_auto_adopt: true` by default",
+    "rationale": [
+      "Framework curates teachings before distribution \u2014 if it's distributed, it's vetted",
+      "Manual approval gates every update \u2014 this breaks framework velocity",
+      "Trust the distribution. If teaching is unsafe, don't distribute it",
+      "Auto-adoption enables continuous framework evolution across all spokes"
+    ],
+    "exception": "CRITICAL teachings may have blocking rules (like audit), but still auto-adopt. Blocking happens AFTER adoption, not before."
+  },
+  "teaching_authoring_requirement": [
+    "Every new teaching MUST include: `safe_to_auto_adopt: true` (default)",
+    "If you believe a teaching should NOT auto-adopt, escalate to framework team \u2014 it may not be ready for distribution",
+    "Reasoning: if there's doubt, either: (a) fix the teaching until you're confident, or (b) don't distribute it yet"
+  ],
+  "template_requirement": [
+    "Teaching template (templates/teaching-template.md.teaching) must include:",
+    "```",
+    "**Safe to auto-adopt:** true \u2190 DEFAULT",
+    "```",
+    "Every new teaching copies this default. Docs remind: change only if you have strong reason and have escalated."
+  ],
+  "enforcement": [
+    "Wakeup Step 5 (teaching discovery): assume auto_adopt=true unless explicitly set to false (rare)",
+    "Teaching processing: if `safe_to_auto_adopt` field missing \u2192 assume true",
+    "Audit: if teaching was processed but not adopted \u2192 remediation includes re-adoption (because it should have auto-adopted)"
+  ],
+  "impact": [
+    "Spokes receive framework updates without gates",
+    "Teaching adoption audit verifies they stuck, not asks permission",
+    "Framework can iterate faster without spoke approval bottlenecks",
+    "Trust model: framework validates before distribution, spokes verify after receipt"
+  ],
+  "next_actions": [
+    "Update teaching template to default: `safe_to_auto_adopt: true`",
+    "Audit existing teachings: change `false` to `true` for all non-critical teachings",
+    "Document exception (critical blocking teachings stay true, but with blocking rule)",
+    "Brief framework team: new policy, rationale, when to escalate"
+  ],
+  "routed_to": "framework",
+  "scope_verified_by": "user insight: 'teachings should be auto-adopt true right?'",
+  "va": "build",
+  "resolved_at": "2026-03-30T03:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Already implemented in closeout Step 9b (safe_to_auto_adopt default true)."
+}

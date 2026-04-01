@@ -1,0 +1,32 @@
+{
+  "i": "idea-lean-option-first-v1",
+  "ty": "idea",
+  "t": "Epic proposals always lead with lean+full options side by side",
+  "s": "resolved",
+  "ca": "2026-03-26T16:30:00Z",
+  "gb": "PathFinder Historian first pass (2026-03-25) via incoming signal",
+  "challenge": "When an agent presents an epic or implementation proposal, it leads with the full design. User consistently reframes to lean scope (confirmed 3x in PathFinder). A reframing turn is wasted every time.",
+  "hypothesis": "Update wai-improve.md epic proposal output format: always present 'Lean version (Xh): ... / Full version (Yh): ...' at the top of every implementation proposal. User picks. No reframing turn needed.",
+  "origin": "signal",
+  "challenge_id": "chal-lean-option-first",
+  "scope": "skill",
+  "spoke_context_loaded": true,
+  "fit_classification": "extends",
+  "related_lugs": [],
+  "scores": {
+    "velocity_lift": "medium",
+    "implementation_cost": "low",
+    "system_fit": "aligned",
+    "generality": "all-spokes"
+  },
+  "priority": "P2",
+  "next_step": "add lean/full framing to wai-improve.md Step 6e (User Approval) and epic lug authoring guidance",
+  "_behavior_directive": {
+    "what_this_is": "Improvement idea: lean+full option framing in epic proposals.",
+    "what_this_is_NOT": "An instruction to implement immediately without user direction."
+  },
+  "va": "grind",
+  "resolved_at": "2026-03-30T03:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Captured as behavioral guidance in memory. Applied in Session 102 (ROI scorer presents lean option)."
+}

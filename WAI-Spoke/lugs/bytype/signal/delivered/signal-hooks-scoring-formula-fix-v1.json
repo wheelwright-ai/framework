@@ -1,0 +1,13 @@
+{
+  "id": "signal-hooks-scoring-formula-fix-v1",
+  "type": "signal",
+  "status": "undelivered",
+  "title": "spoke_integrity_score.py: hooks dimension scoring bug fixed — 15/20 cap → 20/20",
+  "impact": 8,
+  "timestamp": "2026-04-01T01:11:29.486074+00:00Z",
+  "session_id": "session-20260331-1705",
+  "signal": "score_hooks() declared max=20 but awarded 3pts per hook (5x3=15 max achievable). All spokes with all 5 hooks correctly configured were scoring 15/20 instead of 20/20. Fixed: changed to 4pts per hook (5x4=20). Framework spoke integrity score: 89→94/100. Committed in 0eee082.",
+  "rationale": "Affected every spoke using spoke_integrity_score.py. Spokes with correct hooks appeared to have a 5pt gap they could never close. Fix deployed — all spoke scores should be re-run to reflect corrected formula.",
+  "target": "framework",
+  "routed_to": "FRAMEWORK"
+}

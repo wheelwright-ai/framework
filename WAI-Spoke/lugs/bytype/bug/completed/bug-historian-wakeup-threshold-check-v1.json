@@ -1,0 +1,34 @@
+{
+  "id": "bug-historian-wakeup-threshold-check-v1",
+  "ty": "b",
+  "t": "Wakeup has no Historian threshold check \u2014 advisor is entirely passive",
+  "s": "resolved",
+  "resolved_at": "2026-03-30T00:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "ca": "2026-03-25T22:25:00Z",
+  "gb": "Claude Sonnet 4.6 (PathFinder spoke \u2014 Historian first pass)",
+  "priority": "high",
+  "impact": 8,
+  "source": "historian-review-20260325-2215 (vector-20260325-2215-02)",
+  "description": "The Historian advisor spec (historian.yaml) defines a threshold check: when unreviewed track points >= 30, wakeup should surface a suggestion to run the Historian. This check is never actually executed. The wakeup protocol (wai.md) has no step that reads passes.jsonl or counts unreviewed points. As a result, the Historian is entirely passive \u2014 it only runs when the user explicitly invokes it. PathFinder accumulated 75 unreviewed points across 14 sessions (6+ sessions past threshold) before the user manually asked to run it.",
+  "repro_steps": [
+    "1. Set up a spoke with WAI-Spoke/advisors/historian/ directory present.",
+    "2. Accumulate 30+ track points across 3+ sessions (run wakeup + do work + write track points without running Historian).",
+    "3. Start a new session and run the wakeup protocol.",
+    "4. Observe: No Historian suggestion appears in the briefing, even though the threshold is met.",
+    "5. Repeat for additional sessions \u2014 the threshold is never surfaced automatically."
+  ],
+  "actual_behavior": "Wakeup produces a briefing with no Historian mention regardless of unreviewed point count. The only way the Historian runs is if the user explicitly types 'Run the Historian' or invokes /wai-review.",
+  "desired_behavior": "After Step 5c (Track Predecessor Detection), wakeup checks whether the Historian advisor directory exists. If it does, it reads passes.jsonl to find the last reviewed session, counts track points in sessions/ newer than that watermark, and if count >= 30 surfaces: 'Historian: {N} unreviewed points across {M} sessions. Run Historian?' This prompt should appear every session until the user acts on it (either runs it or explicitly skips).",
+  "proposed_fix": {
+    "file": "WAI-Spoke/commands/wai.md (and framework/skills/ wai.md template)",
+    "location": "After Step 5c \u2014 insert new Step 5d",
+    "step_content": "## Step 5d: Historian Threshold Check\n\nIf WAI-Spoke/advisors/historian/ exists:\n1. Read passes.jsonl \u2192 find last pass timestamp and last reviewed session (last_scan_session from scan_state.json)\n2. Count track files in sessions/ with filename > last_scan_session\n3. Sum all points across those files\n4. If total_unreviewed >= 30:\n   Surface in briefing: 'Historian: {N} unreviewed points across {M} sessions. Run Historian? (yes/skip)'\n5. If total_unreviewed < 30 or directory missing: silent\n\nThis step is silent when nothing is due. It fires every session once the threshold is met, until the user runs or skips."
+  },
+  "why_high_priority": "The Historian's entire value depends on periodic review. A passive advisor that waits to be invoked will never be invoked \u2014 this was proven empirically across 6+ PathFinder sessions. Without this check, the Historian accumulates debt silently.",
+  "_behavior_directive": {
+    "what_this_is": "Bug report from PathFinder Historian first pass \u2014 protocol gap in wai.md wakeup Step 5.",
+    "what_this_is_NOT": "An instruction to implement immediately or modify framework files without review."
+  },
+  "va": "fix"
+}

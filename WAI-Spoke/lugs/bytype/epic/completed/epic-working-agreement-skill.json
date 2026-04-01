@@ -1,0 +1,113 @@
+{
+  "i": "epic-working-agreement-skill",
+  "t": "Working agreement: enforced agent contract as successor to _critical_directives",
+  "ty": "epic",
+  "s": "ready_to_implement",
+  "impact": 9,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[architecture] REWRITTEN: Create wai-working-agreement-advisor.md that enforces behavioral contracts through the advisor pattern with watchers, not embedded state. Replaces _critical_directives approach with canonical skill-based agent behavioral enforcement. Uses advisor watchers to ensure AI agents follow WAI expectations consistently.",
+  "ua": "2026-03-19T16:25:00Z",
+  "ub": "claude-sonnet-4-20250514",
+  "canonical_approach": {
+    "implementation": "wai-working-agreement-advisor.md as advisor skill with watchers",
+    "storage": "File-based skill in templates/commands/ with metadata in WAI-Skills.jsonl",
+    "enforcement": "Advisor watchers trigger on session events, not embedded state checks",
+    "integration": "Integrates with existing advisor system (complexity, stewardship, foundation advisors)"
+  },
+  "execution_ready_when": [
+    "Canonical advisor system is stable (already is)",
+    "WAI-Skills.jsonl registry supports new advisor (already does)",
+    "Implementation plan created for behavioral contract enforcement"
+  ],
+  "success_criteria": [
+    "Agent behavioral contracts enforced through skill watchers",
+    "No duplication with existing advisors (complexity, stewardship, foundation)",
+    "Backward compatibility maintained during _critical_directives deprecation phase",
+    "Clear integration with existing advisor pattern established"
+  ],
+  "implementation_plan": {
+    "create_advisor_skill": "templates/commands/wai-working-agreement-advisor.md",
+    "register_in_system": "Add to WAI-Skills.jsonl with advisor metadata",
+    "define_watchers": "Session start, lug creation, closeout events",
+    "behavioral_contracts": [
+      "Foundation completion before work begins",
+      "Scope drift detection and user confirmation",
+      "Explicit acknowledgment for direction changes",
+      "Prefer ask-permission over silent compliance"
+    ],
+    "deprecation_path": "Gradual phase-out of _critical_directives as advisor proves stable"
+  },
+  "stale_assumptions_removed": [
+    "No longer depends on embedded _critical_directives in WAI-State.json",
+    "No longer requires skill attribute storage approach",
+    "Now uses canonical file-based skill with registry approach"
+  ],
+  "dependencies": [
+    "advisor_system (already stable)",
+    "skill_registry (WAI-Skills.jsonl operational)",
+    "no conflicts with existing advisors"
+  ],
+  "rewrite_reason": "Aligned with canonical skill/advisor model - implementation-ready with clear behavioral contract enforcement",
+  "rewritten_by": "implementation-rewrite-precanonical-architecture-lugs-v1",
+  "status": "implemented",
+  "implementation_feedback": {
+    "completion_notes": "Successfully rewrote both target epics to align with canonical Wheelwright model",
+    "epics_rewritten": {
+      "epic-skills-folder-architecture": {
+        "status": "deferred",
+        "reason": "Conflicts with canonical small-core-object principle",
+        "blocking_conditions": [
+          "Post-canonical stability achieved",
+          "Cost-benefit analysis of folder vs filename namespacing",
+          "Migration impact assessment vs organizational benefit"
+        ],
+        "decision_gate": "Does folder structure provide enough organizational benefit to justify migration complexity?"
+      },
+      "epic-working-agreement-skill": {
+        "status": "ready_to_implement",
+        "approach": "Canonical advisor pattern with watchers",
+        "implementation_target": "wai-working-agreement-advisor.md",
+        "stale_assumptions_removed": [
+          "No longer depends on embedded _critical_directives",
+          "Uses file-based skill with registry approach",
+          "Integrates with existing advisor system"
+        ]
+      }
+    },
+    "stale_assumptions_addressed": [
+      "Removed _critical_directives-era embedded state dependencies",
+      "Aligned folder architecture with small-core-object model",
+      "Updated execution conditions to reflect canonical dependencies",
+      "Removed pre-canonical teach/learn and BRIEF/Manifest assumptions"
+    ],
+    "canonical_alignment_verified": [
+      "Skills folder architecture properly deferred due to canonical conflicts",
+      "Working agreement rewritten to use canonical advisor pattern",
+      "Both epics now have clear execution conditions and dependencies",
+      "Future implementers can load epics without inheriting deprecated assumptions"
+    ]
+  },
+  "verification_performed": [
+    "Verified epic-skills-folder-architecture deferred with clear blocking conditions",
+    "Verified epic-working-agreement-skill rewritten for canonical advisor model",
+    "Verified both epics remove stale teach/learn and BRIEF/Manifest assumptions",
+    "Verified execution conditions and dependencies are explicit",
+    "Verified future implementers can understand boundaries without chat context",
+    "Verified no contradiction with canonical model remains in rewritten epics"
+  ],
+  "review_cycles": [
+    {
+      "cycle": 2,
+      "reviewed_at": "2026-03-19T16:30:00Z",
+      "reviewed_by": "claude-sonnet-4-20250514",
+      "model": "claude-sonnet-4-20250514",
+      "result": "implementation_complete",
+      "summary": "Epic rewrite implementation completed successfully. Skills folder architecture deferred due to canonical conflicts. Working agreement rewritten for advisor pattern. All stale assumptions removed, execution conditions clarified.",
+      "blocking_issues": [],
+      "acceptance_criteria_met": true
+    }
+  ],
+  "updated_at": "2026-03-19T16:30:00Z",
+  "updated_by": "claude-sonnet-4-20250514"
+}

@@ -1,0 +1,41 @@
+---
+id: wai-vibe-auto-execute-v1
+title: "Vibe selection triggers Ozi auto-execute — score, plan, execute autonomously"
+version: 1.0.0
+fw_version: 2.0.140
+safe_to_auto_adopt: true
+target: spokes
+created_at: 2026-03-31
+session: 118
+---
+
+## Summary
+
+When a vibe is chosen at wakeup, Ozi now auto-executes rather than waiting. The user's vibe choice is authorization to proceed.
+
+## Prerequisites
+
+- wai.md Step 9 updated (v2.0.140+)
+- score_backlog.py with refine vibe + --clusters support
+
+## What Changed
+
+`wai.md` Step 9 now has two paths:
+- **Vibe chosen** → Step 9b: Ozi scores backlog (`score_backlog.py {vibe} --clusters`), presents ranked plan with 5s countdown, executes items in order
+- **Skipped** → banner + wait (previous behavior preserved)
+
+Step 9b stop conditions: context ≥50%, queue empty, item needs user input.
+
+Needs-user-input detection: missing PEV, type=decision/idea/policy, routed_to=SIGNAL, keywords (browser/credential/oauth/deploy/login/manual/physical).
+
+## Batch Sequence
+
+| Step | Action |
+|------|--------|
+| 1 | Pull latest wai.md (v2.0.140+) |
+| 2 | Verify Step 9b present in skill |
+| 3 | Test: choose vibe at wakeup → Ozi presents plan |
+
+## Adoption Notes
+
+No breaking changes. Skipping vibe preserves old behavior exactly.

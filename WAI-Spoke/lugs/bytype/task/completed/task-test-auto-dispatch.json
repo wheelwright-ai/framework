@@ -1,0 +1,20 @@
+{
+  "id": "task-test-auto-dispatch",
+  "type": "task",
+  "title": "Test Ozi Auto-Dispatch Capability",
+  "status": "completed",
+  "description": "Simple test task to demonstrate Ozi's auto-dispatch mode",
+  "impact": 5,
+  "priority": "medium",
+  "created_at": "2026-03-19T22:34:42.360436+00:00",
+  "created_by": "User (Mario)",
+  "updated_at": "2026-03-19T22:36:52.302175+00:00",
+  "resolution": "stale — one-time test task for auto-dispatch demo, no longer relevant",
+  "closed_at": "2026-03-29T10:00:00Z",
+  "workflow": {
+    "current_owner": "ozi-auto-dispatch",
+    "assigned_at": "2026-03-19T22:36:52.299283+00:00",
+    "updated_at": "2026-03-19T22:36:52.299294+00:00",
+    "dispatch_method": "auto"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "1ef9b813ca6d",
+  "type": "policy",
+  "title": "Shipit Quality Gate Protocol - Pre-Commit Verification",
+  "status": "completed",
+  "_v1_status": "published",
+  "description": "Enhanced shipit workflow with mandatory quality verification before commit:\n\n**Shipit Execution Order:**\n1. **Run Quality Gates** - Execute test suite, linting, type checking, security scans\n2. **Run Benchmarks** - Performance regression testing (if benchmarks defined)\n3. **Update README.md** - Sync documentation with current state (version, features, usage)\n4. **Closeout Processing** - Extract signals, update state files, clear session log\n5. **Git Operations** - Add files, commit with session summary, ask before push\n\n**Quality Gate Requirements:**\n- All tests must pass (unit, integration, smoke)\n- No linting errors\n- No type checking errors\n- Security scan clean (if applicable)\n- Benchmarks within acceptable thresholds (if defined)\n\n**README.md Sync:**\n- Update version numbers\n- Sync feature status\n- Update usage examples if changed\n- Verify accuracy of getting started section\n\n**Failure Handling:**\n- Quality gate failure = abort shipit, report errors\n- Benchmark regression = warn user, require explicit override\n- README sync errors = warn but allow continuation\n\n**Scope:** All projects using Wheelwright framework\n**Enforcement:** Shipit command enforces this protocol automatically\n**Override:** Quality gate failures require explicit acknowledgment to proceed\n\n**Rationale:** Pre-commit verification prevents broken states, maintains documentation accuracy, enables confident automation. Quality gates catch issues before they enter git history.",
+  "impact": 9,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-05T10:28:58.934713+00:00",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "Policy enforced in wai-shipit.md Step 5-6: quality gates now mandatory with clear failure handling, benchmark regression detection, override mechanisms, and comprehensive reporting.",
+  "priority": "before_next_epic",
+  "tags": [
+    "shipit",
+    "quality-gates",
+    "policy",
+    "automation",
+    "testing"
+  ],
+  "scope": "all_spokes",
+  "completed_at": "2026-03-18T10:54:51.003778Z"
+}

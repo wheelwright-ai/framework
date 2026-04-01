@@ -1,0 +1,49 @@
+{
+  "id": "feature-skill-sync-gap-v1",
+  "type": "feature",
+  "status": "done",
+  "title": "Sync templates/commands/ \u2192 .claude/commands/ in closeout",
+  "description": "templates/commands/ is the canonical skill source but .claude/commands/ (the installed copy) is never auto-synced. Sessions run stale skills: wai.md was 370 lines behind, wasting 15-18k tokens per session on redundant reads the session-start hook already computed. Fix: add rsync step to wai-closeout.md (after step X, before commit) and to shipit.",
+  "priority": "high",
+  "effort": 1,
+  "roi": 5.0,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "created_at": "2026-04-01T00:32:25.241255+00:00Z",
+  "updated_at": "2026-04-01T00:32:25.241255+00:00Z",
+  "signal_source": "signal-wai-skill-sync-gap-v1",
+  "perceive": {
+    "current_state": "templates/commands/*.md are edited during sessions but .claude/commands/*.md is never updated. The installed wai.md lagged by 370 lines and did not include the pre-check section (trust hook output, skip redundant reads).",
+    "evidence": [
+      "diff templates/commands/wai.md .claude/commands/wai.md shows divergence",
+      "signal-wai-skill-sync-gap-v1 documents 15-18k token waste per session"
+    ],
+    "files": [
+      "templates/commands/*.md (canonical source)",
+      ".claude/commands/*.md (installed copy, never synced)",
+      "templates/commands/wai-closeout.md (add sync step)",
+      "tools/closeout.sh (add rsync call if applicable)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. Check current diff: diff templates/commands/ .claude/commands/ to confirm gap exists",
+      "2. Add sync step in wai-closeout.md after lug reconciliation (step 4): cp templates/commands/*.md .claude/commands/",
+      "3. Add same sync to tools/closeout.sh if it exists and handles step 4",
+      "4. Run the sync: cp templates/commands/*.md .claude/commands/",
+      "5. Verify .claude/commands/wai.md matches templates/commands/wai.md"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "diff templates/commands/wai.md .claude/commands/wai.md returns no output",
+      "wai-closeout.md contains a sync step that copies templates/commands/*.md to .claude/commands/",
+      "After closeout, .claude/commands/ matches templates/commands/"
+    ]
+  },
+  "acceptance_criteria": [
+    "Closeout automatically keeps .claude/commands/ in sync with templates/commands/",
+    "No session should have stale installed skills after closeout completes"
+  ],
+  "completed_at": "2026-04-01T01:42:40.145668+00:00"
+}

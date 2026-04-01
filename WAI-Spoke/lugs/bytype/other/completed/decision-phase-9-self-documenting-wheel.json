@@ -1,0 +1,24 @@
+{
+  "id": "decision-phase-9-self-documenting-wheel",
+  "type": "decision",
+  "title": "Phase 9 Complete: Self-Documenting, Self-Improving Wheel Architecture",
+  "status": "resolved",
+  "description": "Phase 9 implements the complete architecture for a self-documenting wheel: spokes self-declare via metadata, hub aggregates on wakeup, agents navigate via help skill, gaps become lugs that improve the wheel. All documentation is living (skills + lugs), not separate files.",
+  "impact": 10,
+  "created_by": "Claude Sonnet 4.6",
+  "created_at": "2026-03-12T19:38:26.681545Z",
+  "node": "wheelwright/framework",
+  "perceive": "Wheel needs to: (1) know itself (metadata), (2) route questions accurately (registry), (3) learn from usage (help feedback loop), (4) improve over time (gaps → improvements)",
+  "execute": "Implemented three core skills: self-registry (spokes self-declare), hub-registry-refresh (hub aggregates), help (agents navigate and surface gaps). All documentation in Skills + Lugs, no separate markdown files.",
+  "verify": "Each spoke can maintain its own metadata. Hub gets current registry on wakeup. Agents can find answers or surface gaps. Wheel learns and improves from usage.",
+  "resolution": "accepted",
+  "resolution_reason": "Architecture is self-sustaining: spokes declare → hub aggregates → agents navigate → gaps improve wheel. Living documentation means nothing gets forgotten.",
+  "priority": "critical",
+  "tags": [
+    "architecture",
+    "phase-9",
+    "self-documenting",
+    "feedback-loop",
+    "wheel-improvement"
+  ]
+}

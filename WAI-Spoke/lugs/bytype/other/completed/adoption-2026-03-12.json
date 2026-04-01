@@ -1,0 +1,16 @@
+{
+  "i": "adoption-2026-03-12",
+  "t": "Adopted 24 WAI Skill Teachings",
+  "ty": "maintenance",
+  "s": "c",
+  "description": "Adopted 24 WAI skill definitions from seed/ingest/ to reference/auto/. Updates include core protocols for wakeup, learn, closeout, and advisory roles.",
+  "priority": "high",
+  "impact": 8,
+  "created_at": "2026-03-12T23:30:00Z",
+  "tags": [
+    "adoption",
+    "upgrade",
+    "skills",
+    "v3.0"
+  ]
+}

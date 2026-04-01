@@ -1,0 +1,47 @@
+{
+  "i": "ss-session-20260324-2340",
+  "ty": "session-summary",
+  "t": "Sessions 64-65: Template sync, teachings, hub-coord skills, hub override protocols",
+  "s": "c",
+  "ca": "2026-03-24T23:40:00Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 65,
+  "accomplished": [
+    "Item 1: Synced templates/spoke/skills/WAI-Skills.jsonl — 16 stale v1 entries replaced with 32 current v2 entries",
+    "Item 2: Authored skill-wai-lug-compat-v1.md.teaching — distributable skill install for all spokes (handles old commands/ and new skills/ structures)",
+    "Item 3: Created hub/WAI-Hub/skills/ with 3 hub-coord skills (registry-verification, knowledge-base-curator, health-monitor) + WAI-Skills.jsonl index",
+    "Item 4: Authored migration-lugs-dir-rename-v1.md.teaching + applied to this spoke (inbox->incoming, outbox->outgoing)",
+    "Item 5: Created hub/WAI-Hub/skills/wai/wai.md — hub wakeup override with fleet superpowers (Step 0b hub profile, Step 4.4 fleet status, Step 4.5 teaching queue, fleet-aware briefing)",
+    "Item 6: Created hub/WAI-Hub/skills/closeout/wai-closeout.md — hub closeout override (Step 1b hub session summary, Step 9e spoke distribution, Step 9f hub state persistence)",
+    "Registered wai + closeout overrides in hub WAI-Skills.jsonl (now 5 entries)",
+    "Processed lug-teach-verification-protocol.md.teaching (already applied)"
+  ],
+  "files_touched": [
+    "templates/spoke/skills/WAI-Skills.jsonl",
+    "hub/teachings_repo/framework/current/skill-wai-lug-compat-v1.md.teaching",
+    "hub/teachings_repo/framework/current/migration-lugs-dir-rename-v1.md.teaching",
+    "hub/WAI-Hub/skills/ (5 skill subdirs + WAI-Skills.jsonl)",
+    "WAI-Spoke/lugs/incoming/ (renamed from inbox/)",
+    "WAI-Spoke/lugs/outgoing/ (renamed from outbox/)"
+  ],
+  "decisions": [
+    "Hub override files are complete standalone replacements — not diffs or patches",
+    "Hub wakeup adds 4 new steps: 0b (hub profile), 4.4 (fleet status), 4.5 (teaching queue), fleet briefing",
+    "Hub closeout adds 3 new steps: 1b (hub session summary), 9e (spoke distribution), 9f (hub state persistence)",
+    "Teaching for lug-compat handles both old commands/ and new skills/ spoke structures"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Hub wai/closeout overrides need real-world testing on a hub node",
+      "track-chain-protocol-v1 teaching still deferred (Path B, user review pending)",
+      "templates/spoke/CLAUDE.md still references WAI-Spoke/commands/ (stale path)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Test hub override resolution on an actual hub node",
+      "Review and decide on track-chain-protocol-v1 teaching",
+      "Update templates/spoke/CLAUDE.md paths"
+    ]
+  },
+  "autosaves_reconciled": []
+}

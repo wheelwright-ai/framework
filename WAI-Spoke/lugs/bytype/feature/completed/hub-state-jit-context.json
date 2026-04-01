@@ -1,0 +1,25 @@
+{
+  "id": "hub-state-jit-context",
+  "type": "feature",
+  "title": "Hub Just-In-Time Context - Tool Quotas and Push Notifications",
+  "status": "completed",
+  "_v1_status": "published",
+  "description": "Implemented complete just-in-time hub context system enabling spokes to receive real-time quota warnings and critical notifications from hub. Features: (1) Tool quota tracking with expiry - generic schema for any tool (AMP, Claude Code, etc.) with auto-cleanup, (2) Push notification system - hub bro",
+  "impact": 10,
+  "created_by": "lug_system",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-06T10:32:07.057495",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "Feature description says 'Implemented complete just-in-time hub context system'",
+  "scope": "framework",
+  "modules": [
+    "hub",
+    "briefing",
+    "cli"
+  ],
+  "category": "feature",
+  "completed_at": "2026-03-18T10:56:22.215394+00:00"
+}

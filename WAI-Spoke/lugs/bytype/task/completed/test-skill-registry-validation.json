@@ -1,0 +1,21 @@
+{
+  "id": "test-skill-registry-validation",
+  "type": "task",
+  "title": "Unit Tests: Skill Registry Validation",
+  "status": "published",
+  "description": "Create 5 unit tests for WAI-Skills.jsonl validation: (1) Schema compliance (all required fields), (2) Valid lifecycle values, (3) Valid scope values, (4) safety_level 0-10 range, (5) Advisory skills have watchers array",
+  "impact": 7,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-18T11:05:46.470773+00:00",
+  "priority": "high",
+  "tags": [
+    "testing",
+    "unit-tests",
+    "skill-system",
+    "validation"
+  ],
+  "category": "testing",
+  "blocks": [],
+  "blocked_by": []
+}

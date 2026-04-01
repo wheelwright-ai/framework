@@ -1,0 +1,46 @@
+{
+  "i": "impl-gardener-compass-nightly-v1",
+  "t": "Gardener: Run Compass report + Lathe rescore as nightly post-tend steps",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "effort": 2,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "gardener",
+    "compass",
+    "lathe",
+    "nightly",
+    "phase-3"
+  ],
+  "phase": "p3-complete",
+  "phase_order": 3,
+  "blocks": [],
+  "blocked_by": [
+    "impl-compass-full-dashboard-v1",
+    "impl-lathe-spoke-scoring-v1",
+    "impl-gardener-lathe-integration-v1"
+  ],
+  "description": "After all spokes are tended, the gardener should: (1) re-run lathe_score.py to update spoke scores based on tonight's results, (2) run compass_report.py to generate tomorrow's morning dashboard, (3) write the results to gardener pass record. This ensures the user wakes up to a fresh dashboard every morning. Modify wheel-tender.sh or run_nightly.py to add post-tend steps.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py"
+  ],
+  "perceive": "Read the end of wheel-tender.sh to find where post-tend logic goes. Read run_nightly.py for the nightly orchestration flow.",
+  "execute": "Add post-tend block after all spokes are tended: (1) python3 tools/lathe_score.py (rescore with fresh data), (2) python3 tools/compass_report.py (generate dashboard), (3) log both steps to gardener pass record. Add error handling \u2014 if either script fails, log but don't block the commit.",
+  "verify": "Run wheel-tender.sh --all in test mode. After tending, verify lathe_score.py ran and spoke_lathe.json updated. Verify compass_report.py ran and new dashboard generated. Verify gardener pass record includes post-tend steps.",
+  "acceptance_criteria": [
+    "Lathe rescore runs after every nightly tend",
+    "Compass dashboard regenerated nightly",
+    "Post-tend step failures logged but don't block gardener",
+    "Gardener pass record shows post-tend execution"
+  ],
+  "model_fit": "HAIKU",
+  "routed_to": "LOCAL",
+  "completed_at": "2026-03-30T13:10:00Z",
+  "completed_by": "claude-sonnet-4-6 (session-20260330-1255)"
+}

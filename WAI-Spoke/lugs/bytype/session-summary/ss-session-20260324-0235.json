@@ -1,0 +1,40 @@
+{
+  "i": "ss-session-20260324-0235",
+  "ty": "session-summary",
+  "t": "Session 60: Hub bulletin type-filter bug fix, teaching adoption, mail routing analysis",
+  "s": "c",
+  "ca": "2026-03-24T02:50:00Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 60,
+  "accomplished": [
+    "Adopted 4 hub teachings (fleet-health already applied, 2 signal duplicates skipped, 7 signals from high-impact pack appended)",
+    "Diagnosed and fixed Step 9c bug: type filter missing caused 155 non-signal lugs to accumulate in hub bulletin since February",
+    "Cleared 155-file hub bulletin backlog to processed/",
+    "Created refactor-mail-routing-language-v1 lug (P4) for inbox→incoming/outgoing rename",
+    "Analyzed hub/spoke mail routing architecture — identified direction confusion in WAI-Hub/Signals/incoming/"
+  ],
+  "files_touched": [
+    "templates/commands/wai-closeout.md",
+    "WAI-Spoke/commands/wai-closeout.md",
+    "WAI-Spoke/WAI-Lugs.jsonl",
+    "WAI-Spoke/seed/ingest/processed/ (4 teachings)",
+    "hub/WAI-Hub/Signals/incoming/ (155 files → processed)"
+  ],
+  "decisions": [
+    "Step 9c filter: type=signal AND impact>7 (was impact>7 only — no type restriction)",
+    "Folder rename: deferred to P4 lug, no structural changes this session",
+    "155-file backlog: bulk archive — all self-authored by spoke, already in WAI-Lugs.jsonl"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Build Spoke ID System (wai/spoke_id.py + wai/file_validator.py)",
+      "refactor-chat-to-track-skill-location (P3)",
+      "refactor-mail-routing-language-v1 (P4)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Next session: Spoke ID System build from scratch — see next_session_recommendation"
+    ]
+  },
+  "autosaves_reconciled": []
+}

@@ -1,0 +1,28 @@
+{
+  "id": "task-phone-home-v3.1.0-framework-20260217131407",
+  "ty": "phone-home",
+  "category": "phone-home",
+  "source_wheel_id": "hub",
+  "destination_wheel_id": "framework",
+  "created_at": "2026-02-17T21:14:07.396679Z",
+  "status": "pending",
+  "content": {
+    "action": "generate_status_report",
+    "description": "Report spoke status back to hub for ecosystem health tracking",
+    "trigger_condition": {
+      "type": "version_match",
+      "framework_version_gte": "3.1.0"
+    },
+    "report_fields": [
+      "wheel_id",
+      "spoke_id",
+      "framework_version",
+      "git_status",
+      "session_count",
+      "last_closeout",
+      "lugs_count",
+      "signals_generated",
+      "adoption_status"
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "i": "session-20260323-162700",
+  "ty": "session-summary",
+  "t": "Session 52 — Cluster 1 Hub Orchestration: all 5 epics implemented",
+  "s": "c",
+  "ca": "2026-03-23T08:01:39Z",
+  "gb": "claude-sonnet-4-6",
+  "session_number": 52,
+  "accomplished": [
+    "hub-model-routing-table-v1 implemented: hub/model-routing/ with registry.json (8 models), work-classes.json (8 work classes), confidence-history.jsonl",
+    "hub-provider-grabber-layer-v1 implemented: hub/model-routing/grabbers/ (anthropic/openai/google/manual), grab.py runner with --all/--provider flags, provider-usage.jsonl",
+    "hub-intent-based-spoke-launch-v1 implemented: hub/launch/ with intent-taxonomy.json, startup-profiles.json, context-policies.json, launch.py CLI (intent → dispatch packet)",
+    "octo-gardener-dispatch-v1 implemented: hub/octo/ with octo.py gardener, job-queue.jsonl, spoke-summary-contract.json, spoke-summaries/+tracks/+notifications/ dirs",
+    "ozi-gardens-the-spoke-v1 implemented: ozi-controller/work/test lug types added to wai-lug-advisor.md (template + spoke), demonstration triplet appended to WAI-Lugs.jsonl",
+    "Committed to both framework and hub repos (5 commits framework, 2 commits hub)",
+    "All 3 acceptance tests pass for ozi-gardens (ozi-controller exists, all work paired with tests, WAI-State.json clean)"
+  ],
+  "files_touched": [
+    "WAI-Spoke/WAI-Lugs.jsonl",
+    "WAI-Spoke/WAI-State.json",
+    "templates/commands/wai-lug-advisor.md",
+    "WAI-Spoke/commands/wai-lug-advisor.md",
+    "hub/model-routing/registry.json (hub repo)",
+    "hub/model-routing/work-classes.json (hub repo)",
+    "hub/model-routing/grabbers/anthropic.py + openai.py + google.py + manual.py (hub repo)",
+    "hub/model-routing/grab.py (hub repo)",
+    "hub/launch/intent-taxonomy.json + startup-profiles.json + context-policies.json + launch.py (hub repo)",
+    "hub/octo/octo.py + job-queue.jsonl + spoke-summary-contract.json (hub repo)"
+  ],
+  "decisions": [
+    "Cluster 1 build order: routing-table first, then grabber+intent-launch in parallel, then octo-gardener, then ozi-gardens",
+    "Grabber layer uses pluggable per-provider Python modules with collect()/supports_live_api()/manual_override_path() interface",
+    "launch.py: longest-alias-wins matching, stdout human-readable + stderr JSON for automation",
+    "octo.py get_spoke_summary_stub() explicitly marked for wiring to live ozi-status — no silent stubs",
+    "ozi-gardens: demonstration lug triplet proves pattern without side-effecting real work",
+    "All 5 Cluster 1 epics use sub-agents dispatched in background — parallel where file ownership allows"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "Cluster 2 lugs (handles, product layer, 2 others) — blocked pending Cluster 1, now unblocked",
+      "benchmark-system-v1 — standalone, ready any time",
+      "hub/model-routing/grabbers: live API wiring deferred (supports_live_api=False on all stubs)",
+      "octo.py get_spoke_summary_stub(): needs wiring to actual ozi-status output for live preflight",
+      "Hub repo has ~20 pending deletions/modifications (old registry files, knowledge-base, etc.) — not committed, not reviewed"
+    ],
+    "blockers": [
+      "Cluster 2 was explicitly blocked until Cluster 1 ships — now unblocked"
+    ],
+    "next_steps": [
+      "Start Cluster 2: review implementation-wheelwright-handles-v1, implementation-wheelwright-web-cohort-sharing-v1, and 2 others — check what the lugs specify",
+      "Or build benchmark-system-v1 as warmup — standalone, no deps",
+      "Hub repo pending changes (deletions of old files) should be reviewed and committed separately"
+    ]
+  },
+  "autosaves_reconciled": []
+}

@@ -1,0 +1,42 @@
+{
+  "id": "session-20260325-0500",
+  "type": "session-summary",
+  "title": "Session 67: Skill Thrift — closeout/shipit slimmed 78%, principle established, epic for remaining skills",
+  "status": "completed",
+  "created_at": "2026-03-25T05:45:00Z",
+  "created_by": "claude-opus-4-6",
+  "session_number": 67,
+  "accomplished": [
+    "Slimmed wai-closeout.md: 650→137 lines (-77%), created wai-closeout-reference.md for on-demand content",
+    "Slimmed wai-shipit.md: 680→113 lines (-79%)",
+    "Established Skill Thrift Principle: primary file = behavioral instructions only; verbose content → secondary reference files",
+    "Created epic-skill-thrift-v1 for systematic application to all remaining skills (33 files)",
+    "Synced closeout+shipit to template spoke",
+    "Completed bug promotion to bytype/bug/ and reclassified other/open/ from prior session"
+  ],
+  "files_touched": [
+    "templates/commands/wai-closeout.md",
+    "templates/commands/wai-closeout-reference.md (new)",
+    "templates/commands/wai-shipit.md",
+    "templates/spoke/skills/closeout/wai-closeout.md",
+    "templates/spoke/skills/shipit/wai-shipit.md",
+    "WAI-Spoke/lugs/bytype/epic/open/epic-skill-thrift-v1.json (new)"
+  ],
+  "decisions": [
+    "Skill Thrift Principle: all skills must be lean — examples/schemas/deferred specs move to reference files",
+    "Secondary files use {skill}-reference.md naming, live in same skill subfolder",
+    "Tiered approach: Tier 1 (>200 lines) first for maximum savings"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "epic-skill-thrift-v1: Apply thrift to remaining 31 skills (Tier 1: 9 skills, Tier 2: 6 skills, Tier 3: 16 review-only)"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Start with Tier 1: wai-lug-advisor.md (795 lines) and wai-improve.md (656 lines) — biggest savings",
+      "Then wai-ozi-work-queue-monitor, wai-lug-compat, wai-ide-setup, wai-track-generate, wai-principles, wai-foundation",
+      "Tier 3 skills under 100 lines are likely already lean — quick review pass"
+    ]
+  },
+  "autosaves_reconciled": []
+}

@@ -134,9 +134,29 @@ Extract from WAI-State.json: `spoke_id`, `name`, `version`, `status`, `one_liner
 
 Remove autosave checkpoints older than 3 sessions from `WAI-Spoke/.autosave/`. See `wai-closeout-reference.md` for cleanup script.
 
-### 11. Git Commit + Push
+### 10b. Skill Sync
 
-Commit and push **immediately** — no user confirmation required. Banner displays AFTER.
+Sync canonical skill source to installed copy so the next session runs current skills:
+
+```bash
+\cp templates/commands/*.md .claude/commands/
+```
+
+Verify: `diff templates/commands/wai.md .claude/commands/wai.md` — no output = clean.
+
+### 11. Completion Banner + Git Commit + Push
+
+Display the banner **before** committing, then auto-proceed after 10s unless user cancels:
+
+```
+-- CLOSEOUT Session-{N} [{track_name}] {timestamp}
+|  Accomplished: {bullets}  |  Incomplete: {list or "none"}
+|  Version: v{old} -> v{new}  |  Context: {X}%  |  Signals: {N}
+|  Ceremony: Full|Standard|Essential|Minimal  |  Commits: {N} files
+-- Committing in 10s… type cancel/stop/abort to abort.
+```
+
+Wait 10s. If user types `cancel`, `stop`, `abort`, `no`, or `wait` (case-insensitive): abort. On timeout or any other input: proceed.
 
 ```bash
 git add WAI-Spoke/WAI-State.json WAI-Spoke/ [other session files]
@@ -146,20 +166,13 @@ git push origin main
 
 **Critical:** `WAI-Spoke/WAI-State.json` listed explicitly first to guarantee staging. If Minimal ceremony, include `(minimal closeout — full deferred)` in message.
 
-### 12. Verification + Completion Banner
+### 12. Verification
 
 Verify: `git status` (clean), `git log --oneline -1`, `git tag -l | tail -1` (if production).
 
-Display:
-```
--- CLOSEOUT Session-{N} [{track_name}] {timestamp}
-|  Accomplished: {bullets}  |  Incomplete: {list or "none"}
-|  Version: v{old} -> v{new}  |  Context: {X}%  |  Signals: {N}
-|  Ceremony: Full|Standard|Essential|Minimal  |  Commits: {N} files
--- Session saved. Next wakeup loads exactly where we left off.
-```
+Print: `-- Session saved. Next wakeup loads exactly where we left off.`
 
-If Minimal: add "Context was critical -- full ceremony deferred. Run /wai-closeout next session."
+If Minimal: add `Context was critical — full ceremony deferred. Run /wai-closeout next session.`
 
 ### 13. Release Tag (Production Releases Only)
 

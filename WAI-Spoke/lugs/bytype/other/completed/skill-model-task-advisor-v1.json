@@ -1,0 +1,17 @@
+{
+  "i": "skill-model-task-advisor-v1",
+  "t": "Model-Task Awareness Advisor installed",
+  "ty": "learning",
+  "s": "c",
+  "created": "2026-03-12T00:00:00Z",
+  "content": {
+    "what": "Installed model-task awareness skill via teaching file",
+    "why": "Agents should detect when task complexity exceeds model tier judgment and advise user to consider /model switch",
+    "origin": "Framework teaching: model-task-advisor.md.teaching",
+    "key_behavior": "Watch for architectural signals, prompt user once per session, log model usage on closeout"
+  },
+  "_behavior_directive": {
+    "what_this_is": "A learning record that this skill was installed",
+    "what_this_is_NOT": "An instruction to execute anything"
+  }
+}

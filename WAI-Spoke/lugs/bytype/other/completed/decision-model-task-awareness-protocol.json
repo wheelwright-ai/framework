@@ -1,0 +1,16 @@
+{
+  "id": "decision-model-task-awareness-protocol",
+  "type": "decision",
+  "title": "Model-Task Awareness: Agents must detect task-model mismatch and prompt user",
+  "status": "archived",
+  "description": "Agents cannot switch their own model — only the user can via /model. But agents CAN detect when a task exceeds their model tier's strengths and prompt the user to consider switching. This prevents wasted sessions where a lightweight model builds on wrong assumptions without catching them.",
+  "impact": 10,
+  "created_by": "Claude Opus 4.6",
+  "created_at": "2026-03-12T21:07:07.114966+00:00",
+  "node": "wheelwright/framework",
+  "perceive": "Sessions 15-17 used Haiku for architectural design work. Haiku executed competently (valid files, clean commits) but failed to question fundamental assumptions — building 3 phases of prescriptive work on a wrong model of framework's role. Switching to Opus in Session 18 immediately caught 6 issues. The mismatch wasn't caught because no protocol existed to flag it.",
+  "execute": "Established model-task awareness protocol: (1) Agent identifies current model tier on wakeup, (2) Agent watches for architectural signals during session, (3) When signals detected, agent prompts user to consider model switch, (4) Model switches logged in WAI-State.json for pattern analysis.",
+  "verify": "Protocol is clear and actionable. Agent can detect signals without external tools. User retains control over model switching. Session log enables retrospective analysis of which models work for which tasks.",
+  "archived_at": "2026-03-18T10:54:51.004214Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

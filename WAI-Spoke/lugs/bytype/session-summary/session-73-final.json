@@ -1,0 +1,125 @@
+{
+  "id": "session-73-final",
+  "type": "session-summary",
+  "status": "completed",
+  "created_at": "2026-03-25T12:45:00Z",
+  "session_number": 73,
+  "model": "claude-haiku-4-5",
+  "duration_turns": "~50 turns over ~90 minutes",
+  "title": "Session 73: Framework Orchestration Design — Ozi Work Queue System",
+  "summary": "Designed complete Ozi autonomous work orchestration system. Discovered 3 critical framework gaps (context estimation, lug routing, interruption recovery). Created 6 major epics + 4 signals for hub delivery + session summary. Framework improvements ready for next session implementation.",
+  "accomplished": [
+    "Discovered context estimation error (57% estimate vs 23% actual — 2.4x overestimate)",
+    "Designed Ozi routing awareness (LOCAL/FRAMEWORK/SIGNAL scope gate before lug creation)",
+    "Designed session interruption recovery (track integrity checks, autosave, timeout warnings)",
+    "Designed Ozi autonomous work queue orchestration (priority ordering, minimal context chains)",
+    "Designed queue auto-discovery (bootstrap queue from existing lugs on first run)",
+    "Designed wakeup output simplification (binary choice: work / refine when queue exists)",
+    "Updated memory with 3 new feedback docs (context measurement, routing, recovery design)",
+    "Created routing metadata on 3 existing lugs (context, minimal-context-wakeup, slim-down)"
+  ],
+  "epics_created": [
+    {
+      "id": "epic-ozi-work-queue-orchestration-v1",
+      "title": "Ozi Work Queue Orchestration",
+      "priority": "high",
+      "size": "10-15 steps",
+      "impact": "Core feature — autonomous work dispatch with minimal context chains"
+    },
+    {
+      "id": "epic-ozi-routing-awareness-v1",
+      "title": "Ozi Routing Awareness",
+      "priority": "high",
+      "size": "6-8 steps",
+      "impact": "Scope gate before lug creation (LOCAL/FRAMEWORK/SIGNAL)"
+    },
+    {
+      "id": "epic-interruption-recovery-v1",
+      "title": "Interruption Recovery",
+      "priority": "high",
+      "size": "7-10 steps",
+      "impact": "Track integrity + autosave + timeout warnings + recovery prompt"
+    },
+    {
+      "id": "epic-minimal-context-wakeup-v1",
+      "title": "Minimal Context Cross-Project Wakeup",
+      "priority": "medium",
+      "size": "5-7 steps",
+      "impact": "Fast handoff: 46k → 8-12k token wakeup for next project"
+    },
+    {
+      "id": "epic-ozi-queue-auto-discovery-v1",
+      "title": "Queue Auto-Discovery",
+      "priority": "medium",
+      "size": "3-4 steps",
+      "impact": "Bootstrap: scan existing lugs, build initial work queue"
+    },
+    {
+      "id": "epic-wakeup-output-simplification-v1",
+      "title": "Wakeup Output Simplification",
+      "priority": "high",
+      "size": "2-3 steps",
+      "impact": "Binary choice when queue exists: Work / Refine (clarity + low cognitive load)"
+    }
+  ],
+  "signals_for_hub": [
+    {
+      "id": "signal-context-estimation-accuracy-v1",
+      "impact": 9,
+      "teaching": "Token measurement needs ground truth (/context), not inference from file sizes"
+    },
+    {
+      "id": "signal-ozi-routing-awareness-v1",
+      "impact": 8,
+      "teaching": "Lug creation should verify scope (LOCAL/FRAMEWORK/SIGNAL) before writing"
+    },
+    {
+      "id": "signal-recovery-mechanism-design-v1",
+      "impact": 8,
+      "teaching": "Interruptions (restarts, crashes) are normal; recovery mechanism is essential"
+    },
+    {
+      "id": "signal-ozi-autonomous-orchestration-v1",
+      "impact": 10,
+      "teaching": "Ozi autonomous orchestration: work queue + auto-chain = continuous delivery at scale"
+    }
+  ],
+  "quick_win_tasks": [
+    {
+      "id": "task-wakeup-slim-down-session73",
+      "impact": "35% context reduction (defer Skills + lug index to lazy-load)"
+    },
+    {
+      "id": "task-track-integrity-validation-wakeup",
+      "impact": "Quick win: detect interruptions (validate final track entry at wakeup)"
+    }
+  ],
+  "incomplete_work": {
+    "status": "None — all design captured as lugs, ready for Session 74 implementation",
+    "next_session_recommendation": "Session 74: Begin implementing epics in priority order. Start with quick wins (tasks) to reduce context overhead. Then tackle epics: (1) Queue orchestration (core), (2) Routing awareness (gate), (3) Interruption recovery (resilience). Define 'workable item' complexity threshold for wakeup-output-simplification. Build the work queue for Wheelwright Framework improvements."
+  },
+  "key_decisions": [
+    "Context estimation should use measured tool output, not inference",
+    "Lug routing (LOCAL/FRAMEWORK/SIGNAL) must be verified before creation",
+    "Work queue is the single source of truth for what to work on next",
+    "Workable items = Haiku-completable (<10 steps, clear acceptance criteria, no blockers)",
+    "Minimal context chains save 57% (20k vs 46k tokens per job)",
+    "Auto-discovery bootstraps queue from existing lugs"
+  ],
+  "files_touched": [
+    "WAI-Spoke/lugs/bytype/epic/open/ (6 new epics)",
+    "WAI-Spoke/lugs/bytype/signal/undelivered/ (4 new signals)",
+    "WAI-Spoke/lugs/bytype/task/open/ (2 new tasks)",
+    "WAI-Spoke/lugs/bytype/session-summary/ (this file)",
+    "Memory: feedback_context_measurement.md, feedback_ozi_routing_awareness.md, project_cross_project_handoff.md",
+    "Memory: MEMORY.md (index updated)"
+  ],
+  "context_health": {
+    "started_at": "23% (GREEN)",
+    "ended_at": "48% (YELLOW)",
+    "budget_used": "25 percentage points",
+    "tokens_estimate": "~96k of 200k"
+  },
+  "phase": "review",
+  "evolution": "Session started with context estimation error discovery. Evolved into comprehensive work queue design for Ozi orchestration. Framework improvements now queued for implementation. Ready to build the next wave of enhancements."
+}

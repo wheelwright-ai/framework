@@ -1,0 +1,19 @@
+{
+  "id": "ss-e3-e7",
+  "type": "lug",
+  "title": "Session 28 Complete: E3-E7",
+  "status": "archived",
+  "_v1_status": "published",
+  "description": "",
+  "impact": 10,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-11T00:00:00Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "archived_at": "2026-03-18T10:54:51.003909Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

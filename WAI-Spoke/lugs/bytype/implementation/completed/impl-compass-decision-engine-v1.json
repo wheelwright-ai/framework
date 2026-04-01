@@ -1,0 +1,44 @@
+{
+  "i": "impl-compass-decision-engine-v1",
+  "t": "Compass: Decision queue engine \u2014 surface decisions, track history, enable approve/defer/reject",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "effort": 3,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "compass",
+    "decisions",
+    "hub",
+    "phase-2"
+  ],
+  "phase": "p2-render",
+  "phase_order": 2,
+  "blocks": [],
+  "blocked_by": [
+    "impl-compass-full-dashboard-v1"
+  ],
+  "description": "The Compass vision is: 'Wake up \u2192 open dashboard \u2192 see 3 decisions \u2192 approve/defer \u2192 gardener executes tonight.' This lug builds the decision engine: (1) decisions.jsonl at WAI-Hub/advisors/compass/ tracking every user decision with timestamp + context + outcome, (2) decision queue scanner that finds items needing user input (high-impact lugs, teaching adoption candidates, Lathe shift direction changes), (3) decision cards in the HTML dashboard with approve/defer/reject buttons that write back to decisions.jsonl via a simple local endpoint or CLI command.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/compass/decisions.jsonl",
+    "/home/mario/projects/wheelwright/hub/tools/compass_report.py",
+    "/home/mario/projects/wheelwright/hub/tools/compass_decide.py"
+  ],
+  "perceive": "Read compass_report.py (now built). Identify where decision items come from: undelivered signals, open high-impact lugs, teachings needing manual review, Lathe direction proposals.",
+  "execute": "Create tools/compass_decide.py CLI: compass_decide.py approve|defer|reject <decision_id> [--reason 'text']. Create decisions.jsonl schema: {id, ts, type, title, source_lug, action, reason, outcome_ts}. Add decision queue section to compass_report.py HTML generation. Decision items sourced from: (a) signals in incoming/ with impact >= 9, (b) work queue items tagged 'needs-decision', (c) Lathe shift direction changes. Each decision card shows: title, source, impact, one-line context, action buttons.",
+  "verify": "Run compass_decide.py approve test-id --reason 'testing'. Verify decisions.jsonl has entry. Run compass_report.py, verify decision queue section shows real items.",
+  "acceptance_criteria": [
+    "decisions.jsonl tracks all user decisions with timestamp and context",
+    "compass_decide.py CLI works: approve/defer/reject with optional reason",
+    "Dashboard decision queue shows real items from signals and work queue",
+    "Morning flow works: view dashboard \u2192 decide \u2192 gardener picks up tonight"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "completed_at": "2026-03-30T13:10:00Z",
+  "completed_by": "claude-sonnet-4-6 (session-20260330-1255)"
+}

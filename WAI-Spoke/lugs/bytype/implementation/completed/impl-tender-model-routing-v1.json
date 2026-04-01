@@ -1,0 +1,41 @@
+{
+  "i": "impl-tender-model-routing-v1",
+  "t": "Gardener tender: Route work items to correct model based on lug model_fit field",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T05:30:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "effort": 2,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "gardener",
+    "model-routing",
+    "efficiency",
+    "phase-1"
+  ],
+  "phase": "p1-unblock",
+  "phase_order": 4,
+  "blocks": [],
+  "blocked_by": [],
+  "model_fit": "SONNET",
+  "description": "The gardener currently spawns every per-spoke Claude session with the same model. Lugs now carry a model_fit field (HAIKU/SONNET/OPUS) indicating the cheapest model that can execute them. The tender should read model_fit from each work item's lug and pass --model to the Claude CLI accordingly. This enables self-directed cost efficiency: Opus defines work, Haiku/Sonnet executes it.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py"
+  ],
+  "perceive": "Read wheel-tender.sh lines 340-420 where per-spoke Claude sessions are spawned. Find the claude command invocation. Read how work items are passed to the per-spoke prompt. Check if --model flag is already supported in the Claude CLI invocation.",
+  "execute": "Modify the per-spoke work loop: (1) For each work item claimed from the spoke's open/in_progress lugs, read the model_fit field. (2) Default to 'sonnet' if model_fit is absent. (3) Map model_fit values: HAIKU\u2192'claude-haiku-4-5', SONNET\u2192'claude-sonnet-4-6', OPUS\u2192'claude-opus-4-6'. (4) Pass --model to the claude CLI invocation. (5) If multiple work items for one spoke have different model_fit values, group by model and run highest-capability model (a SONNET item + HAIKU item in same spoke \u2192 run SONNET for both). (6) Log model selection in the gardener pass record.",
+  "verify": "Run wheel-tender.sh --all --dry-run. Verify: (a) log shows model selection per spoke, (b) HAIKU items get haiku model, (c) mixed items get highest model, (d) no regression in existing functionality.",
+  "acceptance_criteria": [
+    "Per-spoke Claude sessions use model from lug model_fit field",
+    "Default to sonnet when model_fit absent",
+    "Mixed model_fit items within same spoke use highest capability model",
+    "Model selection logged in gardener pass record",
+    "Dry-run mode shows model routing without executing"
+  ],
+  "completed_at": "2026-03-30T13:15:00Z",
+  "completed_by": "claude-sonnet-4-6"
+}

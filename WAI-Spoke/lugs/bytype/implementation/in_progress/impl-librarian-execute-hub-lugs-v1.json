@@ -42,5 +42,6 @@
   "model_fit": "OPUS",
   "routed_to": "LOCAL",
   "blocker_cleared_at": "2026-03-30T23:55:00Z",
-  "blocker_cleared_note": "impl-hub-lug-health-fix-v1 completed 2026-03-30T13:15Z \u2014 hub lug health is fixed, librarian execution is unblocked"
+  "blocker_cleared_note": "impl-hub-lug-health-fix-v1 completed 2026-03-30T13:15Z \u2014 hub lug health is fixed, librarian execution is unblocked",
+  "roi": 2.7
 }

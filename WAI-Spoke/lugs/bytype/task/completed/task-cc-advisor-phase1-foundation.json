@@ -1,0 +1,41 @@
+{
+  "i": "task-cc-advisor-phase1-foundation",
+  "t": "Create ClaudeCode advisor skeleton \u2014 absorb maximizer rubric into persistent advisor with scan_state and passes tracking",
+  "ty": "task",
+  "s": "r",
+  "resolved_at": "2026-03-29T22:22:00Z",
+  "resolved_by": "claude-opus-4-6",
+  "ca": "2026-03-29T10:00:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 9,
+  "priority": "P1",
+  "tags": [
+    "advisor",
+    "claude-code",
+    "foundation"
+  ],
+  "parent_epic": "epic-cc-advisor-spoke-hub-v1",
+  "perceive": "1. Read templates/commands/wai-claude-maximizer.md \u2014 the 8-area rubric, trigger conditions, gap report format, fix mode to absorb. 2. Read templates/commands/wai-claude-maximizer-reference.md \u2014 detailed guidance per area. 3. Read WAI-Spoke/advisors/historian/ structure \u2014 scan_state.json, passes.jsonl, vectors.jsonl, reviews/ as template. 4. Read WAI-Spoke/skills/WAI-Skills.jsonl line 32 \u2014 current maximizer registration.",
+  "execute": "1. Create WAI-Spoke/advisors/cc-advisor/ with: scan_state.json ({last_audit_at: null, current_score: 0, score_by_area: {all 8 areas: null}, sessions_since_last_audit: 0, total_audits: 0, pending_proposals: [], auto_applied_count: 0}), empty passes.jsonl, empty vectors.jsonl, reports/ dir. 2. Create WAI-Spoke/skills/cc-advisor/cc-advisor.md \u2014 absorb the 8-area rubric from wai-claude-maximizer.md, add: periodic audit lifecycle (every 10 sessions), score history tracking, regression detection trigger, advisor state read/write instructions. Keep lean (behavioral only). 3. Create WAI-Spoke/skills/cc-advisor/cc-advisor-reference.md \u2014 absorb from wai-claude-maximizer-reference.md, add: event schemas, proposal format, hub signal format. 4. Create .claude/agents/cc-advisor.md \u2014 agent that reads scan_state, runs 8-area scoring, writes results to passes.jsonl, detects regressions via score delta, writes vectors for regressions. 5. Update WAI-Skills.jsonl: replace claude-maximizer entry with cc-advisor (id: cc-advisor, command_file: cc-advisor.md, type: guard, advisory: true). 6. Edit templates/commands/wai-claude-maximizer.md to 3 lines: 'Absorbed into ClaudeCode advisor. Run /cc-advisor or read WAI-Spoke/skills/cc-advisor/cc-advisor.md.' 7. Sync skill files to templates/spoke/skills/cc-advisor/ and WAI-Spoke/commands/.",
+  "verify": "1. python3 -c 'import json; json.load(open(\"WAI-Spoke/advisors/cc-advisor/scan_state.json\"))' \u2014 valid JSON with all 8 area keys. 2. wc -l WAI-Spoke/skills/cc-advisor/cc-advisor.md \u2014 under 200 lines (lean). 3. grep 'cc-advisor' WAI-Spoke/skills/WAI-Skills.jsonl \u2014 registered. 4. grep -c 'claude-maximizer' WAI-Spoke/skills/WAI-Skills.jsonl \u2014 0 (replaced). 5. cat templates/commands/wai-claude-maximizer.md \u2014 shows redirect message.",
+  "pev": {
+    "priority": "high",
+    "effort": "4",
+    "value": "9"
+  },
+  "acceptance_criteria": [
+    "WAI-Spoke/advisors/cc-advisor/ directory exists with scan_state.json, passes.jsonl, vectors.jsonl",
+    "scan_state.json has all 8 area keys with null initial values",
+    "cc-advisor.md skill file exists under 200 lines (behavioral only)",
+    "cc-advisor-reference.md contains absorbed maximizer reference content",
+    "WAI-Skills.jsonl has cc-advisor entry replacing claude-maximizer",
+    "templates/commands/wai-claude-maximizer.md reduced to redirect stub",
+    ".claude/agents/cc-advisor.md agent definition exists"
+  ],
+  "_behavior_directive": {
+    "what_this_is": "Phase 1 of CC advisor epic \u2014 create the advisor skeleton, absorb the maximizer, register the new skill",
+    "what_this_is_NOT": "Not implementing observation hooks or analysis yet \u2014 just the structure and absorbed rubric. Phases 2-5 are separate tasks."
+  },
+  "va": "build"
+}

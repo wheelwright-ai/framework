@@ -1,0 +1,26 @@
+{
+  "id": "4d6ec5a3f1d1",
+  "type": "feature",
+  "title": "E1: Skill Registry — WAI-Skills.jsonl schema + register 10 existing commands",
+  "status": "completed",
+  "_v1_status": "published",
+  "description": "Define WAI-Skills.jsonl schema. Register all 10 existing commands as skills with full metadata (lifecycle, scope, safety_level, advisory, watchers, objects, use_cases). Create both templates/WAI-Spoke/WAI-Skills.jsonl and WAI-Spoke/WAI-Skills.jsonl (live copy). Update templates/commands/manifest.json.",
+  "impact": 3,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-08T09:42:05.860743+00:00",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "Verified complete during lug cleanup Session 42",
+  "priority": "high",
+  "tags": [
+    "skill-system",
+    "kb-migration",
+    "governance"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "completed_at": "2026-03-18T10:54:51.003871Z"
+}

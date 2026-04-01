@@ -1,0 +1,9 @@
+{
+  "i": "task-remove-wai-cli-refs",
+  "ty": "task",
+  "s": "c",
+  "reconciled": true,
+  "reconciled_at": "2026-03-15T00:45:00Z",
+  "reconciled_by": "Claude Sonnet 4.6",
+  "note": "Closed. Deleted test-bench/WAI-Spoke/wai-cli-launch.sh. Removed CLI parity rule + Commands for Users block from WAI-Spoke/WAI-Guide.md. Cleaned examples/demo-wheel/ (WAI-Guide.md, README.md, WAI-State.json). Updated WAI-Spoke/WAI-State.md (fork notice + CLI commands block). WAI-Spoke/WAI-State.md historical refs left as-is per archive policy."
+}

@@ -1,0 +1,30 @@
+{
+  "id": "d08eb1c7ce84",
+  "type": "learning",
+  "title": "Learning: `run_shell_command` & Multi-line Python Script Execution Issue",
+  "status": "completed",
+  "_v1_status": "resolved",
+  "description": "Discovered a persistent `SyntaxError: unterminated string literal` when attempting to execute multi-line Python scripts, written to temporary files via `write_file`, using `run_shell_command python3 <script_path>`. The error was reproducible even with a minimal file writing script. Further investigation revealed that executing the same Python logic as a single-line command via `python3 -c '...'` within `run_shell_command` worked correctly. This suggests an issue with how the shell interprets or passes multi-line script content to Python when the script is first created by `write_file`.",
+  "impact": 9,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-10T09:44:41Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "accepted",
+  "resolution_reason": "Learning reviewed and incorporated into agent operational guidelines for executing Python scripts.",
+  "priority": "critical",
+  "tags": [
+    "run-shell-command",
+    "python",
+    "syntax-error",
+    "multi-line-script",
+    "file-writing",
+    "automation",
+    "bug-workaround",
+    "agent-tooling"
+  ],
+  "scope": "framework",
+  "completed_at": "2026-03-18T10:54:51.003922Z"
+}

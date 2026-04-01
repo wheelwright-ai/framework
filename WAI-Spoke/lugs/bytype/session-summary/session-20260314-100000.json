@@ -1,0 +1,49 @@
+{
+  "i": "session-20260314-100000",
+  "ty": "session-summary",
+  "t": "Session 19 summary — track system live, spoke template synced",
+  "s": "c",
+  "ca": "2026-03-14T10:00:00Z",
+  "gb": "Claude Sonnet 4.6",
+  "session_number": 19,
+  "accomplished": [
+    "Diagnosed track system: teaching existed but session dirs were never being created — behavioral gap not comprehension gap",
+    "Established core working agreement: plan → epic(announce name) → dogfood → iterate → closeout+restart — saved to taste.spoke.yaml and MEMORY.md",
+    "Applied track-encapsulation teaching to framework spoke: created session-20260314-0903/, moved teaching to processed, taste entry merged",
+    "Created epic-track-system-install-and-cleanup-v1 with dogfood fixes applied (5 issues found and resolved)",
+    "Replaced templates/spoke/commands/wai.md (77-line stub) with full 10-step protocol (351 lines) — Steps 3a, 5a, 5b, 5c, 9 added",
+    "Created teachings/spoke-wai-update-v1.md.teaching for distribution to existing spokes (safe_to_auto_adopt: false)",
+    "Created epic-spoke-template-wai-sync-v1 — dogfooded, executed, closed"
+  ],
+  "files_touched": [
+    "WAI-Spoke/session-20260314-0903/track.jsonl",
+    "WAI-Spoke/taste.spoke.yaml",
+    "WAI-Spoke/WAI-State.json",
+    "WAI-Spoke/WAI-Lugs.jsonl",
+    "WAI-Spoke/WAI-Signals.jsonl",
+    "templates/spoke/commands/wai.md",
+    "teachings/spoke-wai-update-v1.md.teaching",
+    "WAI-Spoke/seed/ingest/processed/track-encapsulation.md.teaching"
+  ],
+  "decisions": [
+    "D1: Inline point schema in Step 9 (no external file reference)",
+    "D2: Overwrite v1 script-based wai.md, no migration path",
+    "D3: safe_to_auto_adopt: false on spoke-wai-update teaching",
+    "D4: Full copy of framework wai.md + Step 9 path fix only",
+    "Dropped broadcast/ task — hub/framework symlink already works"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "epic-track-system-install-and-cleanup-v1: legacy WAI-Spoke root file cleanup — per-file disposition still needed for WAI-Ledger.jsonl, WAI-Manifest.yaml, WAI-Skills.jsonl, observations.jsonl, wai-cli-launch.sh, wai-shell.sh, WAI-Startup.json, WAI-Events.json, *.tmp files",
+      "MEMORY.md lists framework/skills/ files that do not exist on disk — stale entries to correct",
+      "Dogfood spoke-wai-update-v1.md.teaching on a real spoke to validate delivery"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Open new session, run /wai, track will resume from session-20260314-0903",
+      "Work epic-track-system-install-and-cleanup-v1 legacy cleanup — create per-file disposition table",
+      "Correct MEMORY.md stale skills/ entries"
+    ]
+  },
+  "autosaves_reconciled": []
+}

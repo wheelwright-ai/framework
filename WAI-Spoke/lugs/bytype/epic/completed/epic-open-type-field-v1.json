@@ -1,0 +1,10 @@
+{
+  "i": "epic-open-type-field-v1",
+  "ty": "epic",
+  "s": "c",
+  "resolution": "implemented",
+  "resolution_reason": "track-encapsulation.yaml includes open[] field with typed objects (type + content). Implemented in point schema.",
+  "reconciled": true,
+  "reconciled_at": "2026-03-18T02:30:00Z",
+  "reconciled_by": "Claude Sonnet 4.5"
+}

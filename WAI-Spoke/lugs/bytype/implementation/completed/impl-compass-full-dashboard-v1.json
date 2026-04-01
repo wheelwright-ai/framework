@@ -1,0 +1,46 @@
+{
+  "i": "impl-compass-full-dashboard-v1",
+  "t": "Compass: Full dashboard with fleet status, decision queue, productivity metrics, and trends",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 10,
+  "effort": 4,
+  "va": "build",
+  "rt": "LOCAL",
+  "tags": [
+    "compass",
+    "advisor",
+    "hub",
+    "dashboard",
+    "phase-2"
+  ],
+  "phase": "p2-render",
+  "phase_order": 1,
+  "blocks": [],
+  "blocked_by": [
+    "impl-lathe-spoke-scoring-v1"
+  ],
+  "description": "Current Compass dashboard is a static HTML shell showing '0 spokes'. Now that Lathe will have data, Compass needs a real rendering engine. Create tools/compass_report.py that: (1) reads Lathe spoke_lathe.json for strategic data, (2) reads Gardener scan_state.json + reports/ for fleet health, (3) reads spoke changelogs for productivity, (4) reads taste.user.yaml for tone, (5) generates a dynamic HTML dashboard with sections: fleet overview, attention priorities, decision queue (lugs needing go/no-go), productivity trends, cost tracking.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/hub/tools/compass_report.py",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/compass/scan_state.json",
+    "/home/mario/projects/wheelwright/hub/WAI-Hub/advisors/compass/reports/"
+  ],
+  "perceive": "Read existing dashboard HTML to understand current structure. Read Compass scan_state.json for data source list. Read Gardener report format. Read Lathe spoke_lathe.json (now populated). Read taste.user.yaml for personalization.",
+  "execute": "Create tools/compass_report.py: (1) data layer: load all advisor state files, (2) compute metrics: lugs completed/week, teachings adopted/week, cost/spoke from gardener passes, (3) decision queue: scan all spoke open lugs tagged 'needs-decision' or with impact >= 8, (4) trend calculation: compare last 7 gardener passes for health trend per spoke, (5) HTML generation: responsive dashboard with fleet grid, attention list (top 5 by Lathe urgency), decision cards, productivity chart data, (6) write to reports/dashboard-YYYY-MM-DD.html, (7) update scan_state.json. Also create a /wai-compass command stub in hub commands.",
+  "verify": "Run python3 tools/compass_report.py \u2014 generates HTML with real data. Open in browser, verify all sections populated. Verify scan_state updated.",
+  "acceptance_criteria": [
+    "tools/compass_report.py generates dashboard HTML with real data",
+    "Dashboard shows: fleet status (17 spokes with health), attention priorities (sorted by Lathe urgency), decision queue, productivity metrics",
+    "Runs idempotently \u2014 can be called by gardener nightly",
+    "Dashboard subtitle shows actual spoke count, not '0 spokes'",
+    "HTML is self-contained (no external dependencies)"
+  ],
+  "model_fit": "SONNET",
+  "routed_to": "LOCAL",
+  "completed_at": "2026-03-30T13:10:00Z",
+  "completed_by": "claude-sonnet-4-6 (session-20260330-1255)"
+}

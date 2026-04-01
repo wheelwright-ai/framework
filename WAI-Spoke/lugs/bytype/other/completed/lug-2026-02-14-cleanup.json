@@ -1,0 +1,19 @@
+{
+  "id": "lug-2026-02-14-cleanup",
+  "type": "session",
+  "title": "Project cleanup: Structure hygiene + documentation expansion",
+  "status": "archived",
+  "_v1_status": "resolved",
+  "description": "",
+  "impact": 8,
+  "created_by": "session-observer",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-14T20:15:00Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "archived_at": "2026-03-18T10:54:51.003970Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

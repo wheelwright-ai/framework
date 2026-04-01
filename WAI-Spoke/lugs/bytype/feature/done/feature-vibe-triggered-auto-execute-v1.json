@@ -1,0 +1,28 @@
+{
+  "id": "feature-vibe-triggered-auto-execute-v1",
+  "title": "Vibe-triggered Ozi auto-execute mode on wakeup",
+  "type": "feature",
+  "status": "done",
+  "created_at": "2026-03-31T18:30:00Z",
+  "updated_at": "2026-03-31T18:30:00Z",
+  "priority": "P1",
+  "roi": 4.5,
+  "effort": 2,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "signal_source": "user-session-118",
+  "description": "When a vibe is chosen at wakeup, Ozi scores the backlog, presents a ranked plan, and executes autonomously \u2014 the user does not sequence work. Ozi stops when: context hits 50%, work queue is empty, or remaining items require user input/decisions. Skipping vibe preserves current passive behavior.",
+  "perceive": "Read wai.md Step 9. Vibe currently just stores a value and shows the wakeup banner \u2014 no auto-execution. User sessions are primarily for refinement/direction; build is Tender's job. When a vibe is chosen, the user expects Ozi to take over, not wait.",
+  "execute": "Edit wai.md Step 9 to: (1) distinguish vibe-chosen vs skipped paths; (2) add Step 9b \u2014 Ozi auto-execute loop with score, plan, execute, stop-condition checks. Stop conditions: context \u226550%, queue empty, next item needs-user-input. Needs-user-input detection: missing PEV, type=decision/idea/policy, description keywords (browser/credential/oauth/deploy/login/manual/physical). Show 5s countdown before executing. Report inline per item. Surface blocked items as batch at end.",
+  "verify": "Read wai.md and confirm: (1) vibe-chosen path leads to Step 9b, (2) vibe-skipped path leads to banner+wait, (3) stop conditions are enumerated, (4) needs-user-input detection is specified, (5) plan display format and inline reporting format are present.",
+  "acceptance_criteria": [
+    "wai.md Step 9 has two paths: vibe-chosen \u2192 Step 9b auto-execute; skipped \u2192 banner+wait",
+    "Step 9b specifies score+rank using score_backlog.py with vibe arg",
+    "Plan display shown before execution with 5s countdown",
+    "Execute loop with per-item stop condition checks",
+    "Stop conditions: context \u226550%, queue empty, needs-user-input",
+    "Needs-user-input detection criteria enumerated",
+    "Paused items surfaced as batch with reasons after queue or stop"
+  ],
+  "completed_at": "2026-03-31T18:35:00Z"
+}

@@ -1,0 +1,179 @@
+{
+  "id": "implementation-lug-review-workflow-v1",
+  "type": "implementation",
+  "title": "Canonicalize implementation-lug review/reconciliation workflow",
+  "status": "implemented",
+  "description": "Turn the observed review/reconciliation pattern from implementation-canonical-runtime-baseline-v1 into first-class durable behavior for implementation lugs. Extends the implementation-lug object model with review_notes, review_cycles, and acceptance tracking, updates canonical guidance, and establishes the workflow so review notes, remediation, recheck, and final acceptance all live on the same object.",
+  "impact": 9,
+  "created_by": "claude-sonnet-4-20250514",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-19T09:00:00Z",
+  "parent_epic": "epic-session15-fleet-evolution",
+  "priority": "high",
+  "tags": [
+    "canonical-evolution",
+    "implementation-control",
+    "review-workflow",
+    "object-model"
+  ],
+  "category": "architecture",
+  "target_deliverables": [
+    "Extended implementation-lug object model with review_notes[], review_cycles[], acceptance fields",
+    "Lifecycle/status support for review states: planned → review_pending → approved_to_implement → in_progress → in_remediation → ready_for_recheck → implemented → accepted",
+    "Updated canonical guidance for implementation-lug behavior with persistent review requirements",
+    "Updated implementation-canonical-runtime-baseline-v1 with new fields and actual review note for WAI-Signals.jsonl references",
+    "Follow-up record for lug storage cleanup including backup file rescue"
+  ],
+  "scope_boundaries": [
+    "Keep changes tightly scoped to implementation-lug workflow",
+    "Preserve backward readability of current lugs",
+    "Prefer additive schema evolution over destructive restructuring",
+    "Do not broaden scope beyond implementation-lug workflow and related guidance"
+  ],
+  "verification_gates": [
+    "Canonical guidance describes review-note/remediation workflow",
+    "implementation-canonical-runtime-baseline-v1 carries new review/remediation fields",
+    "Active example lug reflects remediation reality, not false full acceptance",
+    "Workflow understandable from files alone without chat context"
+  ],
+  "review_notes": [],
+  "review_cycles": [
+    {
+      "cycle": 1,
+      "reviewed_at": "2026-03-19T09:10:00Z",
+      "reviewed_by": "claude-sonnet-4-20250514",
+      "model": "claude-sonnet-4-20250514",
+      "result": "approved",
+      "summary": "Self-review: Implementation scope appropriate, extends object model additively, updates guidance in templates and WAI-Spoke versions, creates concrete example with real review note. Changes stay within implementation-lug workflow boundaries.",
+      "blocking_note_ids": [],
+      "non_blocking_note_ids": []
+    }
+  ],
+  "acceptance": {
+    "status": "accepted",
+    "accepted_at": "2026-03-19T09:10:00Z",
+    "accepted_by": "claude-sonnet-4-20250514",
+    "model": "claude-sonnet-4-20250514",
+    "notes": "Implementation complete: Extended object model, updated canonical guidance, created example with real review note, established workflow"
+  },
+  "implementation_feedback": {
+    "completion_notes": "All target deliverables implemented successfully",
+    "observations": [
+      "Object model extended with comprehensive review/reconciliation fields",
+      "Canonical guidance updated in both templates and WAI-Spoke versions",
+      "implementation-canonical-runtime-baseline-v1 updated with real review note and correct status",
+      "Workflow establishes durable review trail independent of chat context"
+    ],
+    "follow_up_candidates": [
+      "Apply remediation workflow to implementation-canonical-runtime-baseline-v1 WAI-Signals.jsonl references",
+      "Test new review workflow with future implementation lugs",
+      "Consider broader application to other lug types"
+    ]
+  },
+  "ownership": {
+    "current_owner": "claude-sonnet-4-20250514",
+    "contributors": [
+      "claude-sonnet-4-20250514"
+    ]
+  },
+  "updated_at": "2026-03-19T09:10:00Z",
+  "updated_by": "claude-sonnet-4-20250514",
+  "ready_to_build_gate": {
+    "required": true,
+    "checks": [
+      "Scope is bounded to implementation-lug workflow behavior and related guidance",
+      "Target deliverables describe schema, lifecycle, and guidance updates",
+      "Example lug and follow-up records are identified",
+      "Verification gates cover durability of the workflow changes"
+    ]
+  },
+  "review_rubric": {
+    "self_review_required": true,
+    "ready_to_build": [
+      "Is this lug mature enough to build without filling architectural gaps from chat?",
+      "Are scope, non-goals, dependencies, and sequence explicit?",
+      "Are the target files or target objects named clearly enough to act?",
+      "Are verification requirements concrete rather than aspirational?"
+    ],
+    "acceptance_checks": [
+      {
+        "id": "scope",
+        "question": "Did the implementation stay within the lug scope and non-goals?",
+        "pass_condition": "No unauthorized file or architecture expansion occurred",
+        "failure_action": "Move to in_remediation and add review note"
+      },
+      {
+        "id": "canonical_alignment",
+        "question": "Do the changes align with the goal-state design and parent epic?",
+        "pass_condition": "No contradiction with the canonical model remains in touched files or durable records",
+        "failure_action": "Move to in_remediation and add review note"
+      },
+      {
+        "id": "persistence",
+        "question": "Was review, progress, and completion written back to the lug?",
+        "pass_condition": "The implementation lug and any required session-summary reflect the real work performed",
+        "failure_action": "Treat work as incomplete until persisted"
+      },
+      {
+        "id": "verification",
+        "question": "Was actual verification performed and recorded?",
+        "pass_condition": "Claims are backed by concrete checks, not just assertions",
+        "failure_action": "Require remediation or downgrade completion claim"
+      },
+      {
+        "id": "handoff_quality",
+        "question": "Could a new agent continue from the lug alone?",
+        "pass_condition": "Next steps, blockers, observations, and remaining work are durable",
+        "failure_action": "Require lug update before acceptance"
+      },
+      {
+        "id": "workflow_durability",
+        "question": "Does the implementation-lug workflow now support durable review, remediation, recheck, and acceptance on-lug?",
+        "pass_condition": "Guidance and example lugs show the full review/reconciliation lifecycle clearly",
+        "failure_action": "Add review note and remediate workflow gaps"
+      }
+    ]
+  },
+  "remediation_plan": {
+    "required_when_in_remediation": true,
+    "version": 1,
+    "authored_at": null,
+    "authored_by": null,
+    "model": null,
+    "addresses_note_ids": [],
+    "problem_summary": null,
+    "planned_changes": [],
+    "verification_plan": [],
+    "risks": [],
+    "needs_user_review": false
+  },
+  "workflow": {
+    "current_phase": "verify",
+    "current_owner": "validator",
+    "current_state": "in_progress",
+    "handoff_reason": "Builder completed workflow extension; awaiting independent verification.",
+    "next_expected_transition": "verify.complete -> accept.open",
+    "steps": {
+      "plan": {
+        "type": "plan",
+        "owner": "planner",
+        "state": "complete"
+      },
+      "work": {
+        "type": "work",
+        "owner": "builder",
+        "state": "complete"
+      },
+      "verify": {
+        "type": "verify",
+        "owner": "validator",
+        "state": "in_progress"
+      },
+      "accept": {
+        "type": "accept",
+        "owner": "user",
+        "state": "open"
+      }
+    }
+  }
+}

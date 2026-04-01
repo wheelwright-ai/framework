@@ -1,0 +1,26 @@
+{
+  "id": "152f4a8a8fbc",
+  "type": "feature",
+  "title": "E5: Mode System — wai-mode.md command + _session_state.mode in WAI-State.json",
+  "status": "completed",
+  "_v1_status": "published",
+  "description": "Create templates/commands/wai-mode.md. Add _session_state.mode to WAI-State.json schema. Modes: execution (default), interactive, planning, review, deploy.",
+  "impact": 3,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-08T09:42:05.860743+00:00",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "implemented",
+  "resolution_reason": "Verified complete during lug cleanup Session 42",
+  "priority": "high",
+  "tags": [
+    "skill-system",
+    "kb-migration",
+    "governance"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "completed_at": "2026-03-18T10:54:51.003887Z"
+}

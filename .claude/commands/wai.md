@@ -199,11 +199,22 @@ mkdir -p "$SESSION_DIR" && touch "$SESSION_DIR/track.jsonl"
 
 ## Step 9: Ready
 
-Ask: `Vibe? (build / fix / think / grind / ship) [skip]`
+Ask: `Vibe? (build / fix / think / grind / ship / refine) [skip]`
 
-Store vibe in session state for ROI tiebreaking. Can be changed mid-session.
+| Vibe | Biases toward |
+|------|--------------|
+| **build** | new features, implementations, schema work |
+| **fix** | bugs, flaky tests, broken things |
+| **think** | epics, architecture, big ideas |
+| **grind** | cleanup, triage, signal processing |
+| **ship** | closeout-ready items, finishing half-done work |
+| **refine** | lug quality, backlog scoring, PEV review, prioritization |
 
-Check `WAI-Spoke/runtime/spoke-changelog.jsonl` for recent completions (last 5). Surface tagged next lug from `_session_state.next_session_recommendation`.
+Store vibe in session state for ROI tiebreaking.
+
+**Two paths:**
+- **Vibe chosen** → proceed to Step 9b. Ozi takes priority and executes. User does not sequence.
+- **Skipped** → show wakeup banner and wait for user direction.
 
 ```
 ┌─ WAI WAKEUP Session-{N} [{track_name}] {timestamp}
@@ -213,6 +224,68 @@ Check `WAI-Spoke/runtime/spoke-changelog.jsonl` for recent completions (last 5).
 │  Recent: {last 3 changelog entries}
 │  Next: {tagged lug or "run score_backlog.py"}
 └─ Ready to work.
+```
+
+---
+
+## Step 9b: Ozi Auto-Execute (vibe-triggered)
+
+Ozi scores the backlog, presents a ranked plan, and executes autonomously. The user chose a vibe — that is authorization to proceed without further sequencing input.
+
+### Score & Rank
+
+```bash
+python3 tools/score_backlog.py {vibe}
+```
+
+Filter to **actionable** items: has complete PEV, not blocked, not needs-user-input (see detection below). Rank by ROI descending with vibe multiplier applied.
+
+### Present Plan
+
+Show before executing:
+
+```
+Ozi [{vibe} mode] — {N} actionable items queued, {M} need your input
+
+  1. {id} — {title} | ROI {x} | effort {e} | {model}
+  2. ...
+
+  Paused (needs input): {M} items — listed after queue.
+
+Proceeding in 5s… (reply to redirect)
+```
+
+Wait 5 seconds, then begin.
+
+### Execute Loop
+
+For each item in ranked order:
+
+1. **Check stop conditions before starting:**
+   - **Context ≥ 50%** → stop. Report items completed. Surface remaining queue. Suggest `/wai-closeout`.
+   - **Queue empty** → stop. Report complete.
+   - **Item needs user input** → pause. Surface the item with reason. Wait.
+2. Execute the item.
+3. Update lug status, append track entry.
+4. Report inline: `✓ {id} — {one-line result}`
+5. Loop.
+
+### Needs-User-Input Detection
+
+An item needs user input if any of:
+- Missing PEV fields (not Tender-ready — cannot be built as-is)
+- `type` is `decision`, `idea`, or `policy`
+- `routed_to: SIGNAL` — routing decision required
+- Description or title contains: `browser`, `credential`, `oauth`, `deploy`, `UAT`, `login`, `manual`, `physical`
+
+### After Queue or Stop
+
+```
+Ozi [{vibe}] — {N} done, {M} paused | context {%}
+
+Paused items (need your input):
+  • {id} — {reason}
+  ...
 ```
 
 ---

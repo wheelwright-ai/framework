@@ -1,0 +1,21 @@
+{
+  "id": "test-lug-schema-validation",
+  "type": "task",
+  "title": "Unit Tests: Lug Schema Validation",
+  "status": "published",
+  "description": "Create 8 unit tests for lug schema validation: (1) Required fields present, (2) Valid status values, (3) Valid type values, (4) Valid priority values, (5) ISO timestamp format, (6) impact score 0-10, (7) P/E/V field structure, (8) Resolution/resolution_reason coupling",
+  "impact": 7,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-18T11:05:46.470750+00:00",
+  "priority": "high",
+  "tags": [
+    "testing",
+    "unit-tests",
+    "lug-system",
+    "validation"
+  ],
+  "category": "testing",
+  "blocks": [],
+  "blocked_by": []
+}

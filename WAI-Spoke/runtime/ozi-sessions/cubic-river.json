@@ -1,0 +1,7 @@
+{
+  "session_key": "cubic-river",
+  "auto_mode": true,
+  "max_parallel": 4,
+  "watch_mode": true,
+  "poll_interval_minutes": 5
+}

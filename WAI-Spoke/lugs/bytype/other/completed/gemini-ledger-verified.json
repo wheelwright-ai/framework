@@ -1,0 +1,25 @@
+{
+  "id": "gemini-ledger-verified",
+  "type": "decision",
+  "title": "WAI-Ledger.jsonl append-only pattern verified",
+  "status": "archived",
+  "_v1_status": "open",
+  "description": "Successfully created and appended a test ledger entry to WAI-Spoke/WAI-Ledger.jsonl, confirming its append-only nature and the pattern for recording commitments.",
+  "impact": 8,
+  "created_by": "agent",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-16T20:23:37.659550+00:00",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "tags": [
+    "ledger",
+    "append-only",
+    "verification",
+    "critical-function"
+  ],
+  "archived_at": "2026-03-18T10:54:51.003982Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

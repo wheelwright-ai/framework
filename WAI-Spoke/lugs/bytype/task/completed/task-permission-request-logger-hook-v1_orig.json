@@ -1,0 +1,30 @@
+{
+  "i": "task-permission-request-logger-hook-v1",
+  "t": "Create PermissionRequest logger hook — builds CC Advisor observation data",
+  "ty": "task",
+  "s": "o",
+  "ca": "2026-03-30T19:50:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "effort": 1,
+  "va": "grind",
+  "rt": "LOCAL",
+  "routed_to": "LOCAL",
+  "tags": ["cc-advisor", "hooks", "observability"],
+  "description": "CC Advisor needs data on what tool calls prompt the user for permission. A PermissionRequest hook logs each prompt to a JSONL file. This feeds the CC Advisor's Phase 2 (observation) and Phase 4 (auto-adjustment) — without it the advisor has no signal on what's causing friction.",
+  "target_files": [
+    "/home/mario/.claude/hooks/log-permission-prompts.sh",
+    "/home/mario/projects/wheelwright/framework/.claude/settings.json"
+  ],
+  "perceive": "Read .claude/settings.json to confirm PermissionRequest hook slot is available. Read CC docs for PermissionRequest hook input format (JSON with tool_name, tool_input). Check if ~/.claude/hooks/ directory exists.",
+  "execute": "Create ~/.claude/hooks/log-permission-prompts.sh: reads stdin JSON, extracts tool_name + command, appends one JSONL line to ~/.claude/logs/permission-prompts.jsonl with timestamp, tool, command, project_dir. Add PermissionRequest hook entry to settings.json (no matcher needed). Ensure script is chmod +x.",
+  "verify": "echo '{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"rm -rf /tmp/test\"}}' | bash ~/.claude/hooks/log-permission-prompts.sh && cat ~/.claude/logs/permission-prompts.jsonl shows the entry.",
+  "acceptance_criteria": [
+    "~/.claude/hooks/log-permission-prompts.sh exists and is executable",
+    "settings.json has PermissionRequest hook entry pointing to absolute path",
+    "Hook appends JSONL line with timestamp, tool_name, command to permission-prompts.jsonl",
+    "Hook exits 0 (never blocks — observation only)"
+  ],
+  "model_fit": "HAIKU"
+}

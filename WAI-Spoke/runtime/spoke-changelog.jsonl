@@ -7,3 +7,10 @@
 {"event":"signal_triage","session":"session-20260331-1705","detail":"30 signals cleared from 36 total; 14 incoming routed; 6 remain pending","timestamp":"2026-04-01T01:12:38.905037+00:00Z"}
 {"event":"epic_decomposed","session":"session-20260331-1705","lug_id":"epic-ozi-work-queue-orchestration-v1","detail":"3 child impl lugs created (schema/wakeup/autochain)","timestamp":"2026-04-01T01:12:38.905037+00:00Z"}
 {"event":"lug_closed","session":"session-20260331-1705","lug_id":"feature-tender-spoke-integrity-v1","detail":"Verified complete from S116","timestamp":"2026-04-01T01:12:38.905037+00:00Z"}
+{"ts": "2026-03-31T19:20:00Z", "id": "feature-vibe-triggered-auto-execute-v1", "title": "Vibe-triggered Ozi auto-execute mode on wakeup", "action": "completed", "session": 118}
+{"ts": "2026-03-31T19:20:00Z", "id": "feature-score-backlog-clustering-v1", "title": "score_backlog.py: refine vibe + cluster detection", "action": "completed", "session": 118}
+{"ts": "2026-03-31T19:20:00Z", "id": "feature-closeout-banner-invert-v1", "title": "Closeout: banner-before-commit with 10s countdown", "action": "completed", "session": 118}
+{"ts": "2026-03-31T19:20:00Z", "id": "feature-skill-sync-gap-v1", "title": "Sync templates/commands/ \u2192 .claude/commands/ in closeout", "action": "completed", "session": 118}
+{"ts": "2026-03-31T19:20:00Z", "id": "lug-expedite-asap-flag-20260330", "title": "Tiered priority bands authored (PEV complete)", "action": "authored", "session": 118}
+{"ts": "2026-03-31T19:20:00Z", "id": "lug-routing-intelligence-20260330", "title": "Routing intelligence authored (PEV complete)", "action": "authored", "session": 118}
+{"ts": "2026-03-31T19:20:00Z", "id": "feature-hub-registry-teams-v1", "title": "Hub registry teams concept created", "action": "created", "session": 118}

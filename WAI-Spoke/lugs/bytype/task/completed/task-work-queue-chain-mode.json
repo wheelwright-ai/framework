@@ -1,0 +1,43 @@
+{
+  "i": "task-work-queue-chain-mode",
+  "t": "Add chain mode to work queue \u2014 implement item, closeout with track, auto-load next item without manual intervention",
+  "ty": "task",
+  "s": "resolved",
+  "ca": "2026-03-29T09:45:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "priority": "P2",
+  "tags": [
+    "work-queue",
+    "ozi",
+    "automation"
+  ],
+  "parent_epic": "epic-ozi-work-queue-orchestration-v1",
+  "blocked_by": [
+    "task-work-queue-schema-and-state",
+    "task-work-queue-display-at-wakeup"
+  ],
+  "perceive": "1. Read templates/commands/wai-ozi-work-queue-monitor.md \u2014 current dispatch logic. 2. Read templates/commands/wai-closeout.md \u2014 closeout steps that must run between items. 3. Read WAI-State.json _work_queue to understand item structure.",
+  "execute": "1. Add chain mode option to wai-ozi-work-queue-monitor.md: after completing an item, run a mini-closeout (lug reconciliation, state update, track finalize) then auto-load next ready item. 2. Chain mode requires explicit user approval: 'Chain mode: implement all ready items sequentially? [Y]es / [N]o'. 3. Between items: update _work_queue (remove completed, advance next), increment session_count, write track entry. 4. Stop conditions: queue empty, context >70%, any item fails verification. 5. Sync to all targets.",
+  "verify": "1. With 3 ready items and chain mode enabled: all 3 processed sequentially. 2. Context >70% between items: chain stops with warning. 3. Failed item: chain stops, item stays in queue with review_reason. 4. Each item gets its own track entries.",
+  "pev": {
+    "priority": "low",
+    "effort": "4",
+    "value": "8"
+  },
+  "acceptance_criteria": [
+    "Chain mode option exists in wai-ozi-work-queue-monitor.md with explicit user approval prompt",
+    "Mini-closeout runs between items (lug reconciliation, state update, track entry)",
+    "Stop conditions enforced: queue empty, context >70%, item verification failure",
+    "Each processed item gets its own track entries",
+    "Synced to all targets"
+  ],
+  "_behavior_directive": {
+    "what_this_is": "Chain mode for sequential work queue processing \u2014 mini-closeout between items, auto-advance",
+    "what_this_is_NOT": "Not parallel execution \u2014 strictly sequential. Not bypassing closeout \u2014 each item gets proper state preservation."
+  },
+  "va": "ship",
+  "resolved_at": "2026-03-30T01:10:00Z",
+  "resolved_by": "session-20260329-2315"
+}

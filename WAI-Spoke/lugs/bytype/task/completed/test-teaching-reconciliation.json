@@ -1,0 +1,21 @@
+{
+  "id": "test-teaching-reconciliation",
+  "type": "task",
+  "title": "Integration Tests: Teaching Reconciliation Workflow",
+  "status": "published",
+  "description": "Create 6 integration tests for Step 3a teaching reconciliation: (1) Auto-detect already-implemented teachings, (2) Copy to processed/ on reconcile, (3) Detect new teachings, (4) Duplicate detection (filename + teaching name), (5) Verification file existence check, (6) Hub path discovery",
+  "impact": 8,
+  "created_by": "Claude Sonnet 4.5",
+  "node": "wheelwright/framework",
+  "created_at": "2026-03-18T11:05:46.470770+00:00",
+  "priority": "high",
+  "tags": [
+    "testing",
+    "integration-tests",
+    "teaching-adoption",
+    "step-3a"
+  ],
+  "category": "testing",
+  "blocks": [],
+  "blocked_by": []
+}

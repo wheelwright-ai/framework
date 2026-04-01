@@ -1,0 +1,29 @@
+{
+  "id": "task-from-signal-signal-historian-activity-filter-gap-20260326",
+  "type": "task",
+  "title": "signal-historian-activity-filter-gap-20260326",
+  "status": "resolved",
+  "s": "resolved",
+  "resolved_at": "2026-03-30T00:05:00Z",
+  "resolved_by": "session-20260329-2315",
+  "created_at": "2026-03-26T06:00:00Z",
+  "created_by": "hub-signal-triage",
+  "impact": 7,
+  "source_signal": "signal-historian-activity-filter-gap-20260326",
+  "description": "historian.yaml activity_filter_exclude.tokens is missing the wakeup protocol verbs: read, checked, verified, parsed, detected, confirmed, initialized, ran, loaded. These generate systematic noise clusters in every pattern scan because wakeup steps record their activity in activity[] fields.",
+  "pev": {
+    "priority": "medium",
+    "effort": "1",
+    "value": "7"
+  },
+  "acceptance_criteria": [
+    "historian.yaml activity_filter_exclude.tokens includes: read, checked, verified, parsed, detected, confirmed, ran, loaded",
+    "Existing tokens preserved (no regressions)",
+    "Historian test cases for wakeup verb filtering pass"
+  ],
+  "_behavior_directive": {
+    "what_this_is": "Task derived from hub signal signal-historian-activity-filter-gap-20260326. Needs framework implementation.",
+    "action": "implement"
+  },
+  "va": "build"
+}

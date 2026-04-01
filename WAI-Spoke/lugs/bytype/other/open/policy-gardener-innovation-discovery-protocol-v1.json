@@ -1,0 +1,30 @@
+{
+  "i": "policy-gardener-innovation-discovery-protocol-v1",
+  "t": "POLICY: Gardener scans spokes for custom patterns not in framework template \u2014 signals validated innovations",
+  "ty": "policy",
+  "s": "open",
+  "ca": "2026-03-30T01:30:00Z",
+  "gb": "session-20260329-2315",
+  "fw_ver": "3.0.0",
+  "va": "think",
+  "description": "When gardener runs on a spoke, compare its WAI-Spoke/ contents against the framework template. Files or patterns that exist in the spoke but NOT in the template are potential innovations. If the pattern is validated (used successfully for 3+ sessions), gardener creates a signal-innovation lug and routes to framework for potential inclusion in the template. This makes innovation flow bottom-up: spokes experiment \u2192 gardener detects \u2192 framework evaluates \u2192 template updated \u2192 all spokes benefit.",
+  "protocol": [
+    "1. Diff spoke WAI-Spoke/ against templates/spoke/WAI-Spoke/ (structure only, not content)",
+    "2. For each extra file/folder in spoke: check if it's been stable for 3+ sessions (git log)",
+    "3. If stable: create signal lug routed to FRAMEWORK with description of the innovation",
+    "4. If ephemeral (<3 sessions): ignore",
+    "5. If it's in .gitignore or runtime/: ignore (operational, not innovation)"
+  ],
+  "teaching_candidate": true,
+  "perceive": "Read the current state relevant to: POLICY: Gardener scans spokes for custom patterns not in framework template \u2014 si. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: When gardener runs on a spoke, compare its WAI-Spoke/ contents against the framework template. Files or patterns that exist in the spoke but NOT in the template are potential innovations. If the patte",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: POLICY: Gardener scans spokes for custom patterns not in fra",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "impact": 4,
+  "effort": 2,
+  "routed_to": "LOCAL"
+}

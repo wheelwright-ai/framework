@@ -1,0 +1,53 @@
+{
+  "id": "lug-routing-intelligence-20260330",
+  "ty": "feature",
+  "s": "o",
+  "title": "Routing Intelligence \u2014 spoke-profile-aware dispatch + proactive cross-spoke suggestions",
+  "summary": "Allow ideas to be delivered to one or multiple spokes in one action. IdeaBank retention toggle (default: keep) prevents the idea being consumed on delivery. Orko guides spoke selection during intake.",
+  "why_bother": "Single-spoke delivery is limiting for cross-team ideas. IdeaBank retention means delivery is a copy, not a move \u2014 ideas persist locally as reference.",
+  "goal": "User selects one or more target spokes during idea creation; idea delivered to all selected spokes; original retained in IdeaBank if toggle on.",
+  "scope": [
+    "Minder UI: multi-select spoke picker during idea creation and detail view",
+    "IdeaBank retention toggle \u2014 default: keep (opt-out, not opt-in)",
+    "Spoke validation against registry for each selected target before delivery",
+    "Delivery to multiple destinations with per-spoke success/failure reporting",
+    "Orko intake: awareness of multi-target during conversation",
+    "Lug schema: targets[] list (multi-target lugs)"
+  ],
+  "constraints": [
+    "All selected spokes must validate against registry before creation",
+    "Multi-delivery reports partial failures per spoke",
+    "IdeaBank retention is default \u2014 user must explicitly opt out"
+  ],
+  "source_spoke": "minder",
+  "source_idea_id": "idea-20260330201457",
+  "created_at": "2026-03-30T22:00:00Z",
+  "created_by": "claude-sonnet-4-6-2026-03-30-s55",
+  "impact": 7,
+  "_behavior_directive": {
+    "what_this_is": "Feature lug from Minder: routing intelligence for multi-spoke idea delivery",
+    "what_this_is_NOT": "An instruction to execute immediately",
+    "processing_agent": "Framework team reviews; Minder implements UI + schema changes",
+    "expected_outcome": "Ideas can target multiple spokes in one delivery action with local retention option"
+  },
+  "type": "feature",
+  "status": "open",
+  "priority": "P2",
+  "effort": 4,
+  "roi": 3.8,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "updated_at": "2026-03-31T18:50:00Z",
+  "description": "Two capabilities: (1) When a lug targets multiple spokes, Ozi reads each spoke's profile (focus, audience, purpose) from the hub registry and drafts a spoke-appropriate message \u2014 framework gets functional notes, website gets marketing framing. Ask-once: if profile is missing, Ozi asks focus/goal and persists to registry. (2) Proactive cross-spoke suggestions: when a major enhancement (impact >= 8) completes, Ozi checks the spoke map and surfaces relevant actions (website update, LinkedIn post) rather than waiting for human to remember. Trivial work is silent. Hub registry is the sole source of spoke awareness \u2014 requires spoke profile schema extension.",
+  "perceive": "Hub registry stores basic spoke metadata (id, name, version, status, one_liner). No focus/audience/purpose/external_facing profile fields exist. Ozi has no basis for drafting spoke-appropriate messages or distinguishing framework from website audience. No proactive threshold logic \u2014 Ozi only acts on direct asks. Multi-target lugs have targets[] field (from lug schema) but Ozi ignores spoke profiles.",
+  "execute": "1. Extend hub registry spoke schema: add focus (str), audience (internal|external), purpose (str), communication_style (str) fields to registry/incoming/{spoke_id}.json. 2. Ask-once protocol in Ozi: when dispatching to a spoke with incomplete profile, ask 'What is the focus and goal of spoke {id}?' \u2014 persist answer to registry. 3. Multi-target dispatch: for lugs with targets[] list, read profile per target, draft tailored message per spoke. Framework = functional/behavioral framing. External spokes = audience-appropriate framing. 4. Proactive threshold: after completing a lug with impact >= 8, Ozi checks spoke map for relevant cross-spoke actions. Surfaces max 2 suggestions with one-line rationale. User accepts or dismisses \u2014 Ozi creates lug if accepted. 5. Update 9d (closeout spoke registry) to include new profile fields.",
+  "verify": "Hub registry spoke entry includes focus/audience/purpose fields. Dispatching lug to [framework, website] produces two distinct messages with different framing. Spoke with no profile triggers ask-once question, not silent failure. Completing impact=9 lug surfaces at most 2 cross-spoke suggestions. Completing impact=4 lug produces no unsolicited suggestions.",
+  "acceptance_criteria": [
+    "Hub registry spoke schema includes focus, audience, purpose, communication_style",
+    "Ask-once: incomplete spoke profile triggers one question, answer persisted",
+    "Multi-target lug dispatch drafts per-spoke message using spoke profile",
+    "Proactive suggestions surface only for impact >= 8 completions",
+    "Trivial work (impact < 8) produces no unsolicited cross-spoke suggestions",
+    "User accept/dismiss flow creates or skips the suggested lug"
+  ]
+}

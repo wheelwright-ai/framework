@@ -1,0 +1,32 @@
+{
+  "i": "idea-settings-local-audit-closeout-v1",
+  "ty": "idea",
+  "t": "Audit settings.local.json at closeout for session artifacts vs permanent permissions",
+  "s": "resolved",
+  "ca": "2026-03-26T16:30:00Z",
+  "gb": "session-81-framework via incoming signal",
+  "challenge": "settings.local.json accumulates session-specific junk over time: broken shell fragments, encoded commands, paths to unrelated projects, retired file references. Claude Code appends new permissions on each approval without deduplication or cleanup.",
+  "hypothesis": "Add an audit step to closeout (or periodic hygiene check): scan settings.local.json for entries that look like session artifacts (broken fragments, project-specific paths, retired references) vs permanent permissions. Flag artifacts for user review and removal.",
+  "origin": "signal",
+  "challenge_id": "chal-settings-local-audit",
+  "scope": "protocol",
+  "spoke_context_loaded": true,
+  "fit_classification": "net_new",
+  "related_lugs": [],
+  "scores": {
+    "velocity_lift": "low",
+    "implementation_cost": "low",
+    "system_fit": "neutral",
+    "generality": "all-spokes"
+  },
+  "priority": "P3",
+  "next_step": "add optional hygiene step to wai-closeout.md; define artifact detection heuristics",
+  "_behavior_directive": {
+    "what_this_is": "Improvement idea: settings.local.json hygiene audit at closeout.",
+    "what_this_is_NOT": "An instruction to implement immediately without user direction."
+  },
+  "va": "grind",
+  "resolved_at": "2026-03-30T03:00:00Z",
+  "resolved_by": "session-20260329-2315",
+  "resolution_note": "Low priority \u2014 settings.local.json pollution root cause signal already delivered."
+}

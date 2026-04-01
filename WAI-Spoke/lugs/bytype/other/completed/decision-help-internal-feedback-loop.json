@@ -1,0 +1,23 @@
+{
+  "id": "decision-help-internal-feedback-loop",
+  "type": "decision",
+  "title": "Internal Help Capability: Agent Self-Navigation and Wheel Improvement",
+  "status": "resolved",
+  "description": "Help is an internal agent capability (not user-facing) that enables agents to discover local knowledge, navigate the wheel, and surface gaps. Questions that can't be answered locally create lugs that improve the wheel over time.",
+  "impact": 8,
+  "created_by": "Claude Sonnet 4.6",
+  "created_at": "2026-03-12T19:34:08.974072Z",
+  "node": "wheelwright/framework",
+  "perceive": "Agents working in spokes need to: (1) know what they know locally, (2) discover what exists in the wheel, (3) route questions efficiently, (4) surface gaps for improvement",
+  "execute": "Implemented help as a Skill (framework/skills/help.yaml). Agents use it to navigate registry, find expertise, and identify shortcomings. No user-facing command.",
+  "verify": "Help Skill enables feedback loop: agent finds gap → submits lug → receiver sees gap → improves",
+  "resolution": "accepted",
+  "resolution_reason": "Internal capability creates virtuous cycle: agents discover gaps → wheel improves → next agent has better knowledge",
+  "priority": "high",
+  "tags": [
+    "architecture",
+    "internal-capability",
+    "feedback-loop",
+    "wheel-improvement"
+  ]
+}

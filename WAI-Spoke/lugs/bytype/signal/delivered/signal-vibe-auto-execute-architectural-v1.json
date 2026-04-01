@@ -1,0 +1,11 @@
+{
+  "id": "signal-vibe-auto-execute-architectural-v1",
+  "type": "signal",
+  "status": "undelivered",
+  "title": "Vibe selection triggers Ozi auto-execute — user no longer sequences work",
+  "impact": 9,
+  "target": "spokes",
+  "description": "When a vibe is chosen at wakeup, Ozi scores the backlog (with vibe bias), presents a ranked plan, and executes autonomously. Stops at: context >= 50%, queue empty, or item needs user input. Skipping vibe preserves passive behavior. Implemented in wai.md Step 9b. Changes the session contract: choosing a vibe is authorization to proceed.",
+  "created_at": "2026-03-31T19:15:00Z",
+  "session": 118
+}

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Score active lugs by ROI with vibe-aware tiebreaking.
+"""Score active lugs by ROI with vibe-aware tiebreaking and cluster detection.
 
 Usage:
-    python3 tools/score_backlog.py [vibe]
+    python3 tools/score_backlog.py [vibe] [--clusters] [--update-state]
 
-Where vibe is one of: build, fix, think, grind, ship
+Where vibe is one of: build, fix, think, grind, ship, refine
 Default: no vibe filter (pure ROI ordering).
+
+--clusters   Group related lugs into batch clusters for efficient dispatch.
+--update-state  Write top items back to WAI-State.json _work_queue.
 """
 
 import json
@@ -44,6 +47,14 @@ VIBE_AFFINITY = {
         "in_progress": 1.8,  # strong bonus for anything already started
         "bug": 1.2, "task": 1.1, "feature": 1.1,
         "epic": 0.7, "signal": 0.6, "other": 0.9,
+    },
+    "refine": {
+        "other": 1.4,      # ideas/decisions/policies need triage
+        "feature": 1.3,    # lug quality and PEV gaps
+        "implementation": 1.2,  # schema/spec completeness
+        "epic": 0.7,       # epics are outcomes, not refinement targets
+        "bug": 0.6,        # bugs are fix work, not refine work
+        "signal": 0.5,     # signals route, don't refine
     },
 }
 
@@ -106,6 +117,70 @@ def score_lug(lug: dict, lug_type: str, status: str, vibe: str | None = None) ->
         roi *= multiplier
 
     return round(roi, 2)
+
+
+TYPE_PREFIXES = (
+    "feature-", "impl-", "implementation-", "epic-", "bug-",
+    "task-", "idea-", "lug-", "policy-", "decision-",
+)
+VERSION_SUFFIXES = ("-v1", "-v2", "-v3", "-v4", "-v5")
+
+
+def extract_cluster_key(lug: dict, lug_id: str) -> str:
+    """Extract a cluster key from a lug — shared key = batch together."""
+    # Epic membership takes priority
+    epic_id = lug.get("epic_id") or lug.get("parent_epic")
+    if epic_id:
+        return f"epic:{epic_id}"
+
+    # Strip type prefix
+    key = lug_id
+    for prefix in TYPE_PREFIXES:
+        if key.startswith(prefix):
+            key = key[len(prefix):]
+            break
+
+    # Strip version/date suffix
+    for suffix in VERSION_SUFFIXES:
+        if key.endswith(suffix):
+            key = key[: -len(suffix)]
+            break
+    # Strip 8-digit date suffix (e.g. 20260330)
+    import re
+    key = re.sub(r"-\d{8}$", "", key)
+
+    # Take first 2 hyphen-separated words as domain key
+    parts = key.split("-")
+    return "-".join(parts[:2]) if len(parts) >= 2 else key
+
+
+def build_clusters(scored: list[dict]) -> list[dict]:
+    """Group related lugs into clusters for batch dispatch.
+
+    Returns a list of cluster dicts:
+      {"key": str, "items": [scored...], "roi": float, "solo": bool}
+    solo=True means single-member group (no real cluster).
+    """
+    from collections import defaultdict
+
+    groups: dict[str, list] = defaultdict(list)
+    for item in scored:
+        lug_id = item["lug"].get("id") or item["lug"].get("i") or item["file"].replace(".json", "")
+        key = extract_cluster_key(item["lug"], lug_id)
+        groups[key].append(item)
+
+    clusters = []
+    for key, items in groups.items():
+        clusters.append({
+            "key": key,
+            "items": items,
+            "roi": max(i["roi"] for i in items),
+            "solo": len(items) == 1,
+        })
+
+    # Sort clusters by their max ROI descending
+    clusters.sort(key=lambda c: c["roi"], reverse=True)
+    return clusters
 
 
 def scan_active_lugs() -> list[dict]:
@@ -180,6 +255,9 @@ def main():
     update_state = "--update-state" in args
     if update_state:
         args.remove("--update-state")
+    show_clusters = "--clusters" in args
+    if show_clusters:
+        args.remove("--clusters")
 
     vibe = args[0].lower() if args else None
     if vibe and vibe not in VIBE_AFFINITY:
@@ -212,15 +290,36 @@ def main():
     print(f"\n{'='*80}")
     print(f"  Ozi ROI Backlog — {len(dispatchable)} ready, {len(gated)} gated{vibe_label}")
     print(f"{'='*80}\n")
-    print(f"  {'#':>3}  {'ROI':>5}  {'Type':<10} {'Status':<13} {'Title'}")
-    print(f"  {'─'*3}  {'─'*5}  {'─'*10} {'─'*13} {'─'*40}")
 
-    for i, item in enumerate(dispatchable, 1):
-        phase_tag = f" [{item['lug'].get('phase', '')}]" if item["lug"].get("phase") else ""
-        print(f"  {i:>3}  {item['roi']:>5.1f}  {item['type']:<10} {item['status']:<13} {item['title'][:60]}{phase_tag}")
-        if i == 10 and len(dispatchable) > 10:
-            print(f"\n  ... and {len(dispatchable) - 10} more ready items\n")
-            break
+    if show_clusters:
+        clusters = build_clusters(dispatchable)
+        slot = 0
+        for cluster in clusters:
+            if slot >= 10:
+                remaining = len(clusters) - clusters.index(cluster)
+                print(f"\n  ... and {remaining} more clusters\n")
+                break
+            if cluster["solo"]:
+                item = cluster["items"][0]
+                phase_tag = f" [{item['lug'].get('phase', '')}]" if item["lug"].get("phase") else ""
+                print(f"  {slot+1:>3}  {item['roi']:>5.1f}  {item['type']:<10} {item['status']:<13} {item['title'][:55]}{phase_tag}")
+                slot += 1
+            else:
+                count = len(cluster["items"])
+                print(f"  {slot+1:>3}  {cluster['roi']:>5.1f}  [batch x{count}]    ── {cluster['key']}")
+                for item in cluster["items"]:
+                    phase_tag = f" [{item['lug'].get('phase', '')}]" if item["lug"].get("phase") else ""
+                    print(f"       {'':>5}  {'':10} {'':13}   • {item['title'][:52]}{phase_tag}")
+                slot += 1
+    else:
+        print(f"  {'#':>3}  {'ROI':>5}  {'Type':<10} {'Status':<13} {'Title'}")
+        print(f"  {'─'*3}  {'─'*5}  {'─'*10} {'─'*13} {'─'*40}")
+        for i, item in enumerate(dispatchable, 1):
+            phase_tag = f" [{item['lug'].get('phase', '')}]" if item["lug"].get("phase") else ""
+            print(f"  {i:>3}  {item['roi']:>5.1f}  {item['type']:<10} {item['status']:<13} {item['title'][:60]}{phase_tag}")
+            if i == 10 and len(dispatchable) > 10:
+                print(f"\n  ... and {len(dispatchable) - 10} more ready items\n")
+                break
 
     # Display gated items
     if gated:

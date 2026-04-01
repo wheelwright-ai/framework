@@ -17,7 +17,7 @@ any external AI conversation and bring the value back into WAI.**
 
 ### Step 1: Check Version + Copy to Clipboard
 
-1. Read the prompt from `framework/skills/chat-to-track.md`
+1. Read the prompt from `framework/templates/commands/chat-to-track.md`
 2. Extract and display the current version:
    ```
    Chat-to-Track prompt version: {prompt_version} (updated {updated_at})
@@ -53,9 +53,13 @@ process.
    — the AI records telemetry events after each response
    — if context runs low, it will recommend a closeout
 
-### Closeout and Export
+### Export
 
-4. When you're done, say: **"closeout chat"**
+4. When you're done, say: **"Export WAI Track"**
+   - `full` → entire session
+   - `after: {turn_number}` → from a specific turn onward
+   - `selective: {topic}` → filtered by lens
+   - `summary` → compressed insights
 5. The AI outputs a complete JSONL track — copy it
 
 ### Bring It Home
@@ -127,4 +131,4 @@ When a `WAI_Track-*.jsonl` file is found in `WAI-Spoke/seed/ingest/`:
 - The prompt auto-detects whether it's at the start or middle of a chat
 - Internal WAI sessions don't need this — track-encapsulation handles it
 - Both live and retroactive modes output the same JSONL event format
-- The prompt source of truth lives at `framework/skills/chat-to-track.md`
+- The prompt source of truth lives at `framework/templates/commands/chat-to-track.md`

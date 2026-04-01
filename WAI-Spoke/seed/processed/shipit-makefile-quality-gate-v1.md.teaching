@@ -1,0 +1,186 @@
+# Teaching: Shipit Quality Gate - Makefile Auto-Detection
+
+**Type:** Protocol fix  
+**Priority:** Critical  
+**safe_to_auto_adopt:** false  
+**Affects:** All WAI-enabled spokes
+
+---
+
+## What This Teaching Does
+
+Fixes a critical gap in shipit quality gates: test execution (Step 5a) wasn't running because shipit couldn't auto-detect the test suite.
+
+**Problem:** Shipit Step 5a looks for `pytest.ini`, `pyproject.toml`, `package.json`, or `Makefile`. If none exist, it skips tests with a warning. This allowed broken code to be committed.
+
+**Solution:** Create a `Makefile` as the universal test interface, enabling shipit to auto-detect and run tests before every commit.
+
+---
+
+## Who Needs This
+
+**All spokes with test suites** need this update to enable shipit quality gates.
+
+### Check If You Need This
+
+Run from your project root:
+```bash
+# Do you have tests?
+ls -la benchmarks/ tests/ test/ *test*.py 2>/dev/null
+
+# Does shipit detect them?
+ls -la pytest.ini pyproject.toml package.json Makefile 2>/dev/null
+```
+
+If you have tests BUT no detection file → **you need this teaching**.
+
+---
+
+## Input: What You Have Now
+
+Your project has:
+- Test files (E2E, integration, unit, etc.)
+- Custom test runner scripts
+- No auto-detection interface (no Makefile/pytest.ini/package.json)
+
+**Result:** Shipit skips quality gates, broken code can be committed.
+
+---
+
+## Transformation: What Changes
+
+Create `Makefile` at project root with:
+
+```makefile
+# Project Name - Test & Quality Gates
+# Used by wai-shipit quality gates (Step 5a)
+
+.PHONY: test test-all test-e2e test-integration test-unit clean
+
+# Default: Run primary test suite (shipit runs this)
+test:
+	@echo "Running tests..."
+	# CUSTOMIZE: Replace with your test command
+	@python3 benchmarks/e2e/test_skills.py
+	# OR: pytest -v
+	# OR: npm test
+	# OR: ./run-tests.sh
+
+# Run all test categories (optional)
+test-all: test-e2e test-integration test-unit
+	@echo "✅ All test suites passed"
+
+# E2E tests (optional)
+test-e2e:
+	@echo "Running E2E tests..."
+	@python3 benchmarks/e2e/test_skills.py
+
+# Integration tests (optional)
+test-integration:
+	@echo "Running integration tests..."
+	@./run-integration-tests.sh --mode=all
+
+# Unit tests (optional)
+test-unit:
+	@echo "⚠️  No unit tests defined yet"
+
+# Clean test artifacts (optional)
+clean:
+	@rm -f *.json *.txt
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@echo "✅ Test artifacts cleaned"
+```
+
+**Customize the `test:` target** to run your actual test command.
+
+---
+
+## Verification
+
+After creating `Makefile`:
+
+1. **Test the Makefile works:**
+   ```bash
+   make test
+   echo "Exit code: $?"  # Should be 0 on success, 1 on failure
+   ```
+
+2. **Verify shipit detects it:**
+   ```bash
+   ls -la Makefile  # Should exist
+   ```
+
+3. **Next shipit will auto-run tests** before commit (Step 5a)
+
+---
+
+## Expected Behavior After Adoption
+
+**Before:**
+```
+Shipit Step 5a: Quality Gates
+⚠️ No test suite detected - SKIP (warn user)
+[proceeds to commit without running tests]
+```
+
+**After:**
+```
+Shipit Step 5a: Quality Gates
+Running tests via: make test
+[runs your test suite]
+✅ Tests passed (14/14)
+[proceeds to commit]
+```
+
+**On test failure:**
+```
+❌ QUALITY GATE FAILED: Tests
+   3 tests failed out of 14 total
+   
+   ⛔ SHIPIT ABORTED
+   Fix failing tests and run shipit again.
+```
+
+---
+
+## Why This Matters
+
+**Real incident:** Framework commit f7cf94c was pushed with 126 lug validation errors because shipit couldn't find the test suite. GitHub Actions caught it, but the broken commit was already in git history.
+
+**With this fix:** Shipit blocks commits until tests pass. Broken code never enters git history.
+
+---
+
+## Implementation Steps
+
+1. Create `Makefile` at project root (see template above)
+2. Customize `test:` target to run your test command
+3. Test locally: `make test` should run tests and exit 0/1
+4. Commit the Makefile
+5. Next shipit will auto-detect and enforce quality gates
+
+---
+
+## Post-Completion
+
+After successful adoption:
+1. Move this file to `WAI-Spoke/seed/processed/`
+2. Test shipit quality gate enforcement
+3. Append to `WAI-Signals.jsonl`:
+
+```json
+{"timestamp":"2026-03-18T21:00:00Z","session_id":"session-20260318-shipit-fix","signal":"Shipit quality gate enabled via Makefile auto-detection. Tests now enforced before every commit. Closes gap where shipit Step 5a was skipping tests due to no pytest.ini/package.json/Makefile. Framework incident: commit f7cf94c pushed with 126 validation errors that should have been caught by shipit.","impact":9,"rationale":"Critical quality gate was defined but not active. Prevents broken code from entering git history. Affects all spokes with test suites.","by":"Claude Sonnet 4.5","lug_id":"shipit-makefile-quality-gate-v1"}
+```
+
+---
+
+## Rollout Strategy
+
+**Framework:** ✅ Already applied (commit a02360b)  
+**Other spokes:** Distribute via hub teaching system
+
+1. Teaching file placed in `hub/framework/`
+2. Spokes discover on next wakeup (Step 3a)
+3. User reviews and applies to each spoke
+4. Quality gates active across all projects

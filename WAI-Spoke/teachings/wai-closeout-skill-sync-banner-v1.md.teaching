@@ -1,0 +1,36 @@
+---
+id: wai-closeout-skill-sync-banner-v1
+title: "Closeout: skill sync step + banner-before-commit"
+version: 1.0.0
+fw_version: 2.0.140
+safe_to_auto_adopt: true
+target: spokes
+created_at: 2026-03-31
+session: 118
+---
+
+## Summary
+
+Two closeout improvements: (1) Step 10b auto-syncs templates/commands/*.md → .claude/commands/ so installed skills never lag canonical source. (2) Step 11 now shows the completion banner BEFORE committing with a 10s proceed-unless-cancel countdown.
+
+## Prerequisites
+
+- wai-closeout.md updated (v2.0.140+)
+
+## What Changed
+
+**Step 10b (new):** `\cp templates/commands/*.md .claude/commands/` — runs after autosave cleanup, before commit. Verify with `diff templates/commands/wai.md .claude/commands/wai.md`.
+
+**Step 11:** Banner displays first with countdown: "Committing in 10s… type cancel/stop/abort to abort." Auto-proceeds on timeout. Step 12 is now verification only (no duplicate banner).
+
+## Batch Sequence
+
+| Step | Action |
+|------|--------|
+| 1 | Pull latest wai-closeout.md (v2.0.140+) |
+| 2 | Verify Step 10b present |
+| 3 | Verify Step 11 shows banner before git commands |
+
+## Adoption Notes
+
+No breaking changes. First closeout after adopting will sync any lagging .claude/commands/ files.

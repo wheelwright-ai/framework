@@ -1,0 +1,30 @@
+{
+  "id": "39990feb7223",
+  "type": "feature",
+  "title": "Module-Level Version Tracking with Sub-versioning and Controlled Vocabulary",
+  "status": "completed",
+  "_v1_status": "reviewed",
+  "description": "Implement granular module version tracking with local change sub-versioning (2.0-3) and controlled vocabulary validation. Phases: (A) Create wai/valid_options.json with canonical field values, (B) Create wai/module_versions.json defining module releases, (C) Enhance Lug schema with modules_affected, category, hub_submission metadata, (D) Implement validation in LugManager, (E) Update CLI for interactive validated creation, (F) Hub integration for changelog generation. Success: Can track 'lugs: 2.0-3' indicating 3 local changes pending hub submission, with zero-ambiguity metadata.",
+  "impact": 10,
+  "created_by": "conductor",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-05T01:15:00.000000",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": "acknowledged",
+  "resolution_reason": "Feature reviewed. It is marked as in_progress and session_focus. Its implementation will need to adhere to the new enhanced lug structure policy (7d25ff95999c) for detailed implementation steps and success criteria.",
+  "priority": "session_focus",
+  "tags": [
+    "version-tracking",
+    "metadata",
+    "validation",
+    "controlled-vocabulary",
+    "hub-integration"
+  ],
+  "blocks": [],
+  "blocked_by": [],
+  "scope": "framework",
+  "category": "feature",
+  "completed_at": "2026-03-18T10:54:51.003773Z"
+}

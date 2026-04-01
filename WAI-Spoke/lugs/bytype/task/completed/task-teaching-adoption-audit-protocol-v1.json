@@ -1,0 +1,64 @@
+{
+  "id": "task-teaching-adoption-audit-protocol-v1",
+  "base_id": "task-teaching-adoption-audit-protocol",
+  "version": 1,
+  "revises_id": null,
+  "created_at": "2026-03-25T00:00:00Z",
+  "source_wheel_id": "minder",
+  "destination_wheel_id": "framework",
+  "category": "task",
+  "status": "pending",
+  "_behavior_directive": {
+    "what_this_is": "A work item requesting the framework to author and distribute a teaching that addresses a confirmed anti-pattern in teaching adoption",
+    "what_this_is_NOT": "An instruction to execute immediately or auto-apply anything",
+    "processing_agent": "Framework AI session — read, plan, implement with user approval",
+    "expected_outcome": "A new teaching distributed to all spokes via teachings_repo/framework/current/ that defines the verification protocol and detection/remediation steps"
+  },
+  "content": {
+    "request_type": "author_and_distribute_teaching",
+    "title": "Teaching Adoption Audit Protocol",
+    "problem_statement": "A confirmed anti-pattern has been found across spokes: .teaching files are moved to the processed/ directory WITHOUT the prescribed code or behavioral changes being applied. The file move is treated as evidence of adoption. It is not. The result is that spokes silently accumulate teachings that were 'processed' but never actually absorbed. This failure mode is invisible at wakeup — the processed/ check passes, the teaching never fires again, and the change is simply absent.",
+    "confirmed_instance": {
+      "spoke": "minder",
+      "teaching": "skill-wai-wakeup-discovery-fix-v1.md.teaching",
+      "symptom": "Teaching was in seed/processed/ but wai.md changes were never applied. Wakeup ran the old protocol for multiple sessions without detection.",
+      "discovery": "User noticed wakeup format did not match expected output from the teaching"
+    },
+    "root_causes": [
+      "No verification step between 'move to processed/' and 'confirm changes applied'",
+      "The teaching adoption flow ends at file move — there is no post-adoption check",
+      "Processed/ is used as both a deduplication index AND as adoption confirmation — it should only be the former",
+      "No audit mechanism exists to re-scan processed teachings against their prescribed changes"
+    ],
+    "requested_deliverable": {
+      "type": "teaching",
+      "filename": "skill-wai-teaching-adoption-audit-v1.md.teaching",
+      "distribute_via": "teachings_repo/framework/current/",
+      "target": "all spokes",
+      "safe_to_auto_adopt": false,
+      "content_requirements": [
+        "Define the anti-pattern clearly with the minder instance as a canonical example",
+        "Separate the two concerns: processed/ = deduplication index only; adoption = confirmed change applied",
+        "Define a per-teaching verification protocol: for each file in processed/, extract its 'Changes to Make' section and verify the prescribed change exists in the target file",
+        "Provide a wakeup-time audit step: on first session after receiving this teaching, run the audit against all processed teachings and report pass/fail per teaching",
+        "Define remediation: if a teaching fails audit, surface it as 'adopted but not applied — re-review required' with the original teaching content",
+        "Include a Version Check pattern (like skill-wai-wakeup-discovery-fix already uses) that each future teaching must include so adoption can be verified programmatically",
+        "Update the teaching authoring guidelines to require: every teaching must include a machine-checkable verification fingerprint (a unique string or file change that can be grepped to confirm adoption)"
+      ]
+    },
+    "spoke_remediation_instructions": {
+      "description": "Until the formal teaching is distributed, Mario will instruct each spoke manually. The framework teaching should formalize and automate this.",
+      "manual_steps": [
+        "List all .teaching files in WAI-Spoke/seed/processed/ (and seed/ingest/processed/ if present)",
+        "For each: read the 'Changes to Make' or 'How to Apply' section",
+        "Find the target file mentioned in the teaching",
+        "Grep for the verification fingerprint (unique string the teaching prescribes)",
+        "If not found: mark as 'processed but not adopted', re-present to user for re-application",
+        "Log audit result as a lug in WAI-Lugs.jsonl with ty=audit-result"
+      ]
+    },
+    "priority": "high",
+    "do_not_execute_automatically": true,
+    "implementation_trigger": "Framework AI session — user must approve plan before changes are made"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "i": "idea-shipit-release-tag-v1",
+  "ty": "idea",
+  "s": "c",
+  "ua": "2026-03-16T00:40:00Z",
+  "closed_by": "Claude Sonnet 4.6",
+  "resolution": "Implemented directly — single-file change. Added Step 0 (production release intent question) and Step 9b (conditional git tag + push) to wai-shipit.md. Success criteria and output format updated. Synced to .claude/commands/."
+}

@@ -1,0 +1,27 @@
+{
+  "id": "task-track-integrity-validation-wakeup",
+  "type": "task",
+  "status": "completed",
+  "resolution": "completed — wai.md Step 3b Track Integrity Check already implements interruption detection",
+  "created_at": "2026-03-25T11:45:00Z",
+  "created_by": "claude-haiku-4-5",
+  "timestamp": "2026-03-25T11:45:00Z",
+  "fw_version": "3.0.0",
+  "title": "Add track integrity check to wakeup Step 7 — detect incomplete entries",
+  "description": "Wakeup protocol Step 7 (Display Briefing) should validate track.jsonl before showing it. Quick check: last entry must have all required fields (turn, ts, focus, action, thinking, activity, decisions, insights, open, phase, evolution) OR be explicitly marked `completed: true`. If invalid/incomplete: surface 'Session interrupted at Turn N' in briefing.",
+  "acceptance": [
+    "Wakeup Step 7a new substep: Validate most recent session's track.jsonl",
+    "Check final entry: all required fields present OR `completed: true` flag",
+    "If invalid: flag in briefing as 'Session interrupted at Turn {N} ({timestamp})'",
+    "If valid: continue normal briefing display",
+    "No autosave/recovery logic yet (that's epic-interruption-recovery-v1) — just detection"
+  ],
+  "impact": "Immediate visibility into interruptions. Users know instantly if last session crashed.",
+  "blockers": "None — standalone check",
+  "related_to": "epic-interruption-recovery-v1",
+  "routed_to": "framework",
+  "scope_verified_by": "user request",
+  "routing_notes": "Quick win on path to full recovery epic. Validates track schema.",
+  "updated_at": "2026-03-29T10:00:00Z",
+  "updated_by": "claude-opus-4-6"
+}

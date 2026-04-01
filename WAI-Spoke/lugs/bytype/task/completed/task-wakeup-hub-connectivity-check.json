@@ -1,0 +1,11 @@
+{
+  "id": "task-wakeup-hub-connectivity-check",
+  "type": "task",
+  "status": "archived",
+  "resolution": "implemented",
+  "resolution_reason": "Updated Step 3 in wai.md (template and active) to surface a critical warning if hub_path is inaccessible.",
+  "reconciled": true,
+  "created_at": "2026-03-13T07:35:01Z",
+  "archived_at": "2026-03-18T10:54:51.004227Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "task-wakeup-clear-stale-next-actions",
+  "type": "task",
+  "status": "archived",
+  "resolution": "implemented",
+  "resolution_reason": "Updated Step 8 in wai.md (template and active) to derive Next Actions from active lug state instead of WAI-State.json.",
+  "reconciled": true,
+  "created_at": "2026-03-13T07:35:02Z",
+  "archived_at": "2026-03-18T10:54:51.004231Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

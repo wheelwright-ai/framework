@@ -1,0 +1,23 @@
+{
+  "i": "task-registry-git-tracking",
+  "t": "Track git repo existence per spoke in hub-registry.json — gardener verifies during health scan",
+  "ty": "task",
+  "s": "c",
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "fw_ver": "3.0.0",
+  "impact": 5,
+  "priority": "P3",
+  "tags": ["registry", "infrastructure"],
+  "parent_epic": "epic-session15-fleet-evolution",
+  "description": "2 spokes have no git repo. Registry field git_repo_exists should be set accurately by gardener during health scan.",
+  "resolution": "Already implemented — git_repo_exists field present in hub-registry.json for all spokes, gardener checks .git directory during health scan",
+  "closed_at": "2026-03-29T10:00:00Z",
+  "perceive": "1. Read hub/hub-registry.json — check git_repo_exists field per spoke. 2. Read hub/.claude/agents/ozi-gardener.md Step 1 — does it check for .git? 3. Verify emailinator and leadfinder have no .git.",
+  "execute": "1. Add to gardener Step 1: check if spoke path has .git directory, record in scan_state. 2. Add git_repo_exists to fleet report per-spoke data. 3. Optionally update hub-registry.json git_repo_exists field from scan results.",
+  "verify": "1. Gardener report shows git_repo_exists: false for emailinator and leadfinder. 2. Other spokes show true.",
+  "_behavior_directive": {
+    "what_this_is": "Ensure git repo tracking in registry is accurate",
+    "what_this_is_NOT": "Not creating git repos — just tracking the fact"
+  }
+}

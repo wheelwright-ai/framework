@@ -1,0 +1,25 @@
+{
+  "id": "phone-home-response-task-phone-home-v3.1.0-framework-20260217164216-20260220125817",
+  "ty": "phone-home-response",
+  "source_wheel_id": "Wheelwright",
+  "destination_wheel_id": "hub",
+  "created_at": "2026-02-20T20:58:17.336503Z",
+  "status": "pending",
+  "in_response_to": "task-phone-home-v3.1.0-framework-20260217164216",
+  "content": {
+    "wheel_id": "Wheelwright",
+    "spoke_id": null,
+    "framework_version": "unknown",
+    "git_status": {
+      "branch": "main",
+      "commit": "8cf101bd9fe6",
+      "uncommitted_count": 9
+    },
+    "session_count": 8,
+    "last_closeout": "2026-02-18T23:30:00+00:00",
+    "lugs_count": 96,
+    "signals_generated": 140,
+    "adoption_status": {},
+    "reported_at": "2026-02-20T20:58:17.336294Z"
+  }
+}

@@ -16,8 +16,8 @@
     "MCP_Servers": "fail",
     "Git_Worktrees": "fail"
   },
-  "sessions_since_last_audit": 8,
-  "audit_pending": false,
+  "sessions_since_last_audit": 10,
+  "audit_pending": true,
   "total_audits": 2,
   "pending_proposals": [],
   "auto_applied_count": 0,

@@ -1,0 +1,39 @@
+{
+  "i": "task-dogfood-skill-definition",
+  "t": "Define the dogfood skill — sub-agent validation protocol for lugs, ideas, and modifications before they ship",
+  "ty": "task",
+  "s": "r",
+  "ca": "2026-03-29T10:00:00Z",
+  "resolved_at": "2026-03-29T12:00:00Z",
+  "resolved_by": "claude-opus-4-6",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 8,
+  "priority": "P1",
+  "tags": [
+    "skill",
+    "dogfood",
+    "quality"
+  ],
+  "parent_epic": "epic-dogfood-skill",
+  "perceive": "1. Read templates/commands/wai-improve.md Step 6c (existing dogfood check) — this is the inline version that the skill should formalize. 2. Read .claude/agents/lug-reviewer.md — existing sub-agent that validates lugs. 3. Read templates/commands/wai-lug-schema.md — PEV field requirements that dogfooding validates.",
+  "execute": "1. Create templates/commands/wai-dogfood.md skill file. Core protocol: (a) accept input: lug JSON, idea brief, or modification spec. (b) spawn a fresh sub-agent (general-purpose, no framework context loaded — only the input). (c) sub-agent attempts to understand and act on the input cold. (d) sub-agent reports: what it understood, what was unclear, what it would do, what's missing. (e) compare sub-agent interpretation against intended meaning. (f) output structured assessment: {understood: bool, gaps: [], misinterpretations: [], verdict: PASS|NEEDS_WORK|FAIL}. 2. Create templates/spoke/skills/dogfood/wai-dogfood.md (copy). 3. Register in WAI-Skills.jsonl: id=dogfood, type=guard, advisory=true, watchers=['lug.*created', 'idea.*proposed']. 4. Update wai-improve.md Step 6c to reference /wai-dogfood as the formal skill instead of inline instructions. 5. Sync to WAI-Spoke/commands/ and WAI-Spoke/skills/dogfood/.",
+  "verify": "1. Skill file exists at templates/commands/wai-dogfood.md. 2. Registered in WAI-Skills.jsonl. 3. Running /wai-dogfood on a well-formed lug returns PASS. 4. Running on a lug with vague PEV returns NEEDS_WORK with specific gaps. 5. wai-improve.md Step 6c references /wai-dogfood.",
+  "pev": {
+    "priority": "medium",
+    "effort": "3",
+    "value": "8"
+  },
+  "acceptance_criteria": [
+    "templates/commands/wai-dogfood.md skill file exists with cold-reader validation protocol",
+    "Skill registered in WAI-Skills.jsonl with type=guard, advisory=true",
+    "wai-improve.md Step 6c references /wai-dogfood instead of inline instructions",
+    "Running /wai-dogfood on well-formed lug returns PASS",
+    "Running /wai-dogfood on vague lug returns NEEDS_WORK with specific gaps listed"
+  ],
+  "_behavior_directive": {
+    "what_this_is": "Define the dogfood skill as a standalone WAI skill — formalize the inline dogfood check from wai-improve into a reusable skill",
+    "what_this_is_NOT": "Not changing what dogfooding tests — same cold-reader validation, just extracted into a proper skill file"
+  },
+  "va": "build"
+}

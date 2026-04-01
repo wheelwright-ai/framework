@@ -1,3 +1,13 @@
+## [2.0.140] - 2026-03-31
+
+### Added — Refine Vibe + Ozi Auto-Execute + Backlog Clustering (Session 118)
+
+- **`templates/commands/wai.md`:** Added `refine` vibe (lug quality, backlog scoring, PEV review); added Step 9b — Ozi auto-execute mode triggered by vibe selection; Ozi scores backlog, presents plan, executes autonomously until context ≥50%, queue empty, or item needs user input
+- **`tools/score_backlog.py`:** Added `refine` vibe affinity; added `--clusters` flag with `build_clusters()` and `extract_cluster_key()` — groups related lugs for batch dispatch, reducing file touches
+- **`templates/commands/wai-closeout.md`:** Added Step 10b skill sync (`templates/commands/*.md` → `.claude/commands/`); Step 11 now shows banner before commit with 10s proceed-unless-cancel countdown
+- **`WAI-Spoke/lugs/`:** Authored PEV for `lug-expedite-asap-flag` (tiered priority bands) and `lug-routing-intelligence` (spoke-profile-aware dispatch); created `feature-hub-registry-teams-v1` (spoke relationship groups in registry)
+- **`hub-registry.json`:** Fixed 3 null spoke_ids (`why-go-bye`, `solutions-by-mv`, `analysing-local-mcp`) derived from wheel_id
+
 ## [2.0.139] - 2026-03-31
 
 ### Fixed — Hooks Scoring Formula + Signal Triage + Epic Decomposition (Session 117)

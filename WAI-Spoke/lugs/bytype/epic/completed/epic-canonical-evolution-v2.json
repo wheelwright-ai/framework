@@ -1,0 +1,193 @@
+{
+  "id": "epic-canonical-evolution-v2",
+  "type": "epic",
+  "title": "Canonical Evolution — Remaining Items",
+  "status": "implemented",
+  "priority": "P1",
+  "created_by": "claude-sonnet-4-6",
+  "created_at": "2026-03-22T00:00:00Z",
+  "updated_at": "2026-03-22T00:00:00Z",
+  "session_id": "session-20260322-0000",
+  "node": "wheelwright/framework",
+  "description": "12 remaining items to complete the canonical Wheelwright evolution, grouped into 3 tiers. Full P/E/V per item in plan.md. This lug is the tracking record — each item has id, title, tier, status, owner, and file targets.",
+  "plan_ref": "WAI-Spoke/lugs/epic-canonical-evolution-v2/plan.md",
+  "brief_ref": "WAI-Spoke/lugs/epic-canonical-evolution-v2/BRIEF.md",
+  "acceptance_criteria": [
+    "WAI-State.json migration markers are truthful (adopted = actual adoption state)",
+    "Migration receipts exist for all completed migrations",
+    "All protocol files agree on where signals go (WAI-Lugs.jsonl)",
+    "WAI-Guide.md filter returns results against current lug schema",
+    "Adoption marker enforcement is part of closeout protocol",
+    "Tier 3 items each have a child lug authored before execution"
+  ],
+  "items": [
+    {
+      "id": "E2-01",
+      "tier": 1,
+      "status": "implemented",
+      "title": "Adoption marker sync — canonical_state_migration stuck at false",
+      "files": [
+        "WAI-Spoke/WAI-State.json"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-02",
+      "tier": 1,
+      "status": "implemented",
+      "title": "Migration receipts missing — no rollback evidence for completed migrations",
+      "files": [
+        "WAI-Spoke/WAI-State.json"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-03",
+      "tier": 1,
+      "status": "implemented",
+      "title": "track_path stale — points to flat file not canonical session directory",
+      "files": [
+        "WAI-Spoke/WAI-State.json"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-04",
+      "tier": 1,
+      "status": "implemented",
+      "title": "WAI-Signals.jsonl retirement — stale competing source in live root",
+      "files": [
+        "WAI-Spoke/WAI-Signals.jsonl",
+        "WAI-Spoke/seed/ingest/processed/"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-05",
+      "tier": 1,
+      "status": "implemented",
+      "title": "Backup cleanup — two unreviewed .backup files in WAI-Spoke root",
+      "files": [
+        "WAI-Spoke/WAI-Lugs.jsonl.backup",
+        "WAI-Spoke/WAI-Lugs.jsonl.backup-20260318-035344"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-06",
+      "tier": 2,
+      "status": "implemented",
+      "title": "wai-lug-advisor.md signal routing — still says WAI-Signals.jsonl",
+      "files": [
+        "templates/commands/wai-lug-advisor.md"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-07",
+      "tier": 2,
+      "status": "implemented",
+      "title": "WAI-Guide.md stale patterns — filter returns zero results",
+      "files": [
+        "WAI-Spoke/WAI-Guide.md"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-08",
+      "tier": 2,
+      "status": "implemented",
+      "title": "Adoption marker enforcement — closeout has no adoption sync step",
+      "files": [
+        "templates/commands/wai-closeout.md",
+        "WAI-Spoke/commands/wai-closeout.md"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-09",
+      "tier": 2,
+      "status": "implemented",
+      "title": "Single source of truth for lug storage — scattered across 5 files with contradictions",
+      "files": [
+        "templates/commands/wai-lug-advisor.md",
+        "templates/commands/wai.md",
+        "templates/commands/wai-closeout.md"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-10",
+      "tier": 3,
+      "status": "implemented",
+      "title": "Hub Signals bulletin — WAI-Hub/Signals/incoming/ and processed/ not set up",
+      "files": [
+        "hub/WAI-Hub/Signals/",
+        "templates/commands/wai-closeout.md",
+        "templates/commands/wai.md"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-11",
+      "tier": 3,
+      "status": "implemented",
+      "title": "PEV as linked lugs — currently stuffed as fields, should be lug chain",
+      "files": [
+        "templates/commands/wai-lug-advisor.md"
+      ],
+      "agent": null
+    },
+    {
+      "id": "E2-12",
+      "tier": 3,
+      "status": "implemented",
+      "title": "Lug type schema — task/bug/feature should become work.kind",
+      "files": [
+        "templates/commands/wai-lug-advisor.md"
+      ],
+      "agent": null
+    }
+  ],
+  "sub_agent_batches": {
+    "batch_A": {
+      "items": [
+        "E2-01",
+        "E2-02",
+        "E2-03"
+      ],
+      "description": "WAI-State.json correctness — adoption markers, receipts, track_path (sequential, same file)",
+      "can_parallel": false
+    },
+    "batch_B": {
+      "items": [
+        "E2-04",
+        "E2-05"
+      ],
+      "description": "File retirement — WAI-Signals.jsonl + backup cleanup (independent of batch_A)",
+      "can_parallel": true
+    },
+    "batch_C": {
+      "items": [
+        "E2-06",
+        "E2-07",
+        "E2-09"
+      ],
+      "description": "Protocol consistency — lug-advisor + WAI-Guide + single source of truth (templates/commands/)",
+      "can_parallel": false
+    },
+    "batch_D": {
+      "items": [
+        "E2-08"
+      ],
+      "description": "Closeout enforcement — adoption marker sync step in closeout protocol",
+      "can_parallel": true
+    }
+  },
+  "tags": [
+    "canonical-evolution",
+    "state-correctness",
+    "protocol-consistency"
+  ],
+  "tier1_tier2_status": "complete"
+}

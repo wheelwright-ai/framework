@@ -1,0 +1,19 @@
+{
+  "id": "lug-2026-02-14-docs-expanded",
+  "type": "session",
+  "title": "Documentation expansion: Complete WAI tale with specs, skills, benchmarks",
+  "status": "archived",
+  "_v1_status": "resolved",
+  "description": "",
+  "impact": 9,
+  "created_by": "session-observer",
+  "node": "wheelwright/framework",
+  "created_at": "2026-02-14T05:56:00Z",
+  "perceive": null,
+  "execute": null,
+  "verify": null,
+  "resolution": null,
+  "resolution_reason": null,
+  "archived_at": "2026-03-18T10:54:51.003966Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

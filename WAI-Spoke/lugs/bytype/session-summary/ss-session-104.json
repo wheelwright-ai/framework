@@ -1,0 +1,58 @@
+{
+  "i": "ss-session-104",
+  "ty": "session-summary",
+  "t": "Session 104: Advisor decomposition — 10 implementation lugs with model routing for self-directed cost efficiency",
+  "s": "c",
+  "ca": "2026-03-30T05:35:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "session_number": 104,
+  "accomplished": [
+    "Ran health check on hub spoke — YELLOW (12 lug schema violations, 11 mislocated)",
+    "Investigated all 7 advisors: Gardener operational, Compass/Lathe scaffolded, Librarian not built, CC Advisor Phase 1 done, Historian active, Luci initialized",
+    "Created 10 implementation lugs across 3 phases to get all hub advisors operational",
+    "Pre-classified all 17 spokes with shift directions for Lathe scoring (embedded in lug)",
+    "Introduced model_fit field on lugs (HAIKU/SONNET/OPUS) for self-directed cost efficiency",
+    "Created impl-tender-model-routing-v1 so gardener routes to cheapest capable model per lug",
+    "Saved 3 new feedback memories: model routing cost, context budget guardian, self-directed model routing",
+    "Regraded 3 lugs to HAIKU where work is mechanical (hub health fix, taste deploy, gardener nightly)"
+  ],
+  "files_touched": [
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-hub-lug-health-fix-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-lathe-spoke-scoring-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-taste-user-deploy-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-compass-full-dashboard-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-compass-decision-engine-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-gardener-lathe-integration-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-librarian-execute-hub-lugs-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-cc-advisor-phases-2-5-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-gardener-compass-nightly-v1.json",
+    "WAI-Spoke/lugs/bytype/implementation/in_progress/impl-tender-model-routing-v1.json",
+    "memory/feedback_model_routing_cost.md",
+    "memory/feedback_context_budget_guardian.md",
+    "memory/feedback_self_directed_model_routing.md",
+    "memory/MEMORY.md"
+  ],
+  "decisions": [
+    "Phased advisor work: P1 unblock (health + Lathe + taste + tender routing), P2 render (Compass + decisions + gardener integration), P3 complete (Librarian + CC Advisor + nightly)",
+    "Lathe spoke classifications pre-decided by Opus, embedded in lug so Sonnet/Haiku executes without judgment",
+    "model_fit field: HAIKU for mechanical tasks (3 lugs), SONNET for code generation (5 lugs), OPUS for architecture (2 lugs)",
+    "taste.user.yaml: proceed without if no data, don't block on preferences",
+    "Context budget guardian: Sonnet sessions must STOP at RED zone and switch to Opus for closeout"
+  ],
+  "incomplete_work": {
+    "tasks": [
+      "All 10 implementation lugs created but not yet executed",
+      "Hub spoke still YELLOW — impl-hub-lug-health-fix-v1 pending",
+      "Lathe still has 0 spokes scored — impl-lathe-spoke-scoring-v1 pending"
+    ],
+    "blockers": [],
+    "next_steps": [
+      "Switch to Sonnet, chain through Phase 1 lugs in order: hub health fix (HAIKU), Lathe scoring (SONNET), taste deploy (HAIKU), tender model routing (SONNET)",
+      "Then Phase 2: Compass dashboard, decision engine, gardener-lathe integration",
+      "Phase 3 (OPUS): Librarian 11 child lugs, CC Advisor phases 2-5",
+      "User will do foundation work with each spoke to enrich hub registry data"
+    ]
+  },
+  "autosaves_reconciled": []
+}

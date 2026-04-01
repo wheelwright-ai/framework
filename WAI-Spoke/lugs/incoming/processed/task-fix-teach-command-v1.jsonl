@@ -1,0 +1,33 @@
+{
+  "id": "task-fix-teach-command-v1-20260218-04",
+  "base_id": "task-fix-teach-command-logic",
+  "version": 1,
+  "revises_id": null,
+  "created_at": "2026-02-18T15:30:00Z",
+  "source_wheel_id": "hub",
+  "destination_wheel_id": "framework",
+  "category": "task",
+  "status": "completed",
+  "completed_at": "2026-02-17T02:30:00Z",
+  "completed_by": "Claude Opus 4.5",
+  "content": {
+    "action": "modify_core_script",
+    "script_path": "wai/commands/teach.py",
+    "description": "The 'teach' command is not correctly delivering lugs. This task updates the script to correctly route lug payloads, verify the file write, and generate a delivery confirmation lug for the hub.",
+    "prerequisites": [],
+    "modifications": [
+      {
+        "instruction": "Add logic to differentiate between framework updates and lug deliveries. Lugs must be placed in the target spoke's 'WAI-Spoke/lugs/inbox/' directory.",
+        "pseudo_code": "if payload.type == 'lug':\n    destination_path = spoke_path / 'WAI-Spoke/lugs/inbox/'\nelse:\n    destination_path = spoke_path / 'WAI-Spoke/seed/ingest/'"
+      },
+      {
+        "instruction": "After writing a lug file to the destination, verify that the file exists at the destination path.",
+        "pseudo_code": "write_file(destination_path, lug_content)\nif not os.path.exists(destination_path):\n    raise Exception(f'Failed to verify write for lug {lug.id} at {destination_path}')"
+      },
+      {
+        "instruction": "Upon successful, verified delivery of a lug, generate a 'delivery_confirmation' signal lug in the hub's 'WAI-Spoke/lugs/inbox/ This lug serves as a receipt for the hub.",
+        "pseudo_code": "confirmation_lug = create_lug(\n    source='framework',\n    destination='hub',\n    category='signal',\n    content={\n'signal_type': 'delivery_confirmation',\n        'delivered_lug_id': lug.id,\n        'destination_spoke_id': spoke.id,\n        'timestamp': now()\n}\n)\nwrite_to_hub_inbox(confirmation_lug)"
+      }
+    ]
+  }
+}

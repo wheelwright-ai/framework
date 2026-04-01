@@ -1,0 +1,20 @@
+{
+  "id": "learning-phase-12-implementation-readiness",
+  "type": "learning",
+  "title": "SUPERSEDED: Phase 12 readiness replaced by test-bench validation model",
+  "status": "archived",
+  "resolution": "superseded",
+  "resolution_reason": "Old model: framework creates checklists for spokes. New model: framework creates teaching files, validates via test bench, deploys through hub.",
+  "impact": 0,
+  "created_by": "Claude Opus 4.6",
+  "created_at": "2026-03-12T20:57:36.087999+00:00",
+  "node": "wheelwright/framework",
+  "reconciled": true,
+  "superseded_by": "decision-framework-role-boundaries-mission",
+  "tags": [
+    "reconciled",
+    "superseded"
+  ],
+  "archived_at": "2026-03-18T10:54:51.004206Z",
+  "archived_reason": "Informational/historical - no action needed"
+}

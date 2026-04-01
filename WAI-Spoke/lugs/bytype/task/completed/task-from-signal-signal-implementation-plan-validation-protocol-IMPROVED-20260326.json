@@ -1,0 +1,15 @@
+{
+  "id": "task-from-signal-signal-implementation-plan-validation-protocol-IMPROVED-20260326",
+  "type": "task",
+  "title": "CRITICAL: Enforce Plan Validation Protocol or Lose Authority Over Quality",
+  "status": "open",
+  "created_at": "2026-03-27T00:00:00Z",
+  "created_by": "hub-signal-triage",
+  "impact": 10,
+  "source_signal": "signal-implementation-plan-validation-protocol-IMPROVED-20260326",
+  "description": "",
+  "_behavior_directive": {
+    "what_this_is": "Task derived from hub signal signal-implementation-plan-validation-protocol-IMPROVED-20260326. Needs framework implementation.",
+    "action": "implement"
+  }
+}

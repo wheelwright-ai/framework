@@ -1,0 +1,13 @@
+{
+  "i": "task-upgrade-script-git-detection",
+  "t": "Upgrade script: detect git repo, skip git steps if missing",
+  "ty": "task",
+  "s": "completed",
+  "resolution": "stale — no upgrade script exists in tools/; referenced script no longer part of codebase",
+  "impact": 4,
+  "ca": "2026-03-14T07:22:58Z",
+  "gb": "Claude Opus 4.6",
+  "description": "[infrastructure] Script already handles no-git gracefully. Formalize: don't require .gitignore, skip snapshot/commit cleanly, warn in output.",
+  "updated_at": "2026-03-29T10:00:00Z",
+  "updated_by": "claude-opus-4-6"
+}

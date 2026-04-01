@@ -1,0 +1,40 @@
+{
+  "i": "idea-session-type-tracking-v1",
+  "ty": "idea",
+  "t": "session_count increments only for user-initiated sessions; agent sessions tracked separately",
+  "s": "proposed",
+  "ca": "2026-03-26T16:30:00Z",
+  "gb": "session-81-framework via incoming signal",
+  "challenge": "session_count in WAI-State.json increments at closeout for all session types including agent-initiated sessions. This distorts session metrics and any per-session analytics.",
+  "hypothesis": "User-prompt-submit hook captures session_type (user|agent) and passes it to closeout. Closeout conditionally increments session_count only for user-initiated sessions. Agent sessions tracked under a separate counter or logged differently.",
+  "origin": "signal",
+  "challenge_id": "chal-session-type-tracking",
+  "scope": "protocol",
+  "spoke_context_loaded": true,
+  "fit_classification": "extends",
+  "related_lugs": [],
+  "scores": {
+    "velocity_lift": "low",
+    "implementation_cost": "medium",
+    "system_fit": "aligned",
+    "generality": "all-spokes"
+  },
+  "priority": "P3",
+  "next_step": "update hook + closeout to capture and conditionally use session_type",
+  "_behavior_directive": {
+    "what_this_is": "Improvement idea: distinguish user vs agent sessions in session_count.",
+    "what_this_is_NOT": "An instruction to implement immediately without user direction."
+  },
+  "va": "grind",
+  "perceive": "Read the current state relevant to: session_count increments only for user-initiated sessions; agent sessions tracke. Identify what exists, what's missing, and what needs to change.",
+  "execute": "Implement: session_count increments only for user-initiated sessions; agent sessions tracked separately",
+  "verify": "Verify: the implementation matches the described intent. Test against project principles and mission goals.",
+  "acceptance_criteria": [
+    "Implementation matches described intent in: session_count increments only for user-initiated sessions; a",
+    "Changes verified against project principles and mission goals",
+    "No regressions in existing functionality"
+  ],
+  "impact": 4,
+  "effort": 2,
+  "routed_to": "LOCAL"
+}

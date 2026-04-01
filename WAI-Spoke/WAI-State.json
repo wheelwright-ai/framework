@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.139",
+    "version": "2.0.140",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -28,7 +28,7 @@
         }
       }
     },
-    "last_modified_at": "2026-04-01T01:11:43Z",
+    "last_modified_at": "2026-04-01T02:57:55Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260331-1705",
+    "last_session_id": "session-20260331-1815",
     "last_modified_by": "claude-sonnet-4-6",
     "last_modified_at": "2026-03-31T23:17:42Z",
-    "last_closeout": "2026-04-01T01:11:43Z",
-    "session_count": 118,
-    "track_path": "WAI-Spoke/sessions/session-20260331-1705/track.jsonl",
-    "next_session_recommendation": "Session 118 priorities:\n(1) impl-ozi-queue-schema-v1: extend lug schema with readiness field + _work_queue state in WAI-State (Phase 1 of Ozi orchestration).\n(2) feature-skill-sync-gap-v1: add sync step to wai-closeout.md (templates/commands/ \u2192 .claude/commands/) \u2014 quick fix, high ROI.\n(3) feature-closeout-banner-invert-v1: update wai-closeout.md Step 11 to show banner before commit with 10s proceed-unless-cancel.\n(4) Signal triage: 6 signals remain in framework inbox (execute-when gate, lug triage protocol, repo sanitization, spoke-local expediter, closeout-banner, skill-sync).\n(5) Historian flaky test (session 48 concurrent closeout): 46 sessions flaky \u2014 fix or mark known-flaky.",
+    "last_closeout": "2026-04-01T02:57:55Z",
+    "session_count": 119,
+    "track_path": "WAI-Spoke/sessions/session-20260331-1815/track.jsonl",
+    "next_session_recommendation": "Session 118 refine pass complete. Priority for S119: (1) Triage Groups 2-4: decision-df884ede13e2, 6 idea lugs, policy-gardener-innovation, idea-linkedin \u2014 batch triage. (2) Hub signals inbox: 16 items need triage. (3) CC Audit due (10 sessions). (4) Historian flaky test (S48 concurrent closeout): fix or mark known-flaky. (5) Consider impl-ozi-queue-schema-v1 (ROI 4.5) as first build item once refine pass is complete.",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -103,25 +103,16 @@
     "teaching_audit_wired_to_wakeup": true
   },
   "_work_queue": {
-    "last_scored_at": "2026-04-01T01:12:12.290286+00:00",
+    "last_scored_at": "2026-04-01T02:58:50.042911+00:00",
     "items": [
       {
-        "id": "feature-closeout-banner-invert-v1",
-        "roi": 7.0,
+        "id": "lug-expedite-asap-flag-20260330",
+        "roi": 6.0,
         "type": "feature",
         "status": "ready",
-        "title": "Closeout: banner-before-commit with 10s proceed-unless-cancel",
+        "title": "Tiered priority bands for lug dispatch \u2014 urgency field with ROI within tiers",
         "phase": null,
         "tagged_next": true
-      },
-      {
-        "id": "feature-skill-sync-gap-v1",
-        "roi": 7.0,
-        "type": "feature",
-        "status": "ready",
-        "title": "Sync templates/commands/ \u2192 .claude/commands/ in closeout",
-        "phase": null,
-        "tagged_next": false
       },
       {
         "id": "decision-df884ede13e2",
@@ -133,29 +124,38 @@
         "tagged_next": false
       },
       {
-        "id": "lug-expedite-asap-flag-20260330",
-        "roi": 4.0,
-        "type": "feature",
+        "id": "signal-vibe-auto-execute-architectural-v1",
+        "roi": 4.5,
+        "type": "signal",
         "status": "ready",
-        "title": "Expedite ASAP Flag for Lugs \u2014 urgency value (1-5) integrated with Ozi/Gardener",
+        "title": "Vibe selection triggers Ozi auto-execute \u2014 user no longer sequences work",
         "phase": null,
         "tagged_next": false
       },
       {
-        "id": "signal-hooks-scoring-formula-fix-v1",
+        "id": "signal-hub-registry-teams-concept-v1",
         "roi": 4.0,
         "type": "signal",
         "status": "ready",
-        "title": "spoke_integrity_score.py: hooks dimension scoring bug fixed \u2014 15/20 cap \u2192 20/20",
+        "title": "Hub registry teams: spoke relationship groups with commercial intent",
         "phase": null,
         "tagged_next": false
       },
       {
-        "id": "lug-routing-intelligence-20260330",
+        "id": "signal-routing-intelligence-spoke-profiles-v1",
+        "roi": 4.0,
+        "type": "signal",
+        "status": "ready",
+        "title": "Ozi routing intelligence: spoke-profile-aware dispatch + proactive cross-spoke s",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
+        "id": "feature-hub-registry-teams-v1",
         "roi": 3.5,
         "type": "feature",
         "status": "ready",
-        "title": "Routing Intelligence \u2014 multi-spoke delivery + IdeaBank retention toggle",
+        "title": "Hub registry: teams \u2014 spoke relationship groups with shared purpose and commerci",
         "phase": null,
         "tagged_next": false
       },

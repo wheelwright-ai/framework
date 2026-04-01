@@ -1,0 +1,60 @@
+{
+  "id": "feature-tender-spoke-integrity-v1",
+  "type": "feature",
+  "status": "done",
+  "title": "Tender: hook-path fix + per-spoke integrity verification",
+  "description": "Fix the silent hook failure plague ($CLAUDE_PROJECT_DIR in all spoke settings.json hook paths \u2014 CC never resolves this var, so UserPromptSubmit/PreToolUse/Stop/PreCompact silently never fire). Add post-tend verification that confirms each spoke is on current framework_version and has no open implementation lugs. Expose --spoke flag for targeted single-spoke runs with live progress logging.",
+  "priority": "high",
+  "effort": 3,
+  "roi": 5.0,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "created_at": "2026-03-31T16:40:26Z",
+  "updated_at": "2026-04-01T00:25:22.982842+00:00Z",
+  "perceive": {
+    "current_state": "templates/spoke/.claude/settings.json uses $CLAUDE_PROJECT_DIR in all 5 hook commands. merge_settings() in run_nightly.py copies these verbatim. check_cc_hooks() resolves the var before checking file existence so always PASSES. Result: 16/17 spokes have broken hooks that never fire. Hub just fixed manually.",
+    "evidence": [
+      "grep -r 'CLAUDE_PROJECT_DIR' /home/mario/projects/*/\\.claude/settings.json returns 16 files",
+      "spoke_health_check.py:420 does cmd.replace('$CLAUDE_PROJECT_DIR', str(project_root)) before checking existence \u2014 validation gap",
+      "run_nightly.py merge_settings() lines ~85: copies hook entries from template without substituting the placeholder"
+    ],
+    "files": [
+      "tools/spoke_health_check.py (check_cc_hooks ~line 388)",
+      "hub/WAI-Hub/advisors/gardener/scripts/run_nightly.py (merge_settings ~line 59, remediate_spoke router)",
+      "templates/spoke/.claude/settings.json (SessionStart path non-standard)"
+    ]
+  },
+  "execute": {
+    "steps": [
+      "1. Add env-var detection to check_cc_hooks() \u2014 FAIL before resolving if $CLAUDE_PROJECT_DIR present",
+      "2. Fix merge_settings() \u2014 deepcopy entries and replace $CLAUDE_PROJECT_DIR with spoke_path before writing",
+      "3. Add env-var remediation handler in remediate_spoke() router \u2014 sed-replace in settings.json",
+      "4. Add verify_spoke_current() fn \u2014 checks framework_version, hook cleanliness, open impl lugs",
+      "5. Add --- Post-Tend Verification --- log section per spoke",
+      "6. Add progress log file (LOGS_DIR/fleet-progress-{date}.log) with live [N/17] timing output",
+      "7. Add --spoke CLI flag to main() for targeted single-spoke runs",
+      "8. Fix SessionStart template path from WAI-Spoke/_hooks/ to .claude/hooks/",
+      "9. Run fleet \u2014 all 17 spokes, pilot 3 first then remaining 14"
+    ]
+  },
+  "verify": {
+    "done_when": [
+      "grep -r 'CLAUDE_PROJECT_DIR' /home/mario/projects/*/\\.claude/settings.json returns zero matches",
+      "python3 tools/spoke_health_check.py /home/mario/projects/minder --quick returns PASS on all hooks-* checks",
+      "All 17 spoke logs contain '--- Post-Tend Verification ---' with 'Hook paths: clean'",
+      "python3 tools/spoke_health_check.py /home/mario/projects/minder --json | jq '.failed' returns 0"
+    ]
+  },
+  "acceptance_criteria": [
+    "Fleet has zero spokes with $CLAUDE_PROJECT_DIR in hook paths",
+    "Health check correctly detects env-var paths as FAIL (not PASS)",
+    "merge_settings() writes absolute paths for all new/remediated hook entries",
+    "Per-spoke log shows framework_version, hook cleanliness, open impl lugs after each tend run",
+    "--spoke flag allows targeted single-spoke run without processing full fleet"
+  ],
+  "dependencies": [],
+  "behavior_specification": "When Tender remediates any spoke, hook commands in settings.json always use absolute paths. When health check runs, $CLAUDE_PROJECT_DIR in hook commands is a FAIL not a PASS.",
+  "test_requirements": "Run spoke_health_check.py on a spoke with $CLAUDE_PROJECT_DIR paths \u2014 must return FAIL. Run run_nightly.py --spoke on that spoke \u2014 must fix the paths. Re-run health check \u2014 must return PASS.",
+  "closed_at": "2026-04-01T00:25:22.982842+00:00Z",
+  "resolution": "Completed in S116. Code was already implemented. Fleet run at 16:54 fixed 14/17 spokes. All 17 GREEN with clean hook paths. Zero $CLAUDE_PROJECT_DIR remaining."
+}

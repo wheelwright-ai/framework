@@ -1,0 +1,39 @@
+{
+  "i": "impl-taste-user-deploy-v1",
+  "t": "Deploy taste.user.yaml to hub \u2014 unblocks Compass personalization",
+  "ty": "implementation",
+  "s": "c",
+  "ca": "2026-03-30T04:58:00Z",
+  "gb": "claude-opus-4-6",
+  "fw_ver": "3.0.0",
+  "impact": 7,
+  "effort": 1,
+  "va": "grind",
+  "rt": "LOCAL",
+  "tags": [
+    "taste",
+    "hub",
+    "compass",
+    "phase-1"
+  ],
+  "phase": "p1-unblock",
+  "phase_order": 3,
+  "blocks": [],
+  "blocked_by": [],
+  "description": "Compass and Lathe both list taste.user.yaml as a data source with adequacy 'unknown' or 'missing'. A template exists at framework/hub/taste.user.yaml but it hasn't been copied to the live hub. Copy and populate with user preferences (tone, communication style, workflow preferences). This is a prerequisite for Compass dashboard personalization.",
+  "target_files": [
+    "/home/mario/projects/wheelwright/framework/hub/taste.user.yaml",
+    "/home/mario/projects/wheelwright/hub/taste.user.yaml"
+  ],
+  "perceive": "Read framework/hub/taste.user.yaml template. Check if hub/taste.user.yaml already exists. Read taste skill spec at framework/skills/taste.yaml for schema.",
+  "execute": "Copy template to hub. Populate with known user preferences from memory (WSL environment, concise communication, no emojis, senior engineer, prefers autonomous operation). Set nudge lifecycle entries to 'accepted' for established preferences.",
+  "verify": "File exists at hub/taste.user.yaml. Valid YAML. Compass scan_state data_sources taste entry changes from 'unknown'/'missing' to 'good'.",
+  "acceptance_criteria": [
+    "taste.user.yaml exists at hub root",
+    "Valid YAML with populated preferences",
+    "Compass can read it without error"
+  ],
+  "model_fit": "HAIKU",
+  "completed_at": "2026-03-30T13:15:00Z",
+  "completed_by": "claude-sonnet-4-6"
+}

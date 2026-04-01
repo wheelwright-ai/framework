@@ -1,0 +1,28 @@
+{
+  "id": "feature-hub-registry-teams-v1",
+  "title": "Hub registry: teams — spoke relationship groups with shared purpose and commercial intent",
+  "type": "feature",
+  "status": "open",
+  "created_at": "2026-03-31T19:00:00Z",
+  "updated_at": "2026-03-31T19:00:00Z",
+  "priority": "P2",
+  "roi": 4.2,
+  "effort": 3,
+  "model_fit": "sonnet",
+  "routed_to": "FRAMEWORK",
+  "signal_source": "user-session-118",
+  "description": "Extend hub registry with a teams concept. A team is a named group of spokes sharing a common interest, role, or commercial purpose. A spoke can belong to multiple teams with different relevance in each context. Teams are defined in the hub registry and used by Ozi/routing intelligence to determine: (1) whether cross-spoke suggestions are relevant, (2) how to frame messages (commercial vs internal vs standalone), (3) which spokes are never surfaced for publicizing wins. Example: 'wheelwright-team' = {framework, website, tracks} — commercially linked, wins worth publicizing. 'solutions-mv-hafinder' = {e-org, wheelwright} — different relevance, wheelwright appears in both but with different framing. A spoke with no team (e.g. a personal utility) is standalone — never suggested for cross-promotion.",
+  "perceive": "Hub registry at {hub_path}/WAI-Hub/registry/ stores per-spoke entries (id, name, version, status, one_liner). No team concept exists. Ozi has no way to know whether two spokes are related, commercially linked, or completely independent. Routing intelligence (lug-routing-intelligence-20260330) depends on this to make proactive suggestions meaningful — without teams, Ozi cannot judge whether a framework win should trigger a website update suggestion.",
+  "execute": "1. Define teams schema: teams.json at {hub_path}/WAI-Hub/registry/teams.json. Structure: array of {id, name, purpose, commercial (bool), public_facing (bool), members: [{spoke_id, relevance_note}]}. 2. Extend spoke registry entry: add teams[] (list of team IDs this spoke belongs to). 3. Add standalone flag to spoke profile: standalone=true means never surface for cross-spoke suggestions. 4. Ozi routing logic: before surfacing a cross-spoke suggestion, check if source and target share a team. If no shared team → skip. If shared team → check commercial flag for framing. If target spoke is standalone → never suggest. 5. Document schema in hub registry reference. 6. Seed with initial teams for the wheelwright wheel.",
+  "verify": "teams.json exists in hub registry with at least one team entry. Spoke entries reference team IDs. Ozi completing a framework lug (impact>=8) suggests website update only when framework and website share a team. Standalone spoke never appears in cross-spoke suggestions. Wheelwright appearing in two teams does not cause duplicate suggestions — team context determines framing.",
+  "acceptance_criteria": [
+    "teams.json in hub registry: {id, name, purpose, commercial, public_facing, members[]}",
+    "Spoke registry entries include teams[] field",
+    "Standalone spoke flag prevents cross-spoke suggestions",
+    "Ozi checks shared team membership before surfacing cross-spoke suggestion",
+    "Commercial flag determines whether wins are framed for publicizing",
+    "Framework + website share a team — framework win triggers website suggestion",
+    "bygo-style isolated spoke never appears in cross-spoke suggestions"
+  ],
+  "depends_on": ["epic-hub-evolution-structure", "lug-routing-intelligence-20260330"]
+}
