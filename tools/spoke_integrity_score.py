@@ -40,7 +40,7 @@ def score_structure(spoke: Path) -> tuple[int, list[str]]:
 
 
 def score_hooks(spoke: Path) -> tuple[int, list[str]]:
-    """Max 20 pts. 5 required hooks @ 3pts, no env-var penalty (-5)."""
+    """Max 20 pts. 5 required hooks @ 4pts each, env-var penalty (-5)."""
     score = 0
     notes = []
     settings = spoke / ".claude" / "settings.json"
@@ -57,7 +57,7 @@ def score_hooks(spoke: Path) -> tuple[int, list[str]]:
     required = ["SessionStart", "UserPromptSubmit", "PreToolUse", "Stop", "PreCompact"]
     for h in required:
         if h in hooks:
-            score += 3
+            score += 4
         else:
             notes.append(f"missing hook: {h}")
 
