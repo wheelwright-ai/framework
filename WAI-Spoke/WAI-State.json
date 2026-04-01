@@ -1,6 +1,6 @@
 {
   "wheel": {
-    "version": "2.0.144",
+    "version": "2.0.145",
     "framework_version": "3.0.0",
     "node_type": "spoke",
     "name": "Wheelwright",
@@ -28,7 +28,7 @@
         }
       }
     },
-    "last_modified_at": "2026-04-01T15:57:01Z",
+    "last_modified_at": "2026-04-01T17:24:06Z",
     "last_modified_by": "claude-sonnet-4-6",
     "spoke_id": "a055479fb9bf"
   },
@@ -88,13 +88,13 @@
     "evolution_log": []
   },
   "_session_state": {
-    "last_session_id": "session-20260401-0813",
+    "last_session_id": "session-20260401-0917",
     "last_modified_by": "claude-sonnet-4-6",
     "last_modified_at": "2026-03-31T23:17:42Z",
-    "last_closeout": "2026-04-01T15:57:01Z",
-    "session_count": 123,
-    "track_path": "WAI-Spoke/sessions/session-20260401-0813/track.jsonl",
-    "next_session_recommendation": "S122 delivered: (1) feature-tender-autonomous-pipeline-v1 (4 gaps: PASS0.5 edge-case, signal triage, PASS2 audit, score_backlog wiring). (2) Session re-trigger guard (session-start + pre-tool em-dash block). (3) feature-spoke-activity-log-cartographer-v1 lug created. Priority for S123: (1) Improve wheel-tender.sh logging \u2014 user reports output is not informative enough, add scope/progress indicators to each pass. (2) Add session_closed=true to guard file in closeout procedure (prevents stale guard across days). (3) Run /cc-advisor (audit due since 10 sessions). (4) Navigator advisor: dedicated design session for spoke+hub architecture before implementation.",
+    "last_closeout": "2026-04-01T17:24:06Z",
+    "session_count": 124,
+    "track_path": "WAI-Spoke/sessions/session-20260401-0917/track.jsonl",
+    "next_session_recommendation": "S123 delivered: (1) CC Advisor audit (score 6->7, PostToolUse hook added). (2) Lug refinement pass (6 lugs, 0 need_refinement remaining). (3) Tender fixes: framework-first ordering, signal triage message clarity, Signals/ case folder removed. Priority for S124: (1) session_closed=true guard file \u2014 deferred from S122/S123, do at START of next closeout. (2) Navigator advisor design session (dedicated session, spoke+hub architecture). (3) Tender pass-level scope/progress logging (broader than signal triage fix done this session). (4) Hub signals inbox: 14 items \u2014 process/triage at next framework session.",
     "requires_review": false,
     "mode": "execution",
     "teaching_audit_completed": true,
@@ -104,18 +104,8 @@
     "protocol_completed": false
   },
   "_work_queue": {
-    "last_scored_at": "2026-04-01T15:58:38.154977+00:00",
+    "last_scored_at": "2026-04-01T17:24:34.609978+00:00",
     "items": [
-      {
-        "id": "feature-ozi-octo-chief-of-staff-brief-v1",
-        "roi": 6.75,
-        "type": "feature",
-        "status": "ready",
-        "readiness": "ready",
-        "title": "Ozi/Octo Chief of Staff Identity \u2014 Closeout Brief Capture",
-        "phase": null,
-        "tagged_next": true
-      },
       {
         "id": "decision-df884ede13e2",
         "roi": 4.5,
@@ -124,35 +114,15 @@
         "readiness": "ready",
         "title": "Open-source boundary: advisors are the pro differentiator, core schema stays ope",
         "phase": null,
-        "tagged_next": false
+        "tagged_next": true
       },
       {
         "id": "decision-signal-architecture-v2",
         "roi": 4.5,
         "type": "other",
         "status": "ready",
-        "readiness": "needs_refinement",
+        "readiness": "ready",
         "title": "Signal Architecture v2 \u2014 risk bulletins with patch semantics, separate from work",
-        "phase": null,
-        "tagged_next": false
-      },
-      {
-        "id": "fix-closeout-banner-stall-v1",
-        "roi": 4.5,
-        "type": "signal",
-        "status": "ready",
-        "readiness": "needs_refinement",
-        "title": "Closeout Step 10: invert confirmation logic \u2014 proceed unless explicit cancel",
-        "phase": null,
-        "tagged_next": false
-      },
-      {
-        "id": "signal-claude-gitignore-fleet-antipattern-s121",
-        "roi": 4.0,
-        "type": "signal",
-        "status": "ready",
-        "readiness": "needs_refinement",
-        "title": "Fleet anti-pattern: blanket .claude/ gitignore causes silent command drift",
         "phase": null,
         "tagged_next": false
       },
@@ -205,11 +175,41 @@
         "title": "Ozi Work Queue Orchestration \u2014 Priority-ordered autonomous work dispatch",
         "phase": "planning",
         "tagged_next": false
+      },
+      {
+        "id": "idea-challenge-registry-v1",
+        "roi": 3.0,
+        "type": "other",
+        "status": "ready",
+        "readiness": "ready",
+        "title": "WAI-Challenges.jsonl \u2014 problem-centric backlog as first-class file",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
+        "id": "idea-taste-spoke-schema-v1",
+        "roi": 3.0,
+        "type": "other",
+        "status": "ready",
+        "readiness": "ready",
+        "title": "taste.spoke as living contract: finalize schema, add wakeup loading, create adop",
+        "phase": null,
+        "tagged_next": false
+      },
+      {
+        "id": "epic-hub-evolution-structure",
+        "roi": 2.93,
+        "type": "epic",
+        "status": "ready",
+        "readiness": "ready",
+        "title": "Hub folder/structure evolution for canonical Wheelwright",
+        "phase": null,
+        "tagged_next": false
       }
     ],
     "queue_state": {
-      "ready_count": 7,
-      "needs_refinement_count": 3,
+      "ready_count": 10,
+      "needs_refinement_count": 0,
       "blocked_count": 0
     }
   },

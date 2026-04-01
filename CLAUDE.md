@@ -50,6 +50,7 @@ Plan mode (Shift+Tab twice) before execution. Required for:
 | `.claude/hooks/pre-tool-guard.sh` | PreToolUse | Block destructive commands (rm -rf, force-push) |
 | `.claude/hooks/stop-test-runner.sh` | Stop | Run pytest when Python files changed |
 | `.claude/hooks/pre-compact.sh` | PreCompact | Preserve WAI state summary before context compaction |
+| `.claude/hooks/post-tool-use.sh` | PostToolUse | Python syntax check after Write/Edit on .py files |
 
 ## Anti-Patterns
 

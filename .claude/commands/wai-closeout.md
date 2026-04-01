@@ -173,6 +173,125 @@ git push origin main
 
 **Critical:** `WAI-Spoke/WAI-State.json` listed explicitly first to guarantee staging. If Minimal ceremony, include `(minimal closeout — full deferred)` in message.
 
+### 11b. Generate Ozi Brief
+
+After commit, generate `WAI-Spoke/ozi-brief.json` — a pre-computed snapshot so the next wakeup starts fast. This is a runtime artifact (gitignored, not committed).
+
+```bash
+python3 -c "
+import json, datetime, os, glob
+
+state = json.load(open('WAI-Spoke/WAI-State.json'))
+ss = state.get('_session_state', {})
+
+# Lug queue counts
+open_count = len(glob.glob('WAI-Spoke/lugs/bytype/*/open/*.json'))
+ip_count = len(glob.glob('WAI-Spoke/lugs/bytype/*/in_progress/*.json'))
+undel_count = len(glob.glob('WAI-Spoke/lugs/bytype/signal/undelivered/*.json'))
+
+# Teaching status
+hub_path = state.get('wheel', {}).get('hub_path', '')
+pending = 0
+adopted = len(glob.glob('WAI-Spoke/seed/ingest/processed/*.teaching'))
+if hub_path and os.path.isdir(hub_path):
+    current = set(os.path.basename(f) for f in glob.glob(os.path.join(hub_path, 'teachings_repo/spoke/current/*.teaching')))
+    processed = set(os.path.basename(f) for f in glob.glob('WAI-Spoke/seed/ingest/processed/*.teaching'))
+    pending = len(current - processed)
+
+# Expediter (optional)
+exp = {'avg_quality': 0, 'needs_refinement': 0, 'teaching_candidates': 0}
+exp_path = 'WAI-Spoke/advisors/expediter/scan_state.json'
+if os.path.isfile(exp_path):
+    ed = json.load(open(exp_path))
+    exp['avg_quality'] = ed.get('avg_quality', 0)
+    exp['needs_refinement'] = ed.get('needs_refinement', 0)
+    exp['teaching_candidates'] = ed.get('teaching_candidates', 0)
+
+brief = {
+    'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'session_id': ss.get('last_session_id', ''),
+    'lug_queue': {'open': open_count, 'in_progress': ip_count, 'undelivered_signals': undel_count},
+    'teaching_status': {'pending': pending, 'adopted': adopted},
+    'expediter': exp,
+    'last_session_summary': ss.get('next_session_recommendation', '')[:200],
+    'next_recommendation': ss.get('next_session_recommendation', '')
+}
+with open('WAI-Spoke/ozi-brief.json', 'w') as f:
+    json.dump(brief, f, indent=2)
+print('Ozi brief written: WAI-Spoke/ozi-brief.json')
+"
+```
+
+### 11c. Generate Octo Brief (Hub Projects Only)
+
+**Skip if not a hub project.** Detect: `wheel.node_type == "hub"` in WAI-State.json OR `WAI-Hub/` directory exists.
+
+After Ozi brief, generate `WAI-Hub/octo-brief.json` — a pre-computed fleet snapshot.
+
+```bash
+python3 -c "
+import json, datetime, os, glob
+
+if not os.path.isdir('WAI-Hub'):
+    print('Not a hub project — skipping Octo brief.')
+    exit(0)
+
+# Fleet snapshot from gardener scan_state
+fleet = {'green': 0, 'yellow': 0, 'red': 0, 'red_spoke_names': [], 'yellow_spoke_names': []}
+gs_path = 'WAI-Hub/advisors/gardener/scan_state.json'
+if os.path.isfile(gs_path):
+    gs = json.load(open(gs_path))
+    for spoke in gs.get('spokes', {}).values():
+        health = spoke.get('health', 'unknown')
+        name = spoke.get('name', spoke.get('id', ''))
+        if health == 'green': fleet['green'] += 1
+        elif health == 'yellow':
+            fleet['yellow'] += 1
+            fleet['yellow_spoke_names'].append(name)
+        else:
+            fleet['red'] += 1
+            fleet['red_spoke_names'].append(name)
+
+# Priority order from spinner
+priority = []
+sp_path = 'WAI-Hub/advisors/spinner/spoke_spinner.json'
+if os.path.isfile(sp_path):
+    sp = json.load(open(sp_path))
+    ranked = sorted(sp.get('spokes', {}).items(), key=lambda x: x[1].get('urgency', 0), reverse=True)[:5]
+    priority = [s[0] for s in ranked]
+
+# Advisor state
+adv = {'gardener_last_run_at': None, 'spinner_last_scored_at': None, 'cartologist_last_scan_at': None}
+if os.path.isfile(gs_path):
+    adv['gardener_last_run_at'] = json.load(open(gs_path)).get('last_run_at')
+if os.path.isfile(sp_path):
+    adv['spinner_last_scored_at'] = json.load(open(sp_path)).get('last_scored_at')
+cs_path = 'WAI-Hub/advisors/cartologist/scan_state.json'
+if os.path.isfile(cs_path):
+    adv['cartologist_last_scan_at'] = json.load(open(cs_path)).get('last_scan_at')
+
+# Signal pipeline
+sig = {'undelivered_by_target': {}, 'incoming_count': 0, 'outbox_queue_count': 0}
+for f in glob.glob('WAI-Hub/signals/by-target/*/*.json'):
+    target = os.path.basename(os.path.dirname(f))
+    sig['undelivered_by_target'][target] = sig['undelivered_by_target'].get(target, 0) + 1
+sig['incoming_count'] = len(glob.glob('WAI-Hub/signals/incoming/*.json'))
+
+brief = {
+    'generated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'fleet_snapshot': fleet,
+    'priority_order': priority,
+    'advisor_state': adv,
+    'signal_pipeline': sig,
+    'next_triumvirate_run': None
+}
+os.makedirs('WAI-Hub', exist_ok=True)
+with open('WAI-Hub/octo-brief.json', 'w') as f:
+    json.dump(brief, f, indent=2)
+print('Octo brief written: WAI-Hub/octo-brief.json')
+"
+```
+
 ### 12. Verification
 
 Verify: `git status` (clean), `git log --oneline -1`, `git tag -l | tail -1` (if production).

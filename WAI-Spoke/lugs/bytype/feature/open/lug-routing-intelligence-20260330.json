@@ -37,7 +37,7 @@
   "roi": 3.8,
   "model_fit": "sonnet",
   "routed_to": "FRAMEWORK",
-  "updated_at": "2026-03-31T18:50:00Z",
+  "updated_at": "2026-04-01T16:34:18.345820+00:00",
   "description": "Two capabilities: (1) When a lug targets multiple spokes, Ozi reads each spoke's profile (focus, audience, purpose) from the hub registry and drafts a spoke-appropriate message \u2014 framework gets functional notes, website gets marketing framing. Ask-once: if profile is missing, Ozi asks focus/goal and persists to registry. (2) Proactive cross-spoke suggestions: when a major enhancement (impact >= 8) completes, Ozi checks the spoke map and surfaces relevant actions (website update, LinkedIn post) rather than waiting for human to remember. Trivial work is silent. Hub registry is the sole source of spoke awareness \u2014 requires spoke profile schema extension.",
   "perceive": "Hub registry stores basic spoke metadata (id, name, version, status, one_liner). No focus/audience/purpose/external_facing profile fields exist. Ozi has no basis for drafting spoke-appropriate messages or distinguishing framework from website audience. No proactive threshold logic \u2014 Ozi only acts on direct asks. Multi-target lugs have targets[] field (from lug schema) but Ozi ignores spoke profiles.",
   "execute": "1. Extend hub registry spoke schema: add focus (str), audience (internal|external), purpose (str), communication_style (str) fields to registry/incoming/{spoke_id}.json. 2. Ask-once protocol in Ozi: when dispatching to a spoke with incomplete profile, ask 'What is the focus and goal of spoke {id}?' \u2014 persist answer to registry. 3. Multi-target dispatch: for lugs with targets[] list, read profile per target, draft tailored message per spoke. Framework = functional/behavioral framing. External spokes = audience-appropriate framing. 4. Proactive threshold: after completing a lug with impact >= 8, Ozi checks spoke map for relevant cross-spoke actions. Surfaces max 2 suggestions with one-line rationale. User accepts or dismisses \u2014 Ozi creates lug if accepted. 5. Update 9d (closeout spoke registry) to include new profile fields.",
@@ -49,5 +49,10 @@
     "Proactive suggestions surface only for impact >= 8 completions",
     "Trivial work (impact < 8) produces no unsolicited cross-spoke suggestions",
     "User accept/dismiss flow creates or skips the suggested lug"
+  ],
+  "target_files": [
+    "hub/WAI-Hub/registry/incoming/{spoke_id}.json (add focus, audience, purpose, communication_style)",
+    "hub/WAI-Hub/registry/schema/spoke-profile.json",
+    "hub/tools/ozi_worker.py (ask-once protocol + proactive threshold + multi-target dispatch)"
   ]
 }

@@ -2,10 +2,10 @@
   "advisor_id": "cc-advisor",
   "advisor_name": "ClaudeCode Configuration Advisor",
   "version": "1.1.0",
-  "mission_statement": "Monitor Claude Code configuration health — detect gaps, track scores, suggest improvements across sessions",
-  "last_audit_at": "2026-03-31T23:40:00Z",
-  "last_audit_session": "session-20260331-2023",
-  "current_score": 6,
+  "mission_statement": "Monitor Claude Code configuration health \u2014 detect gaps, track scores, suggest improvements across sessions",
+  "last_audit_at": "2026-04-01T16:23:53.415933+00:00",
+  "last_audit_session": "session-20260401-0917",
+  "current_score": 7,
   "score_by_area": {
     "CLAUDE.md": "pass",
     "Hooks": "pass",
@@ -16,11 +16,11 @@
     "MCP_Servers": "fail",
     "Git_Worktrees": "fail"
   },
-  "sessions_since_last_audit": 12,
-  "audit_pending": true,
-  "total_audits": 3,
+  "sessions_since_last_audit": 0,
+  "audit_pending": false,
+  "total_audits": 4,
   "pending_proposals": [],
-  "auto_applied_count": 0,
+  "auto_applied_count": 1,
   "data_sources": [
     {
       "source": ".claude/settings.json",

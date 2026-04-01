@@ -1,3 +1,14 @@
+## [2.0.145] - 2026-04-01
+
+### Added — CC Advisor Audit + Lug Refinement + Tender Fixes (Session 123)
+
+- **`.claude/hooks/post-tool-use.sh`:** New PostToolUse hook — Python syntax check after Write/Edit on `.py` files (CC advisor score 6→7/8)
+- **`.claude/settings.json`:** PostToolUse hook wired; `CLAUDE.md` hooks table updated
+- **Lug refinement pass:** 6 lugs filled to implementation-ready — `decision-signal-architecture-v2` (full PEV from quality 0), `decision-df884ede13e2` (criteria+target_files), 4 features (target_files added); expediter queue 2→0
+- **`hub/WAI-Hub/advisors/gardener/scripts/wheel-tender.sh`:** Framework spoke pinned first (before triumvirate ordering) so it processes hub signals before fleet runs; signal triage output now shows hub/incoming pending count
+- **`hub/WAI-Hub/Signals/`:** Empty case-typo directory removed (canonical path is lowercase `signals/`)
+- **`WAI-Spoke/runtime/session-guard.json`:** `session_closed=true` written at closeout (S122 carry)
+
 ## [2.0.142] - 2026-04-01
 
 ### Added — Build Session: Sync Detection + Expediter Wakeup + Urgency Tiers + Advisor Context Feeds (Session 120)

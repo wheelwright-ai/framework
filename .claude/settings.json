@@ -54,6 +54,17 @@
         ]
       }
     ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/mario/projects/wheelwright/framework/.claude/hooks/post-tool-use.sh"
+          }
+        ]
+      }
+    ],
     "PermissionRequest": [
       {
         "hooks": [

@@ -21,3 +21,6 @@
 {"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"lug_closed","id":"idea-fit-check-caching-v1","detail":"Closed P4-defer as low-ROI noise"}
 {"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"lug_triage","detail":"Groups 2-4 triage: 7 kept, 1 closed, 1 re-routed to content spoke"}
 {"ts":"2026-04-01T04:11:00Z","session":"session-20260331-2023","event":"pev_fix","id":"impl-ozi-queue-schema-v1","detail":"Fixed blocker_list→blocked_by field name error"}
+{"ts": "2026-04-01T17:25:02.223884+00:00", "session": "session-20260401-0917", "type": "config", "id": "post-tool-use-hook", "summary": "PostToolUse hook added \u2014 Python syntax check after Write/Edit on .py files (CC audit, score 6->7)"}
+{"ts": "2026-04-01T17:25:02.223884+00:00", "session": "session-20260401-0917", "type": "lug-refinement", "id": "refinement-pass-s123", "summary": "Lug refinement pass: 6 lugs filled (PEV+criteria+target_files+model_fit), 0 needs_refinement remaining"}
+{"ts": "2026-04-01T17:25:02.223884+00:00", "session": "session-20260401-0917", "type": "hub", "id": "tender-framework-first", "summary": "wheel-tender.sh: framework runs first (pins before triumvirate order), signal triage shows hub/incoming count, Signals/ case folder removed"}

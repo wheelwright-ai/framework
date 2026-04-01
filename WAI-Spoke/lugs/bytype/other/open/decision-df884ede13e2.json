@@ -7,22 +7,41 @@
   "gb": "claude-opus-4-6 (session-20260330-0134)",
   "fw_ver": "3.0.0",
   "title": "Open-source boundary: advisors are the pro differentiator, core schema stays open",
-  "summary": "The Wheelwright open-source/pro split maps cleanly to the Hub advisor boundary. Framework repo (open) contains WAI-Spoke structure, lug schema (including execute_when and phase fields as inert data), session tracks, hub-spoke sync, teachings pipeline, score_backlog.py, and Ozi monitor. Hub repo (pro/private) contains advisors (Compass, Lathe, Historian, Luci, Distribor), their skills, chain mode, execute-when evaluator, scheduler, and signal triage automation. Without advisors, users get inter-wheel benefits (session continuity, structured memory, teachings). With advisors, the wheel self-sharpens — work creates work, conditions trigger execution, the backlog processes itself.",
+  "summary": "The Wheelwright open-source/pro split maps cleanly to the Hub advisor boundary. Framework repo (open) contains WAI-Spoke structure, lug schema (including execute_when and phase fields as inert data), session tracks, hub-spoke sync, teachings pipeline, score_backlog.py, and Ozi monitor. Hub repo (pro/private) contains advisors (Compass, Lathe, Historian, Luci, Distribor), their skills, chain mode, execute-when evaluator, scheduler, and signal triage automation. Without advisors, users get inter-wheel benefits (session continuity, structured memory, teachings). With advisors, the wheel self-sharpens \u2014 work creates work, conditions trigger execution, the backlog processes itself.",
   "motivation": "Need a clean, atomic boundary between open-source and pro that allows independent evolution of both repos without architectural entanglement.",
-  "decision": "Hub advisors (and their corresponding skills) are the pro differentiator. Core schema fields (execute_when, phase, blocked_by) are open — they're just metadata. The evaluation runtime that makes them live is pro.",
-  "rationale": "Advisors are additive intelligence on top of a working system, not woven into the core. This means: (1) Two GitHub repos with independent release cadences. (2) Framework teachings go to all spokes (open). Hub advisor updates go to hub only (pro). (3) The open-source version is genuinely useful — session continuity alone saves significant time. (4) The pro version is genuinely differentiated — autonomous dispatch, fleet management, self-sharpening.",
+  "decision": "Hub advisors (and their corresponding skills) are the pro differentiator. Core schema fields (execute_when, phase, blocked_by) are open \u2014 they're just metadata. The evaluation runtime that makes them live is pro.",
+  "rationale": "Advisors are additive intelligence on top of a working system, not woven into the core. This means: (1) Two GitHub repos with independent release cadences. (2) Framework teachings go to all spokes (open). Hub advisor updates go to hub only (pro). (3) The open-source version is genuinely useful \u2014 session continuity alone saves significant time. (4) The pro version is genuinely differentiated \u2014 autonomous dispatch, fleet management, self-sharpening.",
   "open_questions": [
-    "tools/wai-chain.sh and evaluator code currently live in framework repo — need to relocate to hub or tools/pro/",
+    "tools/wai-chain.sh and evaluator code currently live in framework repo \u2014 need to relocate to hub or tools/pro/",
     "Where does score_backlog.py live? Scoring is useful open-source, but vibe-aware dispatch is pro territory",
-    "Teaching pipeline: both repos distribute teachings — need clear ownership rules per teaching type"
+    "Teaching pipeline: both repos distribute teachings \u2014 need clear ownership rules per teaching type"
   ],
   "impact": 9,
   "effort": 3,
   "va": "think",
   "routed_to": "LOCAL",
   "scope_verified_by": "user (Session 103: proposed advisor boundary as the clean split)",
-  "tags": ["architecture", "open-source", "strategy"],
+  "tags": [
+    "architecture",
+    "open-source",
+    "strategy"
+  ],
   "perceive": "Read current file layout: what's in framework/ vs hub/. Map which tools/scripts reference hub-only features.",
   "execute": "1. Identify all pro-layer files currently in framework repo. 2. Design relocation plan. 3. Ensure core works standalone without hub. 4. Test both modes.",
-  "verify": "Clone framework repo fresh. Run wai wakeup without hub path. Confirm session continuity works. Confirm no errors from missing advisors."
+  "verify": "Clone framework repo fresh. Run wai wakeup without hub path. Confirm session continuity works. Confirm no errors from missing advisors.",
+  "acceptance_criteria": [
+    "tools/wai-chain.sh and evaluator code identified and relocated to hub or tools/pro/",
+    "tools/score_backlog.py confirmed as open-source (scoring yes, dispatch no)",
+    "Teaching pipeline ownership documented: framework teachings go to all spokes, hub advisor updates hub only",
+    "Framework repo wai wakeup completes without hub path \u2014 no errors from missing advisors",
+    "open_questions resolved: chain/evaluator location, score_backlog.py boundary, teaching pipeline ownership rules"
+  ],
+  "target_files": [
+    "tools/wai-chain.sh (audit: relocate to hub if evaluator-dependent)",
+    "tools/score_backlog.py (confirm open boundary)",
+    "CLAUDE.md (document open vs pro boundary)",
+    "WAI-Spoke/WAI-State.json (hub_path optional flag for standalone mode)"
+  ],
+  "model_fit": "opus",
+  "updated_at": "2026-04-01T16:34:09.799176+00:00"
 }
