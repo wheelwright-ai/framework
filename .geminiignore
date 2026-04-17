@@ -1,0 +1,35 @@
+# Build and package outputs
+node_modules/
+build/
+dist/
+coverage/
+htmlcov/
+
+# Local environments and secrets
+.env
+.env.*
+.venv/
+venv/
+env/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Large generated reference bundles
+docs/llm-full.txt
+
+# WAI runtime and history data
+WAI-Spoke/sessions/
+WAI-Spoke/seed/
+WAI-Spoke/archive/
+WAI-Spoke/model-usage/
+WAI-Spoke/runtime/
+WAI-Spoke/reference/auto/_internal/
+
+# Large state artifacts that are rarely useful for coding tasks
+WAI-Spoke/WAI-LugIndex.jsonl
+WAI-Spoke/WAI-Lugs-archived.jsonl
+WAI-Spoke/WAI-State-extended.json
+WAI-Spoke/ozi-brief.json
+WAI-Spoke/wakeup-brief.json

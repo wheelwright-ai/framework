@@ -1,0 +1,118 @@
+# Teaching: Migrate lugs/inbox + lugs/outbox to incoming + outgoing
+
+**Type:** migration
+**safe_to_auto_adopt:** false
+
+---
+
+## Prerequisites
+
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| WAI-Lugs.jsonl exists | `test -f WAI-Spoke/WAI-Lugs.jsonl && echo PASS || echo FAIL` | Nothing (migration is structural, not data) |
+
+## Batch Sequence
+
+**Batch:** lugs-dir-rename-v1
+**Apply order:** 1 of 1
+**Depends on:** none
+**Required before:** none
+**Parallel safe:** yes — touches only directory structure
+
+---
+
+## What This Teaching Does
+
+Renames two directories in `WAI-Spoke/lugs/` to align with the standardized mail routing
+language adopted in framework v3.0.0:
+
+| Old name | New name |
+|---|---|
+| `WAI-Spoke/lugs/inbox/` | `WAI-Spoke/lugs/incoming/` |
+| `WAI-Spoke/lugs/outbox/` | `WAI-Spoke/lugs/outgoing/` |
+
+**Why this matters:** Protocol files (`wai.md`, `wai-closeout.md`) now write to and read from
+`lugs/outgoing/` and `lugs/incoming/`. Spokes that haven't renamed will silently drop
+outgoing deliveries (path doesn't exist) and miss incoming items (wrong path scanned).
+
+---
+
+## Migration Script
+
+Run from the spoke root (directory containing `WAI-Spoke/`):
+
+```bash
+#!/bin/bash
+# WAI lugs dir rename: inbox->incoming, outbox->outgoing
+# Safe to run multiple times — idempotent.
+
+SPOKE="WAI-Spoke/lugs"
+
+# --- inbox -> incoming ---
+if [ -d "$SPOKE/inbox" ] && [ ! -d "$SPOKE/incoming" ]; then
+  mv "$SPOKE/inbox" "$SPOKE/incoming"
+  echo "Renamed: lugs/inbox -> lugs/incoming"
+elif [ -d "$SPOKE/inbox" ] && [ -d "$SPOKE/incoming" ]; then
+  # Both exist — move contents, then remove old dir
+  mv "$SPOKE/inbox/"* "$SPOKE/incoming/" 2>/dev/null || true
+  rmdir "$SPOKE/inbox" 2>/dev/null || echo "Note: lugs/inbox not empty after merge — check manually"
+  echo "Merged: lugs/inbox contents into lugs/incoming"
+elif [ ! -d "$SPOKE/inbox" ] && [ ! -d "$SPOKE/incoming" ]; then
+  mkdir -p "$SPOKE/incoming"
+  touch "$SPOKE/incoming/.gitkeep"
+  echo "Created: lugs/incoming (inbox did not exist)"
+else
+  echo "Already done: lugs/incoming exists, lugs/inbox absent"
+fi
+
+# --- outbox -> outgoing ---
+if [ -d "$SPOKE/outbox" ] && [ ! -d "$SPOKE/outgoing" ]; then
+  mv "$SPOKE/outbox" "$SPOKE/outgoing"
+  echo "Renamed: lugs/outbox -> lugs/outgoing"
+elif [ -d "$SPOKE/outbox" ] && [ -d "$SPOKE/outgoing" ]; then
+  mv "$SPOKE/outbox/"* "$SPOKE/outgoing/" 2>/dev/null || true
+  rmdir "$SPOKE/outbox" 2>/dev/null || echo "Note: lugs/outbox not empty after merge — check manually"
+  echo "Merged: lugs/outbox contents into lugs/outgoing"
+elif [ ! -d "$SPOKE/outbox" ] && [ ! -d "$SPOKE/outgoing" ]; then
+  mkdir -p "$SPOKE/outgoing"
+  touch "$SPOKE/outgoing/.gitkeep"
+  echo "Created: lugs/outgoing (outbox did not exist)"
+else
+  echo "Already done: lugs/outgoing exists, lugs/outbox absent"
+fi
+
+echo "Migration complete."
+```
+
+---
+
+## Verification
+
+After running, confirm:
+
+```bash
+# Both new dirs should exist
+test -d WAI-Spoke/lugs/incoming && echo "incoming: PASS" || echo "incoming: FAIL"
+test -d WAI-Spoke/lugs/outgoing && echo "outgoing: PASS" || echo "outgoing: FAIL"
+
+# Old dirs should be gone
+test ! -d WAI-Spoke/lugs/inbox && echo "inbox removed: PASS" || echo "inbox removed: FAIL"
+test ! -d WAI-Spoke/lugs/outbox && echo "outbox removed: PASS" || echo "outbox removed: FAIL"
+```
+
+All four lines should print PASS.
+
+---
+
+## What the Agent Should NOT Do
+
+- Do NOT rename `WAI-Hub/Signals/incoming/` — that directory name is already correct
+- Do NOT move or rename any `.jsonl` files
+- Do NOT modify `WAI-State.json` or `WAI-Lugs.jsonl`
+- Do NOT apply this if already done (script is idempotent, but double-check before running)
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/`.

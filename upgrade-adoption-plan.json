@@ -1,0 +1,315 @@
+{
+  "metadata": {
+    "framework_version": "2.0.15",
+    "spoke_structure_version": "3.0",
+    "generated_at": "2026-03-13T06:50:51Z",
+    "source": "framework",
+    "target": "framework (self-teach)",
+    "teach_type": "self-delivery"
+  },
+  "verification": {
+    "hub_fingerprint": null,
+    "signature": null,
+    "note": "Self-delivery - signing skipped"
+  },
+  "files": [
+    {
+      "name": "SKILL-EXAMPLES.md",
+      "path": "WAI-Spoke/seed/ingest/SKILL-EXAMPLES.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "844d6f953e51d9c9",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-benchmark.md",
+      "path": "WAI-Spoke/seed/ingest/wai-benchmark.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "9103cb28dbb27e3c",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-closeout.md",
+      "path": "WAI-Spoke/seed/ingest/wai-closeout.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "8a60a81cde406500",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-complexity-advisor.md",
+      "path": "WAI-Spoke/seed/ingest/wai-complexity-advisor.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "fb68a11949da4926",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-context-advisor.md",
+      "path": "WAI-Spoke/seed/ingest/wai-context-advisor.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "a8806f7b5ebb3863",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-foundation-advisor.md",
+      "path": "WAI-Spoke/seed/ingest/wai-foundation-advisor.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "93cd36c5b3dbbc50",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-foundation.md",
+      "path": "WAI-Spoke/seed/ingest/wai-foundation.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "b8dbe4364c4e96c3",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-green-light.md",
+      "path": "WAI-Spoke/seed/ingest/wai-green-light.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "51ba6d9437de8ff7",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-ide-setup.md",
+      "path": "WAI-Spoke/seed/ingest/wai-ide-setup.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "de307ecad5e1f1b9",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-init-v2.md",
+      "path": "WAI-Spoke/seed/ingest/wai-init-v2.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "ebff66b9b8f7dd7c",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-learn.md",
+      "path": "WAI-Spoke/seed/ingest/wai-learn.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "2a105e3795d72162",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-lug-advisor.md",
+      "path": "WAI-Spoke/seed/ingest/wai-lug-advisor.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "d2713d61a6c44aff",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-principles.md",
+      "path": "WAI-Spoke/seed/ingest/wai-principles.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "b7c9e71871abc417",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-red-light.md",
+      "path": "WAI-Spoke/seed/ingest/wai-red-light.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "593d2eb1384b4983",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-rules.md",
+      "path": "WAI-Spoke/seed/ingest/wai-rules.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "f91091c7c5d9b624",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-shipit.md",
+      "path": "WAI-Spoke/seed/ingest/wai-shipit.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "adf0986e0cedcdd1",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-signal-advisor.md",
+      "path": "WAI-Spoke/seed/ingest/wai-signal-advisor.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "14ae68b0c572ab7a",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-status.md",
+      "path": "WAI-Spoke/seed/ingest/wai-status.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "697521b50d2c252a",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-stewardship-advisor.md",
+      "path": "WAI-Spoke/seed/ingest/wai-stewardship-advisor.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "558fd761daf001e9",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-stewardship-framework.md",
+      "path": "WAI-Spoke/seed/ingest/wai-stewardship-framework.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "6e9f01ad518ad204",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-sync-v2.md",
+      "path": "WAI-Spoke/seed/ingest/wai-sync-v2.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "16a3a08d25fd9d1a",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-teach.md",
+      "path": "WAI-Spoke/seed/ingest/wai-teach.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "06efecb83b4dc616",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai-time.md",
+      "path": "WAI-Spoke/seed/ingest/wai-time.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "34f6f4fa3098cd27",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    },
+    {
+      "name": "wai.md",
+      "path": "WAI-Spoke/seed/ingest/wai.md.teaching",
+      "version": "2.0.15",
+      "content_hash": "72201e6d0974c432",
+      "safe_to_auto_adopt": true,
+      "requires_review": false,
+      "applies_to": [
+        "spoke",
+        "hub"
+      ]
+    }
+  ],
+  "lugs_delivered": [],
+  "lug_folders": [
+    {
+      "id": "epic-path-evolution-v1",
+      "type": "epic",
+      "status": "open",
+      "folder": "WAI-Spoke/lugs/epic-path-evolution-v1/",
+      "note": "Created this session - first folder-based lug"
+    }
+  ]
+}

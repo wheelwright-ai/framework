@@ -1,0 +1,79 @@
+# Teaching: Install wai-chain-load skill — minimal context load for work queue chain mode
+
+**Type:** skill
+**safe_to_auto_adopt:** true
+
+---
+
+## Prerequisites
+
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| templates/commands/ directory exists | `test -d templates/commands && echo PASS` | Install step |
+| wai-ozi-work-queue-monitor.md present | `test -f templates/commands/wai-ozi-work-queue-monitor.md && echo PASS` | Reference update |
+
+## Batch Sequence
+
+**Batch:** wai-chain-load-v1
+**Apply order:** 1 of 1
+**Depends on:** none
+**Required before:** none
+**Parallel safe:** yes
+
+---
+
+## What This Teaching Does
+
+Installs the `wai-chain-load` skill — the minimal context load protocol for work
+queue chain mode. When auto-chain mode transitions to the next lug, Claude reads
+this skill instead of running full wakeup (`/wai`).
+
+**Token savings:** ~7-12k tokens per chain transition vs ~46k for full wakeup
+(~34-39k saved per chained item).
+
+**Protocol:** 3 reads only:
+1. WAI-State identity subset (7 fields from `wheel` + `_session_state`)
+2. Target lug in full
+3. Last 2 track entries
+
+---
+
+## Adoption Steps
+
+### Step 1: Install skill to templates/commands/
+
+Copy `wai-chain-load.md` from the framework spoke's `templates/commands/` or
+`templates/spoke/skills/wai/` to this spoke's `templates/commands/`.
+
+### Step 2: Sync to .claude/commands/
+
+```bash
+\cp templates/commands/wai-chain-load.md .claude/commands/wai-chain-load.md
+```
+
+### Step 3: Update wai-ozi-work-queue-monitor.md Step 3
+
+In Step 3 chain flow, ensure the auto_chain=true bullet reads:
+
+```
+follow wai-chain-load.md protocol, do not run full wakeup
+```
+
+---
+
+## Verification
+
+```bash
+# Skill installed
+test -f templates/commands/wai-chain-load.md && echo "PASS" || echo "FAIL"
+test -f .claude/commands/wai-chain-load.md && echo "PASS" || echo "FAIL"
+
+# Monitor references it
+grep -q "wai-chain-load" templates/commands/wai-ozi-work-queue-monitor.md && echo "PASS" || echo "FAIL"
+```
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/` after successful adoption.

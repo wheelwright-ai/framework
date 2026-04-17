@@ -1,0 +1,52 @@
+{
+  "name": "@wheelwright/framework",
+  "version": "1.0.0",
+  "description": "Wheelwright Framework - Build AI wheels that roll forward forever",
+  "author": "Mario Vaccari",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wheelwright-ai/framework"
+  },
+  "homepage": "https://wheelwright.ai",
+  "bugs": {
+    "url": "https://github.com/wheelwright-ai/framework/issues"
+  },
+  "keywords": [
+    "wheelwright",
+    "ai",
+    "llm",
+    "session-continuity",
+    "context-management",
+    "ai-memory",
+    "chatgpt",
+    "claude",
+    "gemini",
+    "copilot"
+  ],
+  "main": "WAI-Framework/wheelwright-core.js",
+  "bin": {
+    "WAI": "./WAI"
+  },
+  "scripts": {
+    "test": "python -m pytest tests/",
+    "lint": "python -m flake8 *.py",
+    "format": "python -m black *.py",
+    "benchmark": "python3 benchmark.py",
+    "benchmark:tag": "python3 benchmark.py --tag",
+    "benchmark:history": "python3 benchmark.py --history"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.9"
+  },
+  "files": [
+    "WAI",
+    "WAI-Framework/",
+    "WAI-Spokes/",
+    "templates/",
+    "*.py",
+    "README.md",
+    "LICENSE"
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://wheelwright.ai/schemas/assessor/model-registry-v1.0.0.json",
+  "title": "ModelRegistry",
+  "description": "Schema for a single model registry entry. The registry is owned by Navigator (not Assessor). Assessor references model_id values from this registry when building Assay records.",
+  "type": "object",
+  "required": [
+    "provider",
+    "model_id",
+    "provider_tier",
+    "context_window"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "provider": {
+      "type": "string",
+      "description": "Provider name as a lowercase slug (e.g. 'anthropic', 'openai', 'google', 'meta')."
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Canonical model identifier as used by the provider API (e.g. 'claude-sonnet-4-6', 'gpt-4o-2024-11-20')."
+    },
+    "model_family": {
+      "type": ["string", "null"],
+      "description": "Model family grouping for cohort analysis (e.g. 'claude-sonnet', 'gpt-4o'). Nullable."
+    },
+    "display_name": {
+      "type": ["string", "null"],
+      "description": "Human-readable display name (e.g. 'Claude Sonnet 4.6'). Nullable."
+    },
+    "provider_tier": {
+      "type": "string",
+      "enum": ["frontier", "capable", "economy", "local"],
+      "description": "Capability tier. frontier = most capable, capable = strong general-purpose, economy = fast/cheap, local = locally-hosted."
+    },
+    "context_window": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum context window size in tokens."
+    },
+    "max_output_tokens": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Maximum output tokens per response. Nullable if not publicly documented."
+    },
+    "known_strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of known strength descriptors (e.g. ['coding', 'long-context', 'instruction-following'])."
+    },
+    "pricing_input_per_1m_tokens": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Input pricing in USD per 1M tokens. Nullable if pricing is unavailable or variable."
+    },
+    "pricing_output_per_1m_tokens": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Output pricing in USD per 1M tokens. Nullable if pricing is unavailable or variable."
+    },
+    "availability_regions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of availability region codes (e.g. ['us', 'eu', 'ap']). Empty array = globally available."
+    },
+    "deprecated_at": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "ISO 8601 date when this model was deprecated or end-of-life. Null if still active."
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes about this model (e.g. 'Optimized for extended thinking', 'Vision support added 2025-01')."
+    }
+  }
+}

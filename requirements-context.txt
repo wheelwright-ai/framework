@@ -1,0 +1,6 @@
+# WAI Framework — optional context-refresh dependencies
+# Required for advisor_context_refresh.py web_search feeds only.
+# web_fetch and ai_synthesis feeds work without these (httpx + anthropic are already present).
+#
+# Install: pip install -r requirements-context.txt
+duckduckgo_search>=8.0

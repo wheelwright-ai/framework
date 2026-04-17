@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "assay_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "assay_type": "individual",
+  "created_at": "2026-04-16T10:30:00Z",
+  "provider": "anthropic",
+  "model_id": "claude-sonnet-4-6",
+  "model_family": "claude-sonnet",
+  "provider_tier": "capable",
+  "work_type": "coding",
+  "complexity": 3,
+  "quality_score": 4.2,
+  "rework_rate": 0.08,
+  "latency_ms": 3400,
+  "latency_bucket": "moderate",
+  "tokens_in": 8200,
+  "tokens_in_bucket": "medium",
+  "tokens_out": 1850,
+  "tokens_out_bucket": "small",
+  "cost_tier": "low",
+  "confidence": "medium",
+  "provenance": {
+    "spoke_id": "wheelwright-framework",
+    "session_id": "session-20260416-0302",
+    "contributor_count": null
+  },
+  "_wai_meta": {
+    "session_id": "session-20260416-0302",
+    "spoke_id": "wheelwright-framework",
+    "generated_at": "2026-04-16T10:30:00Z",
+    "contributed_at": null
+  }
+}

@@ -1,0 +1,148 @@
+# Teaching: KnowMe.md Lifecycle - LLM Cold-Start Orientation File
+
+**Type:** feature
+**safe_to_auto_adopt:** true
+
+---
+
+## Prerequisites
+
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| Python 3 available | `python3 --version` | Generation step |
+| ANTHROPIC_API_KEY set | `echo ${ANTHROPIC_API_KEY:+set}` | Generation step |
+| tools/generate_knowme.py present | `test -f tools/generate_knowme.py && echo PASS` | Generation step |
+| anthropic SDK installed | `python3 -c "import anthropic; print('ok')"` | Generation step |
+
+## Batch Sequence
+
+**Batch:** knowme-lifecycle-v1
+**Apply order:** 1 of 1
+**Depends on:** none
+**Required before:** none
+**Parallel safe:** yes
+
+---
+
+## What This Teaching Does
+
+Establishes a `KnowMe.md` lifecycle for any WAI spoke. `KnowMe.md` is a compact, Gardener-maintained orientation file that lets an unfamiliar LLM agent understand the project's identity, role, boundaries, and safe starting point in under 2 minutes - without traversing WAI-State.json or replaying session history.
+
+The generator (`tools/generate_knowme.py`) reads project context from WAI-State.json, CLAUDE.md, and CHANGELOG.md, calls Claude Haiku to synthesize the narrative, and writes `KnowMe.md` to the spoke root. The Gardener is responsible for keeping it fresh.
+
+---
+
+## Adoption Steps
+
+### Step 1: Run the generator immediately
+
+Do not wait for the next Gardener pass. Generate `KnowMe.md` now as part of adoption:
+
+```bash
+python3 tools/generate_knowme.py --spoke-path .
+git add KnowMe.md
+git commit -m "chore: initialize KnowMe.md via teaching adoption"
+```
+
+If `ANTHROPIC_API_KEY` is not available in the current environment, set it before running:
+
+```bash
+export ANTHROPIC_API_KEY=your_key_here
+python3 tools/generate_knowme.py --spoke-path .
+```
+
+### Step 2: Add staleness tracking to WAI-State._session_state
+
+The generator stamps these fields automatically on first run. Verify they are present after Step 1:
+
+```bash
+python3 -c "
+import json
+ss = json.load(open('WAI-Spoke/WAI-State.json'))['_session_state']
+print('knowme_last_generated_at:', ss.get('knowme_last_generated_at', 'MISSING'))
+print('knowme_version:', ss.get('knowme_version', 'MISSING'))
+print('knowme_stale:', ss.get('knowme_stale', 'MISSING'))
+"
+```
+
+All three fields should be present. If missing, run the generator again.
+
+### Step 3: Wire Gardener staleness check
+
+In the spoke's Gardener configuration, add a knowme freshness check after the teachings step.
+Regeneration conditions:
+
+- `knowme_stale = true` (set by closeout when epic completes or phase changes), OR
+- Age > 7 days for an actively-worked spoke, OR
+- Age > 30 days for any spoke
+
+Gardener call pattern:
+
+```bash
+python3 tools/generate_knowme.py --spoke-path {spoke_path}
+# On failure: log health warning to scan_state; do not silently skip
+```
+
+### Step 4: Configure closeout to set knowme_stale on structural change
+
+When a spoke's closeout records an epic completion or phase change, it should set
+`_session_state.knowme_stale = true` in WAI-State.json so the next Gardener pass
+triggers regeneration.
+
+---
+
+## Verification
+
+After adoption, confirm:
+
+```bash
+# KnowMe.md present at spoke root
+test -f KnowMe.md && echo "KnowMe.md: PASS" || echo "KnowMe.md: FAIL"
+
+# Under 200 lines (scannable in under 2 minutes)
+wc -l KnowMe.md
+
+# Has expected sections (should be >= 12)
+grep -c '^##' KnowMe.md
+
+# WAI-State stamped
+python3 -c "
+import json
+ss = json.load(open('WAI-Spoke/WAI-State.json'))['_session_state']
+fields = ['knowme_last_generated_at', 'knowme_version', 'knowme_stale']
+[print(f'{f}: {ss.get(f, \"MISSING\")}') for f in fields]
+"
+```
+
+---
+
+## KnowMe.md Content Standard
+
+The generated file covers these sections (produced by the prompt template in `tools/knowme_prompt.md`):
+
+Identity, Mission, Role in the Larger Ecosystem, Current Phase, Stack / Runtime,
+Architecture Snapshot, Constraints / Guardrails, Source of Truth, Desired Agent Behavior,
+Vocabulary, Knowledge Appetite, Triggers, Known Pitfalls, Open Questions, Quick Start
+
+**Content rules enforced by the prompt:**
+- No live telemetry (queue counts, session counts, ROI scores)
+- No tool-specific mechanics (slash commands, hook internals, keyboard shortcuts)
+- Pitfalls capped at 3 highest-risk items
+- Vocabulary capped at 8 terms
+- Plain ASCII output only
+- Target: 120-160 lines, scannable in under 2 minutes
+
+---
+
+## What the Agent Should NOT Do
+
+- Do NOT skip the immediate generation step - every adopting spoke needs KnowMe.md from day one
+- Do NOT include live telemetry in KnowMe.md manually - the prompt template enforces this
+- Do NOT commit KnowMe.md with encoding artifacts (em-dashes, curly quotes) - prompt enforces plain ASCII
+- Do NOT configure Gardener to fail silently on generation errors - emit a health warning
+
+---
+
+## Post-Completion
+
+Move this file to `WAI-Spoke/seed/ingest/processed/` after successful adoption.

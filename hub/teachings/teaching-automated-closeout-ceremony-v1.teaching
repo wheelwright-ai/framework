@@ -1,0 +1,82 @@
+# Teaching: Automated Closeout Ceremony Protocol
+
+**Type:** protocol
+**safe_to_auto_adopt:** true
+**fw_ver:** 2.0.176
+**source_lug:** feature-tender-ceremony-parity-protocol-v1
+
+---
+
+## Prerequisites
+
+| Requirement | Verify with | Blocks |
+|---|---|---|
+| WAI-State.json exists | `test -f WAI-Spoke/WAI-State.json && echo PASS \|\| echo FAIL` | ceremony step |
+| sessions/ directory writable | `test -d WAI-Spoke/sessions && echo PASS \|\| echo FAIL` | track write |
+
+## Batch Sequence
+
+**Batch:** automated-closeout-ceremony-v1
+**Apply order:** 1 of 1
+**Depends on:** none
+**Required before:** none
+**Parallel safe:** yes — no schema changes, protocol documentation only
+
+---
+
+## What This Teaching Does
+
+Establishes a mandatory minimum ceremony for automated agents (Tender, nightly runners) that
+perform work on a spoke without a human session. Without this ceremony, Surveyor and Gardener
+see stale `last_closeout` values after automated runs, making fleet quality metrics unreliable.
+
+### Mandatory artifacts after every automated pass
+
+1. **WAI-State update** — `_session_state.last_closeout`, `session_count += 1`, `wheel.last_updated`
+2. **Minimal track.jsonl** — single entry in a new `WAI-Spoke/sessions/session-{date}-tender-{HHmm}/` directory
+3. **Git commit** — only `WAI-State.json` + the new session directory
+
+### Minimal track entry
+
+```json
+{
+  "ts": "ISO 8601 timestamp",
+  "session": "session-{date}-tender-{HHmm}",
+  "type": "automated-tender",
+  "summary": "Tender pass: signals={n}, teachings={n}, lugs={n}",
+  "signals_processed": 0,
+  "teachings_adopted": 0,
+  "lugs_executed": 0
+}
+```
+
+### What to skip in automated runs
+
+- No version bump
+- No signal extraction (unless the pass created new signals)
+- No teaching generation (unless the pass completed a lug that requires one)
+- No full session summary
+
+---
+
+## Adoption Steps
+
+This teaching is documentation-only. No file migration required.
+
+1. Read `templates/commands/wai-closeout.md` section `## Automated Closeout Protocol` — this is now the canonical reference.
+2. Any automated agent that modifies spoke state must implement the mandatory artifacts above before committing.
+3. Tender execution now lives in Minder; the framework keeps the closeout protocol reference but no longer ships `wheel-tender.sh`.
+
+---
+
+## Verification
+
+```bash
+# After a Tender run, check the spoke's last session directory
+ls WAI-Spoke/sessions/ | grep tender | tail -1
+# Should contain track.jsonl with type: "automated-tender"
+
+# Check WAI-State was updated
+python3 -c "import json; s=json.load(open('WAI-Spoke/WAI-State.json')); print(s.get('_session_state', {}).get('last_closeout', 'MISSING'))"
+# Should return a recent timestamp
+```
