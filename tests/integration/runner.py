@@ -3,8 +3,8 @@
 WAI Integration Test Report Generator
 
 Reads results.json produced by run-integration-tests.sh and writes
-a human-readable text report. Falls back to running the e2e suite
-directly if results.json is not present.
+a human-readable text report. Falls back to running the public
+integration suite directly if results.json is not present.
 
 Usage:
     python3 tests/integration/runner.py --mode=all --output=report.txt
@@ -17,28 +17,39 @@ from pathlib import Path
 
 
 def run_tests_directly() -> tuple[str, dict]:
-    """Run benchmarks/e2e/test_skills.py and return (output, summary)."""
+    """Run the stable public integration suite and return (output, summary)."""
     result = subprocess.run(
-        [sys.executable, "benchmarks/e2e/test_skills.py"],
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests/behavioral/test_public_reorg_structure.py",
+            "tests/behavioral/test_spoke_structure.py",
+            "tests/behavioral/test_tool_advisor.py",
+            "tests/behavioral/test_teaching_adoption.py",
+            "-q",
+        ],
         capture_output=True,
         text=True,
     )
     output = result.stdout + result.stderr
 
-    # Parse summary line
-    total = passed = failed = 0
-    for line in output.splitlines():
-        if "Total:" in line and "Passed:" in line and "Failed:" in line:
-            import re
-            m = re.search(r"Total:\s*(\d+).*Passed:\s*(\d+).*Failed:\s*(\d+)", line)
-            if m:
-                total, passed, failed = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    import re
+
+    passed_match = re.search(r"(\d+)\s+passed", output)
+    failed_match = re.search(r"(\d+)\s+failed", output)
+    skipped_match = re.search(r"(\d+)\s+skipped", output)
+
+    passed = int(passed_match.group(1)) if passed_match else 0
+    failed = int(failed_match.group(1)) if failed_match else 0
+    skipped = int(skipped_match.group(1)) if skipped_match else 0
+    total = passed + failed + skipped
 
     summary = {
         "total_tests": total,
         "passed": passed,
         "failed": failed,
-        "skipped": 0,
+        "skipped": skipped,
     }
     return output, summary
 

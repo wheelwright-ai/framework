@@ -3,19 +3,19 @@
 
 .PHONY: test test-all test-unit test-integration test-e2e test-behavioral test-health clean
 
-# Default: Run all E2E tests
+# Default: Run the stable public integration suite
 test:
-	@echo "Running E2E skill behavior tests..."
-	@python3 benchmarks/e2e/test_skills.py
+	@echo "Running public integration suite..."
+	@./run-integration-tests.sh --mode=all --json=results.json
 
 # Run all test categories
 test-all: test-e2e test-behavioral test-health
 	@echo "All test suites passed"
 
-# E2E structural tests (skill system validation)
+# Public integration suite
 test-e2e:
-	@echo "Running E2E structural tests..."
-	@python3 benchmarks/e2e/test_skills.py
+	@echo "Running public integration suite..."
+	@./run-integration-tests.sh --mode=all --json=results.json
 
 # Behavioral tests (real file operations, no mocks)
 test-behavioral:

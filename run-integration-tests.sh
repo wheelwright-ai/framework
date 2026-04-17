@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # WAI Framework — integration test runner
-# Wraps benchmarks/e2e/test_skills.py and outputs structured JSON results.
+# Runs the stable public integration suite and outputs structured JSON results.
 set -euo pipefail
 
 MODE="all"
@@ -19,16 +19,43 @@ echo "======================================"
 TMPOUT=$(mktemp)
 trap 'rm -f "$TMPOUT"' EXIT
 
-# Run the e2e test suite
+# Run the public integration suite
 set +e
-python3 benchmarks/e2e/test_skills.py 2>&1 | tee "$TMPOUT"
+python3 -m pytest \
+  tests/behavioral/test_public_reorg_structure.py \
+  tests/behavioral/test_spoke_structure.py \
+  tests/behavioral/test_tool_advisor.py \
+  tests/behavioral/test_teaching_adoption.py \
+  -q 2>&1 | tee "$TMPOUT"
 EXIT_CODE=${PIPESTATUS[0]}
 set -e
 
-# Parse summary line: "Total: N | Passed: N | Failed: N | Nms"
-TOTAL=$(grep -oP 'Total: \K[0-9]+' "$TMPOUT" | tail -1 || echo "0")
-PASSED=$(grep -oP 'Passed: \K[0-9]+' "$TMPOUT" | tail -1 || echo "0")
-FAILED=$(grep -oP 'Failed: \K[0-9]+' "$TMPOUT" | tail -1 || echo "0")
+# Parse pytest summary line
+PASSED=$(python3 - <<PYEOF
+import re
+from pathlib import Path
+text = Path("$TMPOUT").read_text()
+m = re.search(r"(\d+)\s+passed", text)
+print(m.group(1) if m else "0")
+PYEOF
+)
+FAILED=$(python3 - <<PYEOF
+import re
+from pathlib import Path
+text = Path("$TMPOUT").read_text()
+m = re.search(r"(\d+)\s+failed", text)
+print(m.group(1) if m else "0")
+PYEOF
+)
+SKIPPED=$(python3 - <<PYEOF
+import re
+from pathlib import Path
+text = Path("$TMPOUT").read_text()
+m = re.search(r"(\d+)\s+skipped", text)
+print(m.group(1) if m else "0")
+PYEOF
+)
+TOTAL=$((PASSED + FAILED + SKIPPED))
 
 if [ -n "$JSON_OUT" ]; then
     python3 - <<PYEOF
@@ -47,7 +74,7 @@ data = {
         "total_tests": total,
         "passed":      passed,
         "failed":      failed,
-        "skipped":     0,
+        "skipped":     int("$SKIPPED") if "$SKIPPED" else 0,
     },
     # baseline-comparison job looks for comparison_summary
     "comparison_summary": {
